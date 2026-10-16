@@ -24,6 +24,7 @@ from uwcopilot.llm.cache import CachedLLMClient
 from uwcopilot.llm.factory import get_llm_client
 from uwcopilot.llm.ollama_client import (
     ContextBudgetExceeded,
+    ContextRejectedByServer,
     OllamaClient,
     OllamaDigestMismatch,
     OllamaError,
@@ -174,6 +175,48 @@ def test_context_guard_uses_ceil_of_half_the_characters() -> None:
     assert len(server.chat_bodies()) == 1
 
 
+# The body Ollama 0.40.3 sent on 2026-10-12 for a 700-digit prompt with num_ctx 512 (an error object as JSON text).
+OVERFLOW_ERROR_TEXT = json.dumps(
+    {
+        "error": {
+            "code": 400,
+            "message": "request (729 tokens) exceeds the available context size (512 tokens), try increasing it",
+            "type": "exceed_context_size_error",
+            "n_prompt_tokens": 729,
+            "n_ctx": 512,
+        }
+    }
+)
+
+
+def test_server_context_rejection_is_a_context_error_with_the_server_count() -> None:
+    server = FakeOllamaServer(chat={"error": OVERFLOW_ERROR_TEXT}, chat_status=400)
+    client = make_client(server, OllamaOptions(num_ctx=512))
+    digits = [LLMMessage(role="user", content="0123456789" * 66)]
+    with pytest.raises(ContextRejectedByServer) as caught:
+        client.complete("", digits, max_tokens=8)
+    error = caught.value
+    assert isinstance(error, ContextBudgetExceeded)
+    assert not isinstance(error, OllamaError)
+    assert (error.n_prompt_tokens, error.num_ctx, error.num_predict, error.est_upper_tokens) == (729, 512, 8, 330)
+    assert "729 prompt tokens" in str(error)
+
+
+def test_other_http_400_replies_stay_ollama_errors() -> None:
+    server = FakeOllamaServer(chat={"error": "invalid options"}, chat_status=400)
+    with pytest.raises(OllamaError, match="HTTP 400: invalid options"):
+        make_client(server).complete("sys", USER, max_tokens=10)
+
+
+def test_non_json_reply_at_startup_is_an_ollama_error() -> None:
+    def plain_text(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, text="Ollama is running")
+
+    http_client = httpx.Client(transport=httpx.MockTransport(plain_text))
+    with pytest.raises(OllamaError, match="did not return JSON"):
+        OllamaClient(BASE_URL, TEST_MODEL, http_client=http_client)
+
+
 def test_possible_truncation_flag_when_tokens_reach_num_ctx() -> None:
     at_limit = FakeOllamaServer(chat=chat_json(prompt_eval_count=4000, eval_count=96))
     assert make_client(at_limit).complete("s", USER, max_tokens=10).metadata["possible_truncation"] is True
@@ -192,6 +235,7 @@ def test_fingerprint_holds_digest_and_options() -> None:
     client = make_client(FakeOllamaServer(), OllamaOptions(num_ctx=2048, seed=7))
     assert client.request_fingerprint == {
         "base_url": BASE_URL,
+        "ollama_version": "0.40.3",
         "digest": TEST_DIGEST,
         "num_ctx": "2048",
         "seed": "7",
@@ -256,6 +300,21 @@ def test_digest_and_options_are_in_the_cache_key(tmp_path: Path) -> None:
     assert cached.cached is True
     assert cached.metadata["digest"] == TEST_DIGEST
     assert same_again.chat_bodies() == []
+
+    upgraded = FakeOllamaServer(tags=tags, version="0.41.0")
+    build_cached(tmp_path, upgraded).complete("sys", USER, max_tokens=10)
+    assert len(upgraded.chat_bodies()) == 1
+
+
+def test_length_stopped_answer_is_cached_and_raised_again(tmp_path: Path) -> None:
+    tags = tags_json(model="qwen2.5-3b-instruct-q4km")
+    server = FakeOllamaServer(chat=chat_json(prompt_eval_count=900, eval_count=200, done_reason="length"), tags=tags)
+    for run in range(2):
+        with pytest.raises(IncompleteLLMResponse) as caught:
+            build_cached(tmp_path, server).complete("sys", USER, max_tokens=200)
+        assert caught.value.response.cached is (run == 1)
+        assert caught.value.response.stop_reason == "length"
+    assert len(server.chat_bodies()) == 1
 
 
 @pytest.mark.integration

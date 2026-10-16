@@ -1,0 +1,929 @@
+{
+ "action_checks": [
+  {
+   "action": "approve",
+   "allowed": false,
+   "needs_override_reason": true,
+   "reasons": [
+    "cannot approve while a referral to Fraud Operations is open; refer the file or request more information",
+    "approving against a refer or decline-for-review recommendation needs a senior_underwriter"
+   ]
+  },
+  {
+   "action": "decline",
+   "allowed": false,
+   "needs_override_reason": true,
+   "reasons": [
+    "only a senior_underwriter may decline (NBC-7.2 / HM-9.2)",
+    "cannot decline while a referral to Fraud Operations is open; refer the file or request more information"
+   ]
+  },
+  {
+   "action": "refer",
+   "allowed": true,
+   "needs_override_reason": false,
+   "reasons": []
+  },
+  {
+   "action": "request_more_information",
+   "allowed": true,
+   "needs_override_reason": false,
+   "reasons": []
+  }
+ ],
+ "allowed_actions": [
+  "refer",
+  "request_more_information"
+ ],
+ "amount_label": "requested loan amount (USD)",
+ "applicant": "Pioneer Dental Group LLC",
+ "approval_limits": {
+  "senior_underwriter": 500000.0,
+  "underwriter": 150000.0
+ },
+ "authority_exposure": 80000.0,
+ "blocking_open": true,
+ "calculations": [
+  {
+   "calc_id": "CALC-time_in_business_months",
+   "inputs": {
+    "application_date": "2026-09-30",
+    "formation_date": "2018-09-28"
+   },
+   "label": "Time in business (months)",
+   "section_ids": [
+    "NBC-2.1"
+   ],
+   "unit": "months",
+   "value": 96.0
+  },
+  {
+   "calc_id": "CALC-min_principal_credit_score",
+   "inputs": {},
+   "label": "Lowest principal credit score",
+   "section_ids": [
+    "NBC-2.1"
+   ],
+   "unit": "score",
+   "value": 705.0
+  },
+  {
+   "calc_id": "CALC-proposed_annual_debt_service",
+   "inputs": {
+    "note_rate_pct": 9.5,
+    "requested_amount": 80000.0,
+    "term_months": 60
+   },
+   "label": "Proposed annual debt service",
+   "section_ids": [
+    "NBC-4.1"
+   ],
+   "unit": "usd",
+   "value": 20161.79
+  },
+  {
+   "calc_id": "CALC-average_balance_floor",
+   "inputs": {
+    "proposed_annual_debt_service": 20161.79
+   },
+   "label": "5% of proposed annual debt service",
+   "section_ids": [
+    "NBC-3.5"
+   ],
+   "unit": "usd",
+   "value": 1008.09
+  },
+  {
+   "calc_id": "CALC-verified_annual_revenue",
+   "inputs": {
+    "cash_excluded_by_cap": 0.0,
+    "non_revenue_deposits_excluded": 26870.0
+   },
+   "label": "Verified annual revenue (eligible deposits, 12 months)",
+   "section_ids": [
+    "NBC-3.2",
+    "NBC-3.3"
+   ],
+   "unit": "usd",
+   "value": 400000.0
+  },
+  {
+   "calc_id": "CALC-revenue_gap_pct",
+   "inputs": {
+    "stated_annual_revenue": 412371.0,
+    "verified_annual_revenue": 400000.0
+   },
+   "label": "Revenue gap (stated minus verified, percent of stated)",
+   "section_ids": [
+    "NBC-3.4"
+   ],
+   "unit": "pct",
+   "value": 3.0
+  },
+  {
+   "calc_id": "CALC-noi",
+   "inputs": {
+    "ttm_ebitda": 57402.0,
+    "ttm_pnl_revenue": 412371.0,
+    "verified_annual_revenue": 400000.0
+   },
+   "label": "Net operating income (TTM EBITDA less revenue shortfall)",
+   "section_ids": [
+    "NBC-4.1"
+   ],
+   "unit": "usd",
+   "value": 45031.0
+  },
+  {
+   "calc_id": "CALC-annual_debt_service",
+   "inputs": {
+    "existing_annual_debt_service": 18000.0,
+    "proposed_annual_debt_service": 20161.79
+   },
+   "label": "Annual debt service (existing plus proposed)",
+   "section_ids": [
+    "NBC-4.1"
+   ],
+   "unit": "usd",
+   "value": 38161.79
+  },
+  {
+   "calc_id": "CALC-dscr",
+   "inputs": {
+    "annual_debt_service": 38161.79,
+    "noi": 45031.0
+   },
+   "label": "Decision DSCR (NOI / annual debt service)",
+   "section_ids": [
+    "NBC-4.1",
+    "NBC-4.2"
+   ],
+   "unit": "ratio",
+   "value": 1.18
+  },
+  {
+   "calc_id": "CALC-dscr_stated_revenue",
+   "inputs": {
+    "annual_debt_service": 38161.79,
+    "noi_with_stated_revenue": 57402.0
+   },
+   "label": "DSCR with stated revenue (information only)",
+   "section_ids": [
+    "NBC-4.1"
+   ],
+   "unit": "ratio",
+   "value": 1.5
+  },
+  {
+   "calc_id": "CALC-leverage",
+   "inputs": {
+    "noi": 45031.0,
+    "total_debt_after_closing": 90062.0
+   },
+   "label": "Total debt after closing / NOI",
+   "section_ids": [
+    "NBC-4.4"
+   ],
+   "unit": "ratio",
+   "value": 2.0
+  },
+  {
+   "calc_id": "CALC-ownership_total_pct",
+   "inputs": {},
+   "label": "Disclosed ownership total (percent)",
+   "section_ids": [
+    "NBC-6.1"
+   ],
+   "unit": "pct",
+   "value": 100.0
+  }
+ ],
+ "checks_passed": [
+  {
+   "detail": "Requested term loan of $80,000.00 over 60 months is within the product limits ($25,000.00 to $2,000,000.00).",
+   "evidence_ids": [
+    "APP-requested_amount",
+    "APP-term_months",
+    "APP-product"
+   ],
+   "rule": "product_limits",
+   "section_ids": [
+    "NBC-1.1"
+   ]
+  },
+  {
+   "detail": "Time in business is 96 months (at least 24).",
+   "evidence_ids": [
+    "CALC-time_in_business_months"
+   ],
+   "rule": "time_in_business",
+   "section_ids": [
+    "NBC-2.1"
+   ]
+  },
+  {
+   "detail": "Industry code dental_practice is neither prohibited nor restricted.",
+   "evidence_ids": [
+    "APP-industry"
+   ],
+   "rule": "industry_eligible",
+   "section_ids": [
+    "NBC-2.2",
+    "NBC-2.3"
+   ]
+  },
+  {
+   "detail": "Lowest principal credit score is 705 (at least 660).",
+   "evidence_ids": [
+    "CALC-min_principal_credit_score"
+   ],
+   "rule": "principal_credit_scores",
+   "section_ids": [
+    "NBC-2.1"
+   ]
+  },
+  {
+   "detail": "Every required document is in the file.",
+   "evidence_ids": [
+    "APP-documents_provided"
+   ],
+   "rule": "documents_complete",
+   "section_ids": [
+    "NBC-3.1"
+   ]
+  },
+  {
+   "detail": "0 NSF events, 0 negative months, and an average daily balance of $25,907.00 meet the account conduct rules.",
+   "evidence_ids": [
+    "APP-nsf_events_last_6_months",
+    "APP-negative_balance_months_last_12",
+    "APP-average_daily_balance_last_3_months"
+   ],
+   "rule": "account_conduct",
+   "section_ids": [
+    "NBC-3.5"
+   ]
+  },
+  {
+   "detail": "Verified annual revenue is $400,000.00 (at least $250,000.00).",
+   "evidence_ids": [
+    "CALC-verified_annual_revenue"
+   ],
+   "rule": "verified_revenue_minimum",
+   "section_ids": [
+    "NBC-2.1",
+    "NBC-3.2"
+   ]
+  },
+  {
+   "detail": "Revenue gap is 3.0% (10.0% or less is benign).",
+   "evidence_ids": [
+    "CALC-revenue_gap_pct"
+   ],
+   "rule": "revenue_gap",
+   "section_ids": [
+    "NBC-3.4"
+   ]
+  },
+  {
+   "detail": "No stress test is required for a term loan of $80,000.00 (not above $100,000.00).",
+   "evidence_ids": [
+    "APP-requested_amount",
+    "APP-product"
+   ],
+   "rule": "stress_tests",
+   "section_ids": [
+    "NBC-4.5"
+   ]
+  },
+  {
+   "detail": "Leverage is 2.00 (4.00 or less).",
+   "evidence_ids": [
+    "CALC-leverage"
+   ],
+   "rule": "leverage",
+   "section_ids": [
+    "NBC-4.4"
+   ]
+  },
+  {
+   "detail": "A request of $80,000.00 may be unsecured (not above $250,000.00).",
+   "evidence_ids": [
+    "APP-requested_amount"
+   ],
+   "rule": "collateral",
+   "section_ids": [
+    "NBC-5.1"
+   ]
+  },
+  {
+   "detail": "Ownership adds up to 100.0% with one control person.",
+   "evidence_ids": [
+    "CALC-ownership_total_pct"
+   ],
+   "rule": "ownership",
+   "section_ids": [
+    "NBC-6.1"
+   ]
+  },
+  {
+   "detail": "Every party (APPLICANT, O1, O2) was screened and none returned a potential match.",
+   "evidence_ids": [
+    "TR-4",
+    "TR-5",
+    "TR-6"
+   ],
+   "rule": "sanctions_screening_clear",
+   "section_ids": [
+    "NBC-6.3"
+   ]
+  }
+ ],
+ "cited_sections": [
+  "NBC-4.2",
+  "NBC-4.3",
+  "NBC-7.3",
+  "NBC-9.2",
+  "NBC-1.1",
+  "NBC-2.1",
+  "NBC-2.2",
+  "NBC-2.3",
+  "NBC-3.1",
+  "NBC-3.5",
+  "NBC-3.2",
+  "NBC-3.4",
+  "NBC-4.5",
+  "NBC-4.4",
+  "NBC-5.1",
+  "NBC-6.1",
+  "NBC-6.3",
+  "NBC-4.1",
+  "NBC-10.1",
+  "NBC-7.4"
+ ],
+ "decision": null,
+ "evidence": {
+  "APP-application_date": {
+   "evidence_id": "APP-application_date",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Application date: 2026-09-30",
+   "title": "Application date"
+  },
+  "APP-average_daily_balance_last_3_months": {
+   "evidence_id": "APP-average_daily_balance_last_3_months",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Average daily balance, last 3 months: $25,907.00",
+   "title": "Average balance"
+  },
+  "APP-business_structure": {
+   "evidence_id": "APP-business_structure",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Business structure: llc",
+   "title": "Business structure"
+  },
+  "APP-collateral": {
+   "evidence_id": "APP-collateral",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Collateral: none",
+   "title": "Collateral"
+  },
+  "APP-debt": {
+   "evidence_id": "APP-debt",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "TTM EBITDA $57,402.00; TTM P&L revenue $412,371.00; existing monthly payments $1,500.00 scheduled and $1,465.00 observed; MCA remittance $0.00 per month; existing total debt $10,062.00",
+   "title": "Debt inputs"
+  },
+  "APP-documents_provided": {
+   "evidence_id": "APP-documents_provided",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Documents provided: signed_application, bank_statements_12_months, business_tax_returns_2_years, ytd_pnl_and_balance_sheet, debt_schedule, principal_photo_ids, formation_documents, beneficial_ownership_certification",
+   "title": "Documents"
+  },
+  "APP-formation_date": {
+   "evidence_id": "APP-formation_date",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Formation date: 2018-09-28",
+   "title": "Formation date"
+  },
+  "APP-industry": {
+   "evidence_id": "APP-industry",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Industry code: dental_practice",
+   "title": "Industry"
+  },
+  "APP-largest_customer_revenue_pct": {
+   "evidence_id": "APP-largest_customer_revenue_pct",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Largest customer share of revenue: 12.0%",
+   "title": "Customer concentration"
+  },
+  "APP-negative_balance_months_last_12": {
+   "evidence_id": "APP-negative_balance_months_last_12",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Months ending negative, last 12 months: 0",
+   "title": "Negative months"
+  },
+  "APP-new_loans_last_90_days": {
+   "evidence_id": "APP-new_loans_last_90_days",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "New loans or advances in the last 90 days: 0",
+   "title": "New loans"
+  },
+  "APP-note_rate_pct": {
+   "evidence_id": "APP-note_rate_pct",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Note rate: 9.50% (fixed)",
+   "title": "Note rate"
+  },
+  "APP-nsf_events_last_6_months": {
+   "evidence_id": "APP-nsf_events_last_6_months",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "NSF or overdraft events, last 6 months: 0",
+   "title": "NSF events"
+  },
+  "APP-owners": {
+   "evidence_id": "APP-owners",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Owners: O1: person, 60.0%, control person, credit score 735; O2: person, 40.0%, credit score 705",
+   "title": "Owners"
+  },
+  "APP-product": {
+   "evidence_id": "APP-product",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Product: term_loan",
+   "title": "Product"
+  },
+  "APP-purpose": {
+   "evidence_id": "APP-purpose",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Purpose: expansion",
+   "title": "Purpose"
+  },
+  "APP-requested_amount": {
+   "evidence_id": "APP-requested_amount",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Requested amount: $80,000.00",
+   "title": "Requested amount"
+  },
+  "APP-stated_annual_revenue": {
+   "evidence_id": "APP-stated_annual_revenue",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Stated annual revenue: $412,371.00",
+   "title": "Stated revenue"
+  },
+  "APP-statement_months": {
+   "evidence_id": "APP-statement_months",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Bank statement months provided: 12 (2025-09 to 2026-08)",
+   "title": "Statement months"
+  },
+  "APP-tax_lien_unresolved": {
+   "evidence_id": "APP-tax_lien_unresolved",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Unresolved tax lien: no",
+   "title": "Tax lien"
+  },
+  "APP-term_months": {
+   "evidence_id": "APP-term_months",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Term: 60 months",
+   "title": "Term"
+  },
+  "CALC-annual_debt_service": {
+   "evidence_id": "CALC-annual_debt_service",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Annual debt service (existing plus proposed) = 38161.79; inputs: existing_annual_debt_service=18000.0, proposed_annual_debt_service=20161.79",
+   "title": "Annual debt service (existing plus proposed)"
+  },
+  "CALC-average_balance_floor": {
+   "evidence_id": "CALC-average_balance_floor",
+   "flags": [],
+   "kind": "calculation",
+   "text": "5% of proposed annual debt service = 1008.09; inputs: proposed_annual_debt_service=20161.79",
+   "title": "5% of proposed annual debt service"
+  },
+  "CALC-dscr": {
+   "evidence_id": "CALC-dscr",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Decision DSCR (NOI / annual debt service) = 1.18; inputs: noi=45031.0, annual_debt_service=38161.79",
+   "title": "Decision DSCR (NOI / annual debt service)"
+  },
+  "CALC-dscr_stated_revenue": {
+   "evidence_id": "CALC-dscr_stated_revenue",
+   "flags": [],
+   "kind": "calculation",
+   "text": "DSCR with stated revenue (information only) = 1.5; inputs: noi_with_stated_revenue=57402.0, annual_debt_service=38161.79",
+   "title": "DSCR with stated revenue (information only)"
+  },
+  "CALC-leverage": {
+   "evidence_id": "CALC-leverage",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Total debt after closing / NOI = 2.0; inputs: total_debt_after_closing=90062.0, noi=45031.0",
+   "title": "Total debt after closing / NOI"
+  },
+  "CALC-min_principal_credit_score": {
+   "evidence_id": "CALC-min_principal_credit_score",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Lowest principal credit score = 705.0; inputs: none",
+   "title": "Lowest principal credit score"
+  },
+  "CALC-noi": {
+   "evidence_id": "CALC-noi",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Net operating income (TTM EBITDA less revenue shortfall) = 45031.0; inputs: ttm_ebitda=57402.0, ttm_pnl_revenue=412371.0, verified_annual_revenue=400000.0",
+   "title": "Net operating income (TTM EBITDA less revenue shortfall)"
+  },
+  "CALC-ownership_total_pct": {
+   "evidence_id": "CALC-ownership_total_pct",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Disclosed ownership total (percent) = 100.0; inputs: none",
+   "title": "Disclosed ownership total (percent)"
+  },
+  "CALC-proposed_annual_debt_service": {
+   "evidence_id": "CALC-proposed_annual_debt_service",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Proposed annual debt service = 20161.79; inputs: requested_amount=80000.0, note_rate_pct=9.5, term_months=60",
+   "title": "Proposed annual debt service"
+  },
+  "CALC-revenue_gap_pct": {
+   "evidence_id": "CALC-revenue_gap_pct",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Revenue gap (stated minus verified, percent of stated) = 3.0; inputs: stated_annual_revenue=412371.0, verified_annual_revenue=400000.0",
+   "title": "Revenue gap (stated minus verified, percent of stated)"
+  },
+  "CALC-time_in_business_months": {
+   "evidence_id": "CALC-time_in_business_months",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Time in business (months) = 96.0; inputs: formation_date=2018-09-28, application_date=2026-09-30",
+   "title": "Time in business (months)"
+  },
+  "CALC-verified_annual_revenue": {
+   "evidence_id": "CALC-verified_annual_revenue",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Verified annual revenue (eligible deposits, 12 months) = 400000.0; inputs: non_revenue_deposits_excluded=26870.0, cash_excluded_by_cap=0.0",
+   "title": "Verified annual revenue (eligible deposits, 12 months)"
+  },
+  "CHK-injection_screen": {
+   "evidence_id": "CHK-injection_screen",
+   "flags": [],
+   "kind": "check",
+   "text": "Injection screen checked notes, applicant.legal_name, owners.O1.name, owners.O2.name: instruction-like text found in notes (approval_claim).",
+   "title": "Injection screen"
+  },
+  "TR-1": {
+   "evidence_id": "TR-1",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "search_guidelines query 'minimum debt service coverage ratio and collateral for a term loan': NBC-4.1 (rank 1), NBC-4.3 (rank 2), NBC-5.1 (rank 3)",
+   "title": "search_guidelines result"
+  },
+  "TR-2": {
+   "evidence_id": "TR-2",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "search_guidelines query 'eligibility of a dental practice business: prohibited or restricted industry': NBC-2.3 (rank 1), NBC-2.2 (rank 2), NBC-2.1 (rank 3)",
+   "title": "search_guidelines result"
+  },
+  "TR-3": {
+   "evidence_id": "TR-3",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "search_guidelines query 'sanctions screening potential match escalation and who can disposition it': NBC-6.3 (rank 1), NBC-10.1 (rank 2), NBC-7.4 (rank 3)",
+   "title": "search_guidelines result"
+  },
+  "TR-4": {
+   "evidence_id": "TR-4",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "screen_entity for party APPLICANT: status clear; 0 candidate(s); screened against sdn.csv sha256 64be7a799105, alt.csv sha256 ff6075fc9635",
+   "title": "screen_entity result"
+  },
+  "TR-5": {
+   "evidence_id": "TR-5",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "screen_entity for party O1: status clear; 0 candidate(s); screened against sdn.csv sha256 64be7a799105, alt.csv sha256 ff6075fc9635",
+   "title": "screen_entity result"
+  },
+  "TR-6": {
+   "evidence_id": "TR-6",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "screen_entity for party O2: status clear; 0 candidate(s); screened against sdn.csv sha256 64be7a799105, alt.csv sha256 ff6075fc9635",
+   "title": "screen_entity result"
+  },
+  "TR-7": {
+   "evidence_id": "TR-7",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "score_risk (risk model score (baseline)): unavailable - UWC_RISK_API_URL is not set, so the risk scoring service was not called. No score was produced.",
+   "title": "score_risk result"
+  }
+ },
+ "findings": [
+  {
+   "blocking": false,
+   "detail": "Decision DSCR is 1.18, below the term loan minimum 1.25 but at least 1.10; approval needs two compensating factors and an exception.",
+   "evidence_ids": [
+    "CALC-dscr",
+    "CALC-noi",
+    "CALC-annual_debt_service"
+   ],
+   "outcome": "refer",
+   "refer_to": [
+    "Senior Underwriter"
+   ],
+   "rule": "dscr_below_minimum",
+   "section_ids": [
+    "NBC-4.2",
+    "NBC-4.3",
+    "NBC-7.3"
+   ],
+   "trigger_ids": [
+    "R-NBC-04"
+   ]
+  },
+  {
+   "blocking": true,
+   "detail": "Instruction-like text was found in notes (patterns: approval_claim). It was not followed and is treated as a document integrity indicator.",
+   "evidence_ids": [
+    "CHK-injection_screen"
+   ],
+   "outcome": "refer",
+   "refer_to": [
+    "Fraud Operations"
+   ],
+   "rule": "embedded_instruction",
+   "section_ids": [
+    "NBC-9.2",
+    "NBC-7.3"
+   ],
+   "trigger_ids": [
+    "R-NBC-13"
+   ]
+  }
+ ],
+ "graph_version": "underwriting-graph-v1",
+ "guideline_search": {
+  "detail": "3 call(s) answered",
+  "status": "ok"
+ },
+ "id": "APP-C-008",
+ "injection_hits": [
+  {
+   "excerpt": "Landlord already approved the lease renewal through 2029.",
+   "field": "notes",
+   "patterns": [
+    "approval_claim"
+   ]
+  }
+ ],
+ "label": "SYNTHETIC DEMO",
+ "line": "credit",
+ "line_label": "Business credit",
+ "memo": {
+  "reasons": [
+   {
+    "citations": [
+     "NBC-4.2",
+     "NBC-4.3",
+     "NBC-7.3",
+     "CALC-dscr",
+     "CALC-noi",
+     "CALC-annual_debt_service"
+    ],
+    "text": "Decision DSCR is 1.18, below the term loan minimum 1.25 but at least 1.10; approval needs two compensating factors and an exception."
+   },
+   {
+    "citations": [
+     "NBC-9.2",
+     "NBC-7.3",
+     "CHK-injection_screen"
+    ],
+    "text": "Instruction-like text was found in notes (patterns: approval_claim). It was not followed and is treated as a document integrity indicator."
+   }
+  ],
+  "recommendation": "refer",
+  "summary": "FAKE LLM \u2014 test mode: template memo restating the reference policy result (recommendation refer); no language model wrote this text. A human decides."
+ },
+ "memo_check": {
+  "issues": [],
+  "passed": true
+ },
+ "memo_note": "Template memo: it restates the reference policy's result with its citations. No language model wrote it and it costs nothing; it is stamped 'FAKE LLM \u2014 test mode'.",
+ "memo_status": "passed",
+ "memo_writer": "template",
+ "not_evaluated": [
+  {
+   "reason": "not implemented: needs ID documents and credit reports (document extraction, Phase 2)",
+   "rule": "identity_verification",
+   "section_ids": [
+    "NBC-6.2"
+   ]
+  },
+  {
+   "reason": "not implemented: no adverse-media or PEP input in the structured application",
+   "rule": "adverse_media_and_pep",
+   "section_ids": [
+    "NBC-6.4"
+   ]
+  },
+  {
+   "reason": "not implemented: needs statement PDFs and metadata (document extraction, Phase 2)",
+   "rule": "document_integrity",
+   "section_ids": [
+    "NBC-9.1"
+   ]
+  },
+  {
+   "reason": "not implemented: needs formation documents; only the application's own ownership total is checked",
+   "rule": "ownership_matches_formation_documents",
+   "section_ids": [
+    "NBC-6.1"
+   ]
+  },
+  {
+   "reason": "not implemented: an exception decision for the human approver, not a policy calculation",
+   "rule": "compensating_factors",
+   "section_ids": [
+    "NBC-4.3"
+   ]
+  },
+  {
+   "reason": "not implemented: checked at the human approval checkpoint, not by the policy",
+   "rule": "approval_authority",
+   "section_ids": [
+    "NBC-7.2"
+   ]
+  },
+  {
+   "reason": "Model PD not available: the score_risk tool was unavailable (UWC_RISK_API_URL is not set, so the risk scoring service was not called. No score was produced.).",
+   "rule": "risk_model_pd",
+   "section_ids": [
+    "NBC-8.1"
+   ]
+  }
+ ],
+ "notice": "The copilot never decides \u2014 a person does.",
+ "override_reasons": [
+  "documented_compensating_factor",
+  "data_error_in_model_input",
+  "information_not_available_to_model",
+  "policy_exception_approved",
+  "referral_resolved_in_writing"
+ ],
+ "policy_version": "reference-policy-v1 (northwind_business_credit 2026.1, harborline_mutual_commercial 2026.1)",
+ "recommendation_text": "The policy suggests: refer to a higher authority \u2014 you decide.",
+ "reference_recommendation": "refer",
+ "referral_targets": [
+  "Fraud Operations",
+  "Senior Underwriter"
+ ],
+ "requested_amount": 80000.0,
+ "required_reviewer_role": "senior_underwriter",
+ "review_queue": "Fraud Operations",
+ "risk_model": {
+  "detail": "UWC_RISK_API_URL is not set, so the risk scoring service was not called. No score was produced.",
+  "status": "unavailable"
+ },
+ "screening": {
+  "configured_lists": [
+   "ofac"
+  ],
+  "lists_used": [
+   {
+    "attribution": null,
+    "file_name": "sdn.csv",
+    "sha256": "64be7a7991059f59a2ebb43bc5dcc7e2951e1e27cbed8cbe41b0231b3a161946",
+    "snapshot_date": "2026-10-12",
+    "source": "OFAC"
+   },
+   {
+    "attribution": null,
+    "file_name": "alt.csv",
+    "sha256": "ff6075fc9635c5034475fa49c0c2e0e03300e1c9375771d75f99c4d4bf799c1b",
+    "snapshot_date": "2026-10-12",
+    "source": "OFAC"
+   }
+  ],
+  "note": "Screening finds possible matches only. A potential match always goes to a person; nothing here can clear or confirm one. The threshold was chosen on the full lists (OFAC + OpenSanctions); with fewer lists its accuracy is not measured.",
+  "results": [
+   {
+    "candidates": [],
+    "error": null,
+    "party_id": "APPLICANT",
+    "result_id": "TR-4",
+    "status": "clear",
+    "top_score": null
+   },
+   {
+    "candidates": [],
+    "error": null,
+    "party_id": "O1",
+    "result_id": "TR-5",
+    "status": "clear",
+    "top_score": null
+   },
+   {
+    "candidates": [],
+    "error": null,
+    "party_id": "O2",
+    "result_id": "TR-6",
+    "status": "clear",
+    "top_score": null
+   }
+  ]
+ },
+ "stamp": "FAKE LLM \u2014 test mode",
+ "tool_rejections": [],
+ "tool_results": [
+  {
+   "error": null,
+   "party_id": null,
+   "purpose": "guideline search",
+   "result_id": "TR-1",
+   "status": "ok",
+   "tool": "search_guidelines"
+  },
+  {
+   "error": null,
+   "party_id": null,
+   "purpose": "guideline search",
+   "result_id": "TR-2",
+   "status": "ok",
+   "tool": "search_guidelines"
+  },
+  {
+   "error": null,
+   "party_id": null,
+   "purpose": "guideline search",
+   "result_id": "TR-3",
+   "status": "ok",
+   "tool": "search_guidelines"
+  },
+  {
+   "error": null,
+   "party_id": "APPLICANT",
+   "purpose": "sanctions screening of APPLICANT (applicant)",
+   "result_id": "TR-4",
+   "status": "ok",
+   "tool": "screen_entity"
+  },
+  {
+   "error": null,
+   "party_id": "O1",
+   "purpose": "sanctions screening of O1 (owner 60%)",
+   "result_id": "TR-5",
+   "status": "ok",
+   "tool": "screen_entity"
+  },
+  {
+   "error": null,
+   "party_id": "O2",
+   "purpose": "sanctions screening of O2 (owner 40%)",
+   "result_id": "TR-6",
+   "status": "ok",
+   "tool": "screen_entity"
+  },
+  {
+   "error": "UWC_RISK_API_URL is not set, so the risk scoring service was not called. No score was produced.",
+   "party_id": null,
+   "purpose": "risk model score (baseline)",
+   "result_id": "TR-7",
+   "status": "unavailable",
+   "tool": "score_risk"
+  }
+ ],
+ "your_reviewer_role": "underwriter"
+}

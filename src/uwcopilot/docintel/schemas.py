@@ -421,7 +421,8 @@ PacketExtraction = LoanPacket | InsuranceSubmission
 
 
 class FlatField(Strict):
-    """One extracted value with its field path, row key and citation."""
+    """One extracted value with its field path, row key and citation (bbox added for the citation evaluation;
+    optional, so older callers that build FlatFields without it still work)."""
 
     field: str
     key: str | None
@@ -430,6 +431,7 @@ class FlatField(Strict):
     page: int | None
     line: int | None
     confidence: float
+    bbox: tuple[float, float, float, float] | None = None
 
 
 def money_key(amount: float | None) -> str:
@@ -459,6 +461,7 @@ def cited_rows(prefix: str, key: str | None, model: BaseModel) -> list[FlatField
                     page=item.page,
                     line=item.line,
                     confidence=item.confidence,
+                    bbox=item.bbox,
                 )
             )
     return rows

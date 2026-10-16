@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "excerpt of a response recorded from the live API on 2026-10-13 by tests/studio/fixtures/record_fixtures.py; rows kept: industry_code in ['10', '311811', '333244', '44-45', '445131', '531110', '721110', '721199', '722511', '722513', '722515', '811192', '812310']",
+  "url": "https://data.bls.gov/cew/doc/titles/industry/industry_titles.csv",
+  "params": {},
+  "recorded_at_utc": "2026-10-13T14:43:26+00:00",
+  "content_type": "text/csv",
+  "body_sha256": "93727666b5304e7fad333629694979e1e6a3f7ac1314a92518cf28ea36f2f787",
+  "full_body_sha256": "facc122ef582f3efdbb5294f103331894d8fdab694de38e4ee7bff1b941ab8e1",
+  "body": "industry_code,industry_title\n10,\"10 Total, all industries\"\n311811,NAICS 311811 Retail bakeries\n333244,NAICS17 333244 Printing machinery and equipment mfg.\n44-45,NAICS 44-45 Retail trade\n445131,NAICS 445131 Convenience retailers\n531110,NAICS 531110 Lessors of residential buildings and dwellings\n721110,NAICS 721110 Hotels (except casino hotels) and motels\n721199,NAICS 721199 All other traveler accommodation\n722511,NAICS 722511 Full-service restaurants\n722513,NAICS 722513 Limited-service restaurants\n722515,NAICS 722515 Snack and nonalcoholic beverage bars\n811192,NAICS 811192 Car washes\n812310,NAICS 812310 Coin-operated laundries and drycleaners\n"
+}

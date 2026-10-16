@@ -1,0 +1,11 @@
+{
+  "fixture_origin": "hand-written from documentation, NOT recorded from the live API - re-record when the host is reachable (values are SYNTHETIC)",
+  "note": "Shape of an Overpass JSON answer with 'out center tags'. overpass-api.de reset connections from the build environment on 2026-10-12. Coordinates are in open ocean (SYNTHETIC). The relation has no position on purpose.",
+  "url": "https://overpass-api.de/api/interpreter",
+  "params": {
+    "data": "(query built by osm.build_query)"
+  },
+  "content_type": "application/json",
+  "body_sha256": "9957bf898f317c735558ec618f63ca1672b432441a066a346d50436805a3c862",
+  "body": "{\"version\": 0.6, \"generator\": \"Overpass API (hand-written)\", \"elements\": [{\"type\": \"node\", \"id\": 1, \"lat\": 10.001, \"lon\": -140.0, \"tags\": {\"amenity\": \"car_wash\", \"name\": \"SYNTHETIC Wash A\"}}, {\"type\": \"way\", \"id\": 2, \"center\": {\"lat\": 10.01, \"lon\": -140.005}, \"tags\": {\"amenity\": \"car_wash\"}}, {\"type\": \"node\", \"id\": 3, \"lat\": 10.03, \"lon\": -140.02, \"tags\": {\"shop\": \"supermarket\", \"name\": \"SYNTHETIC Market\"}}, {\"type\": \"relation\", \"id\": 4, \"tags\": {\"amenity\": \"car_wash\"}}]}"
+}

@@ -1,0 +1,14 @@
+{
+  "fixture_origin": "hand-written from documentation, NOT recorded from the live API - re-record when the host is reachable (values are SYNTHETIC)",
+  "note": "Shape of the Census Data API answer for County Business Patterns. Needs CENSUS_API_KEY.",
+  "url": "https://api.census.gov/data/2023/cbp",
+  "params": {
+    "get": "ESTAB,NAICS2017",
+    "for": "county:*",
+    "in": "state:48",
+    "NAICS2017": "811192"
+  },
+  "content_type": "application/json;charset=utf-8",
+  "body_sha256": "68bdd6c3801259e1ad207351795b4d820092e6c0a1c4b54f2f8e613b388e7d7e",
+  "body": "[[\"ESTAB\", \"NAICS2017\", \"state\", \"county\"], [\"37\", \"811192\", \"48\", \"201\"], [\"5\", \"811192\", \"48\", \"039\"], [null, \"811192\", \"48\", \"071\"]]"
+}

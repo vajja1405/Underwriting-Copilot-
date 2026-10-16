@@ -56,7 +56,9 @@ def load_profile(profile_id: str, metro_id: str | None = None, profiles_dir: Pat
 
 def load_all_profiles(profiles_dir: Path = PROFILES_DIR) -> dict[str, Profile]:
     """{profile id: Profile} for every YAML file."""
-    return {profile_id: load_profile(profile_id, profiles_dir=profiles_dir) for profile_id in list_profiles(profiles_dir)}
+    return {
+        profile_id: load_profile(profile_id, profiles_dir=profiles_dir) for profile_id in list_profiles(profiles_dir)
+    }
 
 
 def apply_metro_overrides(profile: Profile, metro_id: str) -> Profile:

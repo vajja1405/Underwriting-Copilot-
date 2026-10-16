@@ -9,7 +9,7 @@ verified: false
 states: []
 cbsa_code: null
 counties: []
-delineation_source: null
+delineation: null
 crs: EPSG:4326
 bbox: null
 trade_area:

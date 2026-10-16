@@ -1,0 +1,133 @@
+{
+ "patch": {
+  "budget_total": 425000.0,
+  "loan_amount": 325000.0,
+  "owner_equity": 320000.0,
+  "plan_change": {
+   "engine_version": "studio-path-to-approval-1.2",
+   "evidence_needed": [
+    "a written quote at or below $425,000 for the same build-out and equipment",
+    "bank statements that show $320,000 of owner cash (NSP-3.1)"
+   ],
+   "fields": [
+    "budget_total",
+    "loan_amount",
+    "owner_equity"
+   ],
+   "source": "path_to_approval"
+  },
+  "version": 1
+ },
+ "project": {
+  "business_type_id": "laundromat",
+  "business_type_name": "Laundromat",
+  "created_at": "2026-10-13T23:44:22.047807Z",
+  "data_label": "SYNTHETIC",
+  "demand_unit": "machine turns/day",
+  "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+  "expires_at": "2026-11-12T23:44:24.460633Z",
+  "id": "9b78d404eabe8ced",
+  "idea": {
+   "flagged": false,
+   "flags": [],
+   "note": "Your idea, stored as you typed it. v0.1 gives no idea text to any language model.",
+   "text": "A self-service laundromat near apartment blocks, with an attendant a few hours a day. (SYNTHETIC demo.)"
+  },
+  "metro_id": "synthetic_metro",
+  "metro_mode": "synthetic",
+  "metro_name": "Synthetic Metro (SYNTHETIC)",
+  "money": {
+   "annual_rate_pct": null,
+   "annual_rate_status": "ASSUMPTION",
+   "budget_status": "PLAN_CHANGE",
+   "budget_total": 425000.0,
+   "build_out_assumed": null,
+   "cash_reserve_at_opening": 220000.0,
+   "cash_reserve_status": "DERIVED",
+   "loan_amount": 325000.0,
+   "loan_amount_status": "PLAN_CHANGE",
+   "loan_term_months": 120,
+   "loan_term_status": "USER_STATED",
+   "note": "USD. The cash reserve at opening is owner_equity + loan_amount - the build-out budget (the profile's point estimate when the budget is empty); each simulated future then also takes a build-out overrun out of it.",
+   "owner_equity": 320000.0,
+   "owner_equity_status": "PLAN_CHANGE",
+   "plan_changes": {
+    "budget_total": {
+     "applied_at": "2026-10-13T23:44:24.460147Z",
+     "engine_version": "studio-path-to-approval-1.2",
+     "evidence_needed": [
+      "a written quote at or below $425,000 for the same build-out and equipment",
+      "bank statements that show $320,000 of owner cash (NSP-3.1)"
+     ],
+     "source": "path_to_approval"
+    },
+    "loan_amount": {
+     "applied_at": "2026-10-13T23:44:24.460147Z",
+     "engine_version": "studio-path-to-approval-1.2",
+     "evidence_needed": [
+      "a written quote at or below $425,000 for the same build-out and equipment",
+      "bank statements that show $320,000 of owner cash (NSP-3.1)"
+     ],
+     "source": "path_to_approval"
+    },
+    "owner_equity": {
+     "applied_at": "2026-10-13T23:44:24.460147Z",
+     "engine_version": "studio-path-to-approval-1.2",
+     "evidence_needed": [
+      "a written quote at or below $425,000 for the same build-out and equipment",
+      "bank statements that show $320,000 of owner cash (NSP-3.1)"
+     ],
+     "source": "path_to_approval"
+    }
+   },
+   "rate_type": "variable"
+  },
+  "name": "Demo laundromat (SYNTHETIC)",
+  "opening_date": "2027-04-01",
+  "opening_date_status": "ASSUMPTION",
+  "retention_days": 30,
+  "seed": 2801103018,
+  "selected_site_index": 0,
+  "selected_site_status": "USER_STATED",
+  "sites": [
+   {
+    "address": null,
+    "geocode_source": null,
+    "index": 0,
+    "label": "Suggested area 1 (tract SYN000092)",
+    "lat": 10.004742078180668,
+    "location_check": "within 3 miles of a tract centroid of Synthetic Metro (SYNTHETIC)",
+    "location_source": "map_pin",
+    "lon": -140.0061056357697,
+    "matched_address": null,
+    "tract_geoid": "SYN000092"
+   },
+   {
+    "address": null,
+    "geocode_source": null,
+    "index": 1,
+    "label": "Tract SYN000150",
+    "lat": 10.04189,
+    "location_check": "within 3 miles of a tract centroid of Synthetic Metro (SYNTHETIC)",
+    "location_source": "map_pin",
+    "lon": -140.04467,
+    "matched_address": null,
+    "tract_geoid": "SYN000150"
+   },
+   {
+    "address": null,
+    "geocode_source": null,
+    "index": 2,
+    "label": "Tract SYN000010",
+    "lat": 10.02012,
+    "location_check": "within 3 miles of a tract centroid of Synthetic Metro (SYNTHETIC)",
+    "location_source": "map_pin",
+    "lon": -140.03549,
+    "matched_address": null,
+    "tract_geoid": "SYN000010"
+   }
+  ],
+  "updated_at": "2026-10-13T23:44:24.460147Z",
+  "version": 2
+ }
+}

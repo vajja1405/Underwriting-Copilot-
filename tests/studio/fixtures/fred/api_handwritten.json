@@ -1,0 +1,13 @@
+{
+  "fixture_origin": "hand-written from documentation, NOT recorded from the live API - re-record when the host is reachable (values are SYNTHETIC)",
+  "note": "Shape of the FRED API answer. Needs FRED_API_KEY (not visible to the build session). Rates are SYNTHETIC test values, not published rates.",
+  "url": "https://api.stlouisfed.org/fred/series/observations",
+  "params": {
+    "series_id": "DPRIME",
+    "file_type": "json",
+    "observation_start": "2026-09-01"
+  },
+  "content_type": "application/json",
+  "body_sha256": "56e2b2cd0bbe0824dd6d82fe89b191c0cafa1b472bc86cf6a0eea0fd653e3b79",
+  "body": "{\"realtime_start\": \"2026-10-12\", \"realtime_end\": \"2026-10-12\", \"observations\": [{\"realtime_start\": \"2026-10-12\", \"realtime_end\": \"2026-10-12\", \"date\": \"2026-09-29\", \"value\": \"7.25\"}, {\"realtime_start\": \"2026-10-12\", \"realtime_end\": \"2026-10-12\", \"date\": \"2026-09-30\", \"value\": \".\"}, {\"realtime_start\": \"2026-10-12\", \"realtime_end\": \"2026-10-12\", \"date\": \"2026-10-01\", \"value\": \"7.50\"}]}"
+}

@@ -6,6 +6,10 @@ level). Any change to any of them (even one character of the prompt, or pointing
 different gateway) is a new key, so a response is never served for an endpoint or setting that did not produce it.
 Each entry is one JSON file under <cache_dir>/<first two hex chars>/<key>.json, holding the request and the
 response, so a reviewer can open a file and see exactly what was asked and answered.
+
+Incomplete answers (cut off at the token limit, or refused) are cached too, with their stop reason. A later hit
+raises IncompleteLLMResponse again, exactly like the original call, so the partial text is still never used as an
+answer, but a rerun or a resumed run does not pay (or wait) for the same cut-off answer twice.
 """
 
 import hashlib
@@ -15,7 +19,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from uwcopilot.llm.base import LLMClient, LLMMessage, LLMResponse
+from uwcopilot.llm.base import IncompleteLLMResponse, LLMClient, LLMMessage, LLMResponse, raise_if_incomplete
 
 CACHE_FORMAT_VERSION = 2
 
@@ -86,6 +90,7 @@ class CachedLLMClient:
 
     On a hit the inner client is not called, so no money is spent and no budget is used. The returned
     response has cached=True and cost_usd=0.0 (what this call cost); the stored file keeps the original cost.
+    A stored incomplete answer raises IncompleteLLMResponse on a hit, as the original call did.
     """
 
     def __init__(self, inner: LLMClient, cache: LLMCache) -> None:
@@ -104,7 +109,10 @@ class CachedLLMClient:
         max_tokens: int,
         temperature: float = 0,
     ) -> LLMResponse:
-        """Return the cached response for this exact request, or call the inner client and store the result."""
+        """Return the cached response for this exact request, or call the inner client and store the result.
+
+        Raises IncompleteLLMResponse for an incomplete answer, whether it came from the inner client or the cache.
+        """
         params: dict[str, Any] = {
             "max_tokens": max_tokens,
             "temperature": temperature,
@@ -116,9 +124,14 @@ class CachedLLMClient:
         if stored is not None:
             self.hits += 1
             lookup_s = time.perf_counter() - started
-            return stored.model_copy(update={"cached": True, "cost_usd": 0.0, "latency_s": lookup_s})
+            hit = stored.model_copy(update={"cached": True, "cost_usd": 0.0, "latency_s": lookup_s})
+            return raise_if_incomplete(hit)
         self.misses += 1
-        response = self.inner.complete(system, messages, max_tokens, temperature)
         request = build_cache_request(self.provider, self.model, system, messages, params)
+        try:
+            response = self.inner.complete(system, messages, max_tokens, temperature)
+        except IncompleteLLMResponse as error:
+            self.cache.put(key, request, error.response)
+            raise
         self.cache.put(key, request, response)
         return response

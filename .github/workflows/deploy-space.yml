@@ -1,0 +1,181 @@
+name: Deploy to Hugging Face Space
+
+# Runs by hand (Actions tab -> "Deploy to Hugging Face Space" -> "Run workflow") or when a version tag is pushed
+# (git tag v0.2.0 && git push origin v0.2.0).
+#
+# verify: the CI checks (ruff, the offline pytest suite), the frontend checks and build, then the same Dockerfile the
+#         Space builds, run as a container and smoke-tested (scripts/smoke_deploy.py).
+# deploy: only after verify passed, and only when the repository secret HF_TOKEN exists (otherwise it ends with a
+#         notice and pushes nothing). The Space id comes from a secret or variable HF_SPACE_ID, else
+#         astra6/FundProof. It uploads a bundle of the repo (scripts/deploy_space.py), waits until the Space serves
+#         this commit, and smoke-tests the Space.
+#
+# Secrets are passed to steps as environment variables and never echoed. The deploy sets ONE Space secret,
+# UWC_SESSION_SECRET, to a fresh random value on each push (never printed); the owners set every other Space secret
+# in the Space settings. See docs/deployment.md.
+#
+# Supply chain: every action is pinned to a full commit SHA (a tag can be moved; a commit cannot), with the
+# release it was resolved from in a comment (resolved with `git ls-remote --tags` on 2026-10-13). uv is pinned to
+# the same version as the Dockerfile (UV_VERSION). Checkouts do not keep the GitHub token in .git/config. To upgrade
+# an action, resolve the new tag to its commit and update both the SHA and the comment, here and in ci.yml.
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+# One deploy at a time; a second run waits instead of racing the first one.
+concurrency:
+  group: deploy-space
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: verify (lint, tests, frontend, container)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      # Every uv command fails instead of re-locking if uv.lock is out of date with pyproject.toml.
+      UV_LOCKED: "1"
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Install uv and Python 3.11
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          version: "0.11.32"
+          python-version: "3.11"
+          enable-cache: true
+
+      - name: Install Tesseract OCR (document-intelligence tests run real OCR on SYNTHETIC scanned pages)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng
+
+      - name: Install Python dependencies from the lockfile
+        run: uv sync --locked
+
+      - name: Lint (ruff)
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Test (pytest, offline suite)
+        run: uv run pytest
+
+      - name: Install Node 22
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Frontend checks and static build
+        working-directory: frontend
+        run: |
+          npm ci --no-audit --no-fund
+          npm run lint
+          npm run typecheck
+          npm run check:contrast
+          npm run build
+
+      - name: Build the container image (the Dockerfile the Space builds)
+        run: docker build --build-arg "UWC_GIT_SHA=${GITHUB_SHA}" -t fundproof:ci .
+
+      - name: Run the container (dev login off) and smoke-test it
+        run: |
+          docker run -d --name fundproof-ci -p 127.0.0.1:7860:7860 fundproof:ci
+          uv run python scripts/smoke_deploy.py --url http://127.0.0.1:7860 --target local-container \
+            --docker-image fundproof:ci --container fundproof-ci --output ci-smoke/deployment_metrics.json
+
+      - name: Show the container log (only when something failed)
+        if: failure()
+        run: docker logs fundproof-ci || true
+
+      - name: Keep the container smoke results (a CI-runner measurement, not the Space)
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: ci-container-smoke
+          path: ci-smoke/
+          if-no-files-found: ignore
+
+  deploy:
+    name: deploy to the Hugging Face Space
+    needs: verify
+    runs-on: ubuntu-latest
+    # Room for the 60-minute wait below plus checkout, install, bundle, push and the smoke test (a design choice).
+    timeout-minutes: 90
+    env:
+      UV_LOCKED: "1"
+    steps:
+      - name: Check that the deploy secrets exist (their values are never printed)
+        id: secrets
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE_ID: ${{ secrets.HF_SPACE_ID || vars.HF_SPACE_ID || 'astra6/FundProof' }}
+        run: |
+          if [ -z "${HF_TOKEN}" ]; then
+            echo "::notice title=Deploy skipped::The repository secret HF_TOKEN is not set, so nothing was pushed. See docs/deployment.md."
+            echo "ready=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "ready=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          persist-credentials: false
+
+      - name: Install uv and Python 3.11
+        if: steps.secrets.outputs.ready == 'true'
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          version: "0.11.32"
+          python-version: "3.11"
+          enable-cache: true
+
+      - name: Install the runtime dependencies (no dev group)
+        if: steps.secrets.outputs.ready == 'true'
+        run: uv sync --locked --no-dev
+
+      - name: Build the Space bundle
+        if: steps.secrets.outputs.ready == 'true'
+        run: uv run --no-dev python scripts/deploy_space.py bundle --out "${RUNNER_TEMP}/space" --git-sha "${GITHUB_SHA}"
+
+      - name: Push the bundle to the Space
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE_ID: ${{ secrets.HF_SPACE_ID || vars.HF_SPACE_ID || 'astra6/FundProof' }}
+        run: uv run --no-dev python scripts/deploy_space.py push --bundle "${RUNNER_TEMP}/space" --git-sha "${GITHUB_SHA}"
+
+      # The Space builds the whole image after the push. With the CENSUS_API_KEY Space secret its studio-snapshots step
+      # alone may take up to 1710 s (STUDIO_SNAPSHOT_TIMEOUT_S 1500 + 180 + 30 in the Dockerfile), and the other
+      # stages come on top, so the wait is 3600 s (a design choice; the Space builder's speed is not measured).
+      - name: Wait until the Space serves this commit
+        id: wait
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE_ID: ${{ secrets.HF_SPACE_ID || vars.HF_SPACE_ID || 'astra6/FundProof' }}
+        run: uv run --no-dev python scripts/deploy_space.py wait --git-sha "${GITHUB_SHA}" --timeout-s 3600
+
+      - name: Smoke-test the Space
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          SPACE_HOST: ${{ steps.wait.outputs.space_host }}
+        run: |
+          uv run --no-dev python scripts/smoke_deploy.py --url "https://${SPACE_HOST}" --target hf-space \
+            --output space-smoke/deployment_metrics.json
+
+      - name: Keep the Space smoke results
+        if: always() && steps.secrets.outputs.ready == 'true'
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: space-smoke
+          path: space-smoke/
+          if-no-files-found: ignore

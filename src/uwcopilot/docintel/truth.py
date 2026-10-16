@@ -25,7 +25,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-GENERATOR_VERSION = "synthetic-packets-v1"
+GENERATOR_VERSION = "synthetic-packets-v2"
 SYNTHETIC_FOOTER = "SYNTHETIC - for demonstration only"
 
 PacketLine = Literal["credit", "insurance"]

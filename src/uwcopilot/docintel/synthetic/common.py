@@ -1,8 +1,12 @@
 """Seeded helpers shared by the SYNTHETIC packet generator: names, identifiers, dates, money and text formats.
 
-Everything here is made up. Institution names (banks, carriers, the credit bureau, lenders, CPA firms) are
-invented word combinations chosen not to be the names of well-known real companies, and every document that
-shows one also prints "fictional". FEINs use the never-issued "00-" prefix, account numbers start with "99",
+Everything here is made up. Institution names (banks, carriers, the credit bureau, lenders, CPA firms, card
+processors) are invented word combinations chosen not to be the names of real companies (two earlier card processor
+names, CARDSTREAM and TALLYPAY, turned out to be real payment companies and were replaced by invented words in
+generator version synthetic-packets-v2). Every document that shows an institution also prints a "fictional" note:
+the bank statement's "Fictional institution" line also covers the counterparties named in its rows (processors,
+lenders, MCA funders), and the debt schedule says its lender names are fictional. FEINs use the never-issued "00-"
+prefix, account numbers start with "99",
 and e-mail addresses use the reserved example.com / example.org domains (RFC 2606).
 
 All randomness comes from a random.Random and a Faker instance that the caller seeds per packet, so the same
@@ -46,7 +50,7 @@ LENDERS: tuple[str, ...] = (
     "Fenwick Hollow Bank", "Tamarack Business Finance",
 )  # fmt: skip
 MCA_FUNDERS: tuple[str, ...] = ("Rapidleaf Merchant Funding", "Brookhaven Receivables Advance")
-CARD_PROCESSORS: tuple[str, ...] = ("TALLYPAY", "MERCHANTWAY", "CARDSTREAM", "PAYLARK")
+CARD_PROCESSORS: tuple[str, ...] = ("TERNWICK", "MERCHANTWAY", "MOSSGATE", "PAYLARK")
 PAYROLL_PROVIDERS: tuple[str, ...] = ("PAYROLL GRIDWORKS", "PAYROLL BRIGHTPAY HR", "PAYROLL CLOVERDALE HR")
 UTILITIES: tuple[str, ...] = ("CITY UTILITIES", "METRO POWER AND GAS", "COUNTY WATER DEPT", "FIBERNET TELECOM")
 # Words for customer and supplier names in transaction descriptions. They avoid every keyword the deposit and
@@ -159,11 +163,6 @@ def add_months(day: date, months: int) -> date:
     return date(total // 12, total % 12 + 1, 1)
 
 
-def month_key(day: date) -> str:
-    """'YYYY-MM' for a date."""
-    return f"{day.year:04d}-{day.month:02d}"
-
-
 def random_day(rng: random.Random, start: date, end: date) -> date:
     """A uniformly drawn date between start and end, inclusive."""
     return start + timedelta(days=rng.randint(0, (end - start).days))
@@ -183,11 +182,6 @@ def money(value: float, symbol: bool = True) -> str:
     sign = "-" if value < 0 else ""
     prefix = "$" if symbol else ""
     return f"{sign}{prefix}{abs(value):,.2f}"
-
-
-def whole_money(value: float) -> str:
-    """'$1,234,000' for amounts printed without cents (limits, premiums on some layouts)."""
-    return f"${value:,.0f}"
 
 
 def percent(value: float, decimals: int = 1) -> str:

@@ -1,18 +1,26 @@
 # Business-type profile (Founder Studio S1). Schema: src/uwcopilot/studio/profiles/models.py.
 # EVERY number below is an ASSUMPTION of the project author: a deliberately wide range, user-editable in the app,
-# with a note naming the source that should replace it. Nothing is SOURCED (no source could be opened in this build).
+# with a note naming the source that should replace it. Nothing is SOURCED: no primary source has been opened and
+# cited for these numbers yet. A test fails if any field is marked SOURCED (see tests/studio/test_profiles.py).
 id: retail_storefront
 display_name: Small retail storefront (convenience or specialty)
 
 naics:
   - code: "445131"
     title: Convenience retailers
-    verified: false
-    note: Written from the author's knowledge of NAICS 2022; confirm the code and vintage against the Census NAICS reference (https://www.census.gov/naics/).
+    verified: true
+    verification:
+      publisher: U.S. Bureau of Labor Statistics, Quarterly Census of Employment and Wages
+      list_name: QCEW industry titles (industry_titles.csv)
+      url: https://data.bls.gov/cew/doc/titles/industry/industry_titles.csv
+      retrieved_at_utc: "2026-10-13T14:31:09+00:00"
+      sha256: facc122ef582f3efdbb5294f103331894d8fdab694de38e4ee7bff1b941ab8e1
+      published_title: NAICS 445131 Convenience retailers
+    note: Code and title found in the BLS QCEW industry titles list (scripts/studio_verify_naics.py -> results/studio_naics_check.json). The list confirms the code exists with this title; choosing it for this business type is the author's judgement.
   - code: "44"
     title: Retail trade (sector 44-45; specialty stores fall under several codes)
     verified: false
-    note: The specialty-store code depends on what is sold; the founder picks it in the app, checked against the Census NAICS reference.
+    note: Not confirmed, code 44 is not in the BLS QCEW industry titles list (retrieved 2026-10-13, results/studio_naics_check.json). That list has the sector as "44-45" ("NAICS 44-45 Retail trade"), which the profile model's digits-only code pattern cannot hold yet. The specialty-store code depends on what is sold; the founder picks it in the app, checked against the Census NAICS reference.
 
 demand_unit: transactions/day
 demand:
@@ -250,7 +258,7 @@ ramp_up:
 
 design:
   status: DESIGN_CHOICE
-  note: Scoring-method choices by the project author, not facts. Weights are tuned in S2 on the SYNTHETIC metro only.
+  note: Scoring-method choices by the project author, not facts. Weights are not tuned; S2 decided against fitting them to the SYNTHETIC metro (docs/studio/walkthrough_s2.md).
   trade_area_rings_miles: [0.5, 1, 3]
   location_weights:
     resident_population: {weight: 0.20, direction: higher_is_better}

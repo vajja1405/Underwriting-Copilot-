@@ -1,0 +1,139 @@
+{
+  "description": "Each business-type profile's NAICS codes looked up in the BLS QCEW industry titles file. 'confirmed' = the code has the current 'NAICS ' title prefix and the same title as the profile. It checks that the code exists with that title, not that it is the right code for the business type (an author's choice).",
+  "source": {
+    "publisher": "U.S. Bureau of Labor Statistics, Quarterly Census of Employment and Wages",
+    "list_name": "QCEW industry titles (industry_titles.csv)",
+    "url": "https://data.bls.gov/cew/doc/titles/industry/industry_titles.csv",
+    "retrieved_at_utc": "2026-10-13T14:31:09+00:00",
+    "sha256": "facc122ef582f3efdbb5294f103331894d8fdab694de38e4ee7bff1b941ab8e1"
+  },
+  "codes": [
+    {
+      "profile_id": "car_wash",
+      "code": "811192",
+      "profile_title": "Car washes",
+      "status": "confirmed",
+      "published_title": "NAICS 811192 Car washes",
+      "detail": "listed as 'NAICS 811192 Car washes'"
+    },
+    {
+      "profile_id": "laundromat",
+      "code": "812310",
+      "profile_title": "Coin-operated laundries and drycleaners",
+      "status": "confirmed",
+      "published_title": "NAICS 812310 Coin-operated laundries and drycleaners",
+      "detail": "listed as 'NAICS 812310 Coin-operated laundries and drycleaners'"
+    },
+    {
+      "profile_id": "motel",
+      "code": "721110",
+      "profile_title": "Hotels (except casino hotels) and motels",
+      "status": "confirmed",
+      "published_title": "NAICS 721110 Hotels (except casino hotels) and motels",
+      "detail": "listed as 'NAICS 721110 Hotels (except casino hotels) and motels'"
+    },
+    {
+      "profile_id": "restaurant_cafe",
+      "code": "722511",
+      "profile_title": "Full-service restaurants",
+      "status": "confirmed",
+      "published_title": "NAICS 722511 Full-service restaurants",
+      "detail": "listed as 'NAICS 722511 Full-service restaurants'"
+    },
+    {
+      "profile_id": "restaurant_cafe",
+      "code": "722513",
+      "profile_title": "Limited-service restaurants",
+      "status": "confirmed",
+      "published_title": "NAICS 722513 Limited-service restaurants",
+      "detail": "listed as 'NAICS 722513 Limited-service restaurants'"
+    },
+    {
+      "profile_id": "restaurant_cafe",
+      "code": "722515",
+      "profile_title": "Snack and nonalcoholic beverage bars",
+      "status": "confirmed",
+      "published_title": "NAICS 722515 Snack and nonalcoholic beverage bars",
+      "detail": "listed as 'NAICS 722515 Snack and nonalcoholic beverage bars'"
+    },
+    {
+      "profile_id": "restaurant_cafe",
+      "code": "311811",
+      "profile_title": "Retail bakeries",
+      "status": "confirmed",
+      "published_title": "NAICS 311811 Retail bakeries",
+      "detail": "listed as 'NAICS 311811 Retail bakeries'"
+    },
+    {
+      "profile_id": "retail_storefront",
+      "code": "445131",
+      "profile_title": "Convenience retailers",
+      "status": "confirmed",
+      "published_title": "NAICS 445131 Convenience retailers",
+      "detail": "listed as 'NAICS 445131 Convenience retailers'"
+    },
+    {
+      "profile_id": "retail_storefront",
+      "code": "44",
+      "profile_title": "Retail trade (sector 44-45; specialty stores fall under several codes)",
+      "status": "not_in_list",
+      "published_title": null,
+      "detail": "code 44 is not in the list"
+    },
+    {
+      "profile_id": "short_term_rental",
+      "code": "721199",
+      "profile_title": "All other traveler accommodation",
+      "status": "confirmed",
+      "published_title": "NAICS 721199 All other traveler accommodation",
+      "detail": "listed as 'NAICS 721199 All other traveler accommodation'"
+    }
+  ],
+  "confirmed": 9,
+  "total": 10,
+  "provenance": {
+    "git_sha": "a634325fc5a6bf961b1812bde3fed9f951a4f6d9",
+    "git_dirty": true,
+    "generated_at_utc": "2026-10-13T14:31:26+00:00",
+    "generated_by": "scripts/studio_verify_naics.py",
+    "prompts": {},
+    "corpus_checksum": "not applicable (no retrieval corpus is used)",
+    "eval_sets": {},
+    "models": [],
+    "data_snapshots": {
+      "bls_qcew_industry_titles": {
+        "url": "https://data.bls.gov/cew/doc/titles/industry/industry_titles.csv",
+        "sha256": "facc122ef582f3efdbb5294f103331894d8fdab694de38e4ee7bff1b941ab8e1"
+      }
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        0.85,
+        2.56,
+        2.85
+      ],
+      "load_average_end": [
+        0.85,
+        2.56,
+        2.85
+      ]
+    }
+  },
+  "written_at_utc": "2026-10-13T14:31:26+00:00"
+}

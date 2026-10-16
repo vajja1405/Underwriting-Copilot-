@@ -1,0 +1,13 @@
+{
+  "name": "fundproof-web-metrics-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pinned Node tools for scripts/web_metrics.py: Lighthouse (CLI) and axe-core (injected into pages by Playwright). Not part of the app or the container image.",
+  "engines": {
+    "node": ">=22.19 <23"
+  },
+  "dependencies": {
+    "axe-core": "4.13.0",
+    "lighthouse": "13.5.0"
+  }
+}

@@ -1,35 +1,98 @@
 # Metro config (Founder Studio S1). Schema: src/uwcopilot/studio/metros/models.py.
-# UNVERIFIED: the official title, CBSA code and county list must come from the Census delineation file, which could
-# not be opened in this build (www.census.gov is blocked; see docs/studio/metros.md). Counties stay empty and
-# verified stays false until then; the model refuses counties without a delineation_source. With no data snapshot,
-# this metro runs in "limited mode" and every data factor is UNKNOWN.
+# The name, CBSA code, states and counties below were written by scripts/studio_fetch_delineation.py from the Census
+# Bureau delineation file recorded under `delineation` (URL, date, SHA-256 of the file). Do not edit them by hand;
+# re-run the script. Trade-area settings and enhancements are design choices of the project author. Without a data
+# snapshot this metro runs in "limited mode" (see results/studio_metro_coverage.json).
 id: houston_tx
-name: "Houston-Pasadena-The Woodlands (title from the Studio plan, UNVERIFIED)"
+name: Houston-Pasadena-The Woodlands, TX
 data_label: PUBLIC
-verified: false
-states: [TX]
-cbsa_code: null
-counties: []
-delineation_source: null
+verified: true
+states:
+- TX
+cbsa_code: '26420'
+cbsa_title_prefix: Houston-Pasadena-The Woodlands
+counties:
+- state_fips: '48'
+  county_fips: '015'
+  name: Austin County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '039'
+  name: Brazoria County
+  state_name: Texas
+  central_or_outlying: central
+- state_fips: '48'
+  county_fips: '071'
+  name: Chambers County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '157'
+  name: Fort Bend County
+  state_name: Texas
+  central_or_outlying: central
+- state_fips: '48'
+  county_fips: '167'
+  name: Galveston County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '201'
+  name: Harris County
+  state_name: Texas
+  central_or_outlying: central
+- state_fips: '48'
+  county_fips: '291'
+  name: Liberty County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '339'
+  name: Montgomery County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '407'
+  name: San Jacinto County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '473'
+  name: Waller County
+  state_name: Texas
+  central_or_outlying: central
+delineation:
+  source:
+    publisher: U.S. Census Bureau, Population Division
+    title: List 1. CORE BASED STATISTICAL AREAS (CBSAs), METROPOLITAN DIVISIONS, AND COMBINED STATISTICAL AREAS (CSAs), JULY
+      2023
+    date: July 2023
+    url: https://www2.census.gov/programs-surveys/metro-micro/geographies/reference-files/2023/delineation-files/list1_2023.xlsx
+    page_or_table: list1_2023.xlsx, first sheet, the 10 rows with CBSA Code 26420
+  file_name: list1_2023.xlsx
+  file_sha256: 952c4b1e78acbb54e6ec9412434b7602fedacbf021736351a63c181bdb753629
+  retrieved_at_utc: '2026-10-12T19:22:07+00:00'
+  generated_by: scripts/studio_fetch_delineation.py
 crs: EPSG:4326
 bbox: null
 trade_area:
   ring_multiplier: 1.5
   status: DESIGN_CHOICE
-  note: >-
-    Scales every profile's trade-area rings. Tighter rings for dense metros and wider rings for
-    car-dependent ones follow the Studio plan; the density premise itself is UNVERIFIED (docs/studio/metros.md).
+  note: Scales every profile's trade-area rings. Tighter rings for dense metros and wider rings for car-dependent ones follow
+    the Studio plan; the density premise itself is UNVERIFIED (docs/studio/metros.md).
 enhancements:
-  - kind: traffic_state
-    adapter: TX
-    enabled: true
-  - kind: city_open_data
-    adapter: houston
-    enabled: true
-  - kind: str_comps
-    adapter: houston
-    enabled: true
+- kind: traffic_state
+  adapter: TX
+  enabled: true
+- kind: city_open_data
+  adapter: houston
+  enabled: true
+- kind: str_comps
+  adapter: houston
+  enabled: true
 snapshot_date: null
 coverage_threshold: 0.8
 synthetic: null
-note: Expected v1 metro from the Studio plan; rank and title to confirm from the Census tables (docs/studio/metros.md).
+note: Rank 5 of 387 metropolitan statistical areas by POPESTIMATE2025 in cbsa-est2025-alldata.csv (written by scripts/studio_fetch_delineation.py;
+  see results/studio_metro_ranking.json).

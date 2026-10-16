@@ -9,19 +9,12 @@
 |---|---|
 | Model | Probability of default: logistic-regression scorecard (champion candidate) vs LightGBM (challenger) |
 | Owner | Rahul Vajja (portfolio project) |
-| Status | not measured: Lending Club requires Kaggle credentials; run make data after adding a Kaggle token |
-| Version (MLflow registered model) | not measured (no model trained) |
-| Chosen model | not measured |
-| Results provenance | generated 2026-10-11T00:30:40+00:00 from git commit `bbedb8d30fa8f4d761a926d70c61cf25d7771743` (uncommitted changes outside results/: yes) |
+| Status | measured |
+| Version (MLflow registered model) | uwcopilot_credit_pd v1 |
+| Chosen model | LightGBM |
+| Results provenance | generated 2026-10-12T19:35:16+00:00 from git commit `700a5b069a009ec1171884e60a7f5f0387e5cc89` (uncommitted changes outside results/: no) |
 | Independent validation | Not performed. Developer testing only; see validation_report.md. |
 | Approval for use | None. Demonstration only; a person makes every credit decision. |
-
-## Current status
-
-**Not measured.** Lending Club requires Kaggle credentials; run make data after adding a Kaggle token.
-Detail: data/raw/lending_club/lending-club.zip does not exist.
-Implemented and tested on SYNTHETIC Lending Club-shaped data only (tests/risk/test_credit.py). No Lending Club metric has been computed.
-Every metric in this card says "not measured" until the Lending Club data is downloaded (`make data` with a Kaggle token) and `make train-credit` runs.
 
 ## 1. Purpose and intended use
 
@@ -38,23 +31,23 @@ Every metric in this card says "not measured" until the Lending Club data is dow
 
 ## 3. Data
 
-- Source: Lending Club accepted loans 2007-2018Q4 (Kaggle wordsforthewise/lending-club), not downloaded yet.
+- Source: Lending Club accepted loans 2007-2018Q4 (Kaggle wordsforthewise/lending-club).
 - Population: individual applications only (joint applications excluded), finished loans only for modelling (Fully Paid vs Charged Off / Default); unfinished loans are kept for population-stability checks.
 - Out-of-time split by issue year: train 2015 and earlier, validation 2016, test 2017-2018 (touched once).
 - Leakage control: every one of the file's columns has one documented decision in `docs/leakage.md`; post-origination fields (payments, recoveries, last_* pulls, hardship, settlement, loan status) and Lending Club's own grade and pricing outputs are rejected by `assert_no_leakage` at fit and score time.
 
 | Split | Loans | Bad loans | Bad rate |
 |---|---|---|---|
-| train | not measured | not measured | not measured |
-| validation | not measured | not measured | not measured |
-| test | not measured | not measured | not measured |
+| train | 828,954 | 152,966 | 0.1845 |
+| validation | 287,819 | 66,948 | 0.2326 |
+| test | 205,520 | 43,096 | 0.2097 |
 
 ## 4. Methodology
 
 - Champion candidate: logistic-regression scorecard on log-transformed money amounts, values clipped to the 1st-99th training percentile, median imputation with missing-value indicators, standardisation and one-hot categories. Per-feature contributions add up exactly to the log-odds.
 - Challenger: LightGBM with class weighting (scale_pos_weight), early stopping on the 2016 validation AUC, and Platt recalibration on 2016 because the weighting inflates probabilities.
-- Champion/challenger rule, fixed before the test set is scored: LightGBM only if its 2016 validation AUC beats the scorecard by at least 0.005 and the lower end of the 95% paired-bootstrap interval of the difference is above 0; otherwise the scorecard.
-- Selection result: not measured.
+- Champion/challenger rule, fixed before the test set is scored: Chosen on the 2016 validation set, before the test set is scored: LightGBM only if its AUC exceeds the logistic scorecard's by at least 0.005 and the lower end of the 95% paired-bootstrap interval of the difference is above 0; otherwise the logistic scorecard (simpler to explain and monitor).
+- Selection result: validation AUC gain 0.0112 (95% CI low 0.0103) meets the rule (gain >= 0.005 and CI low > 0).
 - Reason codes: top-4 risk-increasing contributions (SHAP for LightGBM, scorecard contributions otherwise) mapped to plain-language reasons in the style of Regulation B sample reasons.
 
 Reason-code references (cited in the code; applicability depends on the institution):
@@ -65,36 +58,48 @@ Reason-code references (cited in the code; applicability depends on the institut
 
 ## 5. Validation results (test split, 2017-2018)
 
-Estimate [95% bootstrap CI] once measured; today every entry is not measured (Lending Club requires Kaggle credentials; run make data after adding a Kaggle token).
+Estimate [95% bootstrap CI]; 1,000 resamples, seed 42.
 
 | Metric | Logistic scorecard | LightGBM |
 |---|---|---|
-| AUC | not measured | not measured |
-| KS | not measured | not measured |
-| Gini | not measured | not measured |
-| Brier score (lower is better) | not measured | not measured |
-| ECE (lower is better) | not measured | not measured |
+| AUC | 0.7010 [0.6982, 0.7038] | 0.7151 [0.7123, 0.7177] |
+| KS | 0.2922 [0.2872, 0.2977] | 0.3122 [0.3076, 0.3176] |
+| Gini | 0.4020 [0.3963, 0.4076] | 0.4302 [0.4245, 0.4354] |
+| Brier score (lower is better) | 0.1534 [0.1523, 0.1545] | 0.1499 [0.1490, 0.1508] |
+| ECE (lower is better) | 0.0386 [0.0369, 0.0403] | 0.0127 [0.0111, 0.0144] |
 
 | Comparison | Value [95% CI] |
 |---|---|
-| AUC difference, LightGBM minus scorecard (paired bootstrap, test) | not measured |
-| AUC difference on the 2016 validation year (used for the choice) | not measured |
-| Benchmark: Lending Club's own sub_grade, test AUC (not a feature) | not measured |
+| AUC difference, LightGBM minus scorecard (paired bootstrap, test) | 0.0141 [0.0130, 0.0152] |
+| AUC difference on the 2016 validation year (used for the choice) | 0.0112 [0.0103, 0.0120] |
+| Benchmark: Lending Club's own sub_grade, test AUC (not a feature) | 0.6842 [0.6813, 0.6867] |
 
 Scenario sanity checks (share of test loans whose PD moves against the documented direction):
 
 | Shift | Expected direction | Model | Rows checked | Moved the wrong way | Unchanged |
 |---|---|---|---|---|---|
-| not measured | not measured | not measured | not measured | not measured | not measured |
+| dti + 5 | increase | logistic scorecard | 203,098 | 0.00% | 0.00% |
+| dti + 5 | increase | LightGBM | 203,098 | 6.32% | 0.00% |
+| fico_range_low + 20 | decrease | logistic scorecard | 205,164 | 0.00% | 2.11% |
+| fico_range_low + 20 | decrease | LightGBM | 205,164 | 6.00% | 0.78% |
 
 ## 6. Outcomes analysis
 
-- Test bad rate not measured; mean predicted PD of the chosen model not measured.
+- Test bad rate 0.2097; mean predicted PD of the chosen model 0.2224.
 - Calibration by predicted decile (chosen model):
 
 | Decile | Loans | Mean predicted PD | Observed bad rate |
 |---|---|---|---|
-| not measured | not measured | not measured | not measured |
+| 1 | 20,552 | 0.0427 | 0.0338 |
+| 2 | 20,552 | 0.0820 | 0.0740 |
+| 3 | 20,552 | 0.1140 | 0.1122 |
+| 4 | 20,552 | 0.1448 | 0.1439 |
+| 5 | 20,552 | 0.1771 | 0.1703 |
+| 6 | 20,552 | 0.2126 | 0.2141 |
+| 7 | 20,552 | 0.2538 | 0.2469 |
+| 8 | 20,552 | 0.3049 | 0.2897 |
+| 9 | 20,552 | 0.3769 | 0.3486 |
+| 10 | 20,552 | 0.5152 | 0.4635 |
 
 - The test set is right-censored: 2017-2018 loans had at most about two years to finish, so finished test loans over-represent early payoffs and early charge-offs (see Limitations).
 
@@ -109,7 +114,7 @@ Scenario sanity checks (share of test loans whose PD moves against the documente
 | Reason codes and risk bands | Share of cases per band and per top reason code | Large movement against the training mix (reviewed together with PSI) | Explain or re-validate |
 | Human overrides (Phase 6) | Reviewer accept / override with a reason | Override rate or override reasons concentrating in one band or reason | Champion/challenger review |
 
-Current PSI results: not measured (Lending Club requires Kaggle credentials; run make data after adding a Kaggle token).
+Current PSI results: flagged above 0.25: score:logistic_scorecard 2007: 0.304; score:logistic_scorecard 2009: 1.220; score:lightgbm 2007: 0.277; score:lightgbm 2009: 0.362; term_months 2007: 2.507; term_months 2008: 2.507; term_months 2009: 2.507; fico_range_low 2007: 0.485; fico_range_low 2009: 0.375; fico_range_low 2010: 0.320; fico_range_low 2011: 0.393; loan_to_income 2007: 0.382; loan_to_income 2008: 0.353; dti 2007: 1.278; dti 2008: 0.541; dti 2009: 1.572; dti 2010: 1.511; dti 2011: 0.594; acc_open_past_24mths 2007: 9.321; acc_open_past_24mths 2008: 9.321; acc_open_past_24mths 2009: 9.321; acc_open_past_24mths 2010: 9.321; acc_open_past_24mths 2011: 9.321; acc_open_past_24mths 2013: 0.387; acc_open_past_24mths 2014: 0.362; acc_open_past_24mths 2015: 0.365; acc_open_past_24mths 2016: 0.371; acc_open_past_24mths 2017: 0.363; acc_open_past_24mths 2018: 0.365; loan_amnt 2007: 1.299; loan_amnt 2008: 1.136; loan_amnt 2009: 0.923; loan_amnt 2010: 0.869; percent_bc_gt_75 2007: 9.215; percent_bc_gt_75 2008: 9.215; percent_bc_gt_75 2009: 9.215; percent_bc_gt_75 2010: 9.215; percent_bc_gt_75 2011: 9.215; percent_bc_gt_75 2018: 0.354; purpose 2007: 0.890; purpose 2008: 0.494; purpose 2009: 0.608; purpose 2010: 0.383; purpose 2011: 0.294; mo_sin_old_rev_tl_op 2007: 8.612; mo_sin_old_rev_tl_op 2008: 8.612; mo_sin_old_rev_tl_op 2009: 8.612; mo_sin_old_rev_tl_op 2010: 8.612; mo_sin_old_rev_tl_op 2011: 8.612; mo_sin_old_rev_tl_op 2012: 1.137; mo_sin_old_rev_tl_op 2013: 0.542; mo_sin_old_rev_tl_op 2014: 0.536; mo_sin_old_rev_tl_op 2015: 0.536; mo_sin_old_rev_tl_op 2016: 0.554; mo_sin_old_rev_tl_op 2017: 0.591; mo_sin_old_rev_tl_op 2018: 0.619.
 
 ## 8. Risk bands used by the API
 
@@ -117,7 +122,10 @@ Cut-offs are the 50th, 80th, 95th percentiles of the served model's predictions 
 
 | Band | Training percentiles | PD range |
 |---|---|---|
-| not measured | not measured | not measured |
+| low | below the 50th percentile | < 0.2053 |
+| medium | 50th to 80th percentile | >= 0.2053 and < 0.3509 |
+| high | 80th to 95th percentile | >= 0.3509 and < 0.5138 |
+| very high | 95th percentile and above | >= 0.5138 |
 
 ## 9. Fairness
 

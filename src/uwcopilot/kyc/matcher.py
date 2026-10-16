@@ -23,7 +23,7 @@ from rapidfuzz import fuzz, process
 
 from uwcopilot.kyc.blocking import BlockingConfig, BlockingIndex, BlockingResult
 from uwcopilot.kyc.countries import normalize_country
-from uwcopilot.kyc.normalize import NormalizedName, normalize_name
+from uwcopilot.kyc.normalize import NormalizedName, normalize_name, normalize_query_name
 from uwcopilot.kyc.reranker import TextEmbedder, blend, cosine_similarities
 from uwcopilot.kyc.scoring import (
     AttributeCheck,
@@ -168,7 +168,7 @@ class SanctionsMatcher:
     def match(self, name: str, entity_type: str | None, country: str | None = None) -> MatchOutcome:
         """Run the full pipeline for one name and return the top candidates with their scores."""
         start = time.perf_counter()
-        query = normalize_name(name, entity_type)
+        query = normalize_query_name(name, entity_type)  # the screened name is untrusted: step 0 first
         country_code = normalize_country(country)
         blocking = self.index.candidates(query.tokens)
         prerank_ids = self.prerank(query, blocking.name_ids)

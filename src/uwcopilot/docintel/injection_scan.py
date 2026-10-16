@@ -5,21 +5,29 @@ reviewer, a system or an AI assistant appears, so the file can be referred to Fr
 
 Detection reuses uwcopilot.agent.injection.detect (the agent's fixed pattern set: rag.prompt.INSTRUCTION_PATTERNS
 plus agent.injection.AGENT_PATTERNS). No pattern was added or tuned on the synthetic packets. Before detection
-every text is normalized with docintel.normalize.normalize_text (invisible characters removed, NFKC, homoglyph
-fold), and any message hidden in Unicode tag characters is decoded and appended, so it is checked too.
+every text goes through uwcopilot.security.normalize.detection_text, the canonical S2 normalization (the whole
+Unicode Default_Ignorable set removed, NFKC, lookalike letters and angle-bracket lookalikes folded), and any message
+hidden in Unicode tag characters is decoded and appended, so it is checked too.
 
 Input interfaces (so this module does not depend on the page-text models in docintel/layout.py):
 - scan_lines(lines): any iterable of (doc_id, page, line_number, text) tuples or ScanLine named tuples.
   Lines are grouped by (doc_id, page) in the order given. Each line is checked alone, and each pair of adjacent
   lines is checked joined with a space, to catch an instruction split across two lines. A pattern found only in a
   joined pair is reported on the pair's first line.
-- scan_pages(pages, doc_ids): objects with `page_number: int` and `lines`, where each line has `text: str` and
-  `line_number: int` (1-based), for example the PageText model of docintel/layout.py. doc_ids maps a page
-  number to its document id (pages not in the map get doc_id None).
+- scan_pages(pages, doc_ids): page objects with a page number and `lines`, where each line has `text: str`
+  and a 1-based line number, for example the PageText model of docintel/layout.py (see PageLike / LineLike).
+  The page number is read from `page_number` (or `page`), the line number from `line_number` (or `number`), so
+  the layout model may use either name. doc_ids maps a page number to its document id (a page not in the map
+  uses its own `doc_id` attribute if it has one, else None).
 - scan_extraction_fields(extraction): the free-text values of an extraction (remarks, transaction descriptions,
   the cover email subject and body, business and owner names), each with its own citation.
 Every hit is a DocumentInjectionHit with the document, page, line, pattern names and a short excerpt of the
 normalized text (the excerpt is untrusted data kept for the audit record).
+
+merge_hits(page_hits, field_hits) combines the two scans without counting one instruction twice: a field hit is
+dropped when the page scan already reported a hit on the same document page (a free-text field is printed on
+that page, so the page scan has seen the same text). A field hit on a page without a page hit is kept: the field
+scan reads a whole multi-line value at once and can see an instruction spread over more than two lines.
 """
 
 from collections.abc import Iterable, Mapping, Sequence
@@ -27,9 +35,9 @@ from typing import NamedTuple, Protocol
 
 from pydantic import BaseModel, ConfigDict
 
-from uwcopilot.agent.injection import MAX_EXCERPT_CHARS, detect
-from uwcopilot.docintel.normalize import hidden_tag_text, normalize_text
+from uwcopilot.agent.injection import ALL_PATTERNS, MAX_EXCERPT_CHARS, detect
 from uwcopilot.docintel.schemas import Cited, InsuranceSubmission, LoanPacket, PacketExtraction
+from uwcopilot.security.normalize import detection_text
 
 
 class DocumentInjectionHit(BaseModel):
@@ -55,30 +63,46 @@ class ScanLine(NamedTuple):
 
 
 class LineLike(Protocol):
-    """A line of page text as docintel/layout.py provides it."""
+    """A line of page text as docintel/layout.py provides it (the line number may also be called `number`)."""
 
     text: str
     line_number: int
 
 
 class PageLike(Protocol):
-    """A page of text as docintel/layout.py provides it."""
+    """A page of text as docintel/layout.py provides it (the page number may also be called `page`)."""
 
     page_number: int
     lines: Sequence[LineLike]
 
 
-def detection_text(raw: str) -> str:
-    """The text the detector sees: normalized visible text plus any decoded tag-character message."""
-    visible = normalize_text(raw)
-    hidden = normalize_text(hidden_tag_text(raw))
-    if hidden:
-        return f"{visible} {hidden}".strip()
-    return visible
+PAGE_NUMBER_NAMES = ("page_number", "page")
+LINE_NUMBER_NAMES = ("line_number", "number")
 
 
-def excerpt_of(text: str) -> str:
-    """A short excerpt for the audit record."""
+def number_attribute(item: object, names: tuple[str, ...]) -> int:
+    """The first of the named attributes that holds an int (a page or line number); an error if none does."""
+    for name in names:
+        value = getattr(item, name, None)
+        if isinstance(value, int):
+            return value
+    raise AttributeError(f"{type(item).__name__} has none of the number attributes {names}")
+
+
+def excerpt_of(text: str, patterns: Sequence[str] = ()) -> str:
+    """A short excerpt for the audit record, around the first match of the named patterns.
+
+    A long free-text field (a cover email body) can hold the instruction far past its first MAX_EXCERPT_CHARS
+    characters; the excerpt then starts a quarter of its length before the match, so the record shows the
+    instruction. Without a match it is the start of the text.
+    """
+    for item in ALL_PATTERNS:
+        if item.name not in patterns:
+            continue
+        match = item.pattern.search(text)
+        if match is not None:
+            start = max(0, match.start() - MAX_EXCERPT_CHARS // 4)
+            return text[start : start + MAX_EXCERPT_CHARS]
     return text[:MAX_EXCERPT_CHARS]
 
 
@@ -100,7 +124,7 @@ def add_hit(hits: dict[tuple, DocumentInjectionHit], line: ScanLine, patterns: l
         hits[marker] = known.model_copy(update={"patterns": merged})
         return
     hits[marker] = DocumentInjectionHit(
-        doc_id=line.doc_id, page=line.page, line=line.line, patterns=list(patterns), excerpt=excerpt_of(text)
+        doc_id=line.doc_id, page=line.page, line=line.line, patterns=list(patterns), excerpt=excerpt_of(text, patterns)
     )
 
 
@@ -128,13 +152,17 @@ def scan_lines(lines: Iterable[ScanLine | tuple[str | None, int, int, str]]) -> 
 
 
 def scan_pages(pages: Iterable[PageLike], doc_ids: Mapping[int, str] | None = None) -> list[DocumentInjectionHit]:
-    """Scan page-text objects (see PageLike); doc_ids maps page numbers to document ids."""
+    """Scan page-text objects (see PageLike); doc_ids maps page numbers to document ids.
+
+    A page that is not in doc_ids uses its own doc_id attribute when it has one, otherwise None.
+    """
     mapping = doc_ids or {}
     lines = []
     for page in pages:
-        doc_id = mapping.get(page.page_number)
+        page_number = number_attribute(page, PAGE_NUMBER_NAMES)
+        doc_id = mapping.get(page_number, getattr(page, "doc_id", None))
         for line in page.lines:
-            lines.append(ScanLine(doc_id, page.page_number, line.line_number, line.text))
+            lines.append(ScanLine(doc_id, page_number, number_attribute(line, LINE_NUMBER_NAMES), line.text))
     return scan_lines(lines)
 
 
@@ -181,7 +209,7 @@ def scan_extraction_fields(extraction: PacketExtraction) -> list[DocumentInjecti
                     page=cited.page,
                     line=cited.line,
                     patterns=patterns,
-                    excerpt=excerpt_of(text),
+                    excerpt=excerpt_of(text, patterns),
                     field=field,
                 )
             )
@@ -191,11 +219,17 @@ def scan_extraction_fields(extraction: PacketExtraction) -> list[DocumentInjecti
 def merge_hits(
     page_hits: list[DocumentInjectionHit], field_hits: list[DocumentInjectionHit]
 ) -> list[DocumentInjectionHit]:
-    """Page-text hits plus the field hits on a (doc_id, page, line) the page scan did not already report."""
-    seen = {(hit.doc_id, hit.page, hit.line) for hit in page_hits}
+    """Page-text hits plus the field hits on document pages the page scan did not flag (see the module docstring).
+
+    Field hits are also kept only once per (doc_id, page, line, field).
+    """
+    flagged_pages = {(hit.doc_id, hit.page) for hit in page_hits}
+    seen_fields: set[tuple] = set()
     merged = list(page_hits)
     for hit in field_hits:
-        if (hit.doc_id, hit.page, hit.line) not in seen:
-            merged.append(hit)
-            seen.add((hit.doc_id, hit.page, hit.line))
+        place = (hit.doc_id, hit.page, hit.line, hit.field)
+        if (hit.doc_id, hit.page) in flagged_pages or place in seen_fields:
+            continue
+        merged.append(hit)
+        seen_fields.add(place)
     return merged

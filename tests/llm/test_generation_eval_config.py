@@ -63,6 +63,8 @@ def test_both_license_sources_are_recorded() -> None:
     models = load_config()["models"]
     for record in models.values():
         assert "Apache-2.0" in record["license_docker_artifact"]
+        # The free-text record names the same layer that scripts/fetch_local_model.py checks.
+        assert f"sha256:{record['license_layer_sha256']}" in record["license_docker_artifact"]
         assert record["license_upstream_card"]
         assert record["upstream_card"].startswith("https://huggingface.co/Qwen/")
         assert "Docker Hub artifact" in record["license"]

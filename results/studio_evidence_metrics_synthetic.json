@@ -1,0 +1,971 @@
+{
+  "description": "Studio S4: founder evidence ledger and provenance-locked narrative on the golden scenarios",
+  "data_label": "SYNTHETIC",
+  "label": "simulated, based on stated assumptions",
+  "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+  "scope": "Seeded SYNTHETIC founder plans (studio/narrative/golden.py), 6 business types x the SYNTHETIC metro and the real metros in their current local mode. The template narrative passes the grammar and traces by construction (its numbers are typed by the renderer from the ledger); these numbers check that the construction holds on every scenario, they are not evidence about how often a model would write a wrong number.",
+  "ledger_version": "founder-ledger-1.0",
+  "provider": "template",
+  "model": null,
+  "golden": {
+    "seed": 4404,
+    "scenarios_available": 36,
+    "scenarios_run": 6,
+    "limit": 6,
+    "by_metro_mode": {
+      "synthetic": 6
+    },
+    "site_scored": 6,
+    "with_synthetic_quoted_rate": 0,
+    "path_status": {
+      "no_path_within_bounds": 6
+    }
+  },
+  "ledgers": {
+    "scenarios": 6,
+    "claims_per_ledger": {
+      "min": 383,
+      "median": 403.0,
+      "max": 419
+    },
+    "claims_by_status": {
+      "VERIFIED": 161,
+      "MODEL_ESTIMATE": 1932,
+      "CONFLICTING": 0,
+      "UNKNOWN": 0,
+      "USER_STATED": 115,
+      "ASSUMPTION": 211
+    },
+    "findings_by_check": {
+      "A-NSP-2.1": 2,
+      "A-NSP-2.2": 1,
+      "A-NSP-2.3": 2,
+      "A-NSP-3.1-statements": 6,
+      "A-NSP-4.1": 1,
+      "A-NSP-4.2-revenue": 6,
+      "A-NSP-5.1": 3,
+      "A-NSP-6.1-r1": 6,
+      "A-NSP-6.1-r2": 6,
+      "A-NSP-6.1-r3": 6,
+      "A-NSP-7.1": 3,
+      "A-NSP-8.1-amount": 3,
+      "A-TARGET-cash": 6,
+      "A-TARGET-dscr": 2,
+      "A-TARGET-stress": 6
+    },
+    "not_evaluated_by_check": {}
+  },
+  "headline": {
+    "narrative_numbers_traced_round_trip": {
+      "k": 285,
+      "n": 285,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.9867,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      },
+      "untraced_total": 0
+    },
+    "narrative_numbers_traced_bound": {
+      "k": 285,
+      "n": 285,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.9867,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      },
+      "untraced_total": 0
+    },
+    "appendix_numbers_traced_round_trip": {
+      "k": 2225,
+      "n": 2225,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.9983,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      },
+      "untraced_total": 0
+    },
+    "appendix_numbers_traced_bound": {
+      "k": 2225,
+      "n": 2225,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.9983,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      },
+      "untraced_total": 0
+    },
+    "template_draft_valid": {
+      "k": 6,
+      "n": 6,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.6097,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      }
+    },
+    "llm_fallback_rate": "not measured: the template provider makes no LLM call; an LLM run (--provider ollama ...) writes results/studio_evidence_metrics_<provider>.json",
+    "hf_inference": "not measured: the hf_inference provider is disabled by default (UWC_HF_INFERENCE_ENABLED, HF_TOKEN and a verified price are all required) and was never run in this build; the owners decided on no extra spending"
+  },
+  "checker": {
+    "note": "Both checks read the same mutated sentences. The round-trip audit accepts any number that equals SOME claim of the ledger, so a value moved to another sentence (cross_section) or a flipped comparator is invisible to it by design. The bound check accepts a number only if it equals a claim its own sentence cites through a footnote marker, with the threshold's comparator; cross_section mutations draw values absent from the cited claims, so the bound check's recall there follows from its design. The mutation sentences come from the template narratives the same author wrote, so this is a test of the implementation, not a held-out benchmark.",
+    "sentences": 117,
+    "round_trip": {
+      "recall_by_type": {
+        "value_perturb": {
+          "k": 115,
+          "n": 117,
+          "rate": 0.9829,
+          "wilson_ci95": [
+            0.9398,
+            0.9953
+          ],
+          "bootstrap_ci95": {
+            "low": 0.9661,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "magnitude_x10": {
+          "k": 104,
+          "n": 117,
+          "rate": 0.8889,
+          "wilson_ci95": [
+            0.8191,
+            0.9339
+          ],
+          "bootstrap_ci95": {
+            "low": 0.8376,
+            "high": 0.9402,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "unit_swap": {
+          "k": 54,
+          "n": 54,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9336,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "comparator_flip": {
+          "k": 0,
+          "n": 21,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.1546
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "cross_section": {
+          "k": 0,
+          "n": 117,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0318
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "wrong_row": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "wilson_ci95": null,
+          "bootstrap_ci95": null,
+          "note": "not applicable: founder narratives have no tables, so no wrong-row mutation exists"
+        }
+      },
+      "false_flag_rate": {
+        "unmutated": {
+          "k": 0,
+          "n": 117,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0318
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "equivalent_rewrite": {
+          "k": 0,
+          "n": 64,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0566
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        }
+      }
+    },
+    "bound": {
+      "recall_by_type": {
+        "value_perturb": {
+          "k": 117,
+          "n": 117,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9682,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "magnitude_x10": {
+          "k": 117,
+          "n": 117,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9682,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "unit_swap": {
+          "k": 54,
+          "n": 54,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9336,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "comparator_flip": {
+          "k": 21,
+          "n": 21,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.8454,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "cross_section": {
+          "k": 117,
+          "n": 117,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9682,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "wrong_row": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "wilson_ci95": null,
+          "bootstrap_ci95": null,
+          "note": "not applicable: founder narratives have no tables, so no wrong-row mutation exists"
+        }
+      },
+      "false_flag_rate": {
+        "unmutated": {
+          "k": 0,
+          "n": 117,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0318
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "equivalent_rewrite": {
+          "k": 0,
+          "n": 64,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0566
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        }
+      }
+    },
+    "wrong_slot_blind_spot": {
+      "note": "The measured blind spot. One claim slot of each template draft is pointed at another claim with the same display format (up to 10 per scenario, seeded), the way a model could pick the wrong slot. The rendered number is a true ledger value cited to the claim it came from, so the round-trip audit and the bound check cannot see it; the grammar catches it only when the slot belongs to a different check in a sentence with an assert slot (V10). A low recall here is the expected, disclosed limit of slot-level provenance.",
+      "grammar": {
+        "k": 3,
+        "n": 60,
+        "rate": 0.05,
+        "wilson_ci95": [
+          0.0171,
+          0.137
+        ],
+        "bootstrap_ci95": {
+          "low": 0.0167,
+          "high": 0.0833,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "resampled": "scenarios"
+        }
+      },
+      "round_trip": {
+        "k": 0,
+        "n": 60,
+        "rate": 0.0,
+        "wilson_ci95": [
+          0.0,
+          0.0602
+        ],
+        "bootstrap_ci95": {
+          "low": 0.0,
+          "high": 0.0,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "resampled": "scenarios"
+        }
+      },
+      "bound": {
+        "k": 2,
+        "n": 60,
+        "rate": 0.0333,
+        "wilson_ci95": [
+          0.0092,
+          0.1136
+        ],
+        "bootstrap_ci95": {
+          "low": 0.0,
+          "high": 0.0667,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "resampled": "scenarios"
+        }
+      },
+      "any": {
+        "k": 5,
+        "n": 60,
+        "rate": 0.0833,
+        "wilson_ci95": [
+          0.0361,
+          0.1807
+        ],
+        "bootstrap_ci95": {
+          "low": 0.0333,
+          "high": 0.1333,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "resampled": "scenarios"
+        }
+      }
+    }
+  },
+  "llm": {
+    "measured": false,
+    "reason": "not measured: the template provider makes no LLM call; an LLM run (--provider ollama ...) writes results/studio_evidence_metrics_<provider>.json"
+  },
+  "statistics": {
+    "intervals": "Wilson 95% and bootstrap 95% over scenarios",
+    "bootstrap_resamples": 1000,
+    "bootstrap_seed": 42
+  },
+  "runtime": {
+    "seconds_build_total": 5.1,
+    "seconds_evaluate_total": 8.6,
+    "seconds_evaluate_max": 1.559,
+    "note": "wall time on a shared machine; build = the scenario's simulation, SiteIQ and path search; evaluate = ledger, template narrative, appendix, mutation test and any LLM calls"
+  },
+  "per_scenario": [
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-car_wash",
+      "metro_id": "synthetic_metro",
+      "profile_id": "car_wash",
+      "metro_mode": "synthetic",
+      "seed": 1306153930,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 401,
+        "status_counts": {
+          "VERIFIED": 26,
+          "MODEL_ESTIMATE": 322,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 18,
+          "ASSUMPTION": 35
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 6,
+          "false": 11,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 46,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 401,
+        "numbers": 367,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "wrong_slot": {
+        "n": 10,
+        "grammar": 0,
+        "round_trip": 0,
+        "bound": 0,
+        "any": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.292,
+      "seconds_build": 1.853
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-laundromat",
+      "metro_id": "synthetic_metro",
+      "profile_id": "laundromat",
+      "metro_mode": "synthetic",
+      "seed": 4015862859,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 419,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 336,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 18,
+          "ASSUMPTION": 38
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 10,
+          "false": 8,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 49,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 419,
+        "numbers": 385,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "wrong_slot": {
+        "n": 10,
+        "grammar": 1,
+        "round_trip": 0,
+        "bound": 0,
+        "any": 1
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.559,
+      "seconds_build": 0.506
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-motel",
+      "metro_id": "synthetic_metro",
+      "profile_id": "motel",
+      "metro_mode": "synthetic",
+      "seed": 3140416408,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 399,
+        "status_counts": {
+          "VERIFIED": 25,
+          "MODEL_ESTIMATE": 321,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 18,
+          "ASSUMPTION": 35
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 6,
+          "false": 11,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 399,
+        "numbers": 366,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "wrong_slot": {
+        "n": 10,
+        "grammar": 0,
+        "round_trip": 0,
+        "bound": 1,
+        "any": 1
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.463,
+      "seconds_build": 0.779
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-restaurant_cafe",
+      "metro_id": "synthetic_metro",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "synthetic",
+      "seed": 2466444597,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 383,
+        "status_counts": {
+          "VERIFIED": 26,
+          "MODEL_ESTIMATE": 304,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 21,
+          "ASSUMPTION": 32
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 7,
+          "false": 10,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-2.2",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 383,
+        "numbers": 354,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "wrong_slot": {
+        "n": 10,
+        "grammar": 0,
+        "round_trip": 0,
+        "bound": 0,
+        "any": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.431,
+      "seconds_build": 0.57
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-retail_storefront",
+      "metro_id": "synthetic_metro",
+      "profile_id": "retail_storefront",
+      "metro_mode": "synthetic",
+      "seed": 180800183,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 412,
+        "status_counts": {
+          "VERIFIED": 29,
+          "MODEL_ESTIMATE": 326,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 21,
+          "ASSUMPTION": 36
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 9,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 48,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 412,
+        "numbers": 379,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "wrong_slot": {
+        "n": 10,
+        "grammar": 1,
+        "round_trip": 0,
+        "bound": 1,
+        "any": 2
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.534,
+      "seconds_build": 0.689
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-short_term_rental",
+      "metro_id": "synthetic_metro",
+      "profile_id": "short_term_rental",
+      "metro_mode": "synthetic",
+      "seed": 2503619377,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 405,
+        "status_counts": {
+          "VERIFIED": 28,
+          "MODEL_ESTIMATE": 323,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 19,
+          "ASSUMPTION": 35
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 8,
+          "false": 10,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 48,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 405,
+        "numbers": 374,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "wrong_slot": {
+        "n": 10,
+        "grammar": 1,
+        "round_trip": 0,
+        "bound": 0,
+        "any": 1
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.326,
+      "seconds_build": 0.677
+    }
+  ],
+  "metros": {
+    "synthetic_metro": {
+      "mode": "synthetic",
+      "mode_reason": "SYNTHETIC metro: generated data for demonstration and validation only",
+      "data_label": "SYNTHETIC",
+      "snapshot_date": null,
+      "snapshot_fingerprint": null
+    }
+  },
+  "provenance": {
+    "git_sha": "0d03cdcfcb9f217003891f81a42e9dbcc5879c7e",
+    "git_dirty": false,
+    "generated_at_utc": "2026-10-16T15:16:06+00:00",
+    "generated_by": "scripts/eval_studio_evidence.py",
+    "prompts": {
+      "founder_narrative_v1": "c515ae3d5621f8e097d3f5ce18fcdb0111d9eaac62422f06eec4336098a3138d",
+      "founder_narrative_retry_v1": "aa6090c9676e262c18ecc3b52d93607f08fc8bcfb1918a5c0d4fbce5bd85fa0a",
+      "founder_narrative_template_v1": "ff569e6d7a587337618ec4d8daf19493d5ff4c5d467c84b93986bd9fe6a15548"
+    },
+    "corpus_checksum": "not applicable (no retrieval corpus is used)",
+    "eval_sets": {
+      "config/studio/feasibility/assumptions.yaml": "dfdb363c054c94a42fe2c4d9671dbea0c8221704b6db3987ecf2c0f668de4a48",
+      "config/studio/levers.yaml": "a99ba386620def05baa6995da923085501d4c3fba81925452d3bc67720d43fff",
+      "corpus/programs/northwind_startup_program.md": "f915468475c08128e4af850766ad6232fa9d0e39b09b831945b2bf57ef44593f",
+      "config/studio/business_types/car_wash.yaml": "2fbceefd150e2ad1da1ecb3af1c6bc6daacc9955e263bb429cf03bcf74104654",
+      "config/studio/business_types/laundromat.yaml": "be4a842c05ca1a2b7448a1c370728c2daea4c52e591bf33fc61d0bd5274b1561",
+      "config/studio/business_types/motel.yaml": "cba4ffdaa4e81ffbe2072ad2feb7fe3bde4c09b0edce26e15b2f29d710a092b9",
+      "config/studio/business_types/restaurant_cafe.yaml": "0333ab79c35dd8e9bb300fc018b1c71c92c2a7bd51fe7b8fb402378fd52fcc67",
+      "config/studio/business_types/retail_storefront.yaml": "6dcbd70017c53fd23b3d436671c6f4ccb4ee471fee2c4437d5cd5cc1f5c34cd9",
+      "config/studio/business_types/short_term_rental.yaml": "2b9d83b4f92c6953608fde111b88c84fb76031221bba6dd0770aaa0ff0062112",
+      "config/studio/metros/chicago_il_in.yaml": "b62b1a2608c34642889d562fac69acb1866a52bc1e3ef70d0afc2ad459ba3b33",
+      "config/studio/metros/dallas_fort_worth_tx.yaml": "eb4d45275dfe5dffa11bddd25163247f1e995a236b22b4e938aab86aa8b6e7a5",
+      "config/studio/metros/houston_tx.yaml": "03cb55781fb12ec0b1dbf32874e295a159f03687864e38326d738eba4219811e",
+      "config/studio/metros/los_angeles_ca.yaml": "3216dc1be66bad0ba7ff1daa9cb75e8b3473a565f687f4d7faae19c0d0d6c3fc",
+      "config/studio/metros/new_york_ny_nj_pa.yaml": "03751e78cee6ffa9e327931546a3700c4ea2fbc3ce1c0ec1052dbb540c2391ba",
+      "config/studio/metros/synthetic_metro.yaml": "48a8e7953dc02e13e6ed89fe6f8eeaba24ec97514333dc37ef8855135c7ab726"
+    },
+    "models": [],
+    "data_snapshots": {
+      "studio_snapshots": {
+        "synthetic_metro": null
+      },
+      "golden_seed": 4404
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        0.66,
+        0.71,
+        0.58
+      ],
+      "load_average_end": [
+        0.74,
+        0.72,
+        0.58
+      ]
+    }
+  }
+}

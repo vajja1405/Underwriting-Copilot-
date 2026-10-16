@@ -77,14 +77,20 @@ def test_endpoint_or_effort_change_is_a_miss(tmp_path: Path) -> None:
     assert len(fake.calls) == 3
 
 
-def test_incomplete_answers_are_not_cached(tmp_path: Path) -> None:
+def test_incomplete_answers_are_cached_and_raised_again(tmp_path: Path) -> None:
+    """A cut-off answer is stored once; a rerun raises the same failure from the cache without a new call."""
     inner = PretendPaidClient(stop_reason="max_tokens")
-    client = CachedLLMClient(inner, LLMCache(tmp_path))
+    raised = []
     for _ in range(2):
-        with pytest.raises(IncompleteLLMResponse):
+        client = CachedLLMClient(inner, LLMCache(tmp_path))
+        with pytest.raises(IncompleteLLMResponse) as caught:
             client.complete("sys", USER, max_tokens=100)
-    assert inner.calls == 2
-    assert not list(tmp_path.rglob("*.json"))
+        raised.append(caught.value.response)
+    assert inner.calls == 1
+    assert len(list(tmp_path.rglob("*.json"))) == 1
+    assert [response.cached for response in raised] == [False, True]
+    assert raised[1].stop_reason == "max_tokens"
+    assert raised[1].cost_usd == 0.0
 
 
 def test_a_new_cache_object_reads_existing_entries(tmp_path: Path) -> None:

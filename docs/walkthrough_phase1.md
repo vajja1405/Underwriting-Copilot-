@@ -15,7 +15,7 @@ model-risk pack (model cards and a validation report) generated from the results
   results generated 2026-10-11T00:41:27+00:00.
 - **Fairness demo (German Credit): measured** on the real public data, with a documented data-quality problem
   in the dataset's own documentation (see Q&A 10 and the validation report).
-- **Credit (Lending Club): not measured.** Recorded reason: "Lending Club requires Kaggle credentials; run make data after adding a Kaggle token". The whole pipeline (loader, leakage guard, out-of-time split, both models, metrics, PSI, reason codes, risk bands, scenario checks, MLflow registration) is implemented and tested on SYNTHETIC Lending Club-shaped data only. No credit number exists anywhere in this repo until `make data` (with a Kaggle token) and `make train-credit` run.
+- **Credit (Lending Club): measured** on the real public data; see the credit model card.
 - Nothing here has been independently validated, and nothing claims compliance with any regulation.
 
 ## How to run it
@@ -40,7 +40,7 @@ The response holds the baseline prediction (claims per policy-year), its risk ba
 model version (here insurance_frequency_lgbm v4 (MLflow registry)) and a `scenario` block with the baseline and the
 scenario side by side. `GET /health` lists which models are loaded, their versions and their risk-band cut-offs. Every
 input is checked against the training data: a missing feature, an out-of-range value, an unseen category or a
-fraction of a whole-number feature gets HTTP 422 naming the problem. A credit request gets HTTP 503 today, with the reason.
+fraction of a whole-number feature gets HTTP 422 naming the problem.
 
 ## Results at a glance
 
@@ -130,7 +130,7 @@ models.
 A lender scores applications today with a model trained on the past. A random split lets the model learn from
 loans issued after the ones it is tested on, so it looks better than it can ever be in use. The credit pipeline
 trains on loans issued in 2015 and earlier, chooses and recalibrates on 2016, and touches 2017-2018 once.
-Its results are not measured today: Lending Club requires Kaggle credentials; run make data after adding a Kaggle token. freMTPL2 has no date field, so the insurance split is
+Its out-of-time results are in the credit model card. freMTPL2 has no date field, so the insurance split is
 random and stratified, and the results file says so: "freMTPL2 has no date or policy-year field, so an out-of-time test is impossible. Train, validation and test are random draws from the same period; the test metrics do not show how the models would hold up on a later year." That
 limitation is also why insurance PSI is not measured.
 
@@ -139,14 +139,14 @@ AUC is the probability that a random bad loan scores riskier than a random good 
 cut-offs. KS is the largest gap between the cumulative score distributions of good and bad loans, which is the
 best separation at a single cut-off; credit scorecard teams have reported it for decades, so validators expect
 it. Neither says anything about calibration. Credit KS on Lending Club (scorecard):
-not measured (the credit model has not been run).
+0.2922 [0.2872, 0.2977].
 
 **3. Why PSI?**
 Population stability compares the distribution of a score or feature now with the training population, and needs
 no outcomes, so it warns months before defaults arrive. The bins are quantiles of the reference period; PSI below
 0.10 is read as stable, 0.10 to 0.25 as a moderate shift, above 0.25 as significant and flagged (the thresholds
 are constants in `uwcopilot.risk.stability`). For credit, PSI runs per issue-year vintage on the score and the
-top-10 features (flag threshold in the results: not measured (the credit model has not been run)). For
+top-10 features (flag threshold in the results: 0.2500). For
 freMTPL2 it is not measured (PSI needs a time field. freMTPL2 has no date or policy-year field, so an out-of-time test is impossible. Train, validation and test are random draws from the same period; the test metrics do not show how the models would hold up on a later year.).
 
 **4. Give examples of leakage you guarded against.**
@@ -156,7 +156,7 @@ underwriting outputs: known at origination, but using them would mostly copy Len
 synthetic test data, `recoveries` alone separates bad from good loans perfectly, which is what a leak looks like.
 The guard runs at fit time, at score time, and in the API before a model is even loaded; a test fails if any
 banned column reaches a model. `sub_grade` is reported only as a benchmark (test AUC
-not measured (the credit model has not been run)).
+0.6842 [0.6813, 0.6867]).
 
 **5. Calibration vs discrimination?**
 Discrimination is ranking: does the model put riskier cases above safer ones (AUC, Gini, Lorenz Gini).

@@ -229,8 +229,10 @@ Passing does not prove the memo is faithful; faithfulness needs a judge model an
 - **Integrity.** Records are SHA-256 chained (`verify_chain()` detects an edited or deleted record). Appends are
   idempotent by `record_id`, so a crash between writing and checkpointing cannot write the record twice. Tool latencies
   are kept out of the record, so a replay gives the same hash.
-- Decision records are the system of record and hold the (synthetic) names. They are not encrypted at rest yet. That
-  is a later phase.
+- Decision records are the system of record and hold the (synthetic) names. `scripts/run_agent.py` still writes them
+  in plaintext. An encrypted drop-in exists (`security.encrypted_log.EncryptedDecisionLog`, Phase 5 B: payload
+  encrypted with Fernet, chain fields in clear so the chain is checked without the key); any caller that builds
+  `AgentDeps` can pass it, and the tests run the agent with it. Wiring it into the CLI is open (docs/security.md).
 
 ## 8. Tracing
 
@@ -409,9 +411,11 @@ Further tests:
   sensitivity run). Common names need secondary identifiers (date of birth, address) that the structured
   application does not have.
 - The injection detector misses phrasing it does not know (the novel case and three review paraphrases).
-- Roles are limited to underwriter and senior underwriter, and they are **claimed, not authenticated**: the role
-  comes from the resume payload. Authentication, document-level permissions and encryption at rest (Fernet / KMS)
-  are later phases.
+- Only underwriter and senior underwriter can decide a file, and roles are **claimed, not authenticated**: the role
+  comes from the resume payload. Phase 5 B added `security/rbac.py` (four roles; `validate_decision` refuses a
+  model_validator or an admin), packet access lists, Fernet encryption at rest and hash-chained audit events as
+  tested library code; authentication (an identity provider) and Cloud KMS (Phase 7) are not built, and the CLI does
+  not write audit events yet. See docs/security.md.
 - The injection detector's recall is measured on the generator's own phrasings only. When it misses (APP-C-029),
   the reference recommendation follows the note and only the human gate remains.
 - Arize Phoenix is not run here. Only an in-process stand-in collector received OTLP spans.

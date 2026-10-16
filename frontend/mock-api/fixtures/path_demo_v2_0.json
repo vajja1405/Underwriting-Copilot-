@@ -1,0 +1,353 @@
+{
+ "before": {
+  "annual_debt_service": 49932.76,
+  "label": "simulated, based on stated assumptions",
+  "meets_target": false,
+  "n_paths": 1000,
+  "p_cash_negative_within_months": 0.104,
+  "p_dscr_at_least_target_year2": 0.711,
+  "p_stressed_dscr_at_least_min_year2": 0.473,
+  "projected_dscr_base_case": 3.1,
+  "seed": 2801103018,
+  "shortfall": 0.42,
+  "stressed_dscr_base_case": 0.83,
+  "targets_missed": [
+   "dscr_year2",
+   "stressed_dscr_year2",
+   "cash_negative"
+  ]
+ },
+ "change_sets": [],
+ "closest": {
+  "after": {
+   "annual_debt_service": 25273.66,
+   "label": "simulated, based on stated assumptions",
+   "meets_target": false,
+   "n_paths": 1000,
+   "p_cash_negative_within_months": 0.055,
+   "p_dscr_at_least_target_year2": 0.784,
+   "p_stressed_dscr_at_least_min_year2": 0.558,
+   "projected_dscr_base_case": 6.13,
+   "seed": 2801103018,
+   "shortfall": 0.258,
+   "stressed_dscr_base_case": 1.64,
+   "targets_missed": [
+    "dscr_year2",
+    "stressed_dscr_year2"
+   ]
+  },
+  "apply": {
+   "plan_change": {
+    "engine_version": "studio-path-to-approval-1.2",
+    "evidence_needed": [
+     "bank statements that show $417,000 of owner cash (NSP-3.1)",
+     "a written quote at or below $361,500 for the same build-out and equipment"
+    ],
+    "fields": [
+     "budget_total",
+     "loan_amount",
+     "owner_equity"
+    ],
+    "source": "path_to_approval"
+   },
+   "project_fields": {
+    "budget_total": 361500.0,
+    "loan_amount": 164500.0,
+    "owner_equity": 417000.0
+   },
+   "reason": null,
+   "site_index": 0,
+   "supported": true
+  },
+  "before": {
+   "annual_debt_service": 49932.76,
+   "label": "simulated, based on stated assumptions",
+   "meets_target": false,
+   "n_paths": 1000,
+   "p_cash_negative_within_months": 0.104,
+   "p_dscr_at_least_target_year2": 0.711,
+   "p_stressed_dscr_at_least_min_year2": 0.473,
+   "projected_dscr_base_case": 3.1,
+   "seed": 2801103018,
+   "shortfall": 0.42,
+   "stressed_dscr_base_case": 0.83,
+   "targets_missed": [
+    "dscr_year2",
+    "stressed_dscr_year2",
+    "cash_negative"
+   ]
+  },
+  "changes": [
+   {
+    "effort": 0.300775,
+    "evidence_needed": "bank statements that show $417,000 of owner cash (NSP-3.1)",
+    "fields_changed": [
+     "plan.owner_equity",
+     "loan.amount"
+    ],
+    "from_value": 320000.0,
+    "label": "Owner cash equity",
+    "lever": "owner_equity",
+    "own_change": 97000.0,
+    "to_value": 417000.0,
+    "unit": "USD"
+   },
+   {
+    "effort": 0.147674,
+    "evidence_needed": "a written quote at or below $361,500 for the same build-out and equipment",
+    "fields_changed": [
+     "plan.capex",
+     "loan.amount"
+    ],
+    "from_value": 425000.0,
+    "label": "Build-out and equipment cost",
+    "lever": "build_out_cost",
+    "own_change": -63500.0,
+    "to_value": 361500.0,
+    "unit": "USD"
+   }
+  ],
+  "effort": 0.44845,
+  "evidence_needed": [
+   "bank statements that show $417,000 of owner cash (NSP-3.1)",
+   "a written quote at or below $361,500 for the same build-out and equipment"
+  ],
+  "explanation": "If you put in $97,000 more of your own cash and borrowed that much less and brought the build-out and equipment cost down by $63,500 and borrowed that much less, the simulation (simulated, based on stated assumptions; 1,000 simulated futures, seed 2801103018) gives: chance that year-2 DSCR is at least 1.25: 0.711 -> 0.784 (target: at least 0.80); chance that year-2 DSCR stays at least 1.00 under the lender's 20% revenue stress (NSP-4.2): 0.473 -> 0.558 (target: at least 0.80); chance that cash falls below zero within 24 months: 0.104 -> 0.055 (target: at most 0.10). In this simulation these would still be missed: the year-2 DSCR target, the revenue-stress target. This counts only if you really have this cash: the lender checks owner equity against bank statements (NSP-3.1, SYNTHETIC program). This holds only if the same business can be built for less (a lower quote, used equipment); a smaller build-out that also cuts capacity is not modeled. The plan with this change: owner equity $320,000 -> $417,000, loan $325,000 -> $164,500 over 120 months, build-out $425,000 -> $361,500, cash reserve at opening $220,000; equity injection 71.7% of the project (the SYNTHETIC program asks for at least 20.0%, NSP-3.1). The lender's own check on the year-2 median (NSP-4.1, and NSP-4.2 with the program's 20% revenue stress): projected DSCR 3.10 -> 6.13, revenue-stressed DSCR 0.83 -> 1.64. What would back the changed figures for a lender: bank statements that show $417,000 of owner cash (NSP-3.1); a written quote at or below $361,500 for the same build-out and equipment. Until then they are plan changes from a simulation, not quotes or verified figures. Reaching these simulated targets does not mean a lender will approve the loan. Lenders make their own decisions.",
+  "field_changes": [
+   {
+    "field": "owner_equity",
+    "from_value": 320000.0,
+    "label": "Owner cash equity",
+    "to_value": 417000.0,
+    "unit": "USD",
+    "writes_plan": true
+   },
+   {
+    "field": "loan_amount",
+    "from_value": 325000.0,
+    "label": "Loan amount",
+    "to_value": 164500.0,
+    "unit": "USD",
+    "writes_plan": true
+   },
+   {
+    "field": "build_out_cost",
+    "from_value": 425000.0,
+    "label": "Build-out and equipment cost",
+    "to_value": 361500.0,
+    "unit": "USD",
+    "writes_plan": true
+   }
+  ],
+  "meets_target": false,
+  "n_levers": 2,
+  "plan_after": {
+   "build_out_cost": 361500.0,
+   "cash_reserve_at_opening": 220000.0,
+   "checks": {
+    "equity_injection_pct": 71.7,
+    "equity_minimum_pct": 20.0,
+    "loan_within_limits": true,
+    "meets_equity_minimum": true,
+    "term_within_limits": true
+   },
+   "days_open_per_week": null,
+   "loan_amount": 164500.0,
+   "loan_term_months": 120,
+   "other_debt_amount": 0.0,
+   "owner_equity": 417000.0,
+   "price": null,
+   "site_label": "Suggested area 1 (tract SYN000092)"
+  },
+  "plan_before": {
+   "build_out_cost": 425000.0,
+   "cash_reserve_at_opening": 220000.0,
+   "checks": {
+    "equity_injection_pct": 49.6,
+    "equity_minimum_pct": 20.0,
+    "loan_within_limits": true,
+    "meets_equity_minimum": true,
+    "term_within_limits": true
+   },
+   "days_open_per_week": null,
+   "loan_amount": 325000.0,
+   "loan_term_months": 120,
+   "other_debt_amount": 0.0,
+   "owner_equity": 320000.0,
+   "price": null,
+   "site_label": "Suggested area 1 (tract SYN000092)"
+  },
+  "program_rules_not_met": [],
+  "rank": 0,
+  "unchanged": "Unchanged: your credit score, your experience, your other debts (none listed), the site's demand estimate, every assumption range and the note rate."
+ },
+ "data_label": "SYNTHETIC",
+ "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+ "engine_version": "studio-path-to-approval-1.2",
+ "guardrail_note": "Reaching the targets is not an approval: Studio never approves, declines or recommends a lender.",
+ "guardrails": [
+  "Only plan choices move: owner equity, loan amount, build-out cost, cash reserve at opening, price, days open, loan term and the choice between your own candidate sites in the same metro.",
+  "Facts never move: your credit score, your experience, your other debts (never hidden or reduced), the site's demand estimate, the note rate and every figure you marked as verified.",
+  "Assumption ranges never move: they describe the market and are changed with evidence, never to pass a target.",
+  "Every change-set is checked field by field; anything outside its levers' own fields that differs from your plan is refused.",
+  "Every amount stays inside your bounds whichever lever moves it, and sources always equal uses.",
+  "A change-set may not break a rule of the SYNTHETIC startup program that your plan meets now (equity injection NSP-3.1, loan amount and term limits NSP-8.1).",
+  "Reaching the targets is not an approval: Studio never approves, declines or recommends a lender."
+ ],
+ "label": "simulated, based on stated assumptions",
+ "levers_considered": [
+  {
+   "current": 320000.0,
+   "effort_weight": 2.0,
+   "grid_size": 4,
+   "high": 449000.0,
+   "label": "Owner cash equity",
+   "low": 320000.0,
+   "name": "owner_equity",
+   "note": "Only counts if the founder really has this cash; the lender verifies equity with bank statements (NSP-3.1, SYNTHETIC program). The default upper bound (+20% of project cost) is a placeholder for the founder's own answer.",
+   "unit": "USD"
+  },
+  {
+   "current": 325000.0,
+   "effort_weight": 1.0,
+   "grid_size": 8,
+   "high": 389500.0,
+   "label": "Loan amount",
+   "low": 163750.0,
+   "name": "loan_amount",
+   "note": "Borrowing less lowers the payments and the cash at opening by the same dollars; borrowing more does the opposite.",
+   "unit": "USD"
+  },
+  {
+   "current": 425000.0,
+   "effort_weight": 1.5,
+   "grid_size": 4,
+   "high": 425000.0,
+   "label": "Build-out and equipment cost",
+   "low": 361250.0,
+   "name": "build_out_cost",
+   "note": "Only valid if the same business can be built for less (a lower quote, used equipment). A smaller build-out that also cuts capacity is not modeled, so the default bound is a 15% saving.",
+   "unit": "USD"
+  },
+  {
+   "current": 220000.0,
+   "effort_weight": 2.0,
+   "grid_size": 8,
+   "high": 349000.0,
+   "label": "Cash reserve at opening",
+   "low": 0.0,
+   "name": "working_capital_reserve",
+   "note": "Extra reserve is funded by the founder's own cash, so owner equity must stay inside its bounds too (with the default bounds that means this lever only adds cash). The low bound of 0 matters for the loan lever, whose change the reserve absorbs.",
+   "unit": "USD"
+  },
+  {
+   "current": 120.0,
+   "effort_weight": 0.5,
+   "grid_size": 5,
+   "high": 120.0,
+   "label": "Loan term",
+   "low": 60.0,
+   "name": "loan_term_months",
+   "note": "The lender sets the term; the founder can ask for a longer one. The default bounds are the SYNTHETIC startup program's term limits (NSP-8.1).",
+   "unit": "months"
+  },
+  {
+   "current": "Suggested area 1 (tract SYN000092)",
+   "effort_weight": 0.3,
+   "grid_size": 2,
+   "high": null,
+   "label": "Candidate site (same metro)",
+   "low": null,
+   "name": "site",
+   "note": "Only sites the founder listed as candidates in the same metro, each with its own demand estimate; the demand estimate of a site is never edited.",
+   "unit": "site"
+  }
+ ],
+ "levers_not_available": {
+  "days_open_per_week": "not part of the v0.1 plan form yet, so the search does not move it (locked by the server, not by you)",
+  "price": "not part of the v0.1 plan form yet, so the search does not move it (locked by the server, not by you)"
+ },
+ "message": "No path within your bounds: the search did not find a change of one or two plan choices inside your bounds that reaches all three targets (simulated, based on stated assumptions). It tries a grid of values and screens pairs, so it is not exhaustive: a combination it did not try could still reach them. The closest result is shown. A wider bound (only where you could really go further) or a different plan (site, size, concept) may change the answer.",
+ "metro_mode": "synthetic",
+ "notes": [
+  "Metro synthetic_metro runs in synthetic mode: SYNTHETIC metro: generated data for demonstration and validation only.",
+  "site data-coverage score 0.90 (from SiteIQ)",
+  "Pairs are searched only for levers that do not reach the targets alone but move the plan closer on their own, and the pair grid assumes that moving a lever further in its helpful direction does not hurt; a pair can be missed when that does not hold.",
+  "Quick mode: a coarser search (4 values on each side of each lever instead of 8, at most 250 plan variants evaluated) on 1,000 simulated paths, seed 2801103018. A finer search can find a smaller change than the one shown.",
+  "Price and days open are not part of the plan form yet, so the search did not move them (the server locks them)."
+ ],
+ "owner_cash_bound": {
+  "current": 320000.0,
+  "extra": 129000.0,
+  "high": 449000.0,
+  "note": "Default bound: owner cash may grow by up to 20% of the project cost (config/studio/levers.yaml), a placeholder (DESIGN_CHOICE) for your own answer. Extra owner cash counts only if you really have it: a lender checks it against bank statements. The cash-reserve lever is funded by your own cash too.",
+  "source": "default"
+ },
+ "plan_before": {
+  "build_out_cost": 425000.0,
+  "cash_reserve_at_opening": 220000.0,
+  "checks": {
+   "equity_injection_pct": 49.6,
+   "equity_minimum_pct": 20.0,
+   "loan_within_limits": true,
+   "meets_equity_minimum": true,
+   "term_within_limits": true
+  },
+  "days_open_per_week": null,
+  "loan_amount": 325000.0,
+  "loan_term_months": 120,
+  "other_debt_amount": 0.0,
+  "owner_equity": 320000.0,
+  "price": null,
+  "site_label": "Suggested area 1 (tract SYN000092)"
+ },
+ "project_id": "9b78d404eabe8ced",
+ "project_version": 2,
+ "search": {
+  "blocked_by_program": 0,
+  "budget_exhausted": false,
+  "cache_hits": 1,
+  "evaluations": 38,
+  "pairs_screened": 6,
+  "pairs_searched": 3,
+  "runtime_ms": 170.97,
+  "search_complete": true,
+  "singles_tried": 27,
+  "variants_evaluated": 38
+ },
+ "settings": {
+  "confirm_paths": null,
+  "max_evaluations": 250,
+  "max_results": 3,
+  "mode": "quick",
+  "months": 36,
+  "n_paths": 1000,
+  "search_pairs": true,
+  "seed": 2801103018,
+  "steps_per_side": 4
+ },
+ "simulator_version": "studio-feasibility-1.0",
+ "site_index": 0,
+ "site_label": "Suggested area 1 (tract SYN000092)",
+ "skipped_candidates": [],
+ "status": "no_path_within_bounds",
+ "target": {
+  "cash_months": 24,
+  "dscr_min": 1.25,
+  "p_cash_negative_max": 0.1,
+  "p_dscr_min": 0.8,
+  "p_stressed_min": 0.8,
+  "sources": {
+   "cash_months": "the S3 simulator's cash check (P(cash < 0 within 24 months)); design choice of the build plan (docs/studio/founder_studio_build_prompts.md Prompt S5 and the lead engineer's decision of 2026-10-13); editable; not a lender rule",
+   "dscr_min": "NSP-4.1 of the SYNTHETIC startup program = corpus/guidelines/northwind_business_credit.md NBC-4.2, term loan minimum decision DSCR (SYNTHETIC document of a fictional institution; also the NSP-4.1 threshold of the SYNTHETIC startup program)",
+   "p_cash_negative_max": "design choice of the build plan (docs/studio/founder_studio_build_prompts.md Prompt S5 and the lead engineer's decision of 2026-10-13); editable; not a lender rule",
+   "p_dscr_min": "design choice of the build plan (docs/studio/founder_studio_build_prompts.md Prompt S5 and the lead engineer's decision of 2026-10-13); editable; not a lender rule",
+   "p_stressed_min": "design choice of the build plan (docs/studio/founder_studio_build_prompts.md Prompt S5 and the lead engineer's decision of 2026-10-13); editable; not a lender rule",
+   "stress_revenue_share": "NSP-4.2 of the SYNTHETIC startup program (corpus/programs/northwind_startup_program.md), which applies the NBC-4.5 revenue stress of the SYNTHETIC Northwind guideline; constants imported from agent/policy_credit.py",
+   "stressed_dscr_min": "NSP-4.2 of the SYNTHETIC startup program (corpus/programs/northwind_startup_program.md), which applies the NBC-4.5 revenue stress of the SYNTHETIC Northwind guideline; constants imported from agent/policy_credit.py"
+  },
+  "stress_revenue_share": 0.2,
+  "stressed_dscr_min": 1.0,
+  "year": 2
+ }
+}

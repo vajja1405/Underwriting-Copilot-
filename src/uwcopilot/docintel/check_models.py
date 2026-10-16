@@ -7,6 +7,11 @@ key rules as schemas.flatten_fields), the value and the source text.
 
 A failing check also lists CheckIssues: each issue is one concrete disagreement with the evidence on each side and
 the numbers the explanation rules need. contradictions.py turns issues into Contradictions.
+
+CheckResult.severity is how serious a FAILURE of the check is (CHECK_SEVERITY: high = integrity indicator or
+blocking referral, medium = referral or request for information, low = informational or already resolved by a
+guideline rule); a passing or not-evaluated result keeps its check's default. CREDIT_REFS and INSURANCE_REFS list
+the guideline sections each check implements. Evidence.value of an excerpt of document text is untrusted data.
 """
 
 from typing import Any, Literal
@@ -21,7 +26,12 @@ EvidenceValue = str | float | int | bool | None
 
 
 class Evidence(BaseModel):
-    """One cited value a check or contradiction relies on."""
+    """One cited value a check or contradiction relies on.
+
+    confidence is the extractor's confidence of the cited line (1.0 for the text layer, the mean Tesseract word
+    confidence for an OCR line; None when the evidence names a whole document or a hit). contradiction_ocr.py uses
+    it to flag disagreements that an OCR misread may explain.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
@@ -32,6 +42,7 @@ class Evidence(BaseModel):
     key: str | None = None
     value: EvidenceValue
     source_text: str | None = None
+    confidence: float | None = None
 
 
 class CheckIssue(BaseModel):
@@ -51,7 +62,11 @@ class CheckIssue(BaseModel):
 
 
 class CheckResult(BaseModel):
-    """The outcome of one deterministic document check."""
+    """The outcome of one deterministic document check.
+
+    status: "pass", "fail", or "not_evaluated" when the values the check needs were not found. issues lists the
+    concrete disagreements of a failing check (an extension of the spec's fields, used by contradictions.py).
+    """
 
     model_config = ConfigDict(extra="forbid")
 
@@ -81,7 +96,13 @@ def cite(cited: Cited, field: str, key: str | None = None, doc_id: str | None = 
         key=key,
         value=plain(cited.value),
         source_text=cited.source_text,
+        confidence=round(cited.confidence, 4),
     )
+
+
+def found_only(items: list[Evidence | None]) -> list[Evidence]:
+    """The evidence items that exist (cite() returns None for values the extractor did not find)."""
+    return [item for item in items if item is not None]
 
 
 def cite_each(items: list[tuple[Cited, str, str | None, str | None]]) -> list[Evidence]:
@@ -156,6 +177,34 @@ def make_result(
         issues=issue_list,
     )
 
+
+# Guideline sections each check implements, per line (Northwind NBC for credit, Harborline HM for insurance).
+CREDIT_REFS: dict[str, list[str]] = {
+    "required_documents": ["NBC-3.1"],
+    "statement_months_complete": ["NBC-3.1", "NBC-3.2", "NBC-3.5"],
+    "balance_continuity": ["NBC-9.1"],
+    "revenue_vs_deposits": ["NBC-3.2", "NBC-3.3", "NBC-3.4"],
+    "name_consistency": ["NBC-3.1", "NBC-6.2", "NBC-9.1"],
+    "fein_consistency": ["NBC-3.1", "NBC-6.2"],
+    "owner_consistency": ["NBC-6.1"],
+    "debt_payment_consistency": ["NBC-3.1", "NBC-4.1"],
+    "account_conduct": ["NBC-3.5"],
+    "tax_return_vs_pnl": ["NBC-9.1"],
+    "embedded_instructions": ["NBC-9.2"],
+}
+INSURANCE_REFS: dict[str, list[str]] = {
+    "required_documents": ["HM-3.1"],
+    "name_consistency": ["HM-3.1", "HM-8.1"],
+    "fein_consistency": ["HM-8.1"],
+    "owner_consistency": ["HM-3.1", "HM-8.1"],
+    "loss_run_line_balance": ["HM-3.3", "HM-11.1"],
+    "loss_run_totals": ["HM-11.1"],
+    "claims_history_consistency": ["HM-3.3"],
+    "tiv_consistency": ["HM-5.2", "HM-11.1"],
+    "loss_run_coverage": ["HM-3.1", "HM-3.2"],
+    "loss_run_valuation_age": ["HM-3.2"],
+    "embedded_instructions": ["HM-11.2"],
+}
 
 # Stable check ids (the "check:<id>" levers in config/resolution_templates.yaml use them) and their titles.
 CHECK_TITLES: dict[str, str] = {

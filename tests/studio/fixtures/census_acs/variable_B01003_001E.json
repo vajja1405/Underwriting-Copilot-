@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://api.census.gov/data/2024/acs/acs5/variables/B01003_001E.json",
+  "params": {},
+  "recorded_at_utc": "2026-10-12T19:38:47+00:00",
+  "content_type": "application/json;charset=utf-8",
+  "body_sha256": "06470e0bacf3c8448a75388fd8eaee4c188ff2f70ca9ea14d5b993b17435ff90",
+  "full_body_sha256": "06470e0bacf3c8448a75388fd8eaee4c188ff2f70ca9ea14d5b993b17435ff90",
+  "body": "{\n  \"name\": \"B01003_001E\",\n  \"label\": \"Estimate!!Total\",\n  \"concept\": \"Total Population\",\n  \"predicateType\": \"int\",\n  \"group\": \"B01003\",\n  \"limit\": 0,\n  \"attributes\": \"B01003_001EA,B01003_001M,B01003_001MA\"\n}"
+}

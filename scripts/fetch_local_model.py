@@ -10,7 +10,9 @@ What it does for each model listed under `models:` in config/generation_eval.yam
 1. Asks auth.docker.io for an anonymous pull token for the repository.
 2. Reads the OCI manifest of the tag (GET registry-1.docker.io/v2/<repository>/manifests/<tag>) and checks that
    its GGUF layer digest equals the pinned gguf_sha256. A different digest stops the script: the tag now points
-   at different weights, which needs a migration review, not a silent update.
+   at different weights, which needs a migration review, not a silent update. The license layer is checked
+   against the pinned license_layer_sha256 the same way (also with --check-only): a different license text
+   means the recorded license facts must be reviewed before anything is imported.
 3. Downloads the GGUF layer and the license layer, hashing while writing, and verifies SHA-256 and size before the
    file is moved into place. A file that is already present and verifies is not downloaded again.
 4. Writes a Modelfile `FROM <blob path>` and runs `ollama create <name> -f <Modelfile>`.
@@ -104,7 +106,7 @@ def load_pinned_models(path: Path) -> dict[str, dict[str, Any]]:
     document = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     models = document.get("models") or {}
     for name, entry in models.items():
-        for key in ("source", "gguf_sha256", "gguf_size_bytes"):
+        for key in ("source", "gguf_sha256", "gguf_size_bytes", "license_layer_sha256"):
             if key not in entry:
                 raise FetchError(f"{path.name}: model {name!r} has no {key!r}.")
     return models
@@ -174,6 +176,18 @@ def check_pinned_layer(layer: dict[str, Any], pinned_sha256: str, pinned_size: i
         )
     if int(layer.get("size", -1)) != pinned_size:
         raise FetchError(f"GGUF layer size {layer.get('size')} differs from the pinned {pinned_size} bytes.")
+
+
+def check_pinned_license_layer(layer: dict[str, Any], pinned_sha256: str) -> str:
+    """Return the license layer's sha256, or stop when it is not the pinned license text."""
+    digest = strip_digest_prefix(str(layer.get("digest", "")))
+    if digest != pinned_sha256:
+        raise FetchError(
+            f"The registry now serves license layer {digest}, but the config pins {pinned_sha256}. The artifact's "
+            "license text may have changed: read the new text, then update license_layer_sha256 and the recorded "
+            "license facts (license_docker_artifact, license) together in config/generation_eval.yaml."
+        )
+    return digest
 
 
 def verified_existing(path: Path, sha256_hex: str) -> bool:
@@ -276,9 +290,10 @@ def fetch_model(client: httpx.Client, name: str, pinned: dict[str, Any], args: a
     check_pinned_layer(gguf, str(pinned["gguf_sha256"]), int(pinned["gguf_size_bytes"]))
     print(f"  manifest GGUF layer matches the pinned sha256 {pinned['gguf_sha256']}")
     license_layer = find_layer(manifest, LICENSE_MEDIA_TYPE)
-    license_sha = strip_digest_prefix(str(license_layer["digest"]))
+    license_sha = check_pinned_license_layer(license_layer, str(pinned["license_layer_sha256"]))
+    print(f"  manifest license layer matches the pinned sha256 {license_sha}")
     if args.check_only:
-        print(f"  license layer sha256 {license_sha} (not downloaded: --check-only)")
+        print("  nothing downloaded (--check-only)")
         return
 
     license_path = download_blob(client, repository, token, license_sha, int(license_layer["size"]), args.blob_dir)

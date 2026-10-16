@@ -1,0 +1,79 @@
+{
+  "checked_at_utc": "2026-10-13T23:40:39+00:00",
+  "generated_by": "scripts/fetch_injection_payloads.py --check",
+  "dataset": "deepset/prompt-injections",
+  "revision": "4f61ecb038e9c3fb77e21034b22511b523772cdd",
+  "download_dir_was_empty": true,
+  "train_file": "data/train-00000-of-00001-9564e8b05b4757ab.parquet",
+  "train_file_sha256": "2e10bc7ab30f542c97e4e83e2a5683000b5057d25ec10908784c631d44124c04",
+  "train_file_matches_pinned_sha256": true,
+  "card_sha256": "d90b4518dfe06154deeec938243d1ec9119bdfbfd2105aee9cf1567999764b94",
+  "license_facts": {
+    "card_yaml_top_level_license": "apache-2.0",
+    "card_yaml_dataset_info_license": "cc-by-4.0",
+    "note": "the card's YAML header lists two licenses; both are recorded as read and neither is chosen. Use of the 40 rows here (short attack strings for a non-commercial evaluation, with attribution) is meant to fit either license; a reuser should check the card.",
+    "read_at_utc": "2026-10-13T23:40:38+00:00"
+  },
+  "selection_counts": {
+    "rows_in_split": 546,
+    "label_1": 203,
+    "dropped_non_ascii_letter": 64,
+    "dropped_foreign_function_word": 36,
+    "dropped_fewer_than_2_english_function_words": 7,
+    "dropped_content_filter": 40,
+    "dropped_length": 1,
+    "dropped_duplicate": 0,
+    "candidates": 55,
+    "sampled": 40
+  },
+  "frozen_file": "eval/injection_payloads.jsonl",
+  "frozen_file_sha256": "40625d5b68e193db42c1873d857cdcdda60d261a3a11836d198f2c2095aae954",
+  "rebuilt_sha256": "40625d5b68e193db42c1873d857cdcdda60d261a3a11836d198f2c2095aae954",
+  "identical": true,
+  "provenance": {
+    "git_sha": "38b6ca3f50dbb20d3d440d8977db951b26cd4b46",
+    "git_dirty": true,
+    "generated_at_utc": "2026-10-13T23:40:39+00:00",
+    "generated_by": "scripts/fetch_injection_payloads.py",
+    "prompts": {},
+    "corpus_checksum": "1a0f3d051a1f9ead4d3b0f288b2f521d8661b55e38e74ad79143dd8e302b4fea",
+    "eval_sets": {
+      "eval/injection_payloads.jsonl": "40625d5b68e193db42c1873d857cdcdda60d261a3a11836d198f2c2095aae954"
+    },
+    "models": [],
+    "data_snapshots": {
+      "public_source": {
+        "dataset": "deepset/prompt-injections",
+        "revision": "4f61ecb038e9c3fb77e21034b22511b523772cdd"
+      }
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        0.76,
+        0.9,
+        0.8
+      ],
+      "load_average_end": [
+        1.3,
+        1.01,
+        0.84
+      ]
+    }
+  }
+}

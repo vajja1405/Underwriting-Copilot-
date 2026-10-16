@@ -9,7 +9,7 @@ Scope: the credit PD model (Lending Club), the claim frequency, severity and exp
 
 ## 1. Executive summary
 
-- Credit PD model: not measured. Lending Club requires Kaggle credentials; run make data after adding a Kaggle token. The pipeline is tested on SYNTHETIC data only.
+- Credit PD model: measured; see the credit model card.
 - Claim frequency: LightGBM minus GLM mean Poisson deviance -0.0091 [-0.0107, -0.0075]; the interval excludes 0, so the difference is not explained by test-set sampling alone. Preferred on validation: LightGBM.
 - Claim frequency calibration (LightGBM): observed / predicted claims 1.0052 [0.9785, 1.0330]; the interval includes 1 (total claims predicted within sampling error).
 - Claim severity: LightGBM minus GLM mean Gamma deviance -0.0024 [-0.0135, 0.0089]; the interval includes 0, so neither model is measurably better and the simpler model is reasonable. Preferred on validation: GLM.
@@ -36,7 +36,7 @@ Scope: the credit PD model (Lending Club), the claim frequency, severity and exp
 
 Provenance of the results checked here:
 
-- `credit`: generated 2026-10-11T00:30:40+00:00 from git commit `bbedb8d30fa8f4d761a926d70c61cf25d7771743` (uncommitted changes outside results/: yes)
+- `credit`: generated 2026-10-12T19:35:16+00:00 from git commit `700a5b069a009ec1171884e60a7f5f0387e5cc89` (uncommitted changes outside results/: no)
 - `insurance_frequency`: generated 2026-10-11T00:41:27+00:00 from git commit `bbedb8d30fa8f4d761a926d70c61cf25d7771743` (uncommitted changes outside results/: yes)
 - `insurance_severity`: generated 2026-10-11T00:41:27+00:00 from git commit `bbedb8d30fa8f4d761a926d70c61cf25d7771743` (uncommitted changes outside results/: yes)
 - `fairness_demo`: generated 2026-10-11T00:30:33+00:00 from git commit `bbedb8d30fa8f4d761a926d70c61cf25d7771743` (uncommitted changes outside results/: yes)
@@ -73,7 +73,7 @@ Severity, preferred model (GLM), average capped amount per claim:
 | 9 | 495 | 1918 | 1801 [1535, 2094] | 0.939 | yes |
 | 10 | 479 | 2183 | 2108 [1768, 2514] | 0.965 | yes |
 
-Credit (out-of-time, 2017-2018): not measured (Lending Club requires Kaggle credentials; run make data after adding a Kaggle token).
+Credit (out-of-time, 2017-2018): see the calibration table in the credit model card.
 
 ## 4. Sensitivity analyses
 
@@ -104,7 +104,12 @@ Insurance frequency (test policies):
 
 Credit (test loans):
 
-not measured (Lending Club requires Kaggle credentials; run make data after adding a Kaggle token).
+| Shift | Expected direction | Model | Rows checked | Moved the wrong way | Unchanged |
+|---|---|---|---|---|---|
+| dti + 5 | increase | logistic scorecard | 203,098 | 0.00% | 0.00% |
+| dti + 5 | increase | LightGBM | 203,098 | 6.32% | 0.00% |
+| fico_range_low + 20 | decrease | logistic scorecard | 205,164 | 0.00% | 2.11% |
+| fico_range_low + 20 | decrease | LightGBM | 205,164 | 6.00% | 0.78% |
 
 ## 6. Findings
 
@@ -122,7 +127,6 @@ not measured (Lending Club requires Kaggle credentials; run make data after addi
 | F10 | LightGBM frequency is not monotonic in BonusMalus | Low |
 | F11 | Large-loss cap removes a material share of claim cost | Medium |
 | F12 | Results were produced from uncommitted code | Medium (reproducibility) |
-| F13 | Credit model not measured | High (no evidence yet) |
 
 ### F1. freMTPL2: claims without amounts, concentrated in one IDpol block
 
@@ -193,14 +197,8 @@ not measured (Lending Club requires Kaggle credentials; run make data after addi
 ### F12. Results were produced from uncommitted code
 
 - Severity: Medium (reproducibility)
-- Evidence: The provenance of `credit`, `insurance_frequency`, `insurance_severity`, `fairness_demo` records git commit `bbedb8d30fa8f4d761a926d70c61cf25d7771743` with uncommitted changes outside results/, so that commit alone does not contain the code that produced these numbers.
+- Evidence: The provenance of `insurance_frequency`, `insurance_severity`, `fairness_demo` records git commit `bbedb8d30fa8f4d761a926d70c61cf25d7771743` with uncommitted changes outside results/, so that commit alone does not contain the code that produced these numbers.
 - Action / status: Commit the code, rerun `make phase1` from the clean tree so git_worktree_dirty is false, and commit the regenerated results and documents. This finding disappears when that is done.
-
-### F13. Credit model not measured
-
-- Severity: High (no evidence yet)
-- Evidence: Lending Club requires Kaggle credentials; run make data after adding a Kaggle token.
-- Action / status: Add a Kaggle token, run `make data` and `make train-credit`, then re-render this report.
 
 ## 7. Limitations of this validation
 

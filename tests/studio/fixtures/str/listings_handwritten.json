@@ -1,0 +1,9 @@
+{
+  "fixture_origin": "hand-written from documentation, NOT recorded from the live API - re-record when the host is reachable (values are SYNTHETIC)",
+  "note": "Columns written from the author's knowledge of the Inside Airbnb listings file (the site answered 403). Rows are SYNTHETIC.",
+  "url": "https://insideairbnb.com/get-the-data/ (listings.csv, URL per city)",
+  "params": {},
+  "content_type": "text/csv",
+  "body_sha256": "6e3602ab8642d3d79909866231f5d85cb1b2d997ec2beabe741d70aee2416334",
+  "body": "id,name,latitude,longitude,room_type,price,availability_365,number_of_reviews\n1001,SYNTHETIC loft,10.0010,-140.0010,Entire home/apt,\"$1,250.00\",200,12\n1002,SYNTHETIC room,10.0050,-140.0000,Private room,$85.00,,3\n1003,SYNTHETIC far away,10.5000,-140.5000,Entire home/apt,$150.00,100,0\n"
+}

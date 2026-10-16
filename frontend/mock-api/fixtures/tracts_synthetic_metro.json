@@ -1,0 +1,4514 @@
+{
+ "features": [
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00141,
+     10.02535
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000000"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98576,
+     10.01124
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000001"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97146,
+     10.02175
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000002"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02075,
+     9.97036
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000003"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01792,
+     9.98243
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000004"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01064,
+     9.94746
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000005"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98689,
+     9.98277
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000006"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01431,
+     10.01497
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000007"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99522,
+     10.04429
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000008"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98126,
+     10.03605
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000009"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03549,
+     10.02012
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000010"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98256,
+     10.01278
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000011"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.9874,
+     10.01098
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000012"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98396,
+     9.99421
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000013"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03543,
+     10.02849
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000014"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01616,
+     9.97421
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000015"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00976,
+     9.98818
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000016"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.9925,
+     9.99242
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000017"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.9832,
+     10.00726
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000018"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99729,
+     10.03324
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000019"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99273,
+     10.03324
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000020"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02779,
+     10.04964
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000021"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02138,
+     9.9926
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000022"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02509,
+     9.99926
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000023"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01525,
+     10.05757
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000024"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98835,
+     9.9573
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000025"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99686,
+     9.98872
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000026"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96473,
+     9.97425
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000027"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96153,
+     9.9815
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000028"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97917,
+     10.02887
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000029"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99188,
+     9.98222
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000030"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03691,
+     9.99808
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000031"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02926,
+     10.02965
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000032"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00412,
+     9.99292
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000033"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98733,
+     9.9859
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000034"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00853,
+     10.00154
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000035"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0072,
+     9.96233
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000036"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01964,
+     9.94069
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000037"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98049,
+     9.99592
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000038"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01227,
+     9.98509
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000039"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0208,
+     10.02094
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000040"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99801,
+     10.0181
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000041"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99315,
+     10.00276
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000042"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03329,
+     9.98597
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000043"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98933,
+     9.98785
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000044"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00079,
+     9.99533
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000045"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01377,
+     10.00238
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000046"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00727,
+     9.97568
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000047"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97783,
+     10.02687
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000048"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96381,
+     9.99552
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000049"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99632,
+     9.98793
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000050"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96566,
+     9.98253
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000051"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00246,
+     10.00447
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000052"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02152,
+     9.97953
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000053"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.9676,
+     9.969
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000054"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00354,
+     9.99201
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000055"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98583,
+     9.98242
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000056"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96919,
+     9.97487
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000057"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97812,
+     9.99269
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000058"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95551,
+     10.01102
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000059"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99883,
+     9.98029
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000060"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01518,
+     10.03083
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000061"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.9935,
+     10.00841
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000062"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00225,
+     9.9804
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000063"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.9828,
+     10.01092
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000064"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02019,
+     9.95414
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000065"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.9821,
+     9.98126
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000066"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96274,
+     9.99379
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000067"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03714,
+     9.99107
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000068"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00675,
+     9.96792
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000069"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99063,
+     10.01429
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000070"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97087,
+     9.9873
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000071"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01816,
+     9.96561
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000072"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98626,
+     10.00009
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000073"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96036,
+     9.99989
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000074"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99099,
+     10.0164
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000075"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00526,
+     9.96793
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000076"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99459,
+     9.97112
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000077"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99307,
+     9.98456
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000078"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.001,
+     10.00151
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000079"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99154,
+     9.97351
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000080"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01687,
+     10.01727
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000081"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96748,
+     9.98479
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000082"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99593,
+     9.96255
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000083"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99113,
+     10.02091
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000084"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0272,
+     9.97907
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000085"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01514,
+     9.97862
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000086"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0294,
+     10.0329
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000087"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01627,
+     9.99156
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000088"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.958,
+     10.01829
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000089"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00172,
+     9.98251
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000090"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00072,
+     9.98869
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000091"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00611,
+     10.00474
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000092"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95358,
+     9.96419
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000093"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96711,
+     10.0116
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000094"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99709,
+     10.02366
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000095"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00408,
+     9.98687
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000096"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98431,
+     9.97866
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000097"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99819,
+     9.98572
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000098"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02229,
+     10.00246
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000099"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.98622,
+     9.97733
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000100"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99589,
+     10.01358
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000101"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01682,
+     9.99223
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000102"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03477,
+     9.99628
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000103"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99281,
+     10.03246
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000104"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04276,
+     9.97771
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000105"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06825,
+     9.9699
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000106"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0439,
+     9.95025
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000107"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06267,
+     9.95104
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000108"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03759,
+     9.94843
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000109"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.08346,
+     9.97057
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000110"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06231,
+     9.94994
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000111"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0645,
+     9.95971
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000112"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05489,
+     9.94805
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000113"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.08208,
+     9.95056
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000114"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04704,
+     9.97293
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000115"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04951,
+     9.9705
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000116"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05729,
+     9.94476
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000117"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04176,
+     9.9449
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000118"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04607,
+     9.97445
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000119"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02685,
+     9.94282
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000120"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05439,
+     9.93435
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000121"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.08239,
+     9.94991
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000122"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06362,
+     9.95581
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000123"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05678,
+     9.94737
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000124"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01746,
+     9.95636
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000125"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04061,
+     9.9684
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000126"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05611,
+     9.94245
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000127"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0725,
+     9.92769
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000128"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.07252,
+     9.93124
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000129"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05883,
+     9.94008
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000130"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06676,
+     9.9679
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000131"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.11418,
+     9.97957
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000132"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.078,
+     9.94359
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000133"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.07791,
+     9.93615
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000134"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06284,
+     10.03457
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000135"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04765,
+     10.03802
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000136"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01852,
+     10.05865
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000137"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05008,
+     10.04052
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000138"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06096,
+     10.04279
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000139"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.08709,
+     10.01173
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000140"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05949,
+     10.04012
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000141"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.07922,
+     10.03894
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000142"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05089,
+     10.05067
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000143"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.07038,
+     10.04159
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000144"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06669,
+     10.03761
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000145"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0655,
+     10.04247
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000146"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03025,
+     10.03453
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000147"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.07189,
+     10.04207
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000148"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06751,
+     10.06238
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000149"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04467,
+     10.04189
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000150"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05697,
+     10.03394
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000151"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.07257,
+     10.04063
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000152"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.041,
+     10.0491
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000153"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0808,
+     10.08275
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000154"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.09384,
+     10.03079
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000155"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05863,
+     10.05267
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000156"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03346,
+     10.03679
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000157"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06172,
+     10.04837
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000158"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.07603,
+     10.05089
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000159"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.068,
+     10.02789
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000160"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.09063,
+     10.05729
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000161"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.08959,
+     10.04523
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000162"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06865,
+     10.03825
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000163"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03102,
+     10.00911
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000164"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97923,
+     9.95429
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000165"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.92038,
+     9.95342
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000166"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95517,
+     9.95381
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000167"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95374,
+     9.97947
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000168"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.92617,
+     9.97454
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000169"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95255,
+     9.92386
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000170"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.929,
+     9.94041
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000171"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.93048,
+     9.94235
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000172"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.92933,
+     9.93158
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000173"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.94283,
+     9.94415
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000174"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.94017,
+     9.95842
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000175"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95835,
+     9.96185
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000176"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95675,
+     9.94978
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000177"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.91244,
+     9.94493
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000178"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95105,
+     9.96785
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000179"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95324,
+     9.93949
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000180"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.91647,
+     9.95584
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000181"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97698,
+     9.95863
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000182"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95261,
+     9.95832
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000183"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.93799,
+     9.98464
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000184"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.92753,
+     9.95935
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000185"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.90697,
+     9.9405
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000186"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.93005,
+     9.95577
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000187"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.93031,
+     9.9599
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000188"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.92733,
+     9.94094
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000189"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95252,
+     9.95758
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000190"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95559,
+     9.97798
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000191"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95805,
+     9.92978
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000192"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.93321,
+     9.96151
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000193"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.94181,
+     9.94703
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000194"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96639,
+     10.15975
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000195"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00528,
+     9.98209
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000196"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.86874,
+     10.06979
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000197"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.15381,
+     10.17316
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000198"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.9793,
+     10.06433
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000199"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.1117,
+     9.98726
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000200"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.13886,
+     9.90903
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000201"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0812,
+     9.84642
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000202"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.85567,
+     10.05664
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000203"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.94829,
+     10.16959
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000204"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.90344,
+     9.82357
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000205"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97727,
+     9.93307
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000206"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.109,
+     10.124
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000207"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.14131,
+     10.00894
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000208"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.10539,
+     10.16468
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000209"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.91993,
+     10.08612
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000210"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.84116,
+     9.99024
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000211"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.07583,
+     9.88268
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000212"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.16341,
+     9.98638
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000213"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.84132,
+     9.98835
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000214"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.83675,
+     9.86857
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000215"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.11056,
+     9.88707
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000216"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.93816,
+     9.85112
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000217"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.12005,
+     10.12856
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000218"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04389,
+     9.93138
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000219"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.92534,
+     10.0162
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000220"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00508,
+     10.06523
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000221"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.86518,
+     9.87037
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000222"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06361,
+     10.11492
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000223"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01699,
+     10.08462
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000224"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02052,
+     9.84183
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000225"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95859,
+     10.06669
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000226"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.86984,
+     10.11285
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000227"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.89686,
+     10.06409
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000228"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.14955,
+     10.07889
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000229"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03623,
+     9.89262
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000230"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.1601,
+     9.85947
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000231"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0804,
+     9.92441
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000232"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.86016,
+     9.82424
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000233"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.09524,
+     9.84228
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000234"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.81729,
+     9.97156
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000235"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.02177,
+     10.14243
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000236"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00277,
+     9.95931
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000237"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.89329,
+     10.07554
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000238"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.86679,
+     9.93162
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000239"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.81705,
+     9.87015
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000240"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.13633,
+     10.00828
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000241"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.14455,
+     10.03098
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000242"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.92901,
+     9.84451
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000243"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.83813,
+     9.97909
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000244"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97709,
+     10.01046
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "downtown",
+    "geoid": "SYN000245"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95153,
+     9.83318
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000246"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.10669,
+     10.03409
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000247"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01189,
+     9.95042
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000248"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.82828,
+     10.14199
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000249"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.14463,
+     9.90351
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000250"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.88762,
+     9.99377
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000251"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.97024,
+     10.09272
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000252"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0187,
+     10.1005
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000253"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.8411,
+     10.16505
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000254"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.94113,
+     9.83699
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000255"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.18122,
+     9.95752
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000256"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.17074,
+     10.17013
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000257"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.06046,
+     10.02306
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000258"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.05441,
+     9.91445
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000259"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.85542,
+     9.98668
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000260"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.87502,
+     9.82933
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000261"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99588,
+     10.15883
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000262"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.10094,
+     10.01739
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000263"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95863,
+     10.10603
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000264"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.8743,
+     9.85274
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000265"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.17904,
+     9.88904
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000266"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.0797,
+     9.85532
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000267"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.83608,
+     9.83861
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000268"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.93076,
+     9.84857
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000269"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96108,
+     10.0824
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000270"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.16752,
+     10.11962
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000271"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.87171,
+     10.09138
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000272"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.93457,
+     9.82176
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000273"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.99042,
+     9.92483
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000274"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04352,
+     9.94203
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000275"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.10314,
+     10.14542
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000276"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.08074,
+     10.08986
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000277"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.16759,
+     9.83801
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000278"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.03838,
+     10.17507
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000279"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.12316,
+     9.90861
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000280"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.96209,
+     10.00485
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000281"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.84569,
+     10.04778
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000282"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.91295,
+     9.90713
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000283"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.88426,
+     10.09181
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000284"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.04218,
+     10.01272
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000285"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.92709,
+     10.11198
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000286"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.85456,
+     9.96149
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000287"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.95978,
+     9.88136
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000288"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.93315,
+     9.94645
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000289"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.85622,
+     10.07129
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000290"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.14604,
+     10.03859
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000291"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.947,
+     9.88894
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000292"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.00537,
+     10.02697
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000293"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.91827,
+     10.02487
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000294"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01542,
+     10.1622
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000295"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.01894,
+     9.93325
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "inner ring",
+    "geoid": "SYN000296"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.14819,
+     10.14286
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000297"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -139.81984,
+     10.08696
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000298"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     -140.1693,
+     10.00283
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "data_label": "SYNTHETIC",
+    "district": "outer suburbs",
+    "geoid": "SYN000299"
+   },
+   "type": "Feature"
+  }
+ ],
+ "metadata": {
+  "data_label": "SYNTHETIC",
+  "geometry": "tract centroids (points); tract boundaries are not loaded",
+  "metro_id": "synthetic_metro",
+  "metro_name": "Synthetic Metro (SYNTHETIC)",
+  "mode": "synthetic",
+  "n_tracts": 300,
+  "note": null
+ },
+ "type": "FeatureCollection"
+}

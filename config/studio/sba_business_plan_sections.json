@@ -1,0 +1,23 @@
+{
+  "publisher": "U.S. Small Business Administration",
+  "page_h1": "Plan your business",
+  "section_h2": "Write your business plan",
+  "requested_url": "https://www.sba.gov/business-guide/plan-your-business/write-your-business-plan",
+  "final_url": "https://www.sba.gov/counseling/plan-your-business/",
+  "retrieved_at": "2026-10-14T11:42:54+00:00",
+  "sha256": "ef776b3118903e2d5a27f61d761b70926676697413d7f2d946275cf6d2d79657",
+  "status_code": 200,
+  "list_heading": "Common traditional business plan sections",
+  "sections": [
+    "Executive summary",
+    "Company description",
+    "Market analysis",
+    "Organization and management",
+    "Service or product line",
+    "Marketing and sales",
+    "Funding request",
+    "Financial projections"
+  ],
+  "generated_by": "scripts/studio_fetch_sba_plan_guide.py",
+  "note": "Section names read from the page's h5 headings under the list heading. The page body is kept under data/studio/reference/ (gitignored); its SHA-256 is also in data/studio/checksums.jsonl."
+}

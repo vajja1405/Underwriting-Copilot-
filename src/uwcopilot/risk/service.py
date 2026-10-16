@@ -34,8 +34,11 @@ Rules the API enforces:
   rejected, never filled in.
 - Credit requests pass the leakage guard (uwcopilot.risk.leakage) before anything else: a banned
   post-origination column in the features or overrides gets HTTP 422, even when no credit model is loaded.
-- A product whose model artifact is missing gets HTTP 503 with the reason. Today that is credit: the
-  Lending Club data needs a Kaggle token, so no credit model has been trained.
+- A product whose model artifact is missing gets HTTP 503 with the reason. Artifacts are gitignored, so a fresh
+  checkout has none until `make train-insurance` (and, with a Kaggle token for the Lending Club data,
+  `make train-credit`) has run.
+- The shared HTTP client (uwcopilot.risk.client) speaks exactly this contract; the agent's and the MCP server's
+  tool contract is translated there (docs/risk_service.md).
 - The API supports decisions; it never makes one. A person decides (ground rule 8).
 """
 
@@ -71,8 +74,9 @@ DEFAULT_INSURANCE_DIR = REPO_ROOT / "models" / "insurance"
 
 DECISION_NOTE = "Decision support only: a person makes every underwriting decision."
 CREDIT_MISSING = (
-    "No credit model artifact at {path}. The credit model has not been trained: Lending Club data needs a "
-    "Kaggle API token. Add the token, run `make data`, then `make train-credit`."
+    "No credit model artifact at {path}. Model artifacts are not committed (models/ is gitignored), and training "
+    "the credit model needs the Lending Club data, which needs a Kaggle API token. Add the token, run `make data`, "
+    "then `make train-credit`."
 )
 INSURANCE_MISSING = "No insurance model artifact at {path}. Run `make train-insurance` to train the freMTPL2 models."
 

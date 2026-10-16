@@ -10,6 +10,11 @@ The lock is an exclusive fcntl.flock lock on data/cache/ollama.lock (the shared 
 section 4). The operating system releases it when the process exits, even after a crash, so a leftover lock file
 never blocks the next run. While holding the lock, the file says who holds it (pid, label, time), which is what a
 waiting script prints. fcntl is POSIX-only (Linux, macOS), like the rest of the project's tooling.
+
+One server, many checkouts: the default lock file lives inside this checkout, but the Ollama server serves the
+whole machine. Jobs started from another checkout (a git worktree, or a parallel agent's copy of the repo) take a
+different default file and would run alongside each other. To serialize them, set UWC_OLLAMA_LOCK_PATH to the
+same absolute path (for example /tmp/uwcopilot-ollama.lock) in every checkout; see .env.example.
 """
 
 import fcntl
@@ -17,16 +22,19 @@ import json
 import os
 import sys
 import time
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TextIO
 
-from uwcopilot.common.paths import DATA_DIR
+from uwcopilot.common.paths import DATA_DIR, ENV_FILE
+from uwcopilot.common.settings import env_reader
+from uwcopilot.llm.settings import SettingsError
 
 DEFAULT_LOCK_PATH: Path = DATA_DIR / "cache" / "ollama.lock"
+LOCK_PATH_VARIABLE = "UWC_OLLAMA_LOCK_PATH"
 DEFAULT_POLL_INTERVAL_S = 1.0
 
 
@@ -44,11 +52,28 @@ class QueueHolder:
     waited_s: float
 
 
-def read_lock_holder(lock_path: Path = DEFAULT_LOCK_PATH) -> dict[str, object] | None:
+def resolve_lock_path(environ: Mapping[str, str] | None = None) -> Path:
+    """The lock file every Ollama job should use: UWC_OLLAMA_LOCK_PATH if it is set, else DEFAULT_LOCK_PATH.
+
+    The variable is read like every project setting (the repo .env file wins over the process environment).
+    It must be an absolute path, so that every checkout points at the same file.
+    """
+    value = env_reader(ENV_FILE, environ)(LOCK_PATH_VARIABLE)
+    if value is None:
+        return DEFAULT_LOCK_PATH
+    path = Path(value).expanduser()
+    if not path.is_absolute():
+        raise SettingsError(f"{LOCK_PATH_VARIABLE} must be an absolute path (got {value!r}).")
+    return path
+
+
+def read_lock_holder(lock_path: Path | None = None) -> dict[str, object] | None:
     """The holder record in the lock file, or None if the file is missing, empty or unreadable.
 
-    The record can be stale (the holder exited and the OS released the lock); only the lock itself is reliable.
+    lock_path=None means resolve_lock_path(). The record can be stale (the holder exited and the OS released the
+    lock); only the lock itself is reliable.
     """
+    lock_path = lock_path or resolve_lock_path()
     try:
         text = lock_path.read_text(encoding="utf-8").strip()
     except OSError:
@@ -98,15 +123,17 @@ def wait_for_lock(
 @contextmanager
 def ollama_queue_lock(
     label: str,
-    lock_path: Path = DEFAULT_LOCK_PATH,
+    lock_path: Path | None = None,
     timeout_s: float | None = None,
     poll_interval_s: float = DEFAULT_POLL_INTERVAL_S,
 ) -> Iterator[QueueHolder]:
     """Hold the Ollama queue lock for the duration of the with-block.
 
-    label says which job holds it (for example the script name and config id). timeout_s=None waits until the
+    label says which job holds it (for example the script name and config id). lock_path=None means
+    resolve_lock_path() (UWC_OLLAMA_LOCK_PATH, else data/cache/ollama.lock). timeout_s=None waits until the
     lock is free; otherwise OllamaQueueBusy is raised after that many seconds and the block never runs.
     """
+    lock_path = lock_path or resolve_lock_path()
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     # "a+" opens without truncating, so the current holder's record is kept until this process owns the lock.
     with lock_path.open("a+", encoding="utf-8") as handle:

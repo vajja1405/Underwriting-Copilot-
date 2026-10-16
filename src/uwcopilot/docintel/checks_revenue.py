@@ -16,11 +16,20 @@
   check's severity is low. Payments to lenders that are not on the schedule are listed in values only.
 """
 
+from pydantic import ValidationError
+
 from uwcopilot.agent.applications import BankStatementSummary, MonthlyDeposits
 from uwcopilot.agent.credit_calculations import month_index, revenue_gap_pct, verify_revenue
 from uwcopilot.agent.policy_credit import BENIGN_GAP_PCT, EXPLAINABLE_GAP_PCT
-from uwcopilot.docintel.check_models import CheckIssue, CheckResult, Evidence, cite, make_result
-from uwcopilot.docintel.checks_credit import REFS
+from uwcopilot.docintel.check_models import (
+    CREDIT_REFS,
+    CheckIssue,
+    CheckResult,
+    Evidence,
+    cite,
+    document_evidence,
+    make_result,
+)
 from uwcopilot.docintel.deposits import IDENTIFIED_NON_REVENUE, ClassifiedRow, classify_rows, month_of, monthly_deposits
 from uwcopilot.docintel.normalize import canonical_name
 from uwcopilot.docintel.schemas import BankStatement, DebtItem, LoanPacket, casefold_key, transaction_key
@@ -55,14 +64,21 @@ def statements_with_months(packet: LoanPacket) -> list[tuple[BankStatement, dict
 
 
 def verify(months: list[dict]) -> tuple[float | None, float]:
-    """(verified annual revenue or None, excluded cash) using the agent's verify_revenue."""
-    summary = BankStatementSummary(
-        account_number=PLACEHOLDER_ACCOUNT,
-        months=[MonthlyDeposits(**month) for month in months],
-        nsf_events_last_6_months=0,
-        negative_balance_months_last_12=0,
-        average_daily_balance_last_3_months=0.0,
-    )
+    """(verified annual revenue or None, excluded cash) using the agent's verify_revenue.
+
+    A month the agent model rejects (for example a negative total read from a damaged page) means revenue cannot
+    be verified, so the result is None rather than an exception.
+    """
+    try:
+        summary = BankStatementSummary(
+            account_number=PLACEHOLDER_ACCOUNT,
+            months=[MonthlyDeposits(**month) for month in months],
+            nsf_events_last_6_months=0,
+            negative_balance_months_last_12=0,
+            average_daily_balance_last_3_months=0.0,
+        )
+    except ValidationError:
+        return None, 0.0
     result = verify_revenue(summary)
     return result.verified_annual_revenue, result.excluded_cash
 
@@ -106,15 +122,16 @@ def revenue_sources(packet: LoanPacket) -> tuple[dict, list[Evidence], list[str]
     for item in packet.tax_returns:
         if item.tax_year.found and item.gross_receipts.found:
             data["tax_receipts"][str(item.tax_year.value)] = float(item.gross_receipts.value)
-            evidence.append(cite(item.gross_receipts, "tax_return.gross_receipts", str(item.tax_year.value),
-                                 item.doc_id))
+            evidence.append(
+                cite(item.gross_receipts, "tax_return.gross_receipts", str(item.tax_year.value), item.doc_id)
+            )
             categories.append("tax_return")
     return data, evidence, categories
 
 
 def check_revenue_vs_deposits(packet: LoanPacket) -> CheckResult:
     """NBC-3.4 revenue gap between the stated revenue and revenue verified from deposits."""
-    refs = REFS["revenue_vs_deposits"]
+    refs = CREDIT_REFS["revenue_vs_deposits"]
     application = packet.application
     stated_cited = None if application is None else application.stated_annual_revenue
     pairs = statements_with_months(packet)
@@ -138,13 +155,20 @@ def check_revenue_vs_deposits(packet: LoanPacket) -> CheckResult:
         for field in IDENTIFIED_FIELDS:
             identified += float(months[field])
     gross, identified, unidentified = round(gross, 2), round(identified, 2), round(unidentified, 2)
-    values: dict = {"stated_annual_revenue": stated, "verified_annual_revenue": verified, "months_used": len(recent),
-                    "gross_deposits": gross, "identified_non_revenue": identified, "unidentified_deposits": unidentified,
-                    "excluded_cash": excluded_cash}
+    values: dict = {
+        "stated_annual_revenue": stated,
+        "verified_annual_revenue": verified,
+        "months_used": len(recent),
+        "gross_deposits": gross,
+        "identified_non_revenue": identified,
+        "unidentified_deposits": unidentified,
+        "excluded_cash": excluded_cash,
+    }
     if verified is None:
         message = f"Revenue cannot be verified: {len(pairs)} statement month(s), 12 consecutive needed (NBC-3.2)."
-        return make_result("revenue_vs_deposits", refs, "not_evaluated", message, values,
-                           [stated_evidence, *totals_evidence])
+        return make_result(
+            "revenue_vs_deposits", refs, "not_evaluated", message, values, [stated_evidence, *totals_evidence]
+        )
     gap = revenue_gap_pct(stated, verified)
     values["gap_pct"] = gap
     if gap is None:
@@ -158,9 +182,13 @@ def check_revenue_vs_deposits(packet: LoanPacket) -> CheckResult:
     rows_evidence, row_categories = supporting_rows([statement for statement, _ in recent])
     source_data, source_evidence, source_categories = revenue_sources(packet)
     last_end = recent[-1][0].period_end.value
-    data = {**values, **source_data, "gap_usd": round(stated - verified, 2),
-            "statements_end": None if last_end is None else last_end.isoformat(),
-            "supporting_categories": row_categories + source_categories}
+    data = {
+        **values,
+        **source_data,
+        "gap_usd": round(stated - verified, 2),
+        "statements_end": None if last_end is None else last_end.isoformat(),
+        "supporting_categories": row_categories + source_categories,
+    }
     issue = CheckIssue(
         issue="revenue_gap",
         entity="business",
@@ -192,8 +220,9 @@ def payment_rows(packet: LoanPacket) -> list[tuple[BankStatement, ClassifiedRow]
     return rows
 
 
-def item_issue(index: int, item: DebtItem, doc_id: str, matched: list[tuple[BankStatement, ClassifiedRow]]
-               ) -> CheckIssue | None:
+def item_issue(
+    index: int, item: DebtItem, doc_id: str, matched: list[tuple[BankStatement, ClassifiedRow]]
+) -> CheckIssue | None:
     """Scheduled vs observed monthly payment for one debt item (None when they agree or cannot be compared)."""
     if not matched or not item.monthly_payment.found:
         return None
@@ -208,8 +237,12 @@ def item_issue(index: int, item: DebtItem, doc_id: str, matched: list[tuple[Bank
     key = casefold_key(item.lender)
     side_b = []
     for statement, row in matched:
-        evidence = cite(row.transaction.withdrawal, "statement.transactions.withdrawal",
-                        transaction_key(row.transaction), statement.doc_id)
+        evidence = cite(
+            row.transaction.withdrawal,
+            "statement.transactions.withdrawal",
+            transaction_key(row.transaction),
+            statement.doc_id,
+        )
         side_b.extend([evidence] if evidence else [])
     return CheckIssue(
         issue="payment_differs",
@@ -217,8 +250,13 @@ def item_issue(index: int, item: DebtItem, doc_id: str, matched: list[tuple[Bank
         fields=["debt_schedule.items.monthly_payment", "statement.transactions.withdrawal"],
         side_a=[cite(item.monthly_payment, "debt_schedule.items.monthly_payment", key, doc_id)],
         side_b=side_b,
-        data={"debt_item": index, "scheduled_payment": scheduled, "observed_payment": observed,
-              "months_observed": len(by_month), "difference": round(observed - scheduled, 2)},
+        data={
+            "debt_item": index,
+            "scheduled_payment": scheduled,
+            "observed_payment": observed,
+            "months_observed": len(by_month),
+            "difference": round(observed - scheduled, 2),
+        },
         message=f"Debt item {index} is scheduled at ${scheduled:,.2f} a month but the statements show "
         f"${observed:,.2f} a month on average ({len(by_month)} month(s)).",
     )
@@ -226,14 +264,14 @@ def item_issue(index: int, item: DebtItem, doc_id: str, matched: list[tuple[Bank
 
 def check_debt_payments(packet: LoanPacket) -> CheckResult:
     """NBC-4.1: debt schedule payments vs payments seen in the statements (see the module docstring)."""
-    refs = REFS["debt_payment_consistency"]
+    refs = CREDIT_REFS["debt_payment_consistency"]
     schedule = packet.debt_schedule
     if schedule is None:
         return make_result("debt_payment_consistency", refs, "not_evaluated", "No debt schedule was found.", {}, [])
     rows = payment_rows(packet)
     used: set[int] = set()
     issues = []
-    evidence = []
+    evidence = [document_evidence(schedule, "document", "debt_schedule")]
     not_observed = []
     for index, item in enumerate(schedule.items, start=1):
         words = lender_words(item.lender.value)
@@ -242,20 +280,29 @@ def check_debt_payments(packet: LoanPacket) -> CheckResult:
             if words and words <= set(canonical_name(row.transaction.description.value).split()):
                 matched.append((statement, row))
                 used.add(position)
-        payment = cite(item.monthly_payment, "debt_schedule.items.monthly_payment", casefold_key(item.lender),
-                       schedule.doc_id)
-        evidence.extend([payment] if payment else [])
+        key = casefold_key(item.lender)
+        payment = cite(item.monthly_payment, "debt_schedule.items.monthly_payment", key, schedule.doc_id)
+        if payment is not None:
+            evidence.append(payment)
         if not matched:
             not_observed.append(index)
         issue = item_issue(index, item, schedule.doc_id, matched)
-        issues.extend([issue] if issue else [])
-    values = {"debt_items": len(schedule.items), "items_not_observed": not_observed,
-              "unscheduled_payment_rows": len(rows) - len(used)}
+        if issue is not None:
+            issues.append(issue)
+    values = {
+        "debt_items": len(schedule.items),
+        "items_not_observed": not_observed,
+        "unscheduled_payment_rows": len(rows) - len(used),
+    }
     if issues:
         message = "Debt payments differ (NBC-4.1 uses the higher): " + " ".join(issue.message for issue in issues)
         return make_result("debt_payment_consistency", refs, "fail", message, values, evidence, issues)
     if not schedule.items:
         message = "The debt schedule lists no existing business debt."
         return make_result("debt_payment_consistency", refs, "pass", message, values, evidence)
-    message = f"Scheduled payments match the statements for every observed debt item ({len(schedule.items)} listed)."
+    observed = len(schedule.items) - len(not_observed)
+    message = (
+        f"Scheduled payments match the statements for the {observed} of {len(schedule.items)} debt item(s) with a "
+        "matching payment in the statements."
+    )
     return make_result("debt_payment_consistency", refs, "pass", message, values, evidence)

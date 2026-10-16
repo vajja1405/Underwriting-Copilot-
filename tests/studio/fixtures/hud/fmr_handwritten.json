@@ -1,0 +1,11 @@
+{
+  "fixture_origin": "hand-written from documentation, NOT recorded from the live API - re-record when the host is reachable (values are SYNTHETIC)",
+  "note": "Shape written from the author's knowledge of the HUD USER FMR API documentation (not opened). Needs HUD_USER_TOKEN. Rents are SYNTHETIC.",
+  "url": "https://www.huduser.gov/hudapi/public/fmr/data/4820199999",
+  "params": {
+    "year": "2026"
+  },
+  "content_type": "application/json",
+  "body_sha256": "401b1493056a3cb8c093c162c90a2a06312eb3437e203a7b1c78bfec82e868c9",
+  "body": "{\"data\": {\"county_name\": \"SYNTHETIC County\", \"counties_msa\": \"\", \"town_name\": \"\", \"metro_status\": \"1\", \"metro_name\": \"SYNTHETIC Metro\", \"area_name\": \"SYNTHETIC Metro\", \"smallarea_status\": \"0\", \"basicdata\": {\"zip_code\": \"MSA level\", \"Efficiency\": 1100, \"One-Bedroom\": 1250, \"Two-Bedroom\": 1500, \"Three-Bedroom\": 1950, \"Four-Bedroom\": 2300, \"year\": \"2026\"}}}"
+}

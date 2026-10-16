@@ -10,6 +10,8 @@
   when their names are within edit distance 2. Issues: an ownership percentage that differs by more than 5.0
   points (NBC-6.1; Harborline gives no tolerance, so the same 5.0 points is used for both lines), owners missing
   from either document, a name that differs, and a different control person when both documents name one.
+  For credit, NBC-6.1 also requires the application's percentages to add up to 100% (within 0.5 points for
+  printed rounding); a wrong total fails the check but is not an issue (see owner_consistency).
 
 Names are untrusted free text: messages say which documents disagree, never the names themselves. The names are
 in the evidence.
@@ -25,6 +27,8 @@ from uwcopilot.docintel.schemas import ExtractedOwner
 OWNERSHIP_DIFFERENCE_POINTS = 5.0
 # Owner names this close are treated as the same person with a differently written name.
 OWNER_NAME_MAX_EDITS = 2
+# NBC-6.1: the application's percentages must add up to 100%; 0.5 points allows for printed rounding (3 x 33.3%).
+OWNERSHIP_TOTAL_TOLERANCE_POINTS = 0.5
 
 
 def group_by_key(sources: list[Evidence], key_of: Callable[[str], str]) -> dict[str, list[Evidence]]:
@@ -46,17 +50,17 @@ def doc_ids_of(items: list[Evidence]) -> list[str]:
     return seen
 
 
+def group_rank(items: list[Evidence]) -> tuple[int, int]:
+    """(number of documents, 1 if the application is in the group else 0): the larger rank wins the majority."""
+    has_application = any(item.field.startswith("application.") for item in items)
+    return len(doc_ids_of(items)), 1 if has_application else 0
+
+
 def majority_key(groups: dict[str, list[Evidence]]) -> str:
     """The group printed on the most documents; ties go to the group with the application's value."""
-
-    def rank(key: str) -> tuple[int, int]:
-        items = groups[key]
-        has_application = any(item.field.startswith("application.") for item in items)
-        return len(doc_ids_of(items)), 1 if has_application else 0
-
     best = list(groups)[0]
     for key in groups:
-        if rank(key) > rank(best):
+        if group_rank(groups[key]) > group_rank(groups[best]):
             best = key
     return best
 
@@ -272,6 +276,20 @@ def owner_issues(
     return issues
 
 
+def application_total_problem(application_owners: list[ExtractedOwner]) -> tuple[float | None, str | None]:
+    """(total of the application's percentages, a message when it is not 100% within the tolerance).
+
+    The total is None when an owner's percentage was not found (the rule cannot be applied).
+    """
+    percentages = [pct_of(owner) for owner in application_owners]
+    if not percentages or any(pct is None for pct in percentages):
+        return None, None
+    total = round(sum(pct for pct in percentages if pct is not None), 1)
+    if abs(total - 100.0) <= OWNERSHIP_TOTAL_TOLERANCE_POINTS:
+        return total, None
+    return total, f"The application's ownership percentages add up to {total:g}%, not 100% (NBC-6.1)."
+
+
 def owner_consistency(
     refs: list[str],
     application_owners: list[ExtractedOwner],
@@ -280,26 +298,41 @@ def owner_consistency(
     other_doc: str | None,
     other_prefix: str,
     min_pct_listed: float,
+    total_must_be_100: bool = False,
 ) -> CheckResult:
-    """owner_consistency for either line: not evaluated without owners on both documents."""
+    """owner_consistency for either line (module docstring).
+
+    total_must_be_100 adds the NBC-6.1 rule that the application's percentages add up to 100%. A wrong total
+    fails the check without a CheckIssue: it is a problem inside one document, not a disagreement between two,
+    so it creates no contradiction. Without owners on both documents (and no wrong total) the check is not
+    evaluated.
+    """
     check_id = "owner_consistency"
     values: dict = {"application_owner_count": len(application_owners), "other_doc_id": other_doc}
-    app_total = [pct_of(owner) for owner in application_owners]
-    if all(pct is not None for pct in app_total) and app_total:
-        values["application_total_pct"] = round(sum(pct for pct in app_total if pct is not None), 1)
-    if not application_owners or not other_owners:
-        message = "Owners were not found on both the application and the other ownership document."
-        return make_result(check_id, refs, "not_evaluated", message, values, [])
-    values["other_owner_count"] = len(other_owners)
-    evidence = []
+    total, total_problem = application_total_problem(application_owners)
+    if total is not None:
+        values["application_total_pct"] = total
+    if not total_must_be_100:
+        total_problem = None
+    application_evidence = []
     for i, owner in enumerate(application_owners):
-        evidence.extend(owner_evidence(owner, "application.owners", i + 1, application_doc))
+        application_evidence.extend(owner_evidence(owner, "application.owners", i + 1, application_doc))
+    if not application_owners or not other_owners:
+        if total_problem is not None:
+            return make_result(check_id, refs, "fail", total_problem, values, application_evidence)
+        message = "Owners were not found on both the application and the other ownership document."
+        return make_result(check_id, refs, "not_evaluated", message, values, application_evidence)
+    values["other_owner_count"] = len(other_owners)
+    evidence = list(application_evidence)
     for j, owner in enumerate(other_owners):
         evidence.extend(owner_evidence(owner, other_prefix, j + 1, other_doc))
     issues = owner_issues(application_owners, application_doc, other_owners, other_doc, other_prefix, min_pct_listed)
     values["issue_codes"] = [issue.issue for issue in issues]
-    if not issues:
+    problems = [issue.message for issue in issues]
+    if total_problem is not None:
+        problems.append(total_problem)
+    if not problems:
         message = f"The application's {len(application_owners)} owner(s) match {other_doc}."
         return make_result(check_id, refs, "pass", message, values, evidence)
-    message = "Ownership differs: " + " ".join(issue.message for issue in issues)
+    message = "Ownership differs: " + " ".join(problems)
     return make_result(check_id, refs, "fail", message, values, evidence, issues)

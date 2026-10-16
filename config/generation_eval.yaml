@@ -50,6 +50,8 @@ configs:
 
 # Where each local model came from. ollama_digest is what Ollama reports in GET /api/tags after `ollama create`;
 # gguf_sha256 is the Docker Hub layer digest of the weights file, verified by scripts/fetch_local_model.py.
+# license_layer_sha256 pins the artifact's license layer the same way: if Docker Hub ever serves a different license
+# text, the script stops instead of leaving license_docker_artifact silently out of date.
 models:
   qwen2.5-3b-instruct-q4km:
     source: docker.io/ai/qwen2.5:3B-Q4_K_M
@@ -58,6 +60,7 @@ models:
     ollama_digest: fae2485a8df6d917bc97274961a6fb59820bdd058fbf5849157fa2e8a0abcd6b
     parameter_size: 3.1B
     quantization: Q4_K_M
+    license_layer_sha256: 609e2cb599f84aaa41d8ef29d8fdb04d164fab22e8d9292ca34a599d0f56a338
     license_docker_artifact: "Apache-2.0 (license layer sha256:609e2cb599f84aaa41d8ef29d8fdb04d164fab22e8d9292ca34a599d0f56a338)"
     upstream_card: https://huggingface.co/Qwen/Qwen2.5-3B-Instruct
     license_upstream_card: "Qwen Research License (Hugging Face card: license other, license_name qwen-research; checked 2026-10-12)"
@@ -70,6 +73,7 @@ models:
     ollama_digest: 75a307d2fa0d2d6d5158a9d22a4bad38836b9b998ebb106fd9ea1e8c1a9d33d3
     parameter_size: 1.5B
     quantization: F16
+    license_layer_sha256: 609e2cb599f84aaa41d8ef29d8fdb04d164fab22e8d9292ca34a599d0f56a338
     license_docker_artifact: "Apache-2.0 (license layer sha256:609e2cb599f84aaa41d8ef29d8fdb04d164fab22e8d9292ca34a599d0f56a338)"
     upstream_card: https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct
     license_upstream_card: "Apache-2.0 (Hugging Face card: license apache-2.0; checked 2026-10-12)"

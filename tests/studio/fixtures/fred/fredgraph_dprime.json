@@ -1,0 +1,13 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://fred.stlouisfed.org/graph/fredgraph.csv",
+  "params": {
+    "id": "DPRIME",
+    "cosd": "2026-09-01"
+  },
+  "recorded_at_utc": "2026-10-12T19:38:45+00:00",
+  "content_type": "application/csv",
+  "body_sha256": "0ac10d03c49827263f82e8a2a283b1281736deb0d9d79417ecc8d95a84b7a326",
+  "full_body_sha256": "0ac10d03c49827263f82e8a2a283b1281736deb0d9d79417ecc8d95a84b7a326",
+  "body": "observation_date,DPRIME\n2026-09-01,6.75\n2026-09-02,6.75\n2026-09-03,6.75\n2026-09-04,6.75\n2026-09-07,6.75\n2026-09-08,6.75\n2026-09-09,6.75\n2026-09-10,6.75\n2026-09-11,6.75\n2026-09-14,6.75\n2026-09-15,6.75\n2026-09-16,6.75\n2026-09-17,7.00\n2026-09-18,7.00\n2026-09-21,7.00\n2026-09-22,7.00\n2026-09-23,7.00\n2026-09-24,7.00\n2026-09-25,7.00\n2026-09-28,7.00\n2026-09-29,7.00\n2026-09-30,7.00\n2026-10-01,7.00\n2026-10-02,7.00\n"
+}

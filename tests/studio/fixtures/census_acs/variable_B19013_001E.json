@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://api.census.gov/data/2024/acs/acs5/variables/B19013_001E.json",
+  "params": {},
+  "recorded_at_utc": "2026-10-12T19:38:48+00:00",
+  "content_type": "application/json;charset=utf-8",
+  "body_sha256": "458acb84dcd00d3572a17927c44edabb1bb444a83eda4c4b0028a24600194d9f",
+  "full_body_sha256": "458acb84dcd00d3572a17927c44edabb1bb444a83eda4c4b0028a24600194d9f",
+  "body": "{\n  \"name\": \"B19013_001E\",\n  \"label\": \"Estimate!!Median household income in the past 12 months (in 2024 inflation-adjusted dollars)\",\n  \"concept\": \"Median Household Income in the Past 12 Months (in 2024 Inflation-Adjusted Dollars)\",\n  \"predicateType\": \"int\",\n  \"group\": \"B19013\",\n  \"limit\": 0,\n  \"attributes\": \"B19013_001EA,B19013_001M,B19013_001MA\"\n}"
+}

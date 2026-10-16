@@ -15,6 +15,7 @@ controlled ways.
 import re
 from dataclasses import asdict, dataclass
 
+from uwcopilot.agent.programs import load_program_chunks
 from uwcopilot.provenance.numbers import extract_numbers
 from uwcopilot.rag.guidelines import load_guideline_chunks
 
@@ -125,5 +126,23 @@ def build_reference_sentences() -> list[ReferenceSentence]:
 
 
 def section_texts() -> dict[str, str]:
-    """Guideline section id -> section text (the sources a cited sentence is checked against)."""
+    """Guideline section id -> section text: the sources of the mutation test's reference sentences.
+
+    It reads corpus/guidelines only, so the committed reference sentences and mutations stay reproducible. To check
+    a memo or narrative that may cite lending-program sections (for example [NSP-4.1]), use citable_section_texts().
+    """
     return {chunk.chunk_id: chunk.text for chunk in load_guideline_chunks()}
+
+
+def citable_section_texts() -> dict[str, str]:
+    """Every citable section id -> text: the guidelines plus the SYNTHETIC lending programs (corpus/programs).
+
+    This is the source map for checking cited sentences outside the mutation test, such as a founder narrative that
+    cites the startup program. A section id may appear only once across both folders.
+    """
+    texts = section_texts()
+    for chunk in load_program_chunks():
+        if chunk.chunk_id in texts:
+            raise ValueError(f"section id {chunk.chunk_id} appears in a guideline and in a program document")
+        texts[chunk.chunk_id] = chunk.text
+    return texts

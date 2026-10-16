@@ -37,6 +37,7 @@ from uwcopilot.agent.applications import CreditApplication, InsuranceApplication
 from uwcopilot.agent.decision_record import DecisionLog
 from uwcopilot.agent.evaluation import (
     BOOTSTRAP_SEED,
+    DEFAULT_LINES,
     N_RESAMPLES,
     PathCase,
     evaluate_policy_case,
@@ -50,6 +51,7 @@ from uwcopilot.agent.fake_memo import template_memo_responder
 from uwcopilot.agent.graph import GRAPH_VERSION, AgentDeps
 from uwcopilot.agent.memo import PROMPT_VERSION
 from uwcopilot.agent.policy import POLICY_VERSION
+from uwcopilot.agent.policy_startup import STARTUP_POLICY_VERSION
 from uwcopilot.agent.runner import compile_agent, start_run
 from uwcopilot.agent.settings import load_agent_settings
 from uwcopilot.agent.synthetic_apps import GENERATOR_VERSION
@@ -204,6 +206,36 @@ def run_path(
     return cases
 
 
+def application_lines(applications: list) -> tuple[str, ...]:
+    """The lines whose referral triggers the coverage metric counts.
+
+    A Phase 5 set (credit and insurance files, or a --limit slice of one) keeps the credit and insurance triggers,
+    as before. A set with startup files adds the startup program's triggers, and a startup-only set counts only them.
+    """
+    present = {application.line for application in applications}
+    if "startup_credit" not in present:
+        return DEFAULT_LINES
+    if present == {"startup_credit"}:
+        return ("startup_credit",)
+    return (*DEFAULT_LINES, "startup_credit")
+
+
+def startup_count(applications: list) -> dict[str, int]:
+    """{"startup_credit": n} when the set has startup files, else {} (the Phase 5 report keeps its keys)."""
+    count = sum(1 for application in applications if application.line == "startup_credit")
+    return {"startup_credit": count} if count else {}
+
+
+def policy_version_for(lines: tuple[str, ...]) -> str:
+    """The reference policy version(s) that evaluated these lines."""
+    versions = []
+    if "credit" in lines or "insurance" in lines:
+        versions.append(POLICY_VERSION)
+    if "startup_credit" in lines:
+        versions.append(STARTUP_POLICY_VERSION)
+    return "; ".join(versions) or POLICY_VERSION
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the evaluation and write the result files."""
     args = parse_args(argv)
@@ -220,8 +252,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Refusing to run with --provider {args.provider}: {error}")
         return 2
 
+    lines = application_lines(applications)
     policy_cases = [evaluate_policy_case(application) for application in applications]
-    policy_summary = summarize_policy(policy_cases)
+    policy_summary = summarize_policy(policy_cases, lines)
     detector_summary = summarize_injection_detector(applications)
 
     settings = load_agent_settings()
@@ -278,12 +311,13 @@ def main(argv: list[str] | None = None) -> int:
             "count": len(applications),
             "credit": sum(1 for application in applications if application.line == "credit"),
             "insurance": sum(1 for application in applications if application.line == "insurance"),
+            **startup_count(applications),
             "set_sha256": manifest.get("applications_sha256"),
             "generator_version": manifest.get("generator_version", GENERATOR_VERSION),
             "limited_to_first": args.limit,
         },
         "versions": {
-            "policy_version": POLICY_VERSION,
+            "policy_version": policy_version_for(lines),
             "prompt_version": PROMPT_VERSION,
             "graph_version": GRAPH_VERSION,
             "git": git_state(),

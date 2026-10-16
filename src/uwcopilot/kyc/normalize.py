@@ -15,11 +15,24 @@ alphabets and conventions. Before any comparison every name goes through the sam
 Letters from other scripts (Cyrillic, Arabic, Chinese) are kept as they are; they simply do not match Latin
 names. Normalization never invents tokens, it only removes them, and it records what it removed so an alert
 can explain why "Dr. John Smith Jr." matched "SMITH, John".
+
+Step 0, for the name being screened only (added after the S2 review). A name typed by a customer or an applicant is
+untrusted text, so normalize_query_name() first passes a non-ASCII name through screening_text(): invisible
+characters are removed (a zero-width space or a soft hyphen inside "Ser\u200bpens" would otherwise split it into
+"ser" and "pens" and miss the listed "Serpens"), NFKC is applied, and lookalike letters are folded inside words that
+can only be read as Latin ("S\u0435rp\u0435ns" with two Cyrillic "\u0435" becomes "Serpens"). Words written in
+another script are left as they are, ASCII names are not touched at all, and uwcopilot.security.normalize holds the
+character tables. List names do not go through step 0: they come from the list publishers, not from the applicant,
+and keeping them as they were keeps the blocking index and every measured KYC result unchanged. (Folding them too
+would change the tokens of some OpenSanctions names that mix Latin letters with Cyrillic lookalikes; that is a
+matcher change to evaluate on its own, not part of this fix.)
 """
 
 import re
 import unicodedata
 from dataclasses import dataclass
+
+from uwcopilot.security.normalize import fold_mixed_script_words, strip_invisible
 
 # Titles and honorifics, stripped only from the START of a person name.
 HONORIFICS: frozenset[str] = frozenset(
@@ -162,6 +175,17 @@ class NormalizedName:
         return " ".join(sorted(self.tokens))
 
 
+def screening_text(name: str) -> str:
+    """Step 0 of the module docstring: invisible characters removed, NFKC, mixed-script lookalikes folded.
+
+    ASCII names are returned unchanged at once (nothing to remove or fold; this matters for millions of list names).
+    """
+    if name.isascii():
+        return name
+    compatible = unicodedata.normalize("NFKC", strip_invisible(name))
+    return fold_mixed_script_words(strip_invisible(compatible))
+
+
 def strip_accents(text: str) -> str:
     """Decompose characters (NFKD) and drop the combining marks, so "é" becomes "e"."""
     if text.isascii():
@@ -241,6 +265,15 @@ def normalize_name(name: str, entity_type: str | None = None) -> NormalizedName:
         tokens = strip_leading(tokens, LEGAL_FORM_PREFIXES, removed)
         tokens = strip_trailing(tokens, LEGAL_FORM_SUFFIXES, removed)
     return NormalizedName(original=name, tokens=tuple(tokens), removed=tuple(removed))
+
+
+def normalize_query_name(name: str, entity_type: str | None = None) -> NormalizedName:
+    """normalize_name for the name being SCREENED (typed by a customer or an applicant): step 0 runs first.
+
+    original keeps the name exactly as given. List names are not passed through step 0 (see the module docstring).
+    """
+    cleaned = normalize_name(screening_text(name), entity_type)
+    return NormalizedName(original=name, tokens=cleaned.tokens, removed=cleaned.removed)
 
 
 def is_initial(token: str) -> bool:

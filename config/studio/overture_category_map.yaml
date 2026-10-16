@@ -1,0 +1,308 @@
+# Reviewed mapping from Overture Maps places categories to the tag filters the business-type profiles use for
+# competitors, anchors and tourism (config/studio/business_types/*.yaml and profiles/factors.py TOURISM_TAGS).
+# Read by src/uwcopilot/studio/data/overture_places.py; checked by tests/studio/test_data_overture.py.
+#
+# How a place gets its tags (one rule, applied in code):
+#   Walk the place's taxonomy.hierarchy from the most specific category (the last entry, equal to taxonomy.primary)
+#   to the most general one. The FIRST category that has a row below decides the place's tags. A row with
+#   `tags: []` means "reviewed and deliberately not counted"; it stops the walk, so a subtype is not counted under
+#   its parent (for example airport_terminal is not counted as an airport). A place whose hierarchy has no row at all
+#   is "unmapped": it is ignored and counted in the snapshot step's detail. Alternate categories are not used.
+#
+# Category names come from the place hierarchies seen in the five metros' bounding boxes in release 2026-09-23.1
+# (queried on 2026-10-13: category paths and counts only, no names) and from the taxonomy guide. The profile tags are
+# OpenStreetMap-style filters; "intended equivalent" below means the project author's reading of what the profile
+# tag is meant to count, reviewed row by row. Every row is a judgement of the project author, not an official
+# crosswalk; rows marked "approximate" over- or under-count relative to the profile tag, as their note says.
+#
+# Facility rows (merge_within_miles, a DESIGN_CHOICE distance in miles): Overture files many places of one airport,
+# hospital or campus under the same category (terminals, departments, buildings), while the profiles' OpenStreetMap
+# tags count one feature per facility. Places decided by such a row are merged: from the highest confidence down, a
+# place within the distance of an already kept place of the same row is merged into it (never chained), see
+# overture_places.merge_facilities. Two different facilities closer than the distance count once (an undercount).
+#
+# Second review (2026-10-13): rows were added for categories that live queries of the five metros' boxes showed
+# with many places and no row (generic lodging, resorts, lodges and other lodging subtypes; dessert, beverage, food
+# truck and bagel places; warehouse clubs; kindergartens), either counted or deliberately not counted.
+# Not handled: places with no taxonomy at all are ignored (no_taxonomy in the accounting), even when their
+# basic_category names a mapped kind of place (for example fueling_station); see docs/studio/data_sources.md.
+reviewed_on: "2026-10-13"
+release: "2026-09-23.1"
+rows:
+  # --- car wash
+  - category: car_wash
+    tags: [amenity=car_wash]
+    note: travel_and_transportation>vehicle_service>automotive_service>car_wash; same kind of place as the profile's car-wash tag.
+  # --- laundromat
+  - category: laundromat
+    tags: [shop=laundry]
+    note: Self-service laundries; the intended equivalent of shop=laundry.
+  - category: laundry_service
+    tags: [shop=laundry]
+    note: Approximate. Places filed only under the generic laundry_service (no laundromat or dry_cleaning subtype) are counted as laundries; some may be drop-off services.
+  - category: dry_cleaning
+    tags: [shop=dry_cleaning]
+    note: Dry cleaners; the intended equivalent of shop=dry_cleaning.
+  # --- lodging
+  - category: motel
+    tags: [tourism=motel]
+    note: lodging>hotel>motel. Because the most specific category wins, a motel is counted as a motel only, not also as a hotel.
+  - category: hotel
+    tags: [tourism=hotel]
+    note: lodging>hotel (motels excluded by their own row).
+  - category: inn
+    tags: [tourism=hotel]
+    note: Approximate. lodging>inn is counted as a (small) hotel.
+  - category: guest_house
+    tags: [tourism=guest_house]
+    note: lodging>private_lodging>guest_house.
+  - category: bed_and_breakfast
+    tags: [tourism=guest_house]
+    note: Approximate. Bed and breakfasts are counted as guest houses.
+  - category: holiday_rental_home
+    tags: [tourism=apartment]
+    note: Approximate. The profile tag means a short-term holiday rental unit; lodging>private_lodging>holiday_rental_home is the closest category.
+  - category: service_apartment
+    tags: [tourism=apartment]
+    note: Approximate. Serviced apartments rented by the night or week are counted as holiday apartments.
+  - category: apartment
+    tags: []
+    note: services_and_business>housing_or_property_service>apartment is residential apartment buildings, not holiday rentals; not counted.
+  - category: lodging
+    tags: [tourism=hotel]
+    note: Approximate. The top lodging category. Places filed only as lodging (no subtype), and lodging subtypes without a row of their own, are counted as hotels, the most common lodging type; some of them are other kinds of lodging. Before this row they were ignored as unmapped, which undercounted motel and short-term-rental competitors.
+  - category: resort
+    tags: [tourism=hotel]
+    note: Approximate. lodging>resort and its subtypes (beach and ski resorts) sell overnight stays and are counted as hotels; OpenStreetMap tags resorts leisure=resort, which no profile uses.
+  - category: lodge
+    tags: [tourism=hotel]
+    note: Approximate. lodging>lodge is counted as a hotel.
+  - category: private_lodging
+    tags: [tourism=apartment]
+    note: Approximate. lodging>private_lodging places without a guest-house or holiday-rental subtype are counted as holiday rentals.
+  - category: cabin
+    tags: [tourism=apartment]
+    note: Approximate. lodging>cabin (rented by the night) is counted as a holiday rental unit.
+  - category: cottage
+    tags: [tourism=apartment]
+    note: Approximate. lodging>cottage is counted as a holiday rental unit.
+  - category: self_catering_accommodation
+    tags: [tourism=apartment]
+    note: Approximate. lodging>self_catering_accommodation is counted as a holiday rental unit.
+  - category: hostel
+    tags: []
+    note: lodging>hostel sells dormitory beds, a different lodging segment; no profile counts tourism=hostel, so not counted.
+  - category: campground
+    tags: []
+    note: lodging>campground is camping, not a motel or short-term-rental competitor; not counted.
+  - category: rv_park
+    tags: []
+    note: lodging>rv_park is camping for recreational vehicles; not counted (see campground).
+  - category: holiday_park
+    tags: []
+    note: lodging>holiday_park (camping and caravan parks); not counted (see campground).
+  - category: retreat
+    tags: []
+    note: lodging>retreat and its subtypes (retreat and health-retreat centers) are not counted as hotels.
+  # --- food and drink
+  - category: restaurant
+    tags: [amenity=restaurant]
+    note: food_and_drink>restaurant and every cuisine-specific restaurant below it (for example mexican_restaurant). fast_food_restaurant is not under restaurant in the taxonomy.
+  - category: diner
+    tags: [amenity=restaurant]
+    note: Approximate. food_and_drink>casual_eatery>diner is counted as a restaurant.
+  - category: bistro
+    tags: [amenity=restaurant]
+    note: Approximate. food_and_drink>casual_eatery>bistro is counted as a restaurant.
+  - category: fondue_restaurant
+    tags: [amenity=restaurant]
+    note: food_and_drink>casual_eatery>fondue_restaurant is a restaurant filed under casual_eatery.
+  - category: fast_food_restaurant
+    tags: [amenity=fast_food]
+    note: food_and_drink>casual_eatery>fast_food_restaurant.
+  - category: food_truck_stand
+    tags: [amenity=fast_food]
+    note: Approximate. food_and_drink>casual_eatery>food_truck_stand sells counter-service food and is counted as fast food.
+  - category: bagel_shop
+    tags: [amenity=fast_food]
+    note: Approximate. food_and_drink>casual_eatery>bagel_shop is counted as counter-service fast food.
+  - category: delicatessen
+    tags: []
+    note: food_and_drink>casual_eatery>delicatessen; OpenStreetMap files delis as shops (shop=deli), which no profile counts, so not counted. This undercounts places that also serve prepared food.
+  - category: gastropub
+    tags: []
+    note: food_and_drink>casual_eatery>gastropub; a pub in OpenStreetMap terms (amenity=pub), which no profile counts; not counted.
+  - category: tapas_bar
+    tags: []
+    note: food_and_drink>casual_eatery>tapas_bar; a bar in OpenStreetMap terms (amenity=bar), which no profile counts; not counted.
+  - category: food_court
+    tags: []
+    note: food_and_drink>casual_eatery>food_court; the vendors inside a food court are places of their own, so the court itself is not counted (no double count).
+  - category: candy_store
+    tags: []
+    note: food_and_drink>casual_eatery>candy_store and its subtypes (chocolatiers and confectionery shops) sell packaged sweets (OpenStreetMap shop=confectionery, which no profile counts); not counted.
+  - category: sandwich_shop
+    tags: [amenity=fast_food]
+    note: Approximate. Counter-service sandwich shops are counted as fast food.
+  - category: cafe
+    tags: [amenity=cafe]
+    note: food_and_drink>casual_eatery>cafe and its subtypes except internet cafes.
+  - category: internet_cafe
+    tags: []
+    note: An internet cafe is not a food cafe; not counted.
+  - category: coffee_shop
+    tags: [amenity=cafe]
+    note: food_and_drink>non_alcoholic_beverage_venue>coffee_shop (including coffee roasteries) is counted as a cafe.
+  - category: non_alcoholic_beverage_venue
+    tags: [amenity=cafe]
+    note: Approximate. food_and_drink>non_alcoholic_beverage_venue and its subtypes without a row of their own (smoothie and juice bars, bubble tea shops, tea rooms, milk bars, kombucha bars) are counted as cafes.
+  - category: dessert_shop
+    tags: [amenity=cafe]
+    note: Approximate. food_and_drink>casual_eatery>dessert_shop and its subtypes without a row of their own (donut, cupcake and pie shops) are counted as cafes; ice cream, frozen yogurt, gelato and shaved ice shops have rows of their own.
+  - category: shaved_ice_shop
+    tags: [amenity=ice_cream]
+    note: Approximate. food_and_drink>casual_eatery>dessert_shop>shaved_ice_shop is counted with ice cream shops.
+  - category: ice_cream_shop
+    tags: [amenity=ice_cream]
+    note: food_and_drink>casual_eatery>dessert_shop>ice_cream_shop.
+  - category: frozen_yogurt_shop
+    tags: [amenity=ice_cream]
+    note: Approximate. Frozen yogurt shops are counted with ice cream shops.
+  - category: gelato_shop
+    tags: [amenity=ice_cream]
+    note: Approximate. Gelato shops are counted with ice cream shops.
+  - category: bakery
+    tags: [shop=bakery]
+    note: food_and_drink>casual_eatery>bakery and its subtypes (pretzel and macaron shops).
+  # --- retail
+  - category: convenience_store
+    tags: [shop=convenience]
+    note: shopping>convenience_store.
+  - category: discount_store
+    tags: [shop=variety_store]
+    note: Approximate. Discount stores are the closest category to a variety store.
+  - category: kiosk
+    tags: [shop=kiosk]
+    note: shopping>kiosk (rental kiosks are under rental_service and are not counted).
+  - category: grocery_store
+    tags: [shop=supermarket]
+    note: Approximate, overcounts. The taxonomy does not separate supermarkets from small grocers, so every grocery store (and its subtypes) is counted as a supermarket.
+  - category: superstore
+    tags: [shop=supermarket]
+    note: Approximate. Superstores sell groceries and are counted as supermarkets.
+  - category: warehouse_club_store
+    tags: [shop=supermarket]
+    note: Approximate. shopping>warehouse_club_store sells groceries in bulk and is counted as a supermarket (as superstores are).
+  - category: shopping_mall
+    tags: [shop=mall]
+    note: shopping>shopping_mall.
+  - category: gas_station
+    tags: [amenity=fuel]
+    note: travel_and_transportation>fueling_station>gas_station, including truck gas stations.
+  - category: fuel_dock
+    tags: []
+    note: Fuel for boats; not a roadside fuel station.
+  - category: auto_dealer
+    tags: [shop=car]
+    note: shopping>vehicle_dealer>auto_dealer, including used-car dealers.
+  - category: auto_broker
+    tags: []
+    note: A broker is not a car showroom; not counted.
+  - category: auto_leasing
+    tags: []
+    note: Leasing offices are not car showrooms; not counted.
+  # --- education, health, transport, venues
+  - category: school
+    tags: [amenity=school]
+    note: education>place_of_learning>school and its subtypes (elementary, middle, high, private, public, religious, charter, Montessori) except preschools and kindergartens, which have rows of their own.
+  - category: preschool
+    tags: []
+    note: Preschools are not counted as schools.
+  - category: kindergarten
+    tags: []
+    note: education>place_of_learning>school>kindergarten is counted with preschools, not as a school (OpenStreetMap separates amenity=kindergarten from amenity=school).
+  - category: college_university
+    tags: [amenity=university]
+    merge_within_miles: 0.25
+    note: education>place_of_learning>college_university and its subtypes (business, law, medical schools). Facility row - a campus appears as many places (departments, buildings), so places within 0.25 miles of a kept one count as the same campus; a large campus can still count more than once.
+  - category: hospital
+    tags: [amenity=hospital]
+    merge_within_miles: 0.25
+    note: health_care>hospital and its subtypes (general, specialty, children's, psychiatric, veterans). Facility row - a hospital appears as many places (departments, clinics filed as hospital), so places within 0.25 miles of a kept one count as the same hospital; neighbouring hospitals closer than that count once.
+  - category: airport
+    tags: [aeroway=aerodrome]
+    merge_within_miles: 1.0
+    note: travel_and_transportation>air_transport_facility_or_service>airport. Facility row - an airport's grounds hold many places filed as airport, so places within 1 mile of a kept one count as the same airport (an airport is larger than a hospital, hence the larger distance).
+  - category: airport_terminal
+    tags: []
+    note: Part of an airport; not counted, so one airport is not counted several times.
+  - category: heliport
+    tags: []
+    note: Not an airport for travelers; not counted.
+  - category: seaplane_base
+    tags: []
+    note: Not counted as an airport.
+  - category: balloon_port
+    tags: []
+    note: Not counted as an airport.
+  - category: stadium_arena
+    tags: [leisure=stadium]
+    note: arts_and_entertainment>stadium_arena and its stadium and arena subtypes.
+  - category: train_station
+    tags: [railway=station, public_transport=station]
+    note: Rail stations carry both station tags (the profiles use either one).
+  - category: metro_station
+    tags: [railway=station, public_transport=station]
+    note: Metro stations are rail stations.
+  - category: light_rail_and_subway_station
+    tags: [railway=station, public_transport=station]
+    note: Light rail and subway stations are rail stations.
+  - category: bus_station
+    tags: [public_transport=station]
+    note: Bus stations are public transport stations but not rail stations.
+  - category: movie_theater
+    tags: [amenity=cinema]
+    note: arts_and_entertainment>movie_theater, including drive-in theaters.
+  - category: theatre_venue
+    tags: [amenity=theatre]
+    note: arts_and_entertainment>performing_arts_venue>theatre_venue, including dinner theaters.
+  - category: park
+    tags: [leisure=park]
+    note: sports_and_recreation>park, except the subtypes below that are not parks in the profile's sense.
+  - category: water_park
+    tags: []
+    note: A water park is an attraction, not a park; not counted as a park.
+  - category: dog_park
+    tags: []
+    note: Not counted as a park.
+  - category: playground
+    tags: []
+    note: Not counted as a park.
+  - category: national_park
+    tags: []
+    note: Protected areas are not neighborhood parks; not counted.
+  - category: mountain_bike_park
+    tags: []
+    note: Not counted as a park.
+  - category: museum
+    tags: [tourism=museum]
+    note: arts_and_entertainment>museum and its subtypes.
+  - category: zoo
+    tags: [tourism=zoo]
+    note: arts_and_entertainment>animal_attraction>zoo, including petting zoos.
+  - category: amusement_park
+    tags: [tourism=theme_park]
+    note: Approximate. arts_and_entertainment>amusement_attraction>amusement_park is counted as a theme park.
+  - category: corporate_or_business_office
+    tags: [office]
+    note: Approximate, both over- and under-counts. Counts corporate_or_business_office and its whole subtree, which in this release includes industry-named company categories (for example information_technology_company, pharmaceutical_company, plastics_company, industrial_company, bottled_water_company, tobacco_company); some of those places are plants, warehouses or depots rather than offices (an overcount). Government, legal, financial and other offices sit under other categories and are not counted (an undercount).
+
+# Profile tags with no Overture places category. They are left out of the counts, and the coverage report scales
+# the factor's coverage by the share of its tags that are mapped (fabric_base.FactorCoverage.definition_share).
+unmapped_profile_tags:
+  - tag: highway=motorway_junction
+    reason: Motorway junctions are road features (the Overture transportation theme), not places.
+  - tag: tourism=attraction
+    reason: The taxonomy has no general "tourist attraction" category; historic_site, amusement_attraction and other categories cover parts of it with a different meaning, so it is left unmapped rather than guessed.
+  - tag: tourism=viewpoint
+    reason: No viewpoint or scenic-lookout category appeared in the five metros' place hierarchies (2026-10-13).

@@ -126,9 +126,10 @@ def redactor_for_application(application: dict[str, Any]) -> PiiRedactor:
     known: list[str] = []
     people: list[str] = []
     applicant = application.get("applicant") or {}
-    if applicant.get("legal_name"):
-        known.append(applicant["legal_name"])
-        known.append(normalized_form(applicant["legal_name"], "organization"))
+    for key in ("legal_name", "business_name"):  # business_name: startup credit applications
+        if applicant.get(key):
+            known.append(applicant[key])
+            known.append(normalized_form(applicant[key], "organization"))
     for owner in application.get("owners") or []:
         name = owner.get("name")
         if not name:

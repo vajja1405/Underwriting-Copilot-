@@ -1,0 +1,1101 @@
+{
+ "action_checks": [
+  {
+   "action": "approve",
+   "allowed": false,
+   "needs_override_reason": false,
+   "reasons": [
+    "only a senior_underwriter may approve a startup file (NSP-9.1)",
+    "approval authority exceeded: underwriter may approve up to $0.00, this file is $250,000.00; refer it to a higher authority"
+   ]
+  },
+  {
+   "action": "decline",
+   "allowed": false,
+   "needs_override_reason": true,
+   "reasons": [
+    "only a senior_underwriter may decline (NBC-7.2 / HM-9.2)"
+   ]
+  },
+  {
+   "action": "refer",
+   "allowed": true,
+   "needs_override_reason": false,
+   "reasons": []
+  },
+  {
+   "action": "request_more_information",
+   "allowed": true,
+   "needs_override_reason": false,
+   "reasons": []
+  }
+ ],
+ "allowed_actions": [
+  "approve",
+  "decline",
+  "refer",
+  "request_more_information"
+ ],
+ "amount_label": "requested startup loan amount (USD)",
+ "applicant": "Harbor Express Wash LLC",
+ "approval_limits": {
+  "senior_underwriter": 500000.0,
+  "underwriter": 0.0
+ },
+ "authority_exposure": 250000.0,
+ "blocking_open": false,
+ "calculations": [
+  {
+   "calc_id": "CALC-startup_months_open",
+   "inputs": {
+    "planned_opening_date": "2027-02-28",
+    "submitted_date": "2026-09-30"
+   },
+   "label": "Months open on the submission date (0 = not open yet)",
+   "section_ids": [
+    "NSP-1.2"
+   ],
+   "unit": "months",
+   "value": 0.0
+  },
+  {
+   "calc_id": "CALC-startup_max_principal_experience_months",
+   "inputs": {
+    "owner_id": "O1",
+    "years_relevant_experience": 6.0
+   },
+   "label": "Most relevant experience of any principal (whole months)",
+   "section_ids": [
+    "NSP-2.1"
+   ],
+   "unit": "months",
+   "value": 72.0
+  },
+  {
+   "calc_id": "CALC-startup_min_principal_credit_score",
+   "inputs": {},
+   "label": "Lowest principal credit score",
+   "section_ids": [
+    "NSP-2.2"
+   ],
+   "unit": "score",
+   "value": 716.0
+  },
+  {
+   "calc_id": "CALC-startup_total_project_cost",
+   "inputs": {
+    "build_out": 110827.0,
+    "equipment": 98513.0,
+    "initial_inventory": 12314.0,
+    "other": 0.0,
+    "real_estate": 0.0,
+    "soft_costs": 24628.0,
+    "working_capital_reserve": 100940.0
+   },
+   "label": "Total project cost (sum of uses)",
+   "section_ids": [
+    "NSP-1.2",
+    "NSP-3.2"
+   ],
+   "unit": "usd",
+   "value": 347222.0
+  },
+  {
+   "calc_id": "CALC-startup_total_sources",
+   "inputs": {
+    "loan": 250000.0,
+    "other": 0.0,
+    "other_debt": 0,
+    "owner_cash_equity": 97222.0
+   },
+   "label": "Total sources of funds",
+   "section_ids": [
+    "NSP-3.2"
+   ],
+   "unit": "usd",
+   "value": 347222.0
+  },
+  {
+   "calc_id": "CALC-startup_equity_injection_pct",
+   "inputs": {
+    "owner_cash_equity": 97222.0,
+    "total_project_cost": 347222.0
+   },
+   "label": "Equity injection (owner cash equity / total project cost, percent)",
+   "section_ids": [
+    "NSP-3.1"
+   ],
+   "unit": "pct",
+   "value": 28.0
+  },
+  {
+   "calc_id": "CALC-startup_annual_debt_service",
+   "inputs": {
+    "note_rate_pct": 9.5,
+    "other_debt_annual_debt_service": 0.0,
+    "requested_amount": 250000.0,
+    "startup_loan_annual_debt_service": 38819.27,
+    "term_months": 120
+   },
+   "label": "Projected annual debt service (startup term loan plus other loans and seller notes)",
+   "section_ids": [
+    "NSP-1.2",
+    "NSP-4.1"
+   ],
+   "unit": "usd",
+   "value": 38819.27
+  },
+  {
+   "calc_id": "CALC-startup_projected_dscr",
+   "inputs": {
+    "annual_debt_service": 38819.27,
+    "noi_year2_p50": 212961.0
+   },
+   "label": "Projected DSCR (year 2 P50 NOI / projected annual debt service)",
+   "section_ids": [
+    "NSP-4.1"
+   ],
+   "unit": "ratio",
+   "value": 5.49
+  },
+  {
+   "calc_id": "CALC-startup_stressed_dscr_revenue",
+   "inputs": {
+    "annual_debt_service": 38819.27,
+    "revenue_year2_p50": 820000.0,
+    "stressed_noi": 48961.0
+   },
+   "label": "Projected DSCR after a 20% revenue stress (year 2 P50)",
+   "section_ids": [
+    "NSP-4.2"
+   ],
+   "unit": "ratio",
+   "value": 1.26
+  },
+  {
+   "calc_id": "CALC-startup_required_reserve",
+   "inputs": {
+    "annual_debt_service": 38819.27,
+    "monthly_fixed_costs": 22000.0,
+    "working_capital_reserve": 100940.0
+   },
+   "label": "Required working-capital reserve (3 months of fixed costs plus debt service)",
+   "section_ids": [
+    "NSP-5.1"
+   ],
+   "unit": "usd",
+   "value": 75704.82
+  },
+  {
+   "calc_id": "CALC-startup_reserve_months",
+   "inputs": {
+    "monthly_fixed_costs_plus_debt_service": 25234.94,
+    "working_capital_reserve": 100940.0
+   },
+   "label": "Working-capital reserve in months of fixed costs plus debt service",
+   "section_ids": [
+    "NSP-5.1"
+   ],
+   "unit": "months",
+   "value": 4.0
+  },
+  {
+   "calc_id": "CALC-startup_ownership_total_pct",
+   "inputs": {},
+   "label": "Disclosed ownership total (percent)",
+   "section_ids": [
+    "NSP-7.3",
+    "NBC-6.1"
+   ],
+   "unit": "pct",
+   "value": 100.0
+  }
+ ],
+ "checks_passed": [
+  {
+   "detail": "Requested startup term loan of $250,000.00 over 120 months is within the program limits ($50,000.00 to $500,000.00, 60 to 120 months).",
+   "evidence_ids": [
+    "APP-requested_amount",
+    "APP-term_months",
+    "APP-product"
+   ],
+   "rule": "product_limits",
+   "section_ids": [
+    "NSP-8.1"
+   ]
+  },
+  {
+   "detail": "The business has not opened yet (less than 24 months), so it qualifies as a startup.",
+   "evidence_ids": [
+    "CALC-startup_months_open"
+   ],
+   "rule": "startup_status",
+   "section_ids": [
+    "NSP-1.2"
+   ]
+  },
+  {
+   "detail": "Entity type llc is eligible (already formed).",
+   "evidence_ids": [
+    "APP-entity_type",
+    "APP-formation_date"
+   ],
+   "rule": "entity_type",
+   "section_ids": [
+    "NSP-2.4"
+   ]
+  },
+  {
+   "detail": "Industry code car_wash (business type car_wash) is neither prohibited nor restricted for startups.",
+   "evidence_ids": [
+    "APP-industry",
+    "APP-business_type"
+   ],
+   "rule": "industry_eligible",
+   "section_ids": [
+    "NSP-2.3"
+   ]
+  },
+  {
+   "detail": "Principal O1 has at least 24 months of relevant experience, evidenced by a resume and references in the file; the most experience of any principal is 72 months.",
+   "evidence_ids": [
+    "CALC-startup_max_principal_experience_months",
+    "APP-owners",
+    "APP-documents_provided"
+   ],
+   "rule": "owner_experience",
+   "section_ids": [
+    "NSP-2.1"
+   ]
+  },
+  {
+   "detail": "Lowest principal credit score is 716 (at least 680).",
+   "evidence_ids": [
+    "CALC-startup_min_principal_credit_score"
+   ],
+   "rule": "principal_credit_scores",
+   "section_ids": [
+    "NSP-2.2"
+   ]
+  },
+  {
+   "detail": "No principal had a bankruptcy within the last 7 years or has an unresolved tax lien.",
+   "evidence_ids": [
+    "APP-owners"
+   ],
+   "rule": "principal_history",
+   "section_ids": [
+    "NSP-2.2"
+   ]
+  },
+  {
+   "detail": "Every required document is in the file.",
+   "evidence_ids": [
+    "APP-documents_provided"
+   ],
+   "rule": "documents_complete",
+   "section_ids": [
+    "NSP-1.3"
+   ]
+  },
+  {
+   "detail": "Total sources equal total uses ($347,222.00), and the loan in the sources equals the requested amount.",
+   "evidence_ids": [
+    "CALC-startup_total_project_cost",
+    "CALC-startup_total_sources"
+   ],
+   "rule": "sources_and_uses",
+   "section_ids": [
+    "NSP-3.2"
+   ]
+  },
+  {
+   "detail": "Equity injection is 28.0% of total project cost (at least 20.0%).",
+   "evidence_ids": [
+    "CALC-startup_equity_injection_pct"
+   ],
+   "rule": "equity_injection",
+   "section_ids": [
+    "NSP-3.1"
+   ]
+  },
+  {
+   "detail": "Bank statements in the file verify the owner cash equity.",
+   "evidence_ids": [
+    "APP-sources_and_uses",
+    "APP-documents_provided"
+   ],
+   "rule": "equity_verified",
+   "section_ids": [
+    "NSP-3.1"
+   ]
+  },
+  {
+   "detail": "Projected DSCR is 5.49 (year 2 P50 NOI $212,961.00 / annual debt service $38,819.27), at or above the program minimum 1.25.",
+   "evidence_ids": [
+    "CALC-startup_projected_dscr",
+    "CALC-startup_annual_debt_service",
+    "APP-projections"
+   ],
+   "rule": "projected_dscr",
+   "section_ids": [
+    "NSP-4.1"
+   ]
+  },
+  {
+   "detail": "Revenue-stressed projected DSCR is 1.26 (at least 1.00).",
+   "evidence_ids": [
+    "CALC-startup_stressed_dscr_revenue"
+   ],
+   "rule": "stress_test_revenue",
+   "section_ids": [
+    "NSP-4.2"
+   ]
+  },
+  {
+   "detail": "No rate stress is required: the note rate is fixed.",
+   "evidence_ids": [
+    "APP-note_rate_pct"
+   ],
+   "rule": "stress_test_rate",
+   "section_ids": [
+    "NSP-4.2"
+   ]
+  },
+  {
+   "detail": "The projection lists 4 material assumptions, each with its status and a stated source.",
+   "evidence_ids": [
+    "APP-material_assumptions"
+   ],
+   "rule": "projection_assumptions",
+   "section_ids": [
+    "NSP-4.3"
+   ]
+  },
+  {
+   "detail": "Working-capital reserve $100,940.00 is at least the required $75,704.82 (3 months of fixed costs plus debt service).",
+   "evidence_ids": [
+    "CALC-startup_required_reserve",
+    "CALC-startup_reserve_months"
+   ],
+   "rule": "working_capital_reserve",
+   "section_ids": [
+    "NSP-5.1"
+   ]
+  },
+  {
+   "detail": "Every top driver (cars_per_day, average_ticket, monthly_rent) is backed by a supporting document in the file or has VERIFIED status.",
+   "evidence_ids": [
+    "APP-material_assumptions",
+    "APP-documents_provided"
+   ],
+   "rule": "material_assumptions_supported",
+   "section_ids": [
+    "NSP-6.1"
+   ]
+  },
+  {
+   "detail": "A request of $250,000.00 may be unsecured (not above $250,000.00).",
+   "evidence_ids": [
+    "APP-requested_amount"
+   ],
+   "rule": "collateral",
+   "section_ids": [
+    "NSP-7.1"
+   ]
+  },
+  {
+   "detail": "Every owner with 20% or more has signed a guarantee.",
+   "evidence_ids": [
+    "APP-owners"
+   ],
+   "rule": "guarantees",
+   "section_ids": [
+    "NSP-7.2"
+   ]
+  },
+  {
+   "detail": "Ownership adds up to 100.0% with one control person.",
+   "evidence_ids": [
+    "CALC-startup_ownership_total_pct"
+   ],
+   "rule": "ownership",
+   "section_ids": [
+    "NSP-7.3",
+    "NBC-6.1"
+   ]
+  },
+  {
+   "detail": "Every party (APPLICANT, O1, O2) was screened and none returned a potential match.",
+   "evidence_ids": [
+    "TR-1",
+    "TR-2",
+    "TR-3"
+   ],
+   "rule": "sanctions_screening_clear",
+   "section_ids": [
+    "NBC-6.3"
+   ]
+  },
+  {
+   "detail": "No instruction-like text was found in the free-text fields.",
+   "evidence_ids": [
+    "CHK-injection_screen"
+   ],
+   "rule": "no_embedded_instructions",
+   "section_ids": [
+    "NBC-9.2"
+   ]
+  }
+ ],
+ "cited_sections": [
+  "NSP-8.1",
+  "NSP-1.2",
+  "NSP-2.4",
+  "NSP-2.3",
+  "NSP-2.1",
+  "NSP-2.2",
+  "NSP-1.3",
+  "NSP-3.2",
+  "NSP-3.1",
+  "NSP-4.1",
+  "NSP-4.2",
+  "NSP-4.3",
+  "NSP-5.1",
+  "NSP-6.1",
+  "NSP-7.1",
+  "NSP-7.2",
+  "NSP-7.3",
+  "NBC-6.1",
+  "NBC-6.3",
+  "NBC-9.2"
+ ],
+ "decision": {
+  "action": "request_more_information",
+  "decided_at": "2026-10-13T23:44:51.354169+00:00",
+  "final_status": "more_information_requested_by_human",
+  "is_override": false,
+  "label": "DEMO",
+  "record_id": "DR-34b8d51237646bbdef254006",
+  "record_sha256": "5e936448efd6a97563aa38eebabfa8ce1d3171309ae7c87fca34c378a0d03adb",
+  "reviewer_role": "underwriter"
+ },
+ "evidence": {
+  "APP-business_type": {
+   "evidence_id": "APP-business_type",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Business type: car_wash",
+   "title": "Business type"
+  },
+  "APP-collateral": {
+   "evidence_id": "APP-collateral",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Collateral: none",
+   "title": "Collateral"
+  },
+  "APP-documents_provided": {
+   "evidence_id": "APP-documents_provided",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Documents provided: signed_application, business_plan, financial_projections, sources_and_uses_statement, personal_financial_statements, principal_photo_ids, formation_documents, beneficial_ownership_certification, equity_bank_statements, owner_resumes_and_references, lease_or_letter_of_intent, contractor_or_equipment_quotes",
+   "title": "Documents"
+  },
+  "APP-entity_type": {
+   "evidence_id": "APP-entity_type",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Entity type: llc",
+   "title": "Entity type"
+  },
+  "APP-formation_date": {
+   "evidence_id": "APP-formation_date",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Formation date: 2026-06-28",
+   "title": "Formation date"
+  },
+  "APP-industry": {
+   "evidence_id": "APP-industry",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Industry code: car_wash",
+   "title": "Industry"
+  },
+  "APP-material_assumptions": {
+   "evidence_id": "APP-material_assumptions",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "4 material assumptions: cars_per_day = 310 cars/day (ASSUMPTION; tornado rank 1; supporting document yes; source stated yes); average_ticket = 14 USD/car (USER_STATED; tornado rank 2; supporting document yes; source stated yes); monthly_rent = 7500 USD/month (USER_STATED; tornado rank 3; supporting document yes; source stated yes); labor_cost_share = 0.22 share (ASSUMPTION; tornado rank 4; supporting document no; source stated yes)",
+   "title": "Material assumptions"
+  },
+  "APP-metro_id": {
+   "evidence_id": "APP-metro_id",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Metro: synthetic_metro",
+   "title": "Metro"
+  },
+  "APP-note_rate_pct": {
+   "evidence_id": "APP-note_rate_pct",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Note rate: 9.50% (fixed)",
+   "title": "Note rate"
+  },
+  "APP-owners": {
+   "evidence_id": "APP-owners",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Owners: O1: person, 60.0%, control person, credit score 742, relevant experience 6 years (resume and references yes), guarantee signed yes; O2: person, 40.0%, credit score 716, relevant experience 3 years (resume and references yes), guarantee signed yes",
+   "title": "Owners"
+  },
+  "APP-planned_opening_date": {
+   "evidence_id": "APP-planned_opening_date",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Planned or actual opening date: 2027-02-28",
+   "title": "Opening date"
+  },
+  "APP-product": {
+   "evidence_id": "APP-product",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Product: startup_term_loan",
+   "title": "Product"
+  },
+  "APP-projections": {
+   "evidence_id": "APP-projections",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Projections: year 1: revenue P10 $492,000.00, P50 $615,000.00, P90 $707,250.00; NOI P10 $-57,918.00, P50 $95,832.00, P90 $157,332.00 | year 2: revenue P10 $656,000.00, P50 $820,000.00, P90 $943,000.00; NOI P10 $7,961.00, P50 $212,961.00, P90 $294,961.00 | year 3: revenue P10 $688,800.00, P50 $861,000.00, P90 $990,150.00; NOI P10 $14,748.00, P50 $229,998.00, P90 $316,098.00 | monthly fixed costs $22,000.00",
+   "title": "Projections"
+  },
+  "APP-purpose": {
+   "evidence_id": "APP-purpose",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Purpose: build_out_and_equipment",
+   "title": "Purpose"
+  },
+  "APP-requested_amount": {
+   "evidence_id": "APP-requested_amount",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Requested amount: $250,000.00",
+   "title": "Requested amount"
+  },
+  "APP-simulation": {
+   "evidence_id": "APP-simulation",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Simulation outputs: not provided",
+   "title": "Simulation outputs"
+  },
+  "APP-sources_and_uses": {
+   "evidence_id": "APP-sources_and_uses",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Uses: build_out $110,827.00, equipment $98,513.00, real_estate $0.00, initial_inventory $12,314.00, soft_costs $24,628.00, working_capital_reserve $100,940.00, other $0.00; total $347,222.00. Sources: loan $250,000.00, owner cash equity $97,222.00, other (not repaid) $0.00; total $347,222.00. Owner cash equity marked as verified by bank statements: yes",
+   "title": "Sources and uses"
+  },
+  "APP-state": {
+   "evidence_id": "APP-state",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "State of organization: TX",
+   "title": "State"
+  },
+  "APP-submitted_date": {
+   "evidence_id": "APP-submitted_date",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Submitted date: 2026-09-30",
+   "title": "Submitted date"
+  },
+  "APP-term_months": {
+   "evidence_id": "APP-term_months",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Term: 120 months",
+   "title": "Term"
+  },
+  "CALC-startup_annual_debt_service": {
+   "evidence_id": "CALC-startup_annual_debt_service",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Projected annual debt service (startup term loan plus other loans and seller notes) = 38819.27; inputs: requested_amount=250000.0, note_rate_pct=9.5, term_months=120, startup_loan_annual_debt_service=38819.27, other_debt_annual_debt_service=0.0",
+   "title": "Projected annual debt service (startup term loan plus other loans and seller notes)"
+  },
+  "CALC-startup_equity_injection_pct": {
+   "evidence_id": "CALC-startup_equity_injection_pct",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Equity injection (owner cash equity / total project cost, percent) = 28.0; inputs: owner_cash_equity=97222.0, total_project_cost=347222.0",
+   "title": "Equity injection (owner cash equity / total project cost, percent)"
+  },
+  "CALC-startup_max_principal_experience_months": {
+   "evidence_id": "CALC-startup_max_principal_experience_months",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Most relevant experience of any principal (whole months) = 72.0; inputs: owner_id=O1, years_relevant_experience=6.0",
+   "title": "Most relevant experience of any principal (whole months)"
+  },
+  "CALC-startup_min_principal_credit_score": {
+   "evidence_id": "CALC-startup_min_principal_credit_score",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Lowest principal credit score = 716.0; inputs: none",
+   "title": "Lowest principal credit score"
+  },
+  "CALC-startup_months_open": {
+   "evidence_id": "CALC-startup_months_open",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Months open on the submission date (0 = not open yet) = 0.0; inputs: planned_opening_date=2027-02-28, submitted_date=2026-09-30",
+   "title": "Months open on the submission date (0 = not open yet)"
+  },
+  "CALC-startup_ownership_total_pct": {
+   "evidence_id": "CALC-startup_ownership_total_pct",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Disclosed ownership total (percent) = 100.0; inputs: none",
+   "title": "Disclosed ownership total (percent)"
+  },
+  "CALC-startup_projected_dscr": {
+   "evidence_id": "CALC-startup_projected_dscr",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Projected DSCR (year 2 P50 NOI / projected annual debt service) = 5.49; inputs: noi_year2_p50=212961.0, annual_debt_service=38819.27",
+   "title": "Projected DSCR (year 2 P50 NOI / projected annual debt service)"
+  },
+  "CALC-startup_required_reserve": {
+   "evidence_id": "CALC-startup_required_reserve",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Required working-capital reserve (3 months of fixed costs plus debt service) = 75704.82; inputs: monthly_fixed_costs=22000.0, annual_debt_service=38819.27, working_capital_reserve=100940.0",
+   "title": "Required working-capital reserve (3 months of fixed costs plus debt service)"
+  },
+  "CALC-startup_reserve_months": {
+   "evidence_id": "CALC-startup_reserve_months",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Working-capital reserve in months of fixed costs plus debt service = 4.0; inputs: working_capital_reserve=100940.0, monthly_fixed_costs_plus_debt_service=25234.94",
+   "title": "Working-capital reserve in months of fixed costs plus debt service"
+  },
+  "CALC-startup_stressed_dscr_revenue": {
+   "evidence_id": "CALC-startup_stressed_dscr_revenue",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Projected DSCR after a 20% revenue stress (year 2 P50) = 1.26; inputs: stressed_noi=48961.0, revenue_year2_p50=820000.0, annual_debt_service=38819.27",
+   "title": "Projected DSCR after a 20% revenue stress (year 2 P50)"
+  },
+  "CALC-startup_total_project_cost": {
+   "evidence_id": "CALC-startup_total_project_cost",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Total project cost (sum of uses) = 347222.0; inputs: build_out=110827.0, equipment=98513.0, real_estate=0.0, initial_inventory=12314.0, soft_costs=24628.0, working_capital_reserve=100940.0, other=0.0",
+   "title": "Total project cost (sum of uses)"
+  },
+  "CALC-startup_total_sources": {
+   "evidence_id": "CALC-startup_total_sources",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Total sources of funds = 347222.0; inputs: loan=250000.0, owner_cash_equity=97222.0, other_debt=0, other=0.0",
+   "title": "Total sources of funds"
+  },
+  "CHK-injection_screen": {
+   "evidence_id": "CHK-injection_screen",
+   "flags": [],
+   "kind": "check",
+   "text": "Injection screen checked notes, applicant.business_name, applicant.site_description, owners.O1.name, owners.O2.name, material_assumptions.0.source, material_assumptions.1.source, material_assumptions.2.source, material_assumptions.3.source, material_assumptions.0.name, material_assumptions.0.unit, material_assumptions.1.name, material_assumptions.1.unit, material_assumptions.2.name, material_assumptions.2.unit, material_assumptions.3.name, material_assumptions.3.unit: no instruction-like text found.",
+   "title": "Injection screen"
+  },
+  "TR-1": {
+   "evidence_id": "TR-1",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "screen_entity for party APPLICANT: status clear; 0 candidate(s); screened against sdn.csv sha256 64be7a799105, alt.csv sha256 ff6075fc9635",
+   "title": "screen_entity result"
+  },
+  "TR-2": {
+   "evidence_id": "TR-2",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "screen_entity for party O1: status clear; 0 candidate(s); screened against sdn.csv sha256 64be7a799105, alt.csv sha256 ff6075fc9635",
+   "title": "screen_entity result"
+  },
+  "TR-3": {
+   "evidence_id": "TR-3",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "screen_entity for party O2: status clear; 0 candidate(s); screened against sdn.csv sha256 64be7a799105, alt.csv sha256 ff6075fc9635",
+   "title": "screen_entity result"
+  }
+ },
+ "findings": [],
+ "graph_version": "underwriting-graph-v1",
+ "guideline_search": {
+  "detail": "the agent did not call search_guidelines for this file",
+  "status": "not_called"
+ },
+ "id": "APP-S-001",
+ "injection_hits": [],
+ "label": "SYNTHETIC DEMO",
+ "line": "startup_credit",
+ "line_label": "Startup credit",
+ "memo": {
+  "reasons": [
+   {
+    "citations": [
+     "NSP-8.1",
+     "APP-requested_amount",
+     "APP-term_months",
+     "APP-product"
+    ],
+    "text": "Requested startup term loan of $250,000.00 over 120 months is within the program limits ($50,000.00 to $500,000.00, 60 to 120 months)."
+   },
+   {
+    "citations": [
+     "NSP-1.2",
+     "CALC-startup_months_open"
+    ],
+    "text": "The business has not opened yet (less than 24 months), so it qualifies as a startup."
+   },
+   {
+    "citations": [
+     "NSP-2.4",
+     "APP-entity_type",
+     "APP-formation_date"
+    ],
+    "text": "Entity type llc is eligible (already formed)."
+   },
+   {
+    "citations": [
+     "NSP-2.3",
+     "APP-industry",
+     "APP-business_type"
+    ],
+    "text": "Industry code car_wash (business type car_wash) is neither prohibited nor restricted for startups."
+   },
+   {
+    "citations": [
+     "NSP-2.1",
+     "CALC-startup_max_principal_experience_months",
+     "APP-owners",
+     "APP-documents_provided"
+    ],
+    "text": "Principal O1 has at least 24 months of relevant experience, evidenced by a resume and references in the file; the most experience of any principal is 72 months."
+   },
+   {
+    "citations": [
+     "NSP-2.2",
+     "CALC-startup_min_principal_credit_score"
+    ],
+    "text": "Lowest principal credit score is 716 (at least 680)."
+   },
+   {
+    "citations": [
+     "NSP-2.2",
+     "APP-owners"
+    ],
+    "text": "No principal had a bankruptcy within the last 7 years or has an unresolved tax lien."
+   },
+   {
+    "citations": [
+     "NSP-1.3",
+     "APP-documents_provided"
+    ],
+    "text": "Every required document is in the file."
+   },
+   {
+    "citations": [
+     "NSP-3.2",
+     "CALC-startup_total_project_cost",
+     "CALC-startup_total_sources"
+    ],
+    "text": "Total sources equal total uses ($347,222.00), and the loan in the sources equals the requested amount."
+   },
+   {
+    "citations": [
+     "NSP-3.1",
+     "CALC-startup_equity_injection_pct"
+    ],
+    "text": "Equity injection is 28.0% of total project cost (at least 20.0%)."
+   },
+   {
+    "citations": [
+     "NSP-3.1",
+     "APP-sources_and_uses",
+     "APP-documents_provided"
+    ],
+    "text": "Bank statements in the file verify the owner cash equity."
+   },
+   {
+    "citations": [
+     "NSP-4.1",
+     "CALC-startup_projected_dscr",
+     "CALC-startup_annual_debt_service",
+     "APP-projections"
+    ],
+    "text": "Projected DSCR is 5.49 (year 2 P50 NOI $212,961.00 / annual debt service $38,819.27), at or above the program minimum 1.25."
+   },
+   {
+    "citations": [
+     "NSP-4.2",
+     "CALC-startup_stressed_dscr_revenue"
+    ],
+    "text": "Revenue-stressed projected DSCR is 1.26 (at least 1.00)."
+   },
+   {
+    "citations": [
+     "NSP-4.2",
+     "APP-note_rate_pct"
+    ],
+    "text": "No rate stress is required: the note rate is fixed."
+   },
+   {
+    "citations": [
+     "NSP-4.3",
+     "APP-material_assumptions"
+    ],
+    "text": "The projection lists 4 material assumptions, each with its status and a stated source."
+   },
+   {
+    "citations": [
+     "NSP-5.1",
+     "CALC-startup_required_reserve",
+     "CALC-startup_reserve_months"
+    ],
+    "text": "Working-capital reserve $100,940.00 is at least the required $75,704.82 (3 months of fixed costs plus debt service)."
+   },
+   {
+    "citations": [
+     "NSP-6.1",
+     "APP-material_assumptions",
+     "APP-documents_provided"
+    ],
+    "text": "Every top driver (cars_per_day, average_ticket, monthly_rent) is backed by a supporting document in the file or has VERIFIED status."
+   },
+   {
+    "citations": [
+     "NSP-7.1",
+     "APP-requested_amount"
+    ],
+    "text": "A request of $250,000.00 may be unsecured (not above $250,000.00)."
+   },
+   {
+    "citations": [
+     "NSP-7.2",
+     "APP-owners"
+    ],
+    "text": "Every owner with 20% or more has signed a guarantee."
+   },
+   {
+    "citations": [
+     "NSP-7.3",
+     "NBC-6.1",
+     "CALC-startup_ownership_total_pct"
+    ],
+    "text": "Ownership adds up to 100.0% with one control person."
+   },
+   {
+    "citations": [
+     "NBC-6.3",
+     "TR-1",
+     "TR-2",
+     "TR-3"
+    ],
+    "text": "Every party (APPLICANT, O1, O2) was screened and none returned a potential match."
+   },
+   {
+    "citations": [
+     "NBC-9.2",
+     "CHK-injection_screen"
+    ],
+    "text": "No instruction-like text was found in the free-text fields."
+   }
+  ],
+  "recommendation": "approve",
+  "summary": "FAKE LLM \u2014 test mode: template memo restating the reference policy result (recommendation approve); no language model wrote this text. A human decides."
+ },
+ "memo_check": {
+  "issues": [],
+  "passed": true
+ },
+ "memo_note": "Template memo: it restates the reference policy's result with its citations. No language model wrote it and it costs nothing; it is stamped 'FAKE LLM \u2014 test mode'.",
+ "memo_status": "passed",
+ "memo_writer": "template",
+ "not_evaluated": [
+  {
+   "reason": "information only: the plan includes no simulation outputs",
+   "rule": "simulation_outputs",
+   "section_ids": [
+    "NSP-4.4"
+   ]
+  },
+  {
+   "reason": "not applicable: the Northwind credit risk model was not developed on startup loans (NSP-1.1), and the only credit model in this repository (uwcopilot.risk.credit) was trained on Lending Club loan outcomes, not on startup business loans; no probability of default is estimated, so model risk is UNKNOWN and score_risk is not called",
+   "rule": "risk_model_pd",
+   "section_ids": [
+    "NSP-1.1",
+    "NBC-8.1"
+   ]
+  },
+  {
+   "reason": "not implemented: the application has no field for business debt that exists before this loan or for loans taken in the last 90 days; only the loans and seller notes listed in the sources of funds are counted (NSP-1.2)",
+   "rule": "existing_business_debt_and_stacking",
+   "section_ids": [
+    "NSP-1.1",
+    "NBC-4.4"
+   ]
+  },
+  {
+   "reason": "not implemented: the application records bankruptcies and tax liens for principals only, not for the applicant entity",
+   "rule": "applicant_bankruptcy_and_tax_liens",
+   "section_ids": [
+    "NSP-2.2"
+   ]
+  },
+  {
+   "reason": "not implemented: needs ID documents and credit reports (document extraction, Phase 2)",
+   "rule": "identity_verification",
+   "section_ids": [
+    "NBC-6.2"
+   ]
+  },
+  {
+   "reason": "not implemented: needs the formation documents; only the application's own ownership total is checked",
+   "rule": "ownership_matches_formation_documents",
+   "section_ids": [
+    "NBC-6.1"
+   ]
+  },
+  {
+   "reason": "not implemented: no adverse-media or PEP input in the application",
+   "rule": "adverse_media_and_pep",
+   "section_ids": [
+    "NBC-6.4"
+   ]
+  },
+  {
+   "reason": "not implemented: needs the founder package documents and their metadata",
+   "rule": "document_integrity",
+   "section_ids": [
+    "NBC-9.1"
+   ]
+  },
+  {
+   "reason": "not implemented: an exception decision for the human approver, not a policy calculation",
+   "rule": "compensating_factors",
+   "section_ids": [
+    "NBC-4.3"
+   ]
+  },
+  {
+   "reason": "not implemented: checked at the human approval checkpoint, not by the policy",
+   "rule": "approval_authority",
+   "section_ids": [
+    "NSP-9.1",
+    "NBC-7.2"
+   ]
+  }
+ ],
+ "notice": "The copilot never decides \u2014 a person does.",
+ "override_reasons": [
+  "documented_compensating_factor",
+  "data_error_in_model_input",
+  "information_not_available_to_model",
+  "policy_exception_approved",
+  "referral_resolved_in_writing"
+ ],
+ "policy_version": "reference-policy-v1 (northwind_startup_program 2026.1 SYNTHETIC, with northwind_business_credit 2026.1)",
+ "recommendation_text": "The policy suggests: approve \u2014 you decide.",
+ "reference_recommendation": "approve",
+ "referral_targets": [],
+ "requested_amount": 250000.0,
+ "required_reviewer_role": "senior_underwriter",
+ "review_queue": "Senior Underwriter",
+ "risk_model": {
+  "detail": "the agent did not call score_risk for this file",
+  "status": "not_called"
+ },
+ "screening": {
+  "configured_lists": [
+   "ofac"
+  ],
+  "lists_used": [
+   {
+    "attribution": null,
+    "file_name": "sdn.csv",
+    "sha256": "64be7a7991059f59a2ebb43bc5dcc7e2951e1e27cbed8cbe41b0231b3a161946",
+    "snapshot_date": "2026-10-12",
+    "source": "OFAC"
+   },
+   {
+    "attribution": null,
+    "file_name": "alt.csv",
+    "sha256": "ff6075fc9635c5034475fa49c0c2e0e03300e1c9375771d75f99c4d4bf799c1b",
+    "snapshot_date": "2026-10-12",
+    "source": "OFAC"
+   }
+  ],
+  "note": "Screening finds possible matches only. A potential match always goes to a person; nothing here can clear or confirm one. The threshold was chosen on the full lists (OFAC + OpenSanctions); with fewer lists its accuracy is not measured.",
+  "results": [
+   {
+    "candidates": [],
+    "error": null,
+    "party_id": "APPLICANT",
+    "result_id": "TR-1",
+    "status": "clear",
+    "top_score": null
+   },
+   {
+    "candidates": [],
+    "error": null,
+    "party_id": "O1",
+    "result_id": "TR-2",
+    "status": "clear",
+    "top_score": null
+   },
+   {
+    "candidates": [],
+    "error": null,
+    "party_id": "O2",
+    "result_id": "TR-3",
+    "status": "clear",
+    "top_score": null
+   }
+  ]
+ },
+ "stamp": "FAKE LLM \u2014 test mode",
+ "tool_rejections": [],
+ "tool_results": [
+  {
+   "error": null,
+   "party_id": "APPLICANT",
+   "purpose": "sanctions screening of APPLICANT (applicant)",
+   "result_id": "TR-1",
+   "status": "ok",
+   "tool": "screen_entity"
+  },
+  {
+   "error": null,
+   "party_id": "O1",
+   "purpose": "sanctions screening of O1 (owner 60%)",
+   "result_id": "TR-2",
+   "status": "ok",
+   "tool": "screen_entity"
+  },
+  {
+   "error": null,
+   "party_id": "O2",
+   "purpose": "sanctions screening of O2 (owner 40%)",
+   "result_id": "TR-3",
+   "status": "ok",
+   "tool": "screen_entity"
+  }
+ ],
+ "your_reviewer_role": "underwriter"
+}

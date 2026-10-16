@@ -17,3 +17,5 @@ SYNTHETIC_LABEL = "SYNTHETIC"
 DISCLAIMER = "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions."
 # Shown next to every probability (Studio addendum rule E).
 SIMULATION_LABEL = "simulated, based on stated assumptions"
+# The percentile levels of a demand distribution handed from SiteIQ (S2) to the simulator (S3): 0%, 1%, ..., 100%.
+PERCENTILE_LEVELS: tuple[float, ...] = tuple(step / 100 for step in range(101))

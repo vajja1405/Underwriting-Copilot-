@@ -30,6 +30,9 @@ STATUS_SUFFIX = {
     "USER_STATED": " (stated by the applicant)",
     "ASSUMPTION": " (assumption)",
 }
+# An UNKNOWN claim carries a value only when that value was imputed (filled in, not read). The Phase 4 lender
+# ledger keeps imputed values out of value, but any other ledger that prints one gets this marker.
+IMPUTED_SUFFIX = " (imputed, not read from the documents)"
 FOOTNOTE_LINE = re.compile(r"^\[\^[a-z]\d+\]:.*$", re.MULTILINE)
 FOOTNOTE_MARKER = re.compile(r"\[\^[a-z]\d+\]")
 
@@ -138,7 +141,10 @@ def render(text: str, ledger: LedgerLike) -> RenderedMemo:
             footnote_numbers[slot_id] = len(footnote_numbers) + 1
             memo.claims_used.append(slot_id)
             memo.footnotes.append(f"[^c{footnote_numbers[slot_id]}]: {claim.label}: {claim.provenance_note()}")
-        shown = format_value(claim.value, claim.display) + STATUS_SUFFIX.get(claim.status, "")
+        suffix = STATUS_SUFFIX.get(claim.status, "")
+        if claim.status == "UNKNOWN" and claim.value is not None:
+            suffix = IMPUTED_SUFFIX
+        shown = format_value(claim.value, claim.display) + suffix
         return f"{shown}[^c{footnote_numbers[slot_id]}]"
 
     memo.body = SLOT.sub(replace, text)

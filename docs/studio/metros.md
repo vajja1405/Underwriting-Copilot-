@@ -2,11 +2,20 @@
 
 Written on 2026-10-12.
 
-> **Status: UNVERIFIED.** The ranking, the official metro titles, the states and the county lists below are NOT
-> confirmed. The Census Bureau hosts (www.census.gov, api.census.gov) are blocked in this build environment. The lead
-> engineer verified this on 2026-10-12, and a re-check the same day got HTTP 403 from the proxy for both hosts.
-> Everything marked UNVERIFIED must be confirmed when www.census.gov is reachable, before any S1 metro config is
-> final. No population number, rank or county code is written here from memory.
+> **Status update, 2026-10-13: the ranking, titles, states and county lists are now VERIFIED from Census files.**
+> `scripts/studio_fetch_delineation.py` (`make studio-metros`) read them on 2026-10-12 from www2.census.gov, which
+> answered once the network was opened:
+> - ranking: `results/studio_metro_ranking.json`, from the Population Estimates Program file
+>   `cbsa-est2025-alldata.csv` (column POPESTIMATE2025, metropolitan statistical areas only; SHA-256
+>   bf6fad83753456413d047d1acebeb434bd067eba9d6d0be62b3f737ad1301852, retrieved 2026-10-12 19:22 UTC). The five
+>   configured metros equal the top five (`configured_equals_top_five: true`);
+> - titles, states and counties: the July 2023 delineation file `list1_2023.xlsx` (SHA-256
+>   952c4b1e78acbb54e6ec9412434b7602fedacbf021736351a63c181bdb753629, retrieved 2026-10-12 19:22 UTC), written into
+>   each `config/studio/metros/<id>.yaml` with that record.
+>
+> The sections below keep the original S0 plan; where they said UNVERIFIED, the verified values are now given. The
+> plan's rationale claims in section 4 are still UNVERIFIED (no source has been cited for them). No population number,
+> rank or county code is written here from memory: every one is copied from the two files above.
 
 ## 1. Selection rule
 
@@ -44,21 +53,22 @@ Steps:
 4. For each of the five, take the official title and county list from the matching delineation file.
 5. Fill the tables in sections 5 and 6 and commit them with the citation.
 
-## 3. Expected list (UNVERIFIED)
+## 3. The list, verified (2026-10-12)
 
-This is the Studio plan's expected list, in the plan's order. The plan says S0 must confirm it; that was not possible
-here.
+The Studio plan's expected list, checked against the two Census files named in the status note. Rank and population
+are copied from `results/studio_metro_ranking.json`; titles, states and county counts from the metro configs.
 
-| Expected metro (title as written in the plan) | S1 config id (from the plan) | States (from the plan's title) | Status |
-|---|---|---|---|
-| New York-Newark-Jersey City | `new_york_ny_nj_pa` | NY, NJ, PA | UNVERIFIED - to confirm when www.census.gov is reachable (blocked in the build environment on 2026-10-12) |
-| Los Angeles-Long Beach-Anaheim | `los_angeles_ca` | CA | UNVERIFIED - same |
-| Chicago-Naperville-Elgin | `chicago_il_in` | IL, IN | UNVERIFIED - same |
-| Dallas-Fort Worth-Arlington | `dallas_fort_worth_tx` | TX | UNVERIFIED - same |
-| Houston-Pasadena-The Woodlands | `houston_tx` | TX | UNVERIFIED - same |
+| Rank (POPESTIMATE2025) | Official CBSA title (delineation, July 2023) | CBSA code | Config id | States (from the file) | Counties |
+|---|---|---|---|---|---|
+| 1 | New York-Newark-Jersey City, NY-NJ | 35620 | `new_york_ny_nj_pa` | NY, NJ | 22 |
+| 2 | Los Angeles-Long Beach-Anaheim, CA | 31080 | `los_angeles_ca` | CA | 2 |
+| 3 | Chicago-Naperville-Elgin, IL-IN | 16980 | `chicago_il_in` | IL, IN | 13 |
+| 4 | Dallas-Fort Worth-Arlington, TX | 19100 | `dallas_fort_worth_tx` | TX | 11 |
+| 5 | Houston-Pasadena-The Woodlands, TX | 26420 | `houston_tx` | TX | 10 |
 
-The plan lists them in this order, but the order is not a confirmed rank. The official titles may differ from the
-plan's wording; use the delineation file's titles.
+The plan expected New York to span NY, NJ and PA. The July 2023 delineation file lists CBSA 35620 with New York and
+New Jersey counties only, so the config's states are NY and NJ; the config id keeps "_pa" so links and results stay
+stable (renaming it is an owner decision).
 
 ## 4. What each metro is meant to test
 
@@ -78,19 +88,24 @@ the claim holds.
 The plan's summary, "together they span dense urban, sprawling car-dependent, multi-state and tourism-led markets",
 is also UNVERIFIED until these claims are sourced.
 
-## 5. Citation to fill (S1)
+## 5. Citation (filled 2026-10-13 from `results/studio_metro_ranking.json`)
 
 | Field | Value |
 |---|---|
-| Table name | to fill |
-| Vintage | to fill |
-| Release date | to fill |
-| URL | to fill |
-| Date accessed | to fill |
-| Top five MSAs (CBSA code, official title) | to fill |
-| Matches the expected list? | to fill |
+| Table name | Census Bureau Population Estimates Program, CBSA totals file `cbsa-est2025-alldata.csv` |
+| Vintage | Column ranked: POPESTIMATE2025 (the 2020-2025 series) |
+| Release date | not recorded by the script (the file was downloaded, not its release page) |
+| URL | https://www2.census.gov/programs-surveys/popest/datasets/2020-2025/metro/totals/cbsa-est2025-alldata.csv |
+| Date accessed | 2026-10-12 19:22 UTC (SHA-256 bf6fad83753456413d047d1acebeb434bd067eba9d6d0be62b3f737ad1301852) |
+| Top five MSAs (CBSA code, official title) | 35620 New York-Newark-Jersey City, NY-NJ; 31080 Los Angeles-Long Beach-Anaheim, CA; 16980 Chicago-Naperville-Elgin, IL-IN; 19100 Dallas-Fort Worth-Arlington, TX; 26420 Houston-Pasadena-The Woodlands, TX |
+| Matches the expected list? | Yes (`configured_equals_top_five: true`); New York's states are NY and NJ, not NY, NJ and PA |
 
-## 6. County FIPS table to fill (S1)
+## 6. County FIPS table (filled by script)
+
+The county rows are no longer copied into this page: `scripts/studio_fetch_delineation.py` wrote every county (state
+FIPS, county FIPS, name, central or outlying) into `config/studio/metros/<id>.yaml` from `list1_2023.xlsx`, with the
+file's URL, date and SHA-256 under `delineation`, and a test compares the configs with rows recorded from the file.
+The placeholder table below is kept only as the S0 plan's original layout.
 
 Source: the Census Bureau delineation file that matches the vintage above. One row per county. Do not fill from
 memory.

@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "excerpt of a response recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py; the unzipped text file's header and the first 6 rows with GEOID starting 48201",
+  "url": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2024_Gazetteer/2024_Gaz_tracts_national.zip",
+  "params": {},
+  "recorded_at_utc": "2026-10-12T19:38:50+00:00",
+  "content_type": "application/zip",
+  "body_sha256": "260fcf5313e38f288ef13ac06595fb6f38855d41dd06cdf7d1e2bc9ba9c108dc",
+  "full_body_sha256": "089cbeb3908833b73f7c8ea45fcc4498b788f70ab1242d87923e1762c274b5c7",
+  "body": "USPS\tGEOID\tALAND\tAWATER\tALAND_SQMI\tAWATER_SQMI\tINTPTLAT\tINTPTLONG                                                                                                                             \nTX\t48201100001\t2550360\t28976\t0.985\t0.011\t29.7547559\t-95.3621919                                                                                                                                         \nTX\t48201210400\t1811955\t0\t0.7\t0.\t29.7864417\t-95.3621992                                                                                                                                                  \nTX\t48201210500\t2154322\t0\t0.832\t0.\t29.7952549\t-95.3603917                                                                                                                                                \nTX\t48201210600\t2333778\t0\t0.901\t0.\t29.8070404\t-95.3653598                                                                                                                                                \nTX\t48201210700\t1133524\t0\t0.438\t0.\t29.8067305\t-95.3535208                                                                                                                                                \nTX\t48201210800\t3666258\t0\t1.416\t0.\t29.7943827\t-95.3450894                                                                                                                                                \n"
+}

@@ -7,6 +7,7 @@ from typing import Any
 
 import httpx
 import pytest
+import yaml
 
 import fetch_local_model as fetch
 from uwcopilot.common.paths import CONFIG_DIR
@@ -19,7 +20,12 @@ REPOSITORY = "ai/qwen2.5"
 TAG = "3B-Q4_K_M"
 
 
-def manifest_json(gguf_sha: str = GGUF_SHA, media_type: str = "application/vnd.oci.image.manifest.v1+json") -> dict:
+def manifest_json(
+    gguf_sha: str = GGUF_SHA,
+    media_type: str = "application/vnd.oci.image.manifest.v1+json",
+    license_sha: str = LICENSE_SHA,
+    license_size: int = len(LICENSE_BYTES),
+) -> dict:
     """An OCI manifest shaped like a Docker Hub model artifact (one GGUF layer and one license layer)."""
     return {
         "schemaVersion": 2,
@@ -27,7 +33,7 @@ def manifest_json(gguf_sha: str = GGUF_SHA, media_type: str = "application/vnd.o
         "config": {"mediaType": "application/vnd.docker.ai.model.config.v0.1+json", "size": 1, "digest": "x"},
         "layers": [
             {"mediaType": fetch.GGUF_MEDIA_TYPE, "size": len(GGUF_BYTES), "digest": f"sha256:{gguf_sha}"},
-            {"mediaType": fetch.LICENSE_MEDIA_TYPE, "size": len(LICENSE_BYTES), "digest": f"sha256:{LICENSE_SHA}"},
+            {"mediaType": fetch.LICENSE_MEDIA_TYPE, "size": license_size, "digest": f"sha256:{license_sha}"},
         ],
     }
 
@@ -74,6 +80,7 @@ def pinned(gguf_sha: str = GGUF_SHA) -> dict[str, Any]:
         "source": f"docker.io/{REPOSITORY}:{TAG}",
         "gguf_sha256": gguf_sha,
         "gguf_size_bytes": len(GGUF_BYTES),
+        "license_layer_sha256": LICENSE_SHA,
         "license_upstream_card": "Qwen Research License (per plan)",
     }
 
@@ -103,6 +110,8 @@ def test_real_config_pins_both_models() -> None:
     models = fetch.load_pinned_models(CONFIG_DIR / "generation_eval.yaml")
     assert models["qwen2.5-3b-instruct-q4km"]["gguf_size_bytes"] == 1929903008
     assert models["qwen2.5-1.5b-instruct-f16"]["gguf_size_bytes"] == 3093669376
+    for record in models.values():
+        assert record["license_layer_sha256"] == "609e2cb599f84aaa41d8ef29d8fdb04d164fab22e8d9292ca34a599d0f56a338"
     assert fetch.parse_source(models["qwen2.5-3b-instruct-q4km"]["source"]) == ("ai/qwen2.5", "3B-Q4_K_M")
 
 
@@ -138,6 +147,27 @@ def test_a_different_registry_digest_stops_before_download(tmp_path: Path) -> No
     with pytest.raises(fetch.FetchError, match="migration gate"):
         fetch.fetch_model(registry.client(), "qwen-test", pinned(), make_args(tmp_path))
     assert registry.blob_requests() == []
+
+
+@pytest.mark.parametrize("check_only", [True, False])
+def test_a_different_license_layer_stops_before_download(tmp_path: Path, check_only: bool) -> None:
+    other_license = b"---\ntitle: Qwen RESEARCH LICENSE AGREEMENT\n---\nResearch use only\n"
+    other_sha = hashlib.sha256(other_license).hexdigest()
+    registry = FakeRegistry(
+        manifest=manifest_json(license_sha=other_sha, license_size=len(other_license)),
+        blobs={GGUF_SHA: GGUF_BYTES, other_sha: other_license},
+    )
+    with pytest.raises(fetch.FetchError, match="license layer"):
+        fetch.fetch_model(registry.client(), "qwen-test", pinned(), make_args(tmp_path, check_only=check_only))
+    assert registry.blob_requests() == []
+
+
+def test_a_config_without_a_license_pin_is_refused(tmp_path: Path) -> None:
+    config = tmp_path / "generation_eval.yaml"
+    record = {key: value for key, value in pinned().items() if key != "license_layer_sha256"}
+    config.write_text(yaml.safe_dump({"models": {"qwen-test": record}}), encoding="utf-8")
+    with pytest.raises(fetch.FetchError, match="license_layer_sha256"):
+        fetch.load_pinned_models(config)
 
 
 def test_corrupted_download_is_rejected_and_removed(tmp_path: Path) -> None:

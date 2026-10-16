@@ -1,0 +1,152 @@
+{
+  "rule": "v1 metros = the five largest US metropolitan statistical areas by population in the latest Census Bureau estimates (Studio plan)",
+  "source": {
+    "publisher": "U.S. Census Bureau, Population Estimates Program",
+    "url": "https://www2.census.gov/programs-surveys/popest/datasets/2020-2025/metro/totals/cbsa-est2025-alldata.csv",
+    "file": "cbsa-est2025-alldata.csv",
+    "sha256": "bf6fad83753456413d047d1acebeb434bd067eba9d6d0be62b3f737ad1301852",
+    "retrieved_at_utc": "2026-10-12T19:22:08+00:00",
+    "column_ranked": "POPESTIMATE2025",
+    "rows_ranked": "CBSA totals with LSAD 'Metropolitan Statistical Area' (no division or county rows)"
+  },
+  "metropolitan_areas_ranked": 387,
+  "top": [
+    {
+      "rank": 1,
+      "cbsa_code": "35620",
+      "name": "New York-Newark-Jersey City, NY-NJ",
+      "population": 20112448
+    },
+    {
+      "rank": 2,
+      "cbsa_code": "31080",
+      "name": "Los Angeles-Long Beach-Anaheim, CA",
+      "population": 12844441
+    },
+    {
+      "rank": 3,
+      "cbsa_code": "16980",
+      "name": "Chicago-Naperville-Elgin, IL-IN",
+      "population": 9434123
+    },
+    {
+      "rank": 4,
+      "cbsa_code": "19100",
+      "name": "Dallas-Fort Worth-Arlington, TX",
+      "population": 8477157
+    },
+    {
+      "rank": 5,
+      "cbsa_code": "26420",
+      "name": "Houston-Pasadena-The Woodlands, TX",
+      "population": 7904627
+    },
+    {
+      "rank": 6,
+      "cbsa_code": "12060",
+      "name": "Atlanta-Sandy Springs-Roswell, GA",
+      "population": 6482182
+    },
+    {
+      "rank": 7,
+      "cbsa_code": "47900",
+      "name": "Washington-Arlington-Alexandria, DC-VA-MD-WV",
+      "population": 6465724
+    },
+    {
+      "rank": 8,
+      "cbsa_code": "33100",
+      "name": "Miami-Fort Lauderdale-West Palm Beach, FL",
+      "population": 6391072
+    },
+    {
+      "rank": 9,
+      "cbsa_code": "37980",
+      "name": "Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",
+      "population": 6329118
+    },
+    {
+      "rank": 10,
+      "cbsa_code": "38060",
+      "name": "Phoenix-Mesa-Chandler, AZ",
+      "population": 5228938
+    }
+  ],
+  "configured_metros": [
+    {
+      "metro_id": "chicago_il_in",
+      "cbsa_code": "16980",
+      "rank": 3
+    },
+    {
+      "metro_id": "dallas_fort_worth_tx",
+      "cbsa_code": "19100",
+      "rank": 4
+    },
+    {
+      "metro_id": "houston_tx",
+      "cbsa_code": "26420",
+      "rank": 5
+    },
+    {
+      "metro_id": "los_angeles_ca",
+      "cbsa_code": "31080",
+      "rank": 2
+    },
+    {
+      "metro_id": "new_york_ny_nj_pa",
+      "cbsa_code": "35620",
+      "rank": 1
+    }
+  ],
+  "configured_equals_top_five": true,
+  "provenance": {
+    "git_sha": "700a5b069a009ec1171884e60a7f5f0387e5cc89",
+    "git_dirty": true,
+    "generated_at_utc": "2026-10-12T19:22:22+00:00",
+    "generated_by": "scripts/studio_fetch_delineation.py",
+    "prompts": {},
+    "corpus_checksum": "not applicable (no retrieval corpus is used)",
+    "eval_sets": {},
+    "models": [],
+    "data_snapshots": {
+      "census_cbsa_delineation": {
+        "url": "https://www2.census.gov/programs-surveys/metro-micro/geographies/reference-files/2023/delineation-files/list1_2023.xlsx",
+        "sha256": "952c4b1e78acbb54e6ec9412434b7602fedacbf021736351a63c181bdb753629"
+      },
+      "census_pep_cbsa_totals": {
+        "url": "https://www2.census.gov/programs-surveys/popest/datasets/2020-2025/metro/totals/cbsa-est2025-alldata.csv",
+        "sha256": "bf6fad83753456413d047d1acebeb434bd067eba9d6d0be62b3f737ad1301852"
+      }
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        0.56,
+        0.9,
+        0.62
+      ],
+      "load_average_end": [
+        0.56,
+        0.9,
+        0.62
+      ]
+    }
+  },
+  "written_at_utc": "2026-10-12T19:22:22+00:00"
+}

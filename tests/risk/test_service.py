@@ -1,166 +1,25 @@
 """Tests for the scoring API (uwcopilot.risk.service).
 
-Every model here is a tiny one trained on SYNTHETIC data inside the test and saved to a temporary folder, so
-the tests need neither data/raw nor models/. The synthetic models' predictions mean nothing; the tests only
-check that the API serves them faithfully and enforces its rules.
+Every model here is a tiny one trained on SYNTHETIC data and saved to a temporary folder (the session fixtures in
+tests/risk/conftest.py), so the tests need neither data/raw nor models/. The synthetic models' predictions mean
+nothing; the tests only check that the API serves them faithfully and enforces its rules. The shared HTTP client
+against this app is tested in test_client_service_integration.py.
 """
 
 import json
 from pathlib import Path
 from typing import Any
 
-import httpx
 import numpy as np
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
+from risk_service_helpers import SYNTHETIC_CREDIT_VERSION, applicant_features, policy_features
 
 from uwcopilot.risk import credit, insurance
 from uwcopilot.risk.bands import assign_band
-from uwcopilot.risk.data.fremtpl2 import (
-    CATEGORICAL_FEATURES,
-    RATING_FEATURES,
-    prepare_fremtpl2,
-    severity_cap,
-    severity_table,
-    split_policies,
-    synthetic_fremtpl2_frames,
-)
-from uwcopilot.risk.data.lending_club import finished_loans, prepare_loans, synthetic_accepted_loans
-from uwcopilot.risk.scenario import build_feature_ranges
+from uwcopilot.risk.data.fremtpl2 import RATING_FEATURES
 from uwcopilot.risk.service import ModelRegistry, create_app, insurance_model_version
-
-FREQUENCY_PARAMS = {**insurance.FREQUENCY_LGBM_PARAMS, "min_data_in_leaf": 50, "num_threads": 1}
-SEVERITY_PARAMS = {**insurance.SEVERITY_LGBM_PARAMS, "min_data_in_leaf": 20, "num_threads": 1}
-
-
-# ---------------------------------------------------------------------------
-# Fixtures: tiny synthetic models saved to temporary folders
-# ---------------------------------------------------------------------------
-
-
-@pytest.fixture(scope="module")
-def insurance_data() -> dict[str, pd.DataFrame]:
-    """SYNTHETIC freMTPL2-shaped policies, split 60/20/20, plus severity tables."""
-    data = prepare_fremtpl2(*synthetic_fremtpl2_frames(n_policies=5000, seed=7))
-    splits = split_policies(data.policies, seed=42)
-    cap = severity_cap(data.claims.loc[data.claims["IDpol"].isin(splits["train"]["IDpol"]), "ClaimAmount"])
-    for name in ("train", "validation", "test"):
-        splits[f"severity_{name}"] = severity_table(splits[name], data.claims, cap)
-    return splits
-
-
-@pytest.fixture(scope="module")
-def insurance_bundle(insurance_data: dict[str, pd.DataFrame]) -> insurance.InsuranceModels:
-    """All four insurance models, with the metadata the training script writes (bands included)."""
-    bundle = insurance.InsuranceModels(
-        frequency_glm=insurance.fit_frequency_glm(insurance_data["train"], min_level_count=20),
-        frequency_lgbm=insurance.fit_frequency_lgbm(
-            insurance_data["train"],
-            insurance_data["validation"],
-            params=FREQUENCY_PARAMS,
-            max_rounds=200,
-            early_stopping_rounds=20,
-        ),
-        severity_glm=insurance.fit_severity_glm(insurance_data["severity_train"], min_level_count=10),
-        severity_lgbm=insurance.fit_severity_lgbm(
-            insurance_data["severity_train"],
-            insurance_data["severity_validation"],
-            params=SEVERITY_PARAMS,
-            max_rounds=100,
-            early_stopping_rounds=10,
-        ),
-        feature_ranges=build_feature_ranges(
-            insurance_data["train"][RATING_FEATURES], categorical_columns=CATEGORICAL_FEATURES
-        ),
-        metadata={},
-    )
-    preferred = {"frequency": "lgbm", "severity": "glm"}  # the same choice as the real run, so both paths run
-    bundle.metadata = {
-        "model_version": {
-            "frequency_lgbm": {"registered_model": "insurance_frequency_lgbm", "version": "7"},
-            "severity_lgbm": {"registered_model": "insurance_severity_lgbm", "version": "7"},
-            "label": "SYNTHETIC test bundle",
-        },
-        "git_commit": "0123456789abcdef",
-        "prediction_units": {"frequency": "claims per policy-year", "severity": "capped claim amount per claim"},
-        "preferred_model": preferred,
-        "risk_bands": insurance.risk_bands_for(bundle, insurance_data["train"], preferred),
-        "mlflow_runs": {"frequency": "run-frequency", "severity": "run-severity"},
-    }
-    return bundle
-
-
-@pytest.fixture(scope="module")
-def insurance_dir(tmp_path_factory: pytest.TempPathFactory, insurance_bundle: insurance.InsuranceModels) -> Path:
-    path = tmp_path_factory.mktemp("models") / "insurance"
-    insurance.save_models(insurance_bundle, path)
-    return path
-
-
-@pytest.fixture(scope="module")
-def credit_loans() -> pd.DataFrame:
-    return prepare_loans(synthetic_accepted_loans(n_rows=2500, seed=11))
-
-
-@pytest.fixture(scope="module")
-def credit_models(credit_loans: pd.DataFrame) -> credit.CreditModels:
-    """Credit models trained on SYNTHETIC Lending Club-shaped loans with small, fast settings."""
-    params = {**credit.DEFAULT_LGBM_PARAMS, "num_threads": 1, "min_data_in_leaf": 20, "num_leaves": 7}
-    config = credit.CreditConfig(
-        n_resamples=20,
-        shap_sample_size=100,
-        min_category_count=5,
-        lgbm_params=params,
-        max_boost_rounds=200,
-        early_stopping_rounds=20,
-    )
-    _, models = credit.run_credit_pipeline(credit_loans, config, dataset_label="SYNTHETIC test data")
-    models.metadata["model_version"] = "uwcopilot_credit_pd v1 (SYNTHETIC test)"
-    return models
-
-
-@pytest.fixture(scope="module")
-def credit_dir(tmp_path_factory: pytest.TempPathFactory, credit_models: credit.CreditModels) -> Path:
-    path = tmp_path_factory.mktemp("models") / "credit"
-    credit.save_credit_models(credit_models, path)
-    return path
-
-
-@pytest.fixture(scope="module")
-def client(credit_dir: Path, insurance_dir: Path) -> Any:
-    """API with every product loaded."""
-    with TestClient(create_app(credit_dir=credit_dir, insurance_dir=insurance_dir)) as test_client:
-        yield test_client
-
-
-@pytest.fixture(scope="module")
-def client_without_credit(tmp_path_factory: pytest.TempPathFactory, insurance_dir: Path) -> Any:
-    """API as it runs today: no credit model artifact (no Kaggle token), insurance models present."""
-    missing = tmp_path_factory.mktemp("empty") / "credit"
-    with TestClient(create_app(credit_dir=missing, insurance_dir=insurance_dir)) as test_client:
-        yield test_client
-
-
-def _policy(insurance_data: dict[str, pd.DataFrame], position: int = 0) -> dict[str, Any]:
-    """One synthetic test policy's rating features as JSON-ready Python values."""
-    row = insurance_data["test"].iloc[position]
-    return {name: row[name].item() if hasattr(row[name], "item") else row[name] for name in RATING_FEATURES}
-
-
-def _applicant(credit_loans: pd.DataFrame) -> dict[str, Any]:
-    """One synthetic finished training loan's features as JSON-ready values (NaN becomes None).
-
-    A training loan is inside every training range by construction, so the API must accept it.
-    """
-    train = credit.out_of_time_split(finished_loans(credit_loans))["train"]
-    row = train.iloc[0][credit.CREDIT_FEATURES].to_dict()
-    clean = {}
-    for name, value in row.items():
-        value = value.item() if hasattr(value, "item") else value
-        clean[name] = None if isinstance(value, float) and np.isnan(value) else value
-    return clean
-
 
 # ---------------------------------------------------------------------------
 # GET /health
@@ -197,7 +56,7 @@ def test_health_without_credit_model_says_why(client_without_credit: TestClient)
 def test_frequency_score_matches_the_model(
     client: TestClient, insurance_data: dict[str, pd.DataFrame], insurance_bundle: insurance.InsuranceModels
 ) -> None:
-    policy = _policy(insurance_data)
+    policy = policy_features(insurance_data)
     response = client.post("/score", json={"product": "insurance_frequency", "features": policy})
     assert response.status_code == 200, response.text
     body = response.json()
@@ -223,7 +82,7 @@ def test_frequency_score_matches_the_model(
 def test_severity_is_served_by_the_preferred_glm(
     client: TestClient, insurance_data: dict[str, pd.DataFrame], insurance_bundle: insurance.InsuranceModels
 ) -> None:
-    policy = _policy(insurance_data, position=3)
+    policy = policy_features(insurance_data, position=3)
     body = client.post("/score", json={"product": "insurance_severity", "features": policy}).json()
     expected = float(insurance_bundle.severity_glm.predict_rate(pd.DataFrame([policy]))[0])
     assert body["prediction"] == pytest.approx(expected)
@@ -240,7 +99,7 @@ def test_severity_is_served_by_the_preferred_glm(
 def test_override_of_the_same_value_changes_nothing(
     client: TestClient, insurance_data: dict[str, pd.DataFrame]
 ) -> None:
-    policy = _policy(insurance_data)
+    policy = policy_features(insurance_data)
     body = client.post(
         "/score",
         json={"product": "insurance_frequency", "features": policy, "overrides": {"BonusMalus": policy["BonusMalus"]}},
@@ -254,7 +113,7 @@ def test_override_of_the_same_value_changes_nothing(
 def test_scenario_returns_baseline_and_scenario_side_by_side(
     client: TestClient, insurance_data: dict[str, pd.DataFrame], insurance_bundle: insurance.InsuranceModels
 ) -> None:
-    policy = _policy(insurance_data)
+    policy = policy_features(insurance_data)
     worst = insurance_bundle.feature_ranges["BonusMalus"].max_value
     overrides = {"BonusMalus": worst, "Area": "F"}
     body = client.post(
@@ -284,7 +143,7 @@ def test_invalid_overrides_are_rejected_not_clipped(
 ) -> None:
     response = client.post(
         "/score",
-        json={"product": "insurance_frequency", "features": _policy(insurance_data), "overrides": overrides},
+        json={"product": "insurance_frequency", "features": policy_features(insurance_data), "overrides": overrides},
     )
     assert response.status_code == 422
     detail = response.json()["detail"]
@@ -293,7 +152,7 @@ def test_invalid_overrides_are_rejected_not_clipped(
 
 
 def test_invalid_insurance_features_are_rejected(client: TestClient, insurance_data: dict[str, pd.DataFrame]) -> None:
-    policy = _policy(insurance_data)
+    policy = policy_features(insurance_data)
     missing = {name: value for name, value in policy.items() if name != "Region"}
     cases = [
         ({**policy, "ClaimNb": 1}, "unknown features ['ClaimNb']"),  # an outcome column is never an input
@@ -311,7 +170,7 @@ def test_fractional_values_of_whole_number_features_are_rejected(
     client: TestClient, insurance_data: dict[str, pd.DataFrame], insurance_bundle: insurance.InsuranceModels
 ) -> None:
     """VehPower and DrivAge are whole numbers in training, so 6.5 is outside the evidence even if in range."""
-    policy = _policy(insurance_data)
+    policy = policy_features(insurance_data)
     ranges = insurance_bundle.feature_ranges
     assert ranges["VehPower"].integer_only and ranges["DrivAge"].integer_only
     fractional_power = ranges["VehPower"].min_value + 0.5
@@ -347,7 +206,9 @@ def test_unknown_product_and_extra_fields_are_rejected(client: TestClient) -> No
 def test_credit_returns_503_when_no_model_artifact(
     client_without_credit: TestClient, credit_loans: pd.DataFrame
 ) -> None:
-    response = client_without_credit.post("/score", json={"product": "credit", "features": _applicant(credit_loans)})
+    response = client_without_credit.post(
+        "/score", json={"product": "credit", "features": applicant_features(credit_loans)}
+    )
     assert response.status_code == 503
     detail = response.json()["detail"]
     assert detail["error"] == "model_unavailable" and detail["product"] == "credit"
@@ -358,7 +219,7 @@ def test_credit_returns_503_when_no_model_artifact(
 def test_leakage_guard_runs_even_without_a_credit_model(
     client_without_credit: TestClient, credit_loans: pd.DataFrame, which: str
 ) -> None:
-    applicant = _applicant(credit_loans)
+    applicant = applicant_features(credit_loans)
     request = {"product": "credit", "features": applicant}
     if which == "features":
         request["features"] = {**applicant, "total_pymnt": 1234.0}
@@ -372,7 +233,7 @@ def test_leakage_guard_runs_even_without_a_credit_model(
 def test_credit_score_matches_the_model(
     client: TestClient, credit_loans: pd.DataFrame, credit_models: credit.CreditModels
 ) -> None:
-    applicant = _applicant(credit_loans)
+    applicant = applicant_features(credit_loans)
     response = client.post("/score", json={"product": "credit", "features": applicant})
     assert response.status_code == 200, response.text
     body = response.json()
@@ -380,7 +241,7 @@ def test_credit_score_matches_the_model(
     assert body["prediction"] == pytest.approx(expected["pd"])
     assert body["risk_band"] == expected["risk_band"] == assign_band(expected["pd"], credit_models.risk_bands)
     assert body["model"] == credit_models.chosen
-    assert body["model_version"] == "uwcopilot_credit_pd v1 (SYNTHETIC test)"
+    assert body["model_version"] == SYNTHETIC_CREDIT_VERSION
     assert body["prediction_name"] == "probability_of_default"
     assert 0 < len(body["reason_codes"]) <= 4
     assert all(reason["reason"] == credit.REASON_MAP[reason["feature"]] for reason in body["reason_codes"])
@@ -398,7 +259,7 @@ def test_credit_score_matches_the_model(
 def test_credit_rejections(
     client: TestClient, credit_loans: pd.DataFrame, request_part: dict[str, Any], error: str
 ) -> None:
-    applicant = _applicant(credit_loans)
+    applicant = applicant_features(credit_loans)
     body = {"product": "credit", "features": {**applicant, **request_part.get("features_extra", {})}}
     if "overrides" in request_part:
         body["overrides"] = request_part["overrides"]
@@ -411,7 +272,7 @@ def test_invalid_credit_features_are_rejected(
     client: TestClient, credit_loans: pd.DataFrame, credit_models: credit.CreditModels
 ) -> None:
     """The base applicant gets the same checks as an override: nothing is filled in, nothing extrapolated."""
-    applicant = _applicant(credit_loans)
+    applicant = applicant_features(credit_loans)
     dti_max = credit_models.feature_ranges["dti"].max_value
     never_missing = next(
         name for name in credit.CREDIT_FEATURES if not credit_models.feature_ranges[name].missing_allowed
@@ -443,7 +304,7 @@ def test_credit_score_rejects_incomplete_features_directly(
 def test_credit_scenario_and_missing_values(
     client: TestClient, credit_loans: pd.DataFrame, credit_models: credit.CreditModels
 ) -> None:
-    applicant = _applicant(credit_loans)
+    applicant = applicant_features(credit_loans)
     assert credit_models.feature_ranges["mths_since_last_delinq"].missing_allowed
     applicant["mths_since_last_delinq"] = None  # missing in training too, so null is accepted and stays valid JSON
     dti_range = credit_models.feature_ranges["dti"]
@@ -501,46 +362,3 @@ def test_insurance_model_version_strings() -> None:
     assert insurance_model_version(metadata, "severity", "glm") == (
         "insurance_severity_glm (MLflow run abc, commit fedcba987654)"
     )
-
-
-# ---------------------------------------------------------------------------
-# The shared HTTP client against the real app (the contract the agent and the MCP server rely on)
-# ---------------------------------------------------------------------------
-
-
-def test_risk_api_client_round_trip_against_the_real_service(
-    client: TestClient, insurance_data: dict[str, pd.DataFrame], insurance_bundle: insurance.InsuranceModels
-) -> None:
-    """uwcopilot.risk.client talks to the real FastAPI app: baseline and scenario come back as tool responses.
-
-    An earlier client posted the tool model (with a scenario label the service forbids) and expected the tool model
-    back; this test fails on that version, so the two contracts cannot drift apart again.
-    """
-    from uwcopilot.risk.client import RiskApiClient
-    from uwcopilot.tools.schemas import RiskScoreRequest
-
-    class ForwardToTestClient(httpx.BaseTransport):
-        """An httpx transport that hands each request to the FastAPI TestClient (no network)."""
-
-        def handle_request(self, request: httpx.Request) -> httpx.Response:
-            answer = client.request(request.method, str(request.url), content=request.read(), headers=request.headers)
-            return httpx.Response(answer.status_code, headers=answer.headers, content=answer.content)
-
-    api = RiskApiClient("http://testserver", transport=ForwardToTestClient())
-    policy = _policy(insurance_data)
-    baseline = api.score(RiskScoreRequest(product="insurance_frequency", features=policy))
-    direct = client.post("/score", json={"product": "insurance_frequency", "features": policy}).json()
-    assert baseline.prediction == pytest.approx(direct["prediction"])
-    assert baseline.risk_band == direct["risk_band"] and baseline.scenario == "baseline"
-    assert [reason.description for reason in baseline.reason_codes] == [r["reason"] for r in direct["reason_codes"]]
-
-    worst = insurance_bundle.feature_ranges["BonusMalus"].max_value
-    stressed = api.score(
-        RiskScoreRequest(
-            product="insurance_frequency", features=policy, overrides={"BonusMalus": worst}, scenario="bonus_malus_max"
-        )
-    )
-    expected = float(insurance_bundle.frequency_lgbm.predict_rate(pd.DataFrame([{**policy, "BonusMalus": worst}]))[0])
-    assert stressed.prediction == pytest.approx(expected)
-    assert stressed.scenario == "bonus_malus_max"
-    assert stressed.model_version == direct["model_version"]

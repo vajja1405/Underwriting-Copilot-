@@ -1,0 +1,868 @@
+{
+ "action_checks": [
+  {
+   "action": "approve",
+   "allowed": true,
+   "needs_override_reason": false,
+   "reasons": []
+  },
+  {
+   "action": "decline",
+   "allowed": false,
+   "needs_override_reason": true,
+   "reasons": [
+    "only a senior_underwriter may decline (NBC-7.2 / HM-9.2)"
+   ]
+  },
+  {
+   "action": "refer",
+   "allowed": true,
+   "needs_override_reason": false,
+   "reasons": []
+  },
+  {
+   "action": "request_more_information",
+   "allowed": true,
+   "needs_override_reason": false,
+   "reasons": []
+  }
+ ],
+ "allowed_actions": [
+  "approve",
+  "decline",
+  "refer",
+  "request_more_information"
+ ],
+ "amount_label": "total insured value of the schedule (USD)",
+ "applicant": "Prairie Professional Offices LLC",
+ "approval_limits": {
+  "senior_underwriter": 15000000.0,
+  "underwriter": 5000000.0
+ },
+ "authority_exposure": 3223350.0,
+ "blocking_open": false,
+ "calculations": [
+  {
+   "calc_id": "CALC-schedule_tiv",
+   "inputs": {
+    "locations": 1
+   },
+   "label": "Schedule TIV (all locations)",
+   "section_ids": [
+    "HM-1.2",
+    "HM-5.2"
+   ],
+   "unit": "usd",
+   "value": 3223350.0
+  },
+  {
+   "calc_id": "CALC-loss_run_age_days",
+   "inputs": {
+    "proposed_effective_date": "2026-11-01",
+    "valued_as_of": "2026-10-02"
+   },
+   "label": "Days from loss run valuation to proposed effective date",
+   "section_ids": [
+    "HM-3.2"
+   ],
+   "unit": "days",
+   "value": 30.0
+  },
+  {
+   "calc_id": "CALC-incurred_difference_pct",
+   "inputs": {
+    "loss_run_claim_count": 2,
+    "loss_run_total_incurred": 11347.0,
+    "stated_claim_count": 2,
+    "stated_total_incurred": 11347.0
+   },
+   "label": "Difference between stated and loss-run total incurred (percent)",
+   "section_ids": [
+    "HM-3.3"
+   ],
+   "unit": "pct",
+   "value": 0.0
+  },
+  {
+   "calc_id": "CALC-loss_ratio_5yr_property",
+   "inputs": {
+    "covered_years": 5
+   },
+   "label": "Experience-period loss ratio, property (percent)",
+   "section_ids": [
+    "HM-4.1"
+   ],
+   "unit": "pct",
+   "value": 11.5
+  },
+  {
+   "calc_id": "CALC-max_annual_loss_ratio_property",
+   "inputs": {},
+   "label": "Highest annual loss ratio, property (percent)",
+   "section_ids": [
+    "HM-4.2"
+   ],
+   "unit": "pct",
+   "value": 60.0
+  },
+  {
+   "calc_id": "CALC-loss_ratio_5yr_general_liability",
+   "inputs": {
+    "covered_years": 5
+   },
+   "label": "Experience-period loss ratio, general liability (percent)",
+   "section_ids": [
+    "HM-4.1"
+   ],
+   "unit": "pct",
+   "value": 9.8
+  },
+  {
+   "calc_id": "CALC-max_annual_loss_ratio_general_liability",
+   "inputs": {},
+   "label": "Highest annual loss ratio, general liability (percent)",
+   "section_ids": [
+    "HM-4.2"
+   ],
+   "unit": "pct",
+   "value": 50.0
+  },
+  {
+   "calc_id": "CALC-claim_frequency",
+   "inputs": {
+    "claims_last_2_years": 0,
+    "claims_prior_3_years": 2,
+    "gl_claims_in_experience_period": 1,
+    "large_losses": 0,
+    "max_property_claims_in_12_months": 1
+   },
+   "label": "Claim frequency measures",
+   "section_ids": [
+    "HM-4.3"
+   ],
+   "unit": "count",
+   "value": 1.0
+  },
+  {
+   "calc_id": "CALC-tiv_difference_pct",
+   "inputs": {
+    "application_tiv": 3271700.0,
+    "schedule_tiv": 3223350.0
+   },
+   "label": "Difference between application TIV and schedule TIV (percent)",
+   "section_ids": [
+    "HM-5.2"
+   ],
+   "unit": "pct",
+   "value": 1.5
+  }
+ ],
+ "checks_passed": [
+  {
+   "detail": "Account TIV $3,223,350.00 and the limits are within capacity.",
+   "evidence_ids": [
+    "CALC-schedule_tiv"
+   ],
+   "rule": "capacity",
+   "section_ids": [
+    "HM-1.1"
+   ]
+  },
+  {
+   "detail": "Class code office is neither prohibited nor restricted.",
+   "evidence_ids": [
+    "APP-class_code"
+   ],
+   "rule": "class_eligible",
+   "section_ids": [
+    "HM-2.2",
+    "HM-2.3"
+   ]
+  },
+  {
+   "detail": "Every location meets the building age, wiring, roof (20 years or less) and protection class rules.",
+   "evidence_ids": [
+    "APP-locations"
+   ],
+   "rule": "building_eligibility",
+   "section_ids": [
+    "HM-2.1"
+   ]
+  },
+  {
+   "detail": "Every required document is in the submission.",
+   "evidence_ids": [
+    "APP-documents_provided"
+   ],
+   "rule": "documents_complete",
+   "section_ids": [
+    "HM-3.1"
+   ]
+  },
+  {
+   "detail": "Carrier loss runs valued 30 days before the effective date (90 or fewer).",
+   "evidence_ids": [
+    "CALC-loss_run_age_days"
+   ],
+   "rule": "loss_run_quality",
+   "section_ids": [
+    "HM-3.2"
+   ]
+  },
+  {
+   "detail": "Application claim count (2) and incurred total match the loss runs.",
+   "evidence_ids": [
+    "CALC-incurred_difference_pct"
+   ],
+   "rule": "loss_run_reconciliation",
+   "section_ids": [
+    "HM-3.3"
+   ]
+  },
+  {
+   "detail": "The property loss ratio is 11.5% (55.0% or less).",
+   "evidence_ids": [
+    "CALC-loss_ratio_5yr_property"
+   ],
+   "rule": "loss_ratio",
+   "section_ids": [
+    "HM-4.2"
+   ]
+  },
+  {
+   "detail": "The general liability loss ratio is 9.8% (55.0% or less).",
+   "evidence_ids": [
+    "CALC-loss_ratio_5yr_general_liability"
+   ],
+   "rule": "loss_ratio",
+   "section_ids": [
+    "HM-4.2"
+   ]
+  },
+  {
+   "detail": "1 property claims in any 12 months, 1 GL claims, no large loss, and no rising trend.",
+   "evidence_ids": [
+    "CALC-claim_frequency"
+   ],
+   "rule": "claim_frequency",
+   "section_ids": [
+    "HM-4.3"
+   ]
+  },
+  {
+   "detail": "Application TIV is within 1.5% of the schedule TIV (5.0% or less).",
+   "evidence_ids": [
+    "CALC-tiv_difference_pct",
+    "CALC-schedule_tiv"
+   ],
+   "rule": "tiv_reconciliation",
+   "section_ids": [
+    "HM-5.2"
+   ]
+  },
+  {
+   "detail": "No wind Tier 1 location above $5,000,000 TIV and no high wildfire hazard.",
+   "evidence_ids": [
+    "APP-locations"
+   ],
+   "rule": "catastrophe_exposure",
+   "section_ids": [
+    "HM-6.1",
+    "HM-6.2"
+   ]
+  },
+  {
+   "detail": "GL limits $1,000,000.00 / $2,000,000.00 are within the standard limits.",
+   "evidence_ids": [
+    "APP-gl_limits"
+   ],
+   "rule": "general_liability",
+   "section_ids": [
+    "HM-7.1"
+   ]
+  },
+  {
+   "detail": "Every party (APPLICANT, O1, O2) was screened and none returned a potential match.",
+   "evidence_ids": [
+    "TR-4",
+    "TR-5",
+    "TR-6"
+   ],
+   "rule": "sanctions_screening_clear",
+   "section_ids": [
+    "HM-8.2"
+   ]
+  },
+  {
+   "detail": "No instruction-like text was found in the free-text fields.",
+   "evidence_ids": [
+    "CHK-injection_screen"
+   ],
+   "rule": "no_embedded_instructions",
+   "section_ids": [
+    "HM-11.2"
+   ]
+  }
+ ],
+ "cited_sections": [
+  "HM-1.1",
+  "HM-2.2",
+  "HM-2.3",
+  "HM-2.1",
+  "HM-3.1",
+  "HM-3.2",
+  "HM-3.3",
+  "HM-4.2",
+  "HM-4.3",
+  "HM-5.2",
+  "HM-6.1",
+  "HM-6.2",
+  "HM-7.1",
+  "HM-8.2",
+  "HM-11.2",
+  "HM-9.4",
+  "HM-4.1",
+  "HM-9.3",
+  "HM-12.1"
+ ],
+ "decision": null,
+ "evidence": {
+  "APP-application_date": {
+   "evidence_id": "APP-application_date",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Application date: 2026-09-30",
+   "title": "Application date"
+  },
+  "APP-class_code": {
+   "evidence_id": "APP-class_code",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Class code: office",
+   "title": "Class"
+  },
+  "APP-coverage": {
+   "evidence_id": "APP-coverage",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Coverage requested: package",
+   "title": "Coverage"
+  },
+  "APP-documents_provided": {
+   "evidence_id": "APP-documents_provided",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Documents provided: signed_application, property_schedule, loss_runs, prior_carrier_history, beneficial_ownership_statement, revenue_and_payroll",
+   "title": "Documents"
+  },
+  "APP-gl_limits": {
+   "evidence_id": "APP-gl_limits",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "General liability limits: $1,000,000.00 per occurrence / $2,000,000.00 aggregate",
+   "title": "GL limits"
+  },
+  "APP-locations": {
+   "evidence_id": "APP-locations",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Locations: L1: masonry_non_combustible, built 1996, systems updated none recorded, roof 2018 (age 8 years at the effective date), 2 stories, 9,000 sq ft, sprinklered yes, protection class 4, knob-and-tube or fuse box no, building $2,223,000.00, contents $666,900.00, business income $333,450.00, TIV $3,223,350.00, building cost $247.00 per sq ft, wind tier 0, flood zone X, wildfire low, vacant 0 days",
+   "title": "Locations"
+  },
+  "APP-loss_runs": {
+   "evidence_id": "APP-loss_runs",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Loss runs: carrier produced yes, valued as of 2026-10-02, covered years 5, uncovered years 0 (explained yes) | policy year from 2020-11-01: property premium $11,862.00, GL premium $8,280.00; claims: property loss 2021-02-09 paid $7,117.00 reserve $0.00 incurred $7,117.00 | policy year from 2021-11-01: property premium $12,120.00, GL premium $8,460.00; claims: general_liability loss 2022-02-09 paid $4,230.00 reserve $0.00 incurred $4,230.00 | policy year from 2022-11-01: property premium $12,378.00, GL premium $8,640.00; claims: none | policy year from 2023-11-01: property premium $12,636.00, GL premium $8,820.00; claims: none | policy year from 2024-11-01: property premium $12,893.00, GL premium $9,000.00; claims: none",
+   "title": "Loss runs"
+  },
+  "APP-owners": {
+   "evidence_id": "APP-owners",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Owners: O1: person, 60.0%, control person; O2: person, 40.0%",
+   "title": "Owners"
+  },
+  "APP-prior_experience_years": {
+   "evidence_id": "APP-prior_experience_years",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Prior experience in the same operations: 0 years",
+   "title": "Prior experience"
+  },
+  "APP-proposed_effective_date": {
+   "evidence_id": "APP-proposed_effective_date",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Proposed effective date: 2026-11-01",
+   "title": "Effective date"
+  },
+  "APP-revenue_and_payroll": {
+   "evidence_id": "APP-revenue_and_payroll",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Annual revenue $1,800,000.00; annual payroll $630,000.00",
+   "title": "Revenue and payroll"
+  },
+  "APP-stated_losses": {
+   "evidence_id": "APP-stated_losses",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Application states 2 claims and $11,347.00 incurred",
+   "title": "Stated losses"
+  },
+  "APP-stated_tiv": {
+   "evidence_id": "APP-stated_tiv",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "TIV on the application: $3,271,700.00",
+   "title": "Application TIV"
+  },
+  "APP-subcontracting": {
+   "evidence_id": "APP-subcontracting",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Subcontracted work 0.0%; certificate-of-insurance tracking no; products sold outside the US no",
+   "title": "Subcontracting"
+  },
+  "APP-years_in_business": {
+   "evidence_id": "APP-years_in_business",
+   "flags": [],
+   "kind": "application_fact",
+   "text": "Years in business: 9",
+   "title": "Years in business"
+  },
+  "CALC-claim_frequency": {
+   "evidence_id": "CALC-claim_frequency",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Claim frequency measures = 1.0; inputs: max_property_claims_in_12_months=1, gl_claims_in_experience_period=1, large_losses=0, claims_last_2_years=0, claims_prior_3_years=2",
+   "title": "Claim frequency measures"
+  },
+  "CALC-incurred_difference_pct": {
+   "evidence_id": "CALC-incurred_difference_pct",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Difference between stated and loss-run total incurred (percent) = 0.0; inputs: stated_total_incurred=11347.0, loss_run_total_incurred=11347.0, stated_claim_count=2, loss_run_claim_count=2",
+   "title": "Difference between stated and loss-run total incurred (percent)"
+  },
+  "CALC-loss_ratio_5yr_general_liability": {
+   "evidence_id": "CALC-loss_ratio_5yr_general_liability",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Experience-period loss ratio, general liability (percent) = 9.8; inputs: covered_years=5",
+   "title": "Experience-period loss ratio, general liability (percent)"
+  },
+  "CALC-loss_ratio_5yr_property": {
+   "evidence_id": "CALC-loss_ratio_5yr_property",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Experience-period loss ratio, property (percent) = 11.5; inputs: covered_years=5",
+   "title": "Experience-period loss ratio, property (percent)"
+  },
+  "CALC-loss_run_age_days": {
+   "evidence_id": "CALC-loss_run_age_days",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Days from loss run valuation to proposed effective date = 30.0; inputs: valued_as_of=2026-10-02, proposed_effective_date=2026-11-01",
+   "title": "Days from loss run valuation to proposed effective date"
+  },
+  "CALC-max_annual_loss_ratio_general_liability": {
+   "evidence_id": "CALC-max_annual_loss_ratio_general_liability",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Highest annual loss ratio, general liability (percent) = 50.0; inputs: none",
+   "title": "Highest annual loss ratio, general liability (percent)"
+  },
+  "CALC-max_annual_loss_ratio_property": {
+   "evidence_id": "CALC-max_annual_loss_ratio_property",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Highest annual loss ratio, property (percent) = 60.0; inputs: none",
+   "title": "Highest annual loss ratio, property (percent)"
+  },
+  "CALC-schedule_tiv": {
+   "evidence_id": "CALC-schedule_tiv",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Schedule TIV (all locations) = 3223350.0; inputs: locations=1",
+   "title": "Schedule TIV (all locations)"
+  },
+  "CALC-tiv_difference_pct": {
+   "evidence_id": "CALC-tiv_difference_pct",
+   "flags": [],
+   "kind": "calculation",
+   "text": "Difference between application TIV and schedule TIV (percent) = 1.5; inputs: application_tiv=3271700.0, schedule_tiv=3223350.0",
+   "title": "Difference between application TIV and schedule TIV (percent)"
+  },
+  "CHK-injection_screen": {
+   "evidence_id": "CHK-injection_screen",
+   "flags": [],
+   "kind": "check",
+   "text": "Injection screen checked notes, applicant.legal_name, owners.O1.name, owners.O2.name: no instruction-like text found.",
+   "title": "Injection screen"
+  },
+  "TR-1": {
+   "evidence_id": "TR-1",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "search_guidelines query 'eligibility of a professional office account: prohibited or restricted class': HM-9.4 (rank 1), HM-2.2 (rank 2), HM-2.3 (rank 3)",
+   "title": "search_guidelines result"
+  },
+  "TR-2": {
+   "evidence_id": "TR-2",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "search_guidelines query 'loss ratio thresholds, claim frequency and large loss referrals': HM-4.3 (rank 1), HM-4.2 (rank 2), HM-4.1 (rank 3)",
+   "title": "search_guidelines result"
+  },
+  "TR-3": {
+   "evidence_id": "TR-3",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "search_guidelines query 'sanctions screening potential match escalation and who can disposition it': HM-8.2 (rank 1), HM-9.3 (rank 2), HM-12.1 (rank 3)",
+   "title": "search_guidelines result"
+  },
+  "TR-4": {
+   "evidence_id": "TR-4",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "screen_entity for party APPLICANT: status clear; 0 candidate(s); screened against sdn.csv sha256 64be7a799105, alt.csv sha256 ff6075fc9635",
+   "title": "screen_entity result"
+  },
+  "TR-5": {
+   "evidence_id": "TR-5",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "screen_entity for party O1: status clear; 0 candidate(s); screened against sdn.csv sha256 64be7a799105, alt.csv sha256 ff6075fc9635",
+   "title": "screen_entity result"
+  },
+  "TR-6": {
+   "evidence_id": "TR-6",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "screen_entity for party O2: status clear; 0 candidate(s); screened against sdn.csv sha256 64be7a799105, alt.csv sha256 ff6075fc9635",
+   "title": "screen_entity result"
+  },
+  "TR-7": {
+   "evidence_id": "TR-7",
+   "flags": [],
+   "kind": "tool_result",
+   "text": "score_risk (risk model score (baseline)): unavailable - UWC_RISK_API_URL is not set, so the risk scoring service was not called. No score was produced.",
+   "title": "score_risk result"
+  }
+ },
+ "findings": [],
+ "graph_version": "underwriting-graph-v1",
+ "guideline_search": {
+  "detail": "3 call(s) answered",
+  "status": "ok"
+ },
+ "id": "APP-I-001",
+ "injection_hits": [],
+ "label": "SYNTHETIC DEMO",
+ "line": "insurance",
+ "line_label": "Commercial insurance",
+ "memo": {
+  "reasons": [
+   {
+    "citations": [
+     "HM-1.1",
+     "CALC-schedule_tiv"
+    ],
+    "text": "Account TIV $3,223,350.00 and the limits are within capacity."
+   },
+   {
+    "citations": [
+     "HM-2.2",
+     "HM-2.3",
+     "APP-class_code"
+    ],
+    "text": "Class code office is neither prohibited nor restricted."
+   },
+   {
+    "citations": [
+     "HM-2.1",
+     "APP-locations"
+    ],
+    "text": "Every location meets the building age, wiring, roof (20 years or less) and protection class rules."
+   },
+   {
+    "citations": [
+     "HM-3.1",
+     "APP-documents_provided"
+    ],
+    "text": "Every required document is in the submission."
+   },
+   {
+    "citations": [
+     "HM-3.2",
+     "CALC-loss_run_age_days"
+    ],
+    "text": "Carrier loss runs valued 30 days before the effective date (90 or fewer)."
+   },
+   {
+    "citations": [
+     "HM-3.3",
+     "CALC-incurred_difference_pct"
+    ],
+    "text": "Application claim count (2) and incurred total match the loss runs."
+   },
+   {
+    "citations": [
+     "HM-4.2",
+     "CALC-loss_ratio_5yr_property"
+    ],
+    "text": "The property loss ratio is 11.5% (55.0% or less)."
+   },
+   {
+    "citations": [
+     "HM-4.2",
+     "CALC-loss_ratio_5yr_general_liability"
+    ],
+    "text": "The general liability loss ratio is 9.8% (55.0% or less)."
+   },
+   {
+    "citations": [
+     "HM-4.3",
+     "CALC-claim_frequency"
+    ],
+    "text": "1 property claims in any 12 months, 1 GL claims, no large loss, and no rising trend."
+   },
+   {
+    "citations": [
+     "HM-5.2",
+     "CALC-tiv_difference_pct",
+     "CALC-schedule_tiv"
+    ],
+    "text": "Application TIV is within 1.5% of the schedule TIV (5.0% or less)."
+   },
+   {
+    "citations": [
+     "HM-6.1",
+     "HM-6.2",
+     "APP-locations"
+    ],
+    "text": "No wind Tier 1 location above $5,000,000 TIV and no high wildfire hazard."
+   },
+   {
+    "citations": [
+     "HM-7.1",
+     "APP-gl_limits"
+    ],
+    "text": "GL limits $1,000,000.00 / $2,000,000.00 are within the standard limits."
+   },
+   {
+    "citations": [
+     "HM-8.2",
+     "TR-4",
+     "TR-5",
+     "TR-6"
+    ],
+    "text": "Every party (APPLICANT, O1, O2) was screened and none returned a potential match."
+   },
+   {
+    "citations": [
+     "HM-11.2",
+     "CHK-injection_screen"
+    ],
+    "text": "No instruction-like text was found in the free-text fields."
+   }
+  ],
+  "recommendation": "approve",
+  "summary": "FAKE LLM \u2014 test mode: template memo restating the reference policy result (recommendation approve); no language model wrote this text. A human decides."
+ },
+ "memo_check": {
+  "issues": [],
+  "passed": true
+ },
+ "memo_note": "Template memo: it restates the reference policy's result with its citations. No language model wrote it and it costs nothing; it is stamped 'FAKE LLM \u2014 test mode'.",
+ "memo_status": "passed",
+ "memo_writer": "template",
+ "not_evaluated": [
+  {
+   "reason": "not implemented: needs a state business registry lookup (not available offline)",
+   "rule": "named_insured_verification",
+   "section_ids": [
+    "HM-8.1"
+   ]
+  },
+  {
+   "reason": "not implemented: no adverse-media input in the structured submission",
+   "rule": "adverse_media",
+   "section_ids": [
+    "HM-8.3"
+   ]
+  },
+  {
+   "reason": "not implemented: needs document metadata and versions (document extraction, Phase 2)",
+   "rule": "other_document_integrity",
+   "section_ids": [
+    "HM-11.1"
+   ]
+  },
+  {
+   "reason": "not implemented: the submission has no quoted premium to compare with the model indication",
+   "rule": "premium_deviation",
+   "section_ids": [
+    "HM-10.1"
+   ]
+  },
+  {
+   "reason": "not implemented: needs Harborline's portfolio aggregate by county",
+   "rule": "tier1_county_aggregate",
+   "section_ids": [
+    "HM-6.1"
+   ]
+  },
+  {
+   "reason": "not implemented: needs earthquake zones and a catastrophe model",
+   "rule": "earthquake_and_pml",
+   "section_ids": [
+    "HM-6.2"
+   ]
+  },
+  {
+   "reason": "not implemented: needs the written cause-of-loss descriptions (documents)",
+   "rule": "large_loss_descriptions",
+   "section_ids": [
+    "HM-3.3"
+   ]
+  },
+  {
+   "reason": "not implemented: checked at the human approval checkpoint, not by the policy",
+   "rule": "underwriting_authority",
+   "section_ids": [
+    "HM-9.2"
+   ]
+  }
+ ],
+ "notice": "The copilot never decides \u2014 a person does.",
+ "override_reasons": [
+  "documented_compensating_factor",
+  "data_error_in_model_input",
+  "information_not_available_to_model",
+  "policy_exception_approved",
+  "referral_resolved_in_writing"
+ ],
+ "policy_version": "reference-policy-v1 (northwind_business_credit 2026.1, harborline_mutual_commercial 2026.1)",
+ "recommendation_text": "The policy suggests: approve \u2014 you decide.",
+ "reference_recommendation": "approve",
+ "referral_targets": [],
+ "requested_amount": 3223350.0,
+ "required_reviewer_role": "underwriter",
+ "review_queue": "Underwriter",
+ "risk_model": {
+  "detail": "UWC_RISK_API_URL is not set, so the risk scoring service was not called. No score was produced.",
+  "status": "unavailable"
+ },
+ "screening": {
+  "configured_lists": [
+   "ofac"
+  ],
+  "lists_used": [
+   {
+    "attribution": null,
+    "file_name": "sdn.csv",
+    "sha256": "64be7a7991059f59a2ebb43bc5dcc7e2951e1e27cbed8cbe41b0231b3a161946",
+    "snapshot_date": "2026-10-12",
+    "source": "OFAC"
+   },
+   {
+    "attribution": null,
+    "file_name": "alt.csv",
+    "sha256": "ff6075fc9635c5034475fa49c0c2e0e03300e1c9375771d75f99c4d4bf799c1b",
+    "snapshot_date": "2026-10-12",
+    "source": "OFAC"
+   }
+  ],
+  "note": "Screening finds possible matches only. A potential match always goes to a person; nothing here can clear or confirm one. The threshold was chosen on the full lists (OFAC + OpenSanctions); with fewer lists its accuracy is not measured.",
+  "results": [
+   {
+    "candidates": [],
+    "error": null,
+    "party_id": "APPLICANT",
+    "result_id": "TR-4",
+    "status": "clear",
+    "top_score": null
+   },
+   {
+    "candidates": [],
+    "error": null,
+    "party_id": "O1",
+    "result_id": "TR-5",
+    "status": "clear",
+    "top_score": null
+   },
+   {
+    "candidates": [],
+    "error": null,
+    "party_id": "O2",
+    "result_id": "TR-6",
+    "status": "clear",
+    "top_score": null
+   }
+  ]
+ },
+ "stamp": "FAKE LLM \u2014 test mode",
+ "tool_rejections": [],
+ "tool_results": [
+  {
+   "error": null,
+   "party_id": null,
+   "purpose": "guideline search",
+   "result_id": "TR-1",
+   "status": "ok",
+   "tool": "search_guidelines"
+  },
+  {
+   "error": null,
+   "party_id": null,
+   "purpose": "guideline search",
+   "result_id": "TR-2",
+   "status": "ok",
+   "tool": "search_guidelines"
+  },
+  {
+   "error": null,
+   "party_id": null,
+   "purpose": "guideline search",
+   "result_id": "TR-3",
+   "status": "ok",
+   "tool": "search_guidelines"
+  },
+  {
+   "error": null,
+   "party_id": "APPLICANT",
+   "purpose": "sanctions screening of APPLICANT (applicant)",
+   "result_id": "TR-4",
+   "status": "ok",
+   "tool": "screen_entity"
+  },
+  {
+   "error": null,
+   "party_id": "O1",
+   "purpose": "sanctions screening of O1 (owner 60%)",
+   "result_id": "TR-5",
+   "status": "ok",
+   "tool": "screen_entity"
+  },
+  {
+   "error": null,
+   "party_id": "O2",
+   "purpose": "sanctions screening of O2 (owner 40%)",
+   "result_id": "TR-6",
+   "status": "ok",
+   "tool": "screen_entity"
+  },
+  {
+   "error": "UWC_RISK_API_URL is not set, so the risk scoring service was not called. No score was produced.",
+   "party_id": null,
+   "purpose": "risk model score (baseline)",
+   "result_id": "TR-7",
+   "status": "unavailable",
+   "tool": "score_risk"
+  }
+ ],
+ "your_reviewer_role": "underwriter"
+}

@@ -43,6 +43,17 @@ DEVELOPMENT_NOTE = (
     "citations, soft line wraps, table header binding). The fixes were general, but the mutation set is not a "
     "held-out test, and the same author wrote the guidelines, the reference-sentence rules and the mutations."
 )
+MUTATION_SET_NOTE = (
+    "Regenerated with scripts/make_mutations.py (seed 42) on 2026-10-13: the number normalizer now reads duration "
+    "qualifiers ('12 consecutive months' is 12 months, not a count of 12), which changes the units of some section "
+    "numbers and so the seeded draws. The reference sentences did not change. The checker fixes made at the same time "
+    "(duration qualifiers, comparator ownership, table header binding) came from answer sentences found in the S1b "
+    "review, and the later ones (coordinated values share a comparator, fraction words before a scale word) from a "
+    "code review of those fixes; none came from this mutation set. Results written before 2026-10-13 were measured on "
+    "the previous set (sha256 480af16a17cbfa4cd8fecca8fd6e9003cdb55175fcd5ae7d073a09ad3889e1d1, 791 mutations), so a "
+    "before/after comparison across that date mixes a set change with checker changes. A checker-only comparison on "
+    "one set is not measured by any committed script."
+)
 
 
 def read_jsonl(path: Path) -> list[dict]:
@@ -88,6 +99,7 @@ def build_report(run: RunProvenance) -> dict:
         "comparator_unverifiable": comparator_unverifiable_share(mutations, sections),
         "known_blind_spot": "wrong_row: a value from another row of the same cited table looks traceable",
         "development_note": DEVELOPMENT_NOTE,
+        "mutation_set_note": MUTATION_SET_NOTE,
     }
     return {
         "data_label": "SYNTHETIC guidelines (corpus/guidelines); no LLM call was made by this script",

@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "excerpt of a response recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py; rows kept: area_fips in ['C1698', 'C1910', 'C2642', 'C3108', 'C3562']",
+  "url": "https://data.bls.gov/cew/doc/titles/area/area_titles.csv",
+  "params": {},
+  "recorded_at_utc": "2026-10-12T19:38:49+00:00",
+  "content_type": "text/csv",
+  "body_sha256": "66b16547a69be9383f56abab65967032bb20bf1f29329786b75f743103ad6547",
+  "full_body_sha256": "92ec00f591bd986cd46e027a05e35b33b0d2d724f3b76c96969f0e73145698d6",
+  "body": "area_fips,area_title\nC1698,\"Chicago-Naperville-Elgin, IL-IN MSA\"\nC1910,\"Dallas-Fort Worth-Arlington, TX MSA\"\nC2642,\"Houston-Pasadena-The Woodlands, TX MSA\"\nC3108,\"Los Angeles-Long Beach-Anaheim, CA MSA\"\nC3562,\"New York-Newark-Jersey City, NY-NJ MSA\"\nC1698,\"Chicago-Naperville-Elgin, IL-IN MSA\"\nC1910,\"Dallas-Fort Worth-Arlington, TX MSA\"\nC2642,\"Houston-Pasadena-The Woodlands, TX MSA\"\nC3108,\"Los Angeles-Long Beach-Anaheim, CA MSA\"\nC3562,\"New York-Newark-Jersey City, NY-NJ MSA\"\n"
+}

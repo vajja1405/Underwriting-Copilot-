@@ -34,21 +34,29 @@ LOCATION_FACTORS: dict[str, LocationFactor] = {
         LocationFactor("households", "Households in the trade area", "households", "tract"),
         LocationFactor("renter_households", "Renter-occupied households in the trade area", "households", "tract"),
         LocationFactor("median_household_income", "Median household income of the site's tract", "USD/year", "tract"),
-        LocationFactor("traffic_aadt", "Annual average daily traffic on the nearest road segment", "vehicles/day",
-                       "road_layer"),
-        LocationFactor("competition", "Same-type businesses near the site (profile competitor tags)", "count",
-                       "poi_layer"),
-        LocationFactor("anchors", "Complementary traffic generators near the site (profile anchor tags)", "count",
-                       "poi_layer"),
-        LocationFactor("tourism", "Tourism anchors near the site (attractions, venues, lodging)", "count",
-                       "poi_layer"),
-        LocationFactor("str_comparables", "Short-term rental listings near the site, with nightly prices", "count",
-                       "poi_layer"),
-        LocationFactor("commercial_rent", "Commercial rent: founder quote, else the metro ASSUMPTION range",
-                       "USD/month", "metro"),
+        LocationFactor(
+            "traffic_aadt", "Annual average daily traffic on the nearest road segment", "vehicles/day", "road_layer"
+        ),
+        LocationFactor(
+            "competition", "Same-type businesses near the site (profile competitor tags)", "count", "poi_layer"
+        ),
+        LocationFactor(
+            "anchors", "Complementary traffic generators near the site (profile anchor tags)", "count", "poi_layer"
+        ),
+        LocationFactor("tourism", "Tourism anchors near the site (attractions, venues, lodging)", "count", "poi_layer"),
+        LocationFactor(
+            "str_comparables", "Short-term rental listings near the site, with nightly prices", "count", "poi_layer"
+        ),
+        LocationFactor(
+            "commercial_rent", "Commercial rent: founder quote, else the metro ASSUMPTION range", "USD/month", "metro"
+        ),
         LocationFactor("local_wages", "Average wage for the profile's industry in the metro", "USD/hour", "metro"),
-        LocationFactor("prime_rate", "A published bank prime loan rate (the S3 default rate adds a stated spread)",
-                       "percent", "metro"),
+        LocationFactor(
+            "prime_rate",
+            "A published bank prime loan rate (the S3 default rate adds a stated spread)",
+            "percent",
+            "metro",
+        ),
     )
 }
 

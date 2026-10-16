@@ -1,0 +1,1774 @@
+{
+  "description": "SiteIQ (Studio S2) validated on SYNTHETIC cities with a hidden true demand per tract and business type. siteiq_spearman: rank correlation between SiteIQ's overall score and the true demand over the tracts SiteIQ ranks; siteiq_top5_hit_rate: share of SiteIQ's 5 best tracts that are among the 20 best tracts by true demand (out of every tract of the city). Baselines: random ranking (expected values) and the profile's single highest-weight factor used alone.",
+  "data_label": "SYNTHETIC",
+  "statement": "Validation on SYNTHETIC cities whose generator was written by the same project author as SiteIQ. The true demand uses a different formula from SiteIQ's score (gravity decay, saturating competition, interactions, a hidden appeal field, noise), so the check is not circular, but it is not evidence of real-world accuracy.",
+  "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+  "method": {
+    "scoring_method": "siteiq-v1: percentile rank within the metro per factor, weighted mean of the scored factors",
+    "weights": "the profiles' DESIGN_CHOICE weights, unchanged (not tuned on the SYNTHETIC cities)",
+    "min_scored_weight_share": 0.5,
+    "min_reference_values": 20,
+    "metro": "synthetic_metro",
+    "city_seeds": [
+      20261013,
+      20261014,
+      20261015,
+      20261016,
+      20261017,
+      20261018,
+      20261019,
+      20261020,
+      20261021,
+      20261022
+    ],
+    "demo_city_seed_excluded": 20261012,
+    "n_tracts_per_city": 300,
+    "top_k": 5,
+    "true_top": 20,
+    "bootstrap": {
+      "n_resamples": 1000,
+      "seed": 42,
+      "ci": "95% percentile"
+    },
+    "elapsed_seconds_synthetic_part": 125.6,
+    "elapsed_note": "wall-clock time on a shared machine (several agents run at once); not a benchmark"
+  },
+  "by_business_type": {
+    "car_wash": {
+      "baseline_factor": "traffic_aadt",
+      "siteiq_spearman": {
+        "estimate": 0.07188330070057222,
+        "ci_low": 0.02813884478464819,
+        "ci_high": 0.12097077602662097,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "baseline_single_factor_spearman": {
+        "estimate": 0.09052792077973598,
+        "ci_low": 0.04739025224454824,
+        "ci_high": 0.13576220446817008,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_minus_baseline_spearman": {
+        "estimate": -0.018644620079163766,
+        "ci_low": -0.04335250672842574,
+        "ci_high": 0.004260377760459225,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "random_expected_spearman": 0.0,
+      "demand_estimate_spearman": {
+        "estimate": 0.09052792077973598,
+        "ci_low": 0.04739025224454824,
+        "ci_high": 0.13576220446817008,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_top5_hit_rate": {
+        "estimate": 0.06000000000000001,
+        "ci_low": 0.02,
+        "ci_high": 0.12,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "baseline_top5_hit_rate": {
+        "estimate": 0.08,
+        "ci_low": 0.0,
+        "ci_high": 0.18,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "random_expected_top5_hit_rate": 0.0667,
+      "factor_spearman_mean_over_cities": {
+        "traffic_aadt": 0.09052792077973598,
+        "households": -0.1486863408800367,
+        "median_household_income": 0.06533942437186827,
+        "competition": 0.08396841897066118,
+        "anchors": -0.06841701952198731
+      },
+      "per_city": [
+        {
+          "seed": 20261013,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.1051350711720294,
+          "baseline_spearman": 0.08860173192783051,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261014,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.1002678412366208,
+          "baseline_spearman": 0.1108138727123123,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261015,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.029611733901563117,
+          "baseline_spearman": 0.10370782383231288,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261016,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.15569594431300274,
+          "baseline_spearman": 0.1604670545455186,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261017,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.046156198349579625,
+          "baseline_spearman": 0.08870064953029934,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261018,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.1188585899654833,
+          "baseline_spearman": 0.15912355559954047,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261019,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.025399022979474224,
+          "baseline_spearman": 0.044801461352068396,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261020,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.034301359151505305,
+          "baseline_spearman": 0.027940125477141885,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261021,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.040488644255251914,
+          "baseline_spearman": 0.07342077303736498,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261022,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.06291860168121181,
+          "baseline_spearman": 0.04770215978297052,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 2
+        }
+      ]
+    },
+    "laundromat": {
+      "baseline_factor": "renter_households",
+      "siteiq_spearman": {
+        "estimate": 0.7910146012351887,
+        "ci_low": 0.7642432527281815,
+        "ci_high": 0.8119201175467421,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "baseline_single_factor_spearman": {
+        "estimate": 0.8127623834297543,
+        "ci_low": 0.78571492154125,
+        "ci_high": 0.8339297651951381,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_minus_baseline_spearman": {
+        "estimate": -0.021747782194565378,
+        "ci_low": -0.04957682219359778,
+        "ci_high": 0.0036382236876242743,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "random_expected_spearman": 0.0,
+      "demand_estimate_spearman": {
+        "estimate": 0.8127623834297543,
+        "ci_low": 0.78571492154125,
+        "ci_high": 0.8339297651951381,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_top5_hit_rate": {
+        "estimate": 0.42000000000000004,
+        "ci_low": 0.30000000000000004,
+        "ci_high": 0.54,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "baseline_top5_hit_rate": {
+        "estimate": 0.22000000000000003,
+        "ci_low": 0.08,
+        "ci_high": 0.36,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "random_expected_top5_hit_rate": 0.067,
+      "factor_spearman_mean_over_cities": {
+        "renter_households": 0.8127623834297543,
+        "median_household_income": 0.5829971982449285,
+        "competition": -0.4156474509390332,
+        "anchors": 0.6494959338207971
+      },
+      "per_city": [
+        {
+          "seed": 20261013,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.7762223429759849,
+          "baseline_spearman": 0.8128161043804173,
+          "siteiq_top5_hits": 3,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261014,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.8138374226377487,
+          "baseline_spearman": 0.7768897117860661,
+          "siteiq_top5_hits": 2,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261015,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.8275156384153538,
+          "baseline_spearman": 0.7896672457748832,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261016,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.8100320683115034,
+          "baseline_spearman": 0.8421785798857097,
+          "siteiq_top5_hits": 4,
+          "baseline_top5_hits": 3
+        },
+        {
+          "seed": 20261017,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.7860208334060329,
+          "baseline_spearman": 0.8375339275362852,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261018,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.8280597187879102,
+          "baseline_spearman": 0.8417469697883376,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261019,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.8154710038467631,
+          "baseline_spearman": 0.8377136763436169,
+          "siteiq_top5_hits": 2,
+          "baseline_top5_hits": 3
+        },
+        {
+          "seed": 20261020,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.7560179383476049,
+          "baseline_spearman": 0.7747596073793223,
+          "siteiq_top5_hits": 2,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261021,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.7309130395244569,
+          "baseline_spearman": 0.7546728127688312,
+          "siteiq_top5_hits": 3,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261022,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.7660560060985295,
+          "baseline_spearman": 0.8596451986540725,
+          "siteiq_top5_hits": 2,
+          "baseline_top5_hits": 2
+        }
+      ]
+    },
+    "motel": {
+      "baseline_factor": "tourism",
+      "siteiq_spearman": {
+        "estimate": 0.1567543937654539,
+        "ci_low": 0.09007610642603811,
+        "ci_high": 0.21948228395094252,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "baseline_single_factor_spearman": {
+        "estimate": 0.20766835895523728,
+        "ci_low": 0.09189630370123528,
+        "ci_high": 0.3229512241982224,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_minus_baseline_spearman": {
+        "estimate": -0.0509139651897834,
+        "ci_low": -0.12680368566729264,
+        "ci_high": 0.027251442461930106,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "random_expected_spearman": 0.0,
+      "demand_estimate_spearman": {
+        "estimate": null,
+        "note": "not defined: the estimate does not vary by site (no data in the formula)"
+      },
+      "siteiq_top5_hit_rate": {
+        "estimate": 0.1,
+        "ci_low": 0.02,
+        "ci_high": 0.18000000000000002,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "baseline_top5_hit_rate": {
+        "estimate": 0.02,
+        "ci_low": 0.0,
+        "ci_high": 0.06000000000000001,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "random_expected_top5_hit_rate": 0.0667,
+      "factor_spearman_mean_over_cities": {
+        "traffic_aadt": -0.018787621730646565,
+        "tourism": 0.20766835895523728,
+        "competition": -0.04581780239515994,
+        "anchors": 0.0730140026949587
+      },
+      "per_city": [
+        {
+          "seed": 20261013,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.19912537737873545,
+          "baseline_spearman": 0.1847145749243648,
+          "siteiq_top5_hits": 2,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261014,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.09869181966504388,
+          "baseline_spearman": -0.06842477222204375,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261015,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.13225678313651637,
+          "baseline_spearman": 0.23343845266924398,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261016,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.12446979131432616,
+          "baseline_spearman": 0.3308294129632567,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261017,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.20735703233791902,
+          "baseline_spearman": 0.23516317823438904,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261018,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.3274965813571048,
+          "baseline_spearman": 0.5663527545058371,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261019,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.17516205140009725,
+          "baseline_spearman": 0.28262380439372153,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261020,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.07081170160901404,
+          "baseline_spearman": 0.07549866189673744,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261021,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": -0.005497364543464432,
+          "baseline_spearman": -0.012310133729982308,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261022,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.2376701639992462,
+          "baseline_spearman": 0.24879765591684827,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        }
+      ]
+    },
+    "restaurant_cafe": {
+      "baseline_factor": "resident_population",
+      "siteiq_spearman": {
+        "estimate": 0.7454230397772444,
+        "ci_low": 0.7063448784698124,
+        "ci_high": 0.7765946913044394,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "baseline_single_factor_spearman": {
+        "estimate": 0.7447100462911795,
+        "ci_low": 0.7104865587168856,
+        "ci_high": 0.775170761039247,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_minus_baseline_spearman": {
+        "estimate": 0.0007129934860649834,
+        "ci_low": -0.014615605147782802,
+        "ci_high": 0.01641047030330742,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "random_expected_spearman": 0.0,
+      "demand_estimate_spearman": {
+        "estimate": 0.755617160760508,
+        "ci_low": 0.7183169210744245,
+        "ci_high": 0.7880901014116286,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_top5_hit_rate": {
+        "estimate": 0.18000000000000002,
+        "ci_low": 0.04,
+        "ci_high": 0.36,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "baseline_top5_hit_rate": {
+        "estimate": 0.14,
+        "ci_low": 0.08,
+        "ci_high": 0.2,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "random_expected_top5_hit_rate": 0.067,
+      "factor_spearman_mean_over_cities": {
+        "resident_population": 0.7447100462911795,
+        "daytime_workers": 0.7587144864889498,
+        "median_household_income": -0.22292820366027294,
+        "competition": -0.6311074704694734,
+        "anchors": 0.6433794608585257
+      },
+      "per_city": [
+        {
+          "seed": 20261013,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.655367385497317,
+          "baseline_spearman": 0.6821129567126825,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261014,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.7272493120352905,
+          "baseline_spearman": 0.7283248186712532,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261015,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.6584551000266801,
+          "baseline_spearman": 0.6965427581544787,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261016,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.8203463539472023,
+          "baseline_spearman": 0.8320680356315192,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261017,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.7490782909673356,
+          "baseline_spearman": 0.7299267320497493,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261018,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.7876900020916422,
+          "baseline_spearman": 0.7998394298786498,
+          "siteiq_top5_hits": 2,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261019,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.7973899166646501,
+          "baseline_spearman": 0.7917186251318659,
+          "siteiq_top5_hits": 2,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261020,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.7625451068254209,
+          "baseline_spearman": 0.7227443593395694,
+          "siteiq_top5_hits": 4,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261021,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.7198986315234467,
+          "baseline_spearman": 0.7046861111431523,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261022,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.7762102981934592,
+          "baseline_spearman": 0.7591366361988745,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        }
+      ]
+    },
+    "retail_storefront": {
+      "baseline_factor": "resident_population",
+      "siteiq_spearman": {
+        "estimate": 0.3995254037486292,
+        "ci_low": 0.35559161456185384,
+        "ci_high": 0.4384334068584502,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "baseline_single_factor_spearman": {
+        "estimate": 0.5940254548046984,
+        "ci_low": 0.544636617637924,
+        "ci_high": 0.6397974235462487,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_minus_baseline_spearman": {
+        "estimate": -0.19450005105606913,
+        "ci_low": -0.23618342569005327,
+        "ci_high": -0.14935251864111931,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "random_expected_spearman": 0.0,
+      "demand_estimate_spearman": {
+        "estimate": 0.5902722079866172,
+        "ci_low": 0.5415665561631413,
+        "ci_high": 0.6361838045140631,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_top5_hit_rate": {
+        "estimate": 0.08,
+        "ci_low": 0.02,
+        "ci_high": 0.14,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "baseline_top5_hit_rate": {
+        "estimate": 0.1,
+        "ci_low": 0.02,
+        "ci_high": 0.18000000000000002,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "random_expected_top5_hit_rate": 0.067,
+      "factor_spearman_mean_over_cities": {
+        "resident_population": 0.5940254548046984,
+        "daytime_workers": 0.606657983745442,
+        "traffic_aadt": -0.0076808630409761405,
+        "median_household_income": -0.4553687235548157,
+        "competition": -0.41504642570211703,
+        "anchors": 0.5374640976510088
+      },
+      "per_city": [
+        {
+          "seed": 20261013,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.4421907871961735,
+          "baseline_spearman": 0.6536621841806471,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261014,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.31487348609995774,
+          "baseline_spearman": 0.5098790449522912,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261015,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.36543079273062745,
+          "baseline_spearman": 0.623757096356493,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261016,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.4202786155877189,
+          "baseline_spearman": 0.6800531887515641,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 2
+        },
+        {
+          "seed": 20261017,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.4356828036722563,
+          "baseline_spearman": 0.5800824698007901,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261018,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.4401511127505439,
+          "baseline_spearman": 0.6603028114094216,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 1
+        },
+        {
+          "seed": 20261019,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.3714596759627389,
+          "baseline_spearman": 0.6100377737249996,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261020,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.40343944041883667,
+          "baseline_spearman": 0.4766010535064634,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261021,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.33071527878033674,
+          "baseline_spearman": 0.5263413900589056,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261022,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.47103204428710216,
+          "baseline_spearman": 0.6195375353054078,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        }
+      ]
+    },
+    "short_term_rental": {
+      "baseline_factor": "tourism",
+      "siteiq_spearman": {
+        "estimate": 0.5925351809676422,
+        "ci_low": 0.5488762774218618,
+        "ci_high": 0.6283067252965089,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "baseline_single_factor_spearman": {
+        "estimate": 0.5072051010375658,
+        "ci_low": 0.45776566147602277,
+        "ci_high": 0.5570899167878548,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "siteiq_minus_baseline_spearman": {
+        "estimate": 0.08533007993007648,
+        "ci_low": 0.05420142478159469,
+        "ci_high": 0.11525217928995082,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "two-level bootstrap (cities, then tracts), percentile"
+      },
+      "random_expected_spearman": 0.0,
+      "demand_estimate_spearman": {
+        "estimate": null,
+        "note": "not defined: the estimate does not vary by site (no data in the formula)"
+      },
+      "siteiq_top5_hit_rate": {
+        "estimate": 0.14,
+        "ci_low": 0.06000000000000001,
+        "ci_high": 0.22000000000000003,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "baseline_top5_hit_rate": {
+        "estimate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "bootstrap over cities, percentile"
+      },
+      "random_expected_top5_hit_rate": 0.067,
+      "factor_spearman_mean_over_cities": {
+        "tourism": 0.5072051010375658,
+        "str_comparables": 0.5428687396268309,
+        "median_household_income": -0.11298417171989653,
+        "anchors": 0.4640610911153221,
+        "competition": -0.33648375020489485
+      },
+      "per_city": [
+        {
+          "seed": 20261013,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.5342047867574373,
+          "baseline_spearman": 0.4951667502386739,
+          "siteiq_top5_hits": 2,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261014,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.6012193907423815,
+          "baseline_spearman": 0.5598312006409922,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261015,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.5084588760636816,
+          "baseline_spearman": 0.42535694270733465,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261016,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.6477959857947025,
+          "baseline_spearman": 0.5327044055247895,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261017,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.5783865016326878,
+          "baseline_spearman": 0.5072501151198348,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261018,
+          "n_tracts": 300,
+          "n_ranked": 298,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "siteiq_spearman": 0.7035409436881982,
+          "baseline_spearman": 0.6998879481072262,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261019,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.611968453788405,
+          "baseline_spearman": 0.5133283213360671,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261020,
+          "n_tracts": 300,
+          "n_ranked": 300,
+          "excluded": {},
+          "siteiq_spearman": 0.5751312919646024,
+          "baseline_spearman": 0.457536359253468,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261021,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.5767436692852883,
+          "baseline_spearman": 0.4522765420625485,
+          "siteiq_top5_hits": 1,
+          "baseline_top5_hits": 0
+        },
+        {
+          "seed": 20261022,
+          "n_tracts": 300,
+          "n_ranked": 299,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "siteiq_spearman": 0.5879019099590373,
+          "baseline_spearman": 0.42871242538472254,
+          "siteiq_top5_hits": 0,
+          "baseline_top5_hits": 0
+        }
+      ]
+    }
+  },
+  "diagnostics": [
+    {
+      "seed": 20261013,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    },
+    {
+      "seed": 20261014,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    },
+    {
+      "seed": 20261015,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    },
+    {
+      "seed": 20261016,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    },
+    {
+      "seed": 20261017,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    },
+    {
+      "seed": 20261018,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    },
+    {
+      "seed": 20261019,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    },
+    {
+      "seed": 20261020,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    },
+    {
+      "seed": 20261021,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    },
+    {
+      "seed": 20261022,
+      "n_tracts": 300,
+      "share_of_tract_centroids_whose_nearest_road_is_the_generated_local_street": 1.0
+    }
+  ],
+  "real_metro_sanity": {
+    "chicago_il_in": {
+      "metro_id": "chicago_il_in",
+      "name": "Chicago-Naperville-Elgin, IL-IN",
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "tracts_in_snapshot": 2292,
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "aed28fa2385c7610544d37a1c4d5d02656aabbd7ba5ca881db040b0005c18671",
+        "tracts_sha256": "c1f6c621f12a28be5098f5b22c69fbccaca7ddb7f21c49b1095b2bab31553afa"
+      },
+      "snapshot_steps_not_ok": {
+        "enhancement:traffic_state:IL": "not_available: no documented IL DOT traffic-count dataset recorded yet",
+        "enhancement:traffic_state:IN": "not_available: no documented IN DOT traffic-count dataset recorded yet",
+        "enhancement:str_comps:chicago": "not_available: Inside Airbnb coverage for 'chicago' not verified"
+      },
+      "by_business_type": {
+        "car_wash": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.9158899999999999,
+          "tracts_ranked": 2209,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 83
+          },
+          "score_p10_p50_p90": [
+            31.9,
+            51.1,
+            66.72000000000001
+          ]
+        },
+        "laundromat": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.8978399999999999,
+          "tracts_ranked": 2282,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 10
+          },
+          "score_p10_p50_p90": [
+            31.7,
+            51.1,
+            66.89000000000001
+          ]
+        },
+        "motel": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.7709600000000001,
+          "tracts_ranked": 2209,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 83
+          },
+          "score_p10_p50_p90": [
+            32.2,
+            51.4,
+            66.6
+          ]
+        },
+        "restaurant_cafe": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.8729450000000001,
+          "tracts_ranked": 2236,
+          "excluded": {
+            "required data UNKNOWN: daytime_workers": 48,
+            "required data UNKNOWN: median_household_income": 8
+          },
+          "score_p10_p50_p90": [
+            34.05,
+            49.6,
+            66.45
+          ]
+        },
+        "retail_storefront": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.9381849999999999,
+          "tracts_ranked": 2161,
+          "excluded": {
+            "required data UNKNOWN: daytime_workers": 48,
+            "required data UNKNOWN: traffic_aadt": 81,
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "score_p10_p50_p90": [
+            34.0,
+            50.5,
+            65.8
+          ]
+        },
+        "short_term_rental": {
+          "status": "not measured: no tract could be ranked (required data UNKNOWN)",
+          "coverage_share": 0.681185,
+          "tracts_ranked": 0,
+          "excluded": {
+            "required data UNKNOWN: str_comparables": 2292
+          },
+          "score_p10_p50_p90": null
+        }
+      }
+    },
+    "dallas_fort_worth_tx": {
+      "metro_id": "dallas_fort_worth_tx",
+      "name": "Dallas-Fort Worth-Arlington, TX",
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "tracts_in_snapshot": 1704,
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "def918a03577d27fae08623e95a278d57d7e073a1c549dacb971267d6918b18c",
+        "tracts_sha256": "7e74ef50595f9cc2cd51af36002a05a83f3ce7b8f8d227991bd1d8448ab52fea"
+      },
+      "snapshot_steps_not_ok": {
+        "enhancement:traffic_state:TX": "not_available: no documented TX DOT traffic-count dataset recorded yet",
+        "enhancement:city_open_data:dallas": "not_available: no documented open-data license dataset recorded for 'dallas'",
+        "enhancement:str_comps:dallas": "not_available: Inside Airbnb coverage for 'dallas' not verified"
+      },
+      "by_business_type": {
+        "car_wash": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.896455,
+          "tracts_ranked": 1543,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 161
+          },
+          "score_p10_p50_p90": [
+            32.9,
+            49.7,
+            67.4
+          ]
+        },
+        "laundromat": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.8992949999999998,
+          "tracts_ranked": 1702,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "score_p10_p50_p90": [
+            33.4,
+            50.4,
+            65.9
+          ]
+        },
+        "motel": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.7563850000000001,
+          "tracts_ranked": 1543,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 161
+          },
+          "score_p10_p50_p90": [
+            34.02,
+            50.9,
+            66.57999999999998
+          ]
+        },
+        "restaurant_cafe": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.8780950000000001,
+          "tracts_ranked": 1702,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 2
+          },
+          "score_p10_p50_p90": [
+            32.81,
+            50.5,
+            66.3
+          ]
+        },
+        "retail_storefront": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.93063,
+          "tracts_ranked": 1542,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 161,
+            "required data UNKNOWN: median_household_income": 1
+          },
+          "score_p10_p50_p90": [
+            35.410000000000004,
+            50.9,
+            66.6
+          ]
+        },
+        "short_term_rental": {
+          "status": "not measured: no tract could be ranked (required data UNKNOWN)",
+          "coverage_share": 0.68264,
+          "tracts_ranked": 0,
+          "excluded": {
+            "required data UNKNOWN: str_comparables": 1704
+          },
+          "score_p10_p50_p90": null
+        }
+      }
+    },
+    "houston_tx": {
+      "metro_id": "houston_tx",
+      "name": "Houston-Pasadena-The Woodlands, TX",
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "tracts_in_snapshot": 1615,
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "7bc94228c72d552c6da0dbf976f7e69586c5a77098dddca7ac8649f83b9f029c",
+        "tracts_sha256": "df03cd9053d65a161d1abfcea8347e366cc35f3ca8f48b4ddeac50a19b19faf2"
+      },
+      "snapshot_steps_not_ok": {
+        "enhancement:traffic_state:TX": "not_available: no documented TX DOT traffic-count dataset recorded yet",
+        "enhancement:city_open_data:houston": "not_available: no documented open-data license dataset recorded for 'houston'",
+        "enhancement:str_comps:houston": "not_available: Inside Airbnb coverage for 'houston' not verified"
+      },
+      "by_business_type": {
+        "car_wash": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.879675,
+          "tracts_ranked": 1389,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 226
+          },
+          "score_p10_p50_p90": [
+            33.080000000000005,
+            49.8,
+            66.22000000000001
+          ]
+        },
+        "laundromat": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.89796,
+          "tracts_ranked": 1606,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 9
+          },
+          "score_p10_p50_p90": [
+            34.6,
+            50.1,
+            64.9
+          ]
+        },
+        "motel": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.7450350000000001,
+          "tracts_ranked": 1389,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 226
+          },
+          "score_p10_p50_p90": [
+            34.96,
+            51.2,
+            66.0
+          ]
+        },
+        "restaurant_cafe": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.8759650000000001,
+          "tracts_ranked": 1597,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 8,
+            "required data UNKNOWN: daytime_workers": 10
+          },
+          "score_p10_p50_p90": [
+            32.86,
+            50.1,
+            67.4
+          ]
+        },
+        "retail_storefront": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.91973,
+          "tracts_ranked": 1376,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 225,
+            "required data UNKNOWN: daytime_workers": 10,
+            "required data UNKNOWN: median_household_income": 4
+          },
+          "score_p10_p50_p90": [
+            36.7,
+            51.6,
+            65.0
+          ]
+        },
+        "short_term_rental": {
+          "status": "not measured: no tract could be ranked (required data UNKNOWN)",
+          "coverage_share": 0.681305,
+          "tracts_ranked": 0,
+          "excluded": {
+            "required data UNKNOWN: str_comparables": 1615
+          },
+          "score_p10_p50_p90": null
+        }
+      }
+    },
+    "los_angeles_ca": {
+      "metro_id": "los_angeles_ca",
+      "name": "Los Angeles-Long Beach-Anaheim, CA",
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "tracts_in_snapshot": 3112,
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "3897dcb255b02375b56edcea30e88fc9b5d9fed80a11052019aa9b7baca28359",
+        "tracts_sha256": "4adc044aa9d5f4f896ea569aae55671140d4e5142756e3bad2bea15655f07cd8"
+      },
+      "snapshot_steps_not_ok": {
+        "enhancement:traffic_state:CA": "not_available: no documented CA DOT traffic-count dataset recorded yet",
+        "enhancement:city_open_data:los_angeles": "not_available: no documented open-data license dataset recorded for 'los_angeles'",
+        "enhancement:str_comps:los_angeles": "not_available: Inside Airbnb coverage for 'los_angeles' not verified"
+      },
+      "by_business_type": {
+        "car_wash": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.9165099999999999,
+          "tracts_ranked": 3005,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 107
+          },
+          "score_p10_p50_p90": [
+            33.5,
+            49.7,
+            67.0
+          ]
+        },
+        "laundromat": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.897825,
+          "tracts_ranked": 3101,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 11
+          },
+          "score_p10_p50_p90": [
+            33.4,
+            50.6,
+            65.6
+          ]
+        },
+        "motel": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.7714099999999999,
+          "tracts_ranked": 3005,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 107
+          },
+          "score_p10_p50_p90": [
+            33.6,
+            50.6,
+            66.0
+          ]
+        },
+        "restaurant_cafe": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.8769150000000001,
+          "tracts_ranked": 3099,
+          "excluded": {
+            "required data UNKNOWN: daytime_workers": 3,
+            "required data UNKNOWN: median_household_income": 10
+          },
+          "score_p10_p50_p90": [
+            35.1,
+            50.8,
+            64.4
+          ]
+        },
+        "retail_storefront": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.94152,
+          "tracts_ranked": 3003,
+          "excluded": {
+            "required data UNKNOWN: daytime_workers": 3,
+            "required data UNKNOWN: traffic_aadt": 106
+          },
+          "score_p10_p50_p90": [
+            37.3,
+            50.2,
+            63.6
+          ]
+        },
+        "short_term_rental": {
+          "status": "not measured: no tract could be ranked (required data UNKNOWN)",
+          "coverage_share": 0.68117,
+          "tracts_ranked": 0,
+          "excluded": {
+            "required data UNKNOWN: str_comparables": 3112
+          },
+          "score_p10_p50_p90": null
+        }
+      }
+    },
+    "new_york_ny_nj_pa": {
+      "metro_id": "new_york_ny_nj_pa",
+      "name": "New York-Newark-Jersey City, NY-NJ",
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "tracts_in_snapshot": 4928,
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "c3a7d68b0cf51dfd7bf6a1da82491629f6cfda588022810ad4ea09eacc667574",
+        "tracts_sha256": "49dac39e2e53d9ed19b0c00a0810e8e160a0157c811ec9ba020e87f6d886f532"
+      },
+      "snapshot_steps_not_ok": {
+        "enhancement:traffic_state:NY": "not_available: no documented NY DOT traffic-count dataset recorded yet",
+        "enhancement:traffic_state:NJ": "not_available: no documented NJ DOT traffic-count dataset recorded yet",
+        "enhancement:str_comps:new_york_city": "not_available: Inside Airbnb coverage for 'new_york_city' not verified"
+      },
+      "by_business_type": {
+        "car_wash": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.9141649999999999,
+          "tracts_ranked": 4731,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 154,
+            "required data UNKNOWN: households": 43
+          },
+          "score_p10_p50_p90": [
+            33.9,
+            49.7,
+            67.2
+          ]
+        },
+        "laundromat": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.8935349999999999,
+          "tracts_ranked": 4860,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 53,
+            "required data UNKNOWN: renter_households": 15
+          },
+          "score_p10_p50_p90": [
+            34.3,
+            50.7,
+            65.1
+          ]
+        },
+        "motel": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.7722100000000001,
+          "tracts_ranked": 4774,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 154
+          },
+          "score_p10_p50_p90": [
+            33.4,
+            50.9,
+            65.3
+          ]
+        },
+        "restaurant_cafe": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.867545,
+          "tracts_ranked": 4705,
+          "excluded": {
+            "required data UNKNOWN: median_household_income": 44,
+            "required data UNKNOWN: daytime_workers": 164,
+            "required data UNKNOWN: resident_population": 15
+          },
+          "score_p10_p50_p90": [
+            34.9,
+            49.3,
+            65.6
+          ]
+        },
+        "retail_storefront": {
+          "status": "measured (counts and score spread only; no accuracy claim)",
+          "coverage_share": 0.9345549999999999,
+          "tracts_ranked": 4571,
+          "excluded": {
+            "required data UNKNOWN: traffic_aadt": 148,
+            "required data UNKNOWN: median_household_income": 30,
+            "required data UNKNOWN: daytime_workers": 164,
+            "required data UNKNOWN: resident_population": 15
+          },
+          "score_p10_p50_p90": [
+            37.0,
+            50.4,
+            63.7
+          ]
+        },
+        "short_term_rental": {
+          "status": "not measured: no tract could be ranked (required data UNKNOWN)",
+          "coverage_share": 0.67793,
+          "tracts_ranked": 0,
+          "excluded": {
+            "required data UNKNOWN: str_comparables": 4928
+          },
+          "score_p10_p50_p90": null
+        }
+      }
+    }
+  },
+  "provenance": {
+    "git_sha": "a634325fc5a6bf961b1812bde3fed9f951a4f6d9",
+    "git_dirty": true,
+    "generated_at_utc": "2026-10-13T15:54:36+00:00",
+    "generated_by": "scripts/eval_studio_siteiq.py",
+    "prompts": {},
+    "corpus_checksum": "not applicable (no retrieval corpus is used)",
+    "eval_sets": {
+      "config/studio/metros/synthetic_metro.yaml": "48a8e7953dc02e13e6ed89fe6f8eeaba24ec97514333dc37ef8855135c7ab726",
+      "config/studio/business_types/car_wash.yaml": "2fbceefd150e2ad1da1ecb3af1c6bc6daacc9955e263bb429cf03bcf74104654",
+      "config/studio/business_types/laundromat.yaml": "be4a842c05ca1a2b7448a1c370728c2daea4c52e591bf33fc61d0bd5274b1561",
+      "config/studio/business_types/motel.yaml": "cba4ffdaa4e81ffbe2072ad2feb7fe3bde4c09b0edce26e15b2f29d710a092b9",
+      "config/studio/business_types/restaurant_cafe.yaml": "0333ab79c35dd8e9bb300fc018b1c71c92c2a7bd51fe7b8fb402378fd52fcc67",
+      "config/studio/business_types/retail_storefront.yaml": "6dcbd70017c53fd23b3d436671c6f4ccb4ee471fee2c4437d5cd5cc1f5c34cd9",
+      "config/studio/business_types/short_term_rental.yaml": "2b9d83b4f92c6953608fde111b88c84fb76031221bba6dd0770aaa0ff0062112"
+    },
+    "models": [],
+    "data_snapshots": {
+      "synthetic_city_seeds": [
+        20261013,
+        20261014,
+        20261015,
+        20261016,
+        20261017,
+        20261018,
+        20261019,
+        20261020,
+        20261021,
+        20261022
+      ],
+      "studio_snapshots": {
+        "chicago_il_in": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "aed28fa2385c7610544d37a1c4d5d02656aabbd7ba5ca881db040b0005c18671",
+          "tracts_sha256": "c1f6c621f12a28be5098f5b22c69fbccaca7ddb7f21c49b1095b2bab31553afa"
+        },
+        "dallas_fort_worth_tx": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "def918a03577d27fae08623e95a278d57d7e073a1c549dacb971267d6918b18c",
+          "tracts_sha256": "7e74ef50595f9cc2cd51af36002a05a83f3ce7b8f8d227991bd1d8448ab52fea"
+        },
+        "houston_tx": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "7bc94228c72d552c6da0dbf976f7e69586c5a77098dddca7ac8649f83b9f029c",
+          "tracts_sha256": "df03cd9053d65a161d1abfcea8347e366cc35f3ca8f48b4ddeac50a19b19faf2"
+        },
+        "los_angeles_ca": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "3897dcb255b02375b56edcea30e88fc9b5d9fed80a11052019aa9b7baca28359",
+          "tracts_sha256": "4adc044aa9d5f4f896ea569aae55671140d4e5142756e3bad2bea15655f07cd8"
+        },
+        "new_york_ny_nj_pa": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "c3a7d68b0cf51dfd7bf6a1da82491629f6cfda588022810ad4ea09eacc667574",
+          "tracts_sha256": "49dac39e2e53d9ed19b0c00a0810e8e160a0157c811ec9ba020e87f6d886f532"
+        }
+      }
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        1.65,
+        1.18,
+        1.1
+      ],
+      "load_average_end": [
+        1.77,
+        1.76,
+        1.37
+      ]
+    }
+  }
+}

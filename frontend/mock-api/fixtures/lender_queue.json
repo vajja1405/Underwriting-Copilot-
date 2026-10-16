@@ -1,0 +1,924 @@
+{
+ "files": [
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Evergreen Dental Inc.",
+   "id": "APP-C-001",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Riverside Advisory Partners LLC",
+   "id": "APP-C-002",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 75000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Evergreen Machine Works Partners LLC",
+   "id": "APP-C-003",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 95000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Keystone Software Inc.",
+   "id": "APP-C-004",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Northside Kitchen LLC",
+   "id": "APP-C-005",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 60000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Evergreen Landscaping LLC",
+   "id": "APP-C-006",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 50000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Blue Ridge Veterinary Co.",
+   "id": "APP-C-007",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 300000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Pioneer Dental Group LLC",
+   "id": "APP-C-008",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 80000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Granite Dental Partners LLC",
+   "id": "APP-C-009",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 70000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Meadow Dental LLC",
+   "id": "APP-C-010",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 100000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Maple Dental Partners LLC",
+   "id": "APP-C-011",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Prairie Dental Partners LLC",
+   "id": "APP-C-012",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Sterling Botanicals Inc.",
+   "id": "APP-C-013",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Beacon Freight Lines Partners LLC",
+   "id": "APP-C-014",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Golden Dental Group LLC",
+   "id": "APP-C-015",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Pioneer Dental Inc.",
+   "id": "APP-C-016",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Evergreen Dental Group LLC",
+   "id": "APP-C-017",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Summit Dental Inc.",
+   "id": "APP-C-018",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Evergreen Dental Inc.",
+   "id": "APP-C-019",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Harbor Dental Partners LLC",
+   "id": "APP-C-020",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Harbor Dental Co.",
+   "id": "APP-C-021",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Prairie Dental Partners LLC",
+   "id": "APP-C-022",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 400000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Golden Dental Inc.",
+   "id": "APP-C-023",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 350000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Keystone Dental Partners LLC",
+   "id": "APP-C-024",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 2500000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Sterling Dental Group LLC",
+   "id": "APP-C-025",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Lakeview Dental Inc.",
+   "id": "APP-C-026",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Harbor Dental Co.",
+   "id": "APP-C-027",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Harbor Dental LLC",
+   "id": "APP-C-028",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Northside Dental Inc.",
+   "id": "APP-C-029",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Beacon Dental Co.",
+   "id": "APP-C-030",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Evergreen Printing Co.",
+   "id": "APP-C-031",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 90000.0
+  },
+  {
+   "amount_label": "requested loan amount (USD)",
+   "applicant": "Willow Hardware Inc.",
+   "id": "APP-C-032",
+   "label": "SYNTHETIC DEMO",
+   "line": "credit",
+   "line_label": "Business credit",
+   "requested_amount": 85000.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Prairie Professional Offices LLC",
+   "id": "APP-I-001",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Cedar Outfitters Group LLC",
+   "id": "APP-I-002",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 2474063.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Northside Assembly Inc.",
+   "id": "APP-I-003",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 5428800.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Meadow Dental Group Co.",
+   "id": "APP-I-004",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 2205450.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Sterling Bistro Partners LLC",
+   "id": "APP-I-005",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 1583400.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Harbor Distribution Partners LLC",
+   "id": "APP-I-006",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 9108000.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Harbor Professional Offices LLC",
+   "id": "APP-I-007",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 5202600.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Willow Professional Offices LLC",
+   "id": "APP-I-008",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Meadow Professional Offices Inc.",
+   "id": "APP-I-009",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Willow Professional Offices Inc.",
+   "id": "APP-I-010",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Prairie Professional Offices LLC",
+   "id": "APP-I-011",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Blue Ridge Professional Offices Partners LLC",
+   "id": "APP-I-012",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 5014100.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Pioneer Professional Offices Inc.",
+   "id": "APP-I-013",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Willow Pyrotechnics Inc.",
+   "id": "APP-I-014",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 2412800.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Bright Woodworks Co.",
+   "id": "APP-I-015",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3016000.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Maple Professional Offices Co.",
+   "id": "APP-I-016",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Meadow Professional Offices Partners LLC",
+   "id": "APP-I-017",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Keystone Professional Offices Group LLC",
+   "id": "APP-I-018",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Maple Professional Offices Co.",
+   "id": "APP-I-019",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3939650.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Evergreen Professional Offices Inc.",
+   "id": "APP-I-020",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Prairie Professional Offices Partners LLC",
+   "id": "APP-I-021",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Sterling Professional Offices Group LLC",
+   "id": "APP-I-022",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Lakeview Professional Offices LLC",
+   "id": "APP-I-023",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Riverside Professional Offices Inc.",
+   "id": "APP-I-024",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 8027500.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Blue Ridge Professional Offices LLC",
+   "id": "APP-I-025",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Blue Ridge Professional Offices Group LLC",
+   "id": "APP-I-026",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Prairie Professional Offices Partners LLC",
+   "id": "APP-I-027",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Evergreen Professional Offices Co.",
+   "id": "APP-I-028",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 26972400.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Harbor Professional Offices LLC",
+   "id": "APP-I-029",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Prairie Professional Offices Inc.",
+   "id": "APP-I-030",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Keystone Professional Offices Co.",
+   "id": "APP-I-031",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Willow Professional Offices Inc.",
+   "id": "APP-I-032",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "total insured value of the schedule (USD)",
+   "applicant": "Sterling Outfitters LLC",
+   "id": "APP-I-033",
+   "label": "SYNTHETIC DEMO",
+   "line": "insurance",
+   "line_label": "Commercial insurance",
+   "requested_amount": 3223350.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Harbor Express Wash LLC",
+   "id": "APP-S-001",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 250000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Copper Laundry Lounge LLC",
+   "id": "APP-S-002",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 180000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Granite Roadside Inn LLC",
+   "id": "APP-S-003",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 480000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Juniper Stay Rentals LLC",
+   "id": "APP-S-004",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 120000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Maple Corner Cafe LLC",
+   "id": "APP-S-005",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 220000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Granite Market Goods LLC",
+   "id": "APP-S-006",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Harbor Roadside Inn LLC",
+   "id": "APP-S-007",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 450000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Cedar Laundry Lounge LLC",
+   "id": "APP-S-008",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 180000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Granite Market Goods LLC",
+   "id": "APP-S-009",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Maple Express Wash LLC",
+   "id": "APP-S-010",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 200000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Harbor Market Goods LLC",
+   "id": "APP-S-011",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Bluebird Laundry Lounge LLC",
+   "id": "APP-S-012",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 180000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Cedar Express Wash LLC",
+   "id": "APP-S-013",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 200000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Copper Roadside Inn LLC",
+   "id": "APP-S-014",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 240000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Willow Market Goods LLC",
+   "id": "APP-S-015",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Cedar Express Wash LLC",
+   "id": "APP-S-016",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 200000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Bluebird Laundry Lounge LLC",
+   "id": "APP-S-017",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 180000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Copper Market Goods LLC",
+   "id": "APP-S-018",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Granite Roadside Inn LLC",
+   "id": "APP-S-019",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 240000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Harbor Express Wash LLC",
+   "id": "APP-S-020",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 200000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Granite Laundry Lounge LLC",
+   "id": "APP-S-021",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 180000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Cedar Market Goods LLC",
+   "id": "APP-S-022",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Willow Express Wash LLC",
+   "id": "APP-S-023",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 250000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Juniper Roadside Inn LLC",
+   "id": "APP-S-024",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 240000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Cedar Laundry Lounge LLC",
+   "id": "APP-S-025",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 180000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Willow Express Wash LLC",
+   "id": "APP-S-026",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 250000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Maple Market Goods LLC",
+   "id": "APP-S-027",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Bluebird Laundry Lounge LLC",
+   "id": "APP-S-028",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 180000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Bluebird Roadside Inn LLC",
+   "id": "APP-S-029",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 240000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Maple Market Goods LLC",
+   "id": "APP-S-030",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Bluebird Roadside Inn LLC",
+   "id": "APP-S-031",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 400000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Willow Express Wash LLC",
+   "id": "APP-S-032",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 200000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Juniper Laundry Lounge LLC",
+   "id": "APP-S-033",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 180000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Harbor Market Goods LLC",
+   "id": "APP-S-034",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 150000.0
+  },
+  {
+   "amount_label": "requested startup loan amount (USD)",
+   "applicant": "Cedar Express Wash LLC",
+   "id": "APP-S-035",
+   "label": "SYNTHETIC DEMO",
+   "line": "startup_credit",
+   "line_label": "Startup credit",
+   "requested_amount": 200000.0
+  }
+ ],
+ "label": "SYNTHETIC DEMO",
+ "lines": [
+  {
+   "count": 32,
+   "id": "credit",
+   "label": "Business credit"
+  },
+  {
+   "count": 33,
+   "id": "insurance",
+   "label": "Commercial insurance"
+  },
+  {
+   "count": 35,
+   "id": "startup_credit",
+   "label": "Startup credit"
+  }
+ ],
+ "notice": "The copilot never decides \u2014 a person does.",
+ "total": 100
+}

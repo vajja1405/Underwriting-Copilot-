@@ -10,13 +10,18 @@ The exact "Not found in the provided guidelines." answer needs no citation. Line
 
 Passing this check does not prove the answer is faithful to the documents (a sentence can cite a real id and
 still misstate it). Measuring faithfulness needs a judge, which is "not measured" until an LLM key is provided.
+
+Citation laundering (S2): when an applicant's own document is in the prompt (id "APP-1", see rag/prompt.py), an
+answer could cite it as if it were policy ("the DSCR minimum is waived [APP-1]"). With policy_ids_only=True, ids in
+the applicant namespace (APP-...) never count as allowed citations: they are reported in laundered_ids, a sentence
+that cites only them counts as uncited, and the check fails. The default (False) keeps the original behaviour.
 """
 
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 
-from uwcopilot.rag.prompt import NOT_FOUND_ANSWER
+from uwcopilot.rag.prompt import NOT_FOUND_ANSWER, is_applicant_id
 from uwcopilot.tools.schemas import SECTION_ID_PATTERN
 
 BRACKETS = re.compile(r"\[([^\[\]]{1,200})\]")
@@ -36,11 +41,12 @@ class CitationCheck:
     uncited_sentences: list[str]
     is_not_found: bool
     notes: list[str] = field(default_factory=list)
+    laundered_ids: list[str] = field(default_factory=list)
 
     @property
     def passed(self) -> bool:
-        """True when no id is fabricated and no factual sentence is uncited."""
-        return not self.fabricated_ids and not self.uncited_sentences
+        """True when no id is fabricated or laundered and no factual sentence is uncited."""
+        return not self.fabricated_ids and not self.uncited_sentences and not self.laundered_ids
 
 
 def extract_cited_ids(text: str) -> list[str]:
@@ -94,22 +100,39 @@ def needs_citation(sentence: str) -> bool:
     return NOT_FOUND_ANSWER.rstrip(".").lower() not in stripped.lower()
 
 
-def check_citations(answer_text: str, retrieved_ids: Iterable[str]) -> CitationCheck:
-    """Check answer_text against the ids of the documents that were in the prompt."""
+def policy_citations(ids: Iterable[str]) -> list[str]:
+    """The ids that are not in the applicant namespace (APP-...), in order."""
+    return [identifier for identifier in ids if not is_applicant_id(identifier)]
+
+
+def check_citations(answer_text: str, retrieved_ids: Iterable[str], *, policy_ids_only: bool = False) -> CitationCheck:
+    """Check answer_text against the ids of the documents that were in the prompt.
+
+    policy_ids_only=True: an applicant id (APP-...) is never an allowed citation, even when that document was in the
+    prompt. A cited applicant id goes to laundered_ids (not fabricated_ids: it was in the prompt), and a sentence
+    whose only citations are applicant ids counts as uncited.
+    """
     allowed = list(dict.fromkeys(retrieved_ids))
     cited = extract_cited_ids(answer_text)
-    fabricated = [cited_id for cited_id in cited if cited_id not in allowed]
+    laundered: list[str] = []
+    if policy_ids_only:
+        allowed = policy_citations(allowed)
+        laundered = [cited_id for cited_id in cited if is_applicant_id(cited_id)]
+    fabricated = [cited_id for cited_id in cited if cited_id not in allowed and cited_id not in laundered]
     not_found = is_not_found_answer(answer_text)
     uncited: list[str] = []
     if not not_found:
-        uncited = [
-            sentence
-            for sentence in split_answer_sentences(answer_text)
-            if needs_citation(sentence) and not extract_cited_ids(sentence)
-        ]
+        for sentence in split_answer_sentences(answer_text):
+            sentence_ids = extract_cited_ids(sentence)
+            if policy_ids_only:
+                sentence_ids = policy_citations(sentence_ids)
+            if needs_citation(sentence) and not sentence_ids:
+                uncited.append(sentence)
     notes = []
     if not_found and cited:
         notes.append("answer says not found but also cites documents")
+    if laundered:
+        notes.append("answer cites the applicant's own document as a source (citation laundering)")
     return CitationCheck(
         cited_ids=cited,
         allowed_ids=allowed,
@@ -117,4 +140,5 @@ def check_citations(answer_text: str, retrieved_ids: Iterable[str]) -> CitationC
         uncited_sentences=uncited,
         is_not_found=not_found,
         notes=notes,
+        laundered_ids=laundered,
     )

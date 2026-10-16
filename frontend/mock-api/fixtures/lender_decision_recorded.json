@@ -1,0 +1,16 @@
+{
+ "decision": {
+  "action": "request_more_information",
+  "decided_at": "2026-10-13T23:44:51.354169+00:00",
+  "final_status": "more_information_requested_by_human",
+  "is_override": false,
+  "label": "DEMO",
+  "record_id": "DR-34b8d51237646bbdef254006",
+  "record_sha256": "5e936448efd6a97563aa38eebabfa8ce1d3171309ae7c87fca34c378a0d03adb",
+  "reviewer_role": "underwriter"
+ },
+ "file_id": "APP-S-001",
+ "label": "DEMO",
+ "markdown": "# DEMO decision record: APP-S-001 (SYNTHETIC)\n\n> DEMO on SYNTHETIC data, not a lending decision. The copilot never decides \u2014 a person does.\n\n- Record id: `DR-34b8d51237646bbdef254006`\n- Record SHA-256: `5e936448efd6a97563aa38eebabfa8ce1d3171309ae7c87fca34c378a0d03adb`\n- Recorded at: 2026-10-13T23:44:51.363657+00:00\n- Reviewer: demo-founder (role: underwriter)\n- Action: request_more_information -> more_information_requested_by_human\n- Reference recommendation (policy): approve\n- Override of the recommendation: no\n- Memo: template memo (FAKE LLM \u2014 test mode), claim check passed: True\n\n## Rationale (as typed by the reviewer)\n\n```text\nAsk for the signed lease and the equipment quotes first (SYNTHETIC demo).\n```\n\n## Policy findings\n\n- none\n\n## Tool calls\n\n- TR-1 screen_entity: ok\n- TR-2 screen_entity: ok\n- TR-3 screen_entity: ok\n\n## Versions\n\n- graph_version: underwriting-graph-v1\n- llm_model: fake-llm\n- llm_provider: fake\n- policy_version: reference-policy-v1 (northwind_startup_program 2026.1 SYNTHETIC, with northwind_business_credit 2026.1)\n- prompt_version: memo-prompt-v1-afc670274d43\n",
+ "status": "recorded"
+}

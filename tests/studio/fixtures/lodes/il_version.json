@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-13 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://lehd.ces.census.gov/data/lodes/LODES8/il/version.txt",
+  "params": {},
+  "recorded_at_utc": "2026-10-13T14:43:24+00:00",
+  "content_type": "text/plain; charset=UTF-8",
+  "body_sha256": "8d80130bc15b18ede901f97cda514e6363229f1fedcbb56460e8246654208f92",
+  "full_body_sha256": "8d80130bc15b18ede901f97cda514e6363229f1fedcbb56460e8246654208f92",
+  "body": "LEHD Origin-Destination Employment Statistics (LODES)\nIL (Illinois)\nData Vintage: 20251202_1657\nRelease Format Version 8.4\n"
+}

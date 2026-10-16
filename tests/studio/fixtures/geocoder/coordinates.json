@@ -1,0 +1,17 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://geocoding.geo.census.gov/geocoder/geographies/coordinates",
+  "params": {
+    "x": "-95.369483",
+    "y": "29.760724",
+    "benchmark": "Public_AR_Current",
+    "vintage": "Current_Current",
+    "layers": "Census Tracts",
+    "format": "json"
+  },
+  "recorded_at_utc": "2026-10-12T19:38:44+00:00",
+  "content_type": "application/json",
+  "body_sha256": "458ed21331c8ba15726c6ffa42081a387d216322106e2b37dcf967060e2ff8f8",
+  "full_body_sha256": "458ed21331c8ba15726c6ffa42081a387d216322106e2b37dcf967060e2ff8f8",
+  "body": "{\"result\":{\"geographies\":{\"Census Tracts\":[{\"GEOID\":\"48201980700\",\"CENTLAT\":\"+29.7620997\",\"AREAWATER\":48203,\"STATE\":\"48\",\"BASENAME\":\"9807\",\"OID\":\"2079015701946950\",\"LSADC\":\"CT\",\"FUNCSTAT\":\"S\",\"INTPTLAT\":\"+29.7621790\",\"NAME\":\"Census Tract 9807\",\"OBJECTID\":81271,\"TRACT\":\"980700\",\"CENTLON\":\"-095.3652151\",\"AREALAND\":1255605,\"INTPTLON\":\"-095.3652480\",\"MTFCC\":\"G5020\",\"COUNTY\":\"201\"}]},\"input\":{\"vintage\":{\"isDefault\":true,\"id\":\"4\",\"vintageName\":\"Current_Current\",\"vintageDescription\":\"Current Vintage - Current Benchmark\"},\"location\":{\"x\":-95.369483,\"y\":29.760724},\"benchmark\":{\"isDefault\":true,\"benchmarkDescription\":\"Public Address Ranges - Current Benchmark\",\"id\":\"4\",\"benchmarkName\":\"Public_AR_Current\"}}}}"
+}

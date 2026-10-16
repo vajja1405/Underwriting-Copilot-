@@ -1,38 +1,117 @@
 # Metro config (Founder Studio S1). Schema: src/uwcopilot/studio/metros/models.py.
-# UNVERIFIED: the official title, CBSA code and county list must come from the Census delineation file, which could
-# not be opened in this build (www.census.gov is blocked; see docs/studio/metros.md). Counties stay empty and
-# verified stays false until then; the model refuses counties without a delineation_source. With no data snapshot,
-# this metro runs in "limited mode" and every data factor is UNKNOWN.
+# The name, CBSA code, states and counties below were written by scripts/studio_fetch_delineation.py from the Census
+# Bureau delineation file recorded under `delineation` (URL, date, SHA-256 of the file). Do not edit them by hand;
+# re-run the script. Trade-area settings and enhancements are design choices of the project author. Without a data
+# snapshot this metro runs in "limited mode" (see results/studio_metro_coverage.json).
 id: chicago_il_in
-name: "Chicago-Naperville-Elgin (title from the Studio plan, UNVERIFIED)"
+name: Chicago-Naperville-Elgin, IL-IN
 data_label: PUBLIC
-verified: false
-states: [IL, IN]
-cbsa_code: null
-counties: []
-delineation_source: null
+verified: true
+states:
+- IL
+- IN
+cbsa_code: '16980'
+cbsa_title_prefix: Chicago-Naperville-Elgin
+counties:
+- state_fips: '17'
+  county_fips: '031'
+  name: Cook County
+  state_name: Illinois
+  central_or_outlying: central
+- state_fips: '17'
+  county_fips: '043'
+  name: DuPage County
+  state_name: Illinois
+  central_or_outlying: central
+- state_fips: '17'
+  county_fips: '063'
+  name: Grundy County
+  state_name: Illinois
+  central_or_outlying: outlying
+- state_fips: '17'
+  county_fips: '111'
+  name: McHenry County
+  state_name: Illinois
+  central_or_outlying: central
+- state_fips: '17'
+  county_fips: '197'
+  name: Will County
+  state_name: Illinois
+  central_or_outlying: central
+- state_fips: '17'
+  county_fips: '037'
+  name: DeKalb County
+  state_name: Illinois
+  central_or_outlying: outlying
+- state_fips: '17'
+  county_fips: '089'
+  name: Kane County
+  state_name: Illinois
+  central_or_outlying: central
+- state_fips: '17'
+  county_fips: '093'
+  name: Kendall County
+  state_name: Illinois
+  central_or_outlying: central
+- state_fips: '17'
+  county_fips: '097'
+  name: Lake County
+  state_name: Illinois
+  central_or_outlying: central
+- state_fips: '18'
+  county_fips: '073'
+  name: Jasper County
+  state_name: Indiana
+  central_or_outlying: outlying
+- state_fips: '18'
+  county_fips: '089'
+  name: Lake County
+  state_name: Indiana
+  central_or_outlying: central
+- state_fips: '18'
+  county_fips: '111'
+  name: Newton County
+  state_name: Indiana
+  central_or_outlying: outlying
+- state_fips: '18'
+  county_fips: '127'
+  name: Porter County
+  state_name: Indiana
+  central_or_outlying: central
+delineation:
+  source:
+    publisher: U.S. Census Bureau, Population Division
+    title: List 1. CORE BASED STATISTICAL AREAS (CBSAs), METROPOLITAN DIVISIONS, AND COMBINED STATISTICAL AREAS (CSAs), JULY
+      2023
+    date: July 2023
+    url: https://www2.census.gov/programs-surveys/metro-micro/geographies/reference-files/2023/delineation-files/list1_2023.xlsx
+    page_or_table: list1_2023.xlsx, first sheet, the 13 rows with CBSA Code 16980
+  file_name: list1_2023.xlsx
+  file_sha256: 952c4b1e78acbb54e6ec9412434b7602fedacbf021736351a63c181bdb753629
+  retrieved_at_utc: '2026-10-12T19:22:07+00:00'
+  generated_by: scripts/studio_fetch_delineation.py
 crs: EPSG:4326
 bbox: null
 trade_area:
   ring_multiplier: 0.8
   status: DESIGN_CHOICE
-  note: >-
-    Scales every profile's trade-area rings. Tighter rings for dense metros and wider rings for
-    car-dependent ones follow the Studio plan; the density premise itself is UNVERIFIED (docs/studio/metros.md).
+  note: Scales every profile's trade-area rings. Tighter rings for dense metros and wider rings for car-dependent ones follow
+    the Studio plan; the density premise itself is UNVERIFIED (docs/studio/metros.md).
 enhancements:
-  - kind: traffic_state
-    adapter: IL
-    enabled: true
-  - kind: traffic_state
-    adapter: IN
-    enabled: true
-  - kind: city_open_data
-    adapter: chicago
-    enabled: true
-  - kind: str_comps
-    adapter: chicago
-    enabled: true
+- kind: traffic_state
+  adapter: IL
+  enabled: true
+- kind: traffic_state
+  adapter: IN
+  enabled: true
+- kind: city_open_data
+  adapter: chicago
+  enabled: true
+- kind: str_comps
+  adapter: chicago
+  enabled: true
 snapshot_date: null
 coverage_threshold: 0.8
 synthetic: null
-note: Expected v1 metro from the Studio plan; rank and title to confirm from the Census tables (docs/studio/metros.md).
+note: Rank 3 of 387 metropolitan statistical areas by POPESTIMATE2025 in cbsa-est2025-alldata.csv (written by scripts/studio_fetch_delineation.py;
+  see results/studio_metro_ranking.json).

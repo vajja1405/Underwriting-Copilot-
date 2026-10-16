@@ -1,0 +1,131 @@
+# Evidence requests and plausible resolutions for STARTUP files (Founder Studio S6; the SYNTHETIC Northwind startup
+# program, corpus/programs/northwind_startup_program.md).
+#
+# The Evidence-to-Action Engine (src/uwcopilot/evidence/) reads config/evidence_requests.yaml and
+# config/resolution_templates.yaml for credit and insurance files. A startup file can have four more open problems,
+# kept in this separate file so the lender catalog, its version and the Phase 4 results stay exactly as they were:
+#   missing_equity_verification      NSP-3.1: the owner cash equity is not shown by bank statements in the file;
+#   missing_experience_evidence      NSP-2.1: a principal claims 24+ months of experience without resume/references;
+#   unsupported_material_assumption  NSP-6.1: a top driver (tornado rank 1-3) has no supporting document;
+#   missing_quotes                   NSP-1.2 / NSP-3.2: the build-out and equipment cost has no contractor or
+#                                    equipment quote in the file.
+# Read by src/uwcopilot/evidence/startup_requests.py; the items come from evidence/open_items_startup.py.
+#
+# cost_weight is a RELATIVE effort weight on the lender catalog's scale (1.0 = "re-send a document you already
+# have"). The priors below are the plausible ways each problem resolves. BOTH ARE PLANNING ASSUMPTIONS written by the
+# project author, not measurements and not industry figures; the value of information only uses them to order
+# requests. Every request is SYNTHETIC: Northwind Business Credit is a fictional institution.
+#
+# Lever vocabulary: the one of config/resolution_templates.yaml (docintel/levers.py) on the StartupCreditApplication
+# JSON, for example "sources_and_uses.equity_verified_by_statements", "owners[0].experience_evidence_provided",
+# "material_assumptions[2].supporting_document_provided" and "documents_provided+". Values written as {name} are
+# filled from the case (evidence/open_items_startup.py); an option whose value cannot be computed is left out.
+
+version: startup-evidence-requests-v1
+
+requests:
+  equity_bank_statements:
+    title: Bank statements showing the owner cash equity
+    ask: "Recent statements of the account that holds the owner cash equity, showing the funds (NSP-3.1)"
+    resolves: [missing_equity_verification]
+    guideline_refs: [NSP-3.1, NSP-1.3]
+    document: equity_bank_statements
+    cost_weight: 1.0
+  owner_resume_and_references:
+    title: Owner resume and references
+    ask: "A resume and at least one reference for the principal whose experience qualifies the file (NSP-2.1)"
+    resolves: [missing_experience_evidence]
+    guideline_refs: [NSP-2.1]
+    document: owner_resumes_and_references
+    cost_weight: 1.0
+  driver_comparable_data:
+    title: Comparable data for a top driver
+    ask: "Comparable data with its source (publisher, date and table, or comparable sites) for the named top driver"
+    resolves: [unsupported_material_assumption]
+    guideline_refs: [NSP-6.1, NSP-4.3]
+    document: comparable_data_with_source
+    cost_weight: 2.0
+  driver_lease_or_loi:
+    title: Lease or letter of intent for the rent
+    ask: "A signed lease or a landlord's letter of intent that states the rent used in the plan"
+    resolves: [unsupported_material_assumption]
+    guideline_refs: [NSP-6.1]
+    document: lease_or_letter_of_intent
+    cost_weight: 1.5
+  driver_quote:
+    title: Quote for a top driver
+    ask: "A signed contractor or equipment quote for the named top driver"
+    resolves: [unsupported_material_assumption]
+    guideline_refs: [NSP-6.1]
+    document: contractor_or_equipment_quotes
+    cost_weight: 1.5
+  build_out_quotes:
+    title: Contractor and equipment quotes for the build-out
+    ask: "Signed contractor and equipment quotes for the build-out and equipment cost in the sources and uses"
+    resolves: [missing_quotes]
+    guideline_refs: [NSP-1.2, NSP-3.2]
+    document: contractor_or_equipment_quotes
+    cost_weight: 1.5
+
+templates:
+  missing_equity_verification:
+    options:
+      - option_id: statements_confirm
+        description: The statements show the stated owner cash equity.
+        prior: 0.8
+        substitutions:
+          sources_and_uses.equity_verified_by_statements: true
+          documents_provided+: equity_bank_statements
+      - option_id: statements_show_less
+        description: >-
+          The statements show a quarter less cash than stated; the working-capital reserve shrinks by the same
+          amount, so sources still equal uses.
+        prior: 0.2
+        substitutions:
+          sources_and_uses.equity_verified_by_statements: true
+          documents_provided+: equity_bank_statements
+          sources_and_uses.sources.owner_cash_equity: "{equity_shown_less}"
+          sources_and_uses.uses.working_capital_reserve: "{reserve_after_less_equity}"
+  missing_experience_evidence:
+    options:
+      - option_id: evidence_confirms
+        description: The resume and references confirm the stated experience.
+        prior: 0.8
+        substitutions:
+          "owners[{owner_index}].experience_evidence_provided": true
+          documents_provided+: owner_resumes_and_references
+      - option_id: evidence_shows_less
+        description: The resume shows half the stated relevant experience.
+        prior: 0.2
+        substitutions:
+          "owners[{owner_index}].experience_evidence_provided": true
+          "owners[{owner_index}].years_relevant_experience": "{experience_years_half}"
+          documents_provided+: owner_resumes_and_references
+  unsupported_material_assumption:
+    options:
+      - option_id: document_supports
+        description: A supporting document backs the top driver's figure.
+        prior: 0.7
+        substitutions:
+          "material_assumptions[{assumption_index}].supporting_document_provided": true
+          documents_provided+: "{document}"
+      - option_id: no_supporting_document
+        description: No document that backs the figure can be provided; the driver stays unsupported.
+        prior: 0.3
+        substitutions: {}
+  missing_quotes:
+    options:
+      - option_id: quotes_confirm
+        description: The quotes confirm the build-out and equipment cost.
+        prior: 0.7
+        substitutions:
+          documents_provided+: contractor_or_equipment_quotes
+      - option_id: quotes_higher
+        description: >-
+          The quotes come in a tenth above the plan; the extra cost comes out of the working-capital reserve, so
+          sources still equal uses.
+        prior: 0.3
+        substitutions:
+          documents_provided+: contractor_or_equipment_quotes
+          "sources_and_uses.uses.{capex_field}": "{capex_higher}"
+          sources_and_uses.uses.working_capital_reserve: "{reserve_after_higher_capex}"

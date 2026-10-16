@@ -7,6 +7,10 @@ The fake provider is wrapped only in the budget layer (it is free) and is never 
 exactly the scripted responses.
 The ollama provider (local open-weight models) needs no API key. It still goes through Cached(Budgeted(...)): its
 price list entries are 0.0, and the cache key holds the model digest and every model option.
+The hf_inference provider (Hugging Face Inference Providers, hf_inference_client.py) is DISABLED by default: it is
+built only when asked for by name AND UWC_HF_INFERENCE_ENABLED, HF_TOKEN and a model are set, and it goes through
+Cached(Budgeted(...)) like every paid provider, so a model without a verified price is refused before any request.
+It is not in settings.PROVIDERS, so UWC_LLM_PROVIDER cannot select it.
 """
 
 from collections.abc import Sequence
@@ -17,6 +21,12 @@ from uwcopilot.llm.base import LLMClient
 from uwcopilot.llm.budget import BudgetedLLMClient, CostTracker, load_prices
 from uwcopilot.llm.cache import CachedLLMClient, LLMCache
 from uwcopilot.llm.fake_client import FakeLLM, FakeResponder
+from uwcopilot.llm.hf_inference_client import (
+    HF_INFERENCE_PROVIDER,
+    HFInferenceSettings,
+    build_hf_inference_client,
+    load_hf_inference_settings,
+)
 from uwcopilot.llm.ollama_client import OllamaClient, OllamaOptions
 from uwcopilot.llm.openai_client import OpenAIClient
 from uwcopilot.llm.settings import LLMSettings, load_llm_settings, validate_provider
@@ -43,10 +53,12 @@ def get_llm_client(
     fake_responses: Sequence[str] | FakeResponder | None = None,
     http_client: Any | None = None,
     ollama_options: OllamaOptions | None = None,
+    hf_settings: HFInferenceSettings | None = None,
 ) -> LLMClient:
     """Build an LLM client.
 
-    provider: "anthropic", "openai", "ollama" or "fake" (default: settings.provider, i.e. UWC_LLM_PROVIDER).
+    provider: "anthropic", "openai", "ollama", "fake" (default: settings.provider, i.e. UWC_LLM_PROVIDER) or
+        "hf_inference" (only by name; disabled by default).
     settings: defaults to load_llm_settings() (repo .env plus project variables).
     model: overrides the model from settings.
     cost_tracker: share one tracker across clients so the cap covers the whole run.
@@ -55,11 +67,18 @@ def get_llm_client(
     http_client: test hook passed to the SDK (an httpx2.Client with a mock transport); for ollama, an
         httpx.Client with a MockTransport.
     ollama_options: num_ctx, seed, optional JSON-schema format and expected digest for the ollama provider.
+    hf_settings: settings for provider "hf_inference" (default: load_hf_inference_settings(), from .env).
 
     Raises MissingAPIKeyError when a paid provider has no API key; no request is attempted in that case.
+    Provider "hf_inference" raises HFInferenceDisabled / HFInferenceTokenMissing / HFInferenceModelMissing (no request)
+    unless it was explicitly enabled; see hf_inference_client.py.
     The ollama client contacts the local server when it is built (version and model digest).
     """
     settings = settings or load_llm_settings()
+    if provider == HF_INFERENCE_PROVIDER:
+        tracker = cost_tracker or cost_tracker_from_settings(settings)
+        hf_client = build_hf_inference_client(hf_settings or load_hf_inference_settings(), model, http_client)
+        return wrap_provider_client(hf_client, tracker, settings, use_cache)
     chosen = validate_provider(provider or settings.provider)
     chosen_model = model or settings.model_for(chosen)
     tracker = cost_tracker or cost_tracker_from_settings(settings)

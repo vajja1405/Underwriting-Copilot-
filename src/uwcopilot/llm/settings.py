@@ -18,7 +18,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
-from urllib.parse import urlsplit
+from urllib.parse import SplitResult, urlsplit
 
 from uwcopilot.common.paths import CACHE_DIR, CONFIG_DIR, ENV_FILE
 from uwcopilot.common.settings import env_reader, is_http_url
@@ -133,17 +133,31 @@ def validate_effort(effort: str) -> str:
     return effort
 
 
+def has_valid_port(parts: SplitResult) -> bool:
+    """True when the URL has no port, or a port that parses as a number (urlsplit raises ValueError otherwise)."""
+    try:
+        return parts.port is None or parts.port >= 0
+    except ValueError:
+        return False
+
+
 def validate_base_url(url: str) -> str:
     """Require https, except plain http to a loopback host for a local test server. Trailing slashes are removed.
 
     The URL is parsed rather than prefix-matched, so "http://localhost.evil.example" or
     "http://localhost@evil.example" cannot pass as local. User info (user:password@) is always refused: the API key
-    travels in a header, and a URL is not a place for credentials.
+    travels in a header, and a URL is not a place for credentials. A query or fragment is refused because the
+    clients append paths to the base URL ("http://127.0.0.1:11434#x" + "/api/chat" would request "/"), and so is
+    a port that does not parse ("http://127.0.0.1:80:11434").
     """
     cleaned = url.strip().rstrip("/")
     if not is_http_url(cleaned):
         raise SettingsError(f"LLM base URL must be an absolute https URL (got {url!r}).")
     parts = urlsplit(cleaned)
+    if not has_valid_port(parts):
+        raise SettingsError(f"LLM base URL has an invalid port (got {url!r}).")
+    if "?" in cleaned or "#" in cleaned:
+        raise SettingsError(f"LLM base URL must not contain a query or fragment (got {url!r}).")
     if parts.username is not None or parts.password is not None or "@" in parts.netloc:
         raise SettingsError("LLM base URL must not contain a user name or password.")
     if parts.scheme == "http" and parts.hostname not in LOCAL_HOSTS:

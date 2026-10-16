@@ -1,0 +1,2986 @@
+{
+  "title": "Studio S3 feasibility simulator: validation on SYNTHETIC worlds",
+  "data_label": "SYNTHETIC",
+  "simulation_label": "simulated, based on stated assumptions",
+  "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+  "scope": "Validation on SYNTHETIC worlds whose generator the same author wrote (src/uwcopilot/studio/feasibility/worlds.py and validation.py). It checks internal consistency and the effect of misspecification; it is not evidence of real-world accuracy.",
+  "simulator_version": "studio-feasibility-1.0",
+  "settings": {
+    "metro": "synthetic_metro",
+    "worlds_per_business_type": 400,
+    "paths_per_world": 1000,
+    "extra_truths_per_world": 100,
+    "months": 36,
+    "seed": 42,
+    "bootstrap": {
+      "resamples": 1000,
+      "seed": 42,
+      "unit": "world",
+      "alpha": 0.05
+    },
+    "dscr_target": {
+      "value": 1.25,
+      "label": "lender policy (SYNTHETIC Northwind guideline NBC-4.2), editable",
+      "source": "corpus/guidelines/northwind_business_credit.md NBC-4.2, term loan minimum decision DSCR (SYNTHETIC document of a fictional institution; also the NSP-4.1 threshold of the SYNTHETIC startup program)"
+    },
+    "dscr_year": 2
+  },
+  "method": {
+    "worlds": "worlds.py: each world draws a plan, a loan and a target one-forecast year-2 DSCR (uniform 0.6-2.4), then anchors it: the site's most likely demand is set so the one-forecast DSCR equals the target ('demand'); when the capacity mode cannot reach it, the founder gets a rent quote that does ('rent_quote'); worlds that reach it with neither lever are kept and counted ('none', n_worlds_not_anchored)",
+    "well_specified": "the true path is one more draw from the simulator's own model",
+    "misspecified": "the true path adds Student-t(3) monthly noise scaled to unit variance, a mean-one lognormal site demand error (log-sd 0.25), and with probability 0.3 a 6-month downturn cutting demand by a uniform 0.2-0.5 share",
+    "band_coverage": "share of the 36 months whose true value lies within the forecast P10-P90 (inclusive), averaged over worlds (one true future per world)",
+    "expected_band_coverage": "the same with 100 extra true futures per world (independent random stream); removes the noise of one future per world (a diagnostic)",
+    "coverage_reference_if_well_specified": {
+      "value": 0.7984,
+      "formula": "0.8 x (n - 1) / (n + 1) for n forecast paths: the share of new draws expected inside a P10-P90 band estimated from n samples with NumPy's linear interpolation"
+    },
+    "probability_gap": "mean over worlds of |forecast probability - true probability|, where the true probability is the share of the 100 extra true futures with the outcome; it includes the Monte Carlo noise of both shares (a diagnostic)",
+    "brier": "mean of (forecast probability - true 0/1 outcome)^2 over worlds; lower is better",
+    "single_forecast_baseline": "every input at its most likely value, no shocks, no noise; read as a yes (1) or no (0) forecast (single_forecast_yes_rate = share of worlds where it says yes)",
+    "base_rate_baseline": "a constant forecast equal to the share of the same worlds with the outcome (in-sample, so it is optimistic)"
+  },
+  "headline": [
+    {
+      "condition": "well_specified",
+      "n_worlds": 2400,
+      "band_coverage_revenue": {
+        "estimate": 0.7843,
+        "ci_low": 0.7744,
+        "ci_high": 0.7946,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      },
+      "expected_band_coverage_revenue": {
+        "estimate": 0.7987,
+        "ci_low": 0.7976,
+        "ci_high": 0.7998,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      },
+      "brier_dscr_year2_simulator": {
+        "estimate": 0.1405,
+        "ci_low": 0.1321,
+        "ci_high": 0.1493,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      },
+      "brier_dscr_year2_single_forecast": {
+        "estimate": 0.4796,
+        "ci_low": 0.4596,
+        "ci_high": 0.4992,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      },
+      "brier_dscr_year2_base_rate_in_sample": {
+        "estimate": 0.1567,
+        "ci_low": 0.1473,
+        "ci_high": 0.1664,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      }
+    },
+    {
+      "condition": "misspecified",
+      "n_worlds": 2400,
+      "band_coverage_revenue": {
+        "estimate": 0.6211,
+        "ci_low": 0.6074,
+        "ci_high": 0.6349,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      },
+      "expected_band_coverage_revenue": {
+        "estimate": 0.6148,
+        "ci_low": 0.6127,
+        "ci_high": 0.6171,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      },
+      "brier_dscr_year2_simulator": {
+        "estimate": 0.1433,
+        "ci_low": 0.1351,
+        "ci_high": 0.1523,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      },
+      "brier_dscr_year2_single_forecast": {
+        "estimate": 0.4938,
+        "ci_low": 0.4729,
+        "ci_high": 0.5154,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      },
+      "brier_dscr_year2_base_rate_in_sample": {
+        "estimate": 0.1557,
+        "ci_low": 0.146,
+        "ci_high": 0.1654,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile"
+      }
+    },
+    {
+      "timing_paths_only_1000_median_ms_across_types": 3.79
+    }
+  ],
+  "conditions": {
+    "well_specified": {
+      "per_business_type": {
+        "car_wash": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 0,
+          "anchored_by": {
+            "demand": 400,
+            "rent_quote": 0,
+            "none": 0
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.7906,
+            "ci_low": 0.7662,
+            "ci_high": 0.8129,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.7963,
+            "ci_low": 0.7662,
+            "ci_high": 0.8251,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.7971,
+            "ci_low": 0.7945,
+            "ci_high": 0.7997,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.799,
+            "ci_low": 0.796,
+            "ci_high": 0.8019,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.2606,
+            "mean_abs_gap": {
+              "estimate": 0.031,
+              "ci_low": 0.0283,
+              "ci_high": 0.0338,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.7354,
+            "mean_abs_gap": {
+              "estimate": 0.031,
+              "ci_low": 0.0286,
+              "ci_high": 0.0336,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.2325,
+            "mean_forecast": 0.259,
+            "single_forecast_yes_rate": 0.635,
+            "brier_simulator": {
+              "estimate": 0.1574,
+              "ci_low": 0.136,
+              "ci_high": 0.1777,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.4675,
+              "ci_low": 0.42,
+              "ci_high": 0.5175,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1784,
+              "ci_low": 0.1508,
+              "ci_high": 0.1994,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3101,
+              "estimate_a": 0.1574,
+              "estimate_b": 0.4675,
+              "ci_low": -0.3625,
+              "ci_high": -0.2604,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.74,
+            "mean_forecast": 0.7352,
+            "single_forecast_yes_rate": 0.24,
+            "brier_simulator": {
+              "estimate": 0.1495,
+              "ci_low": 0.1293,
+              "ci_high": 0.1696,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.53,
+              "ci_low": 0.48,
+              "ci_high": 0.58,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1924,
+              "ci_low": 0.1688,
+              "ci_high": 0.212,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3805,
+              "estimate_a": 0.1495,
+              "estimate_b": 0.53,
+              "ci_low": -0.4351,
+              "ci_high": -0.3229,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "laundromat": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 1,
+          "anchored_by": {
+            "demand": 397,
+            "rent_quote": 2,
+            "none": 1
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.791,
+            "ci_low": 0.7662,
+            "ci_high": 0.8118,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.8019,
+            "ci_low": 0.771,
+            "ci_high": 0.8309,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.7976,
+            "ci_low": 0.795,
+            "ci_high": 0.8001,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7967,
+            "ci_low": 0.7937,
+            "ci_high": 0.7997,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.3236,
+            "mean_abs_gap": {
+              "estimate": 0.0383,
+              "ci_low": 0.0356,
+              "ci_high": 0.0415,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.6758,
+            "mean_abs_gap": {
+              "estimate": 0.0365,
+              "ci_low": 0.0336,
+              "ci_high": 0.0394,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.3075,
+            "mean_forecast": 0.3227,
+            "single_forecast_yes_rate": 0.6125,
+            "brier_simulator": {
+              "estimate": 0.1858,
+              "ci_low": 0.1684,
+              "ci_high": 0.2024,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.415,
+              "ci_low": 0.3674,
+              "ci_high": 0.4626,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.2129,
+              "ci_low": 0.1947,
+              "ci_high": 0.2275,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.2292,
+              "estimate_a": 0.1858,
+              "estimate_b": 0.415,
+              "ci_low": -0.2755,
+              "ci_high": -0.1808,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.6975,
+            "mean_forecast": 0.6748,
+            "single_forecast_yes_rate": 0.2425,
+            "brier_simulator": {
+              "estimate": 0.1853,
+              "ci_low": 0.1686,
+              "ci_high": 0.2051,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.495,
+              "ci_low": 0.4475,
+              "ci_high": 0.545,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.211,
+              "ci_low": 0.1924,
+              "ci_high": 0.2267,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3097,
+              "estimate_a": 0.1853,
+              "estimate_b": 0.495,
+              "ci_low": -0.3597,
+              "ci_high": -0.2571,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "motel": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 141,
+          "anchored_by": {
+            "demand": 140,
+            "rent_quote": 119,
+            "none": 141
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.7784,
+            "ci_low": 0.7534,
+            "ci_high": 0.8034,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.8148,
+            "ci_low": 0.7873,
+            "ci_high": 0.8422,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.8013,
+            "ci_low": 0.7987,
+            "ci_high": 0.804,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7996,
+            "ci_low": 0.7962,
+            "ci_high": 0.8026,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.1479,
+            "mean_abs_gap": {
+              "estimate": 0.026,
+              "ci_low": 0.0237,
+              "ci_high": 0.0282,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.7447,
+            "mean_abs_gap": {
+              "estimate": 0.0291,
+              "ci_low": 0.0265,
+              "ci_high": 0.0321,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.125,
+            "mean_forecast": 0.1468,
+            "single_forecast_yes_rate": 0.385,
+            "brier_simulator": {
+              "estimate": 0.1015,
+              "ci_low": 0.0818,
+              "ci_high": 0.1209,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.33,
+              "ci_low": 0.2825,
+              "ci_high": 0.3776,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1094,
+              "ci_low": 0.0839,
+              "ci_high": 0.1344,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.2285,
+              "estimate_a": 0.1015,
+              "estimate_b": 0.33,
+              "ci_low": -0.2765,
+              "ci_high": -0.1814,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.7275,
+            "mean_forecast": 0.7476,
+            "single_forecast_yes_rate": 0.21,
+            "brier_simulator": {
+              "estimate": 0.1593,
+              "ci_low": 0.1377,
+              "ci_high": 0.1807,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.5375,
+              "ci_low": 0.4875,
+              "ci_high": 0.585,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1982,
+              "ci_low": 0.1757,
+              "ci_high": 0.2167,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3782,
+              "estimate_a": 0.1593,
+              "estimate_b": 0.5375,
+              "ci_low": -0.4347,
+              "ci_high": -0.3206,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "restaurant_cafe": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 0,
+          "anchored_by": {
+            "demand": 400,
+            "rent_quote": 0,
+            "none": 0
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.7801,
+            "ci_low": 0.752,
+            "ci_high": 0.8061,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.8265,
+            "ci_low": 0.7965,
+            "ci_high": 0.8582,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.7983,
+            "ci_low": 0.7957,
+            "ci_high": 0.8008,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7977,
+            "ci_low": 0.7943,
+            "ci_high": 0.8013,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.1168,
+            "mean_abs_gap": {
+              "estimate": 0.0267,
+              "ci_low": 0.0246,
+              "ci_high": 0.0289,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.9561,
+            "mean_abs_gap": {
+              "estimate": 0.0155,
+              "ci_low": 0.0142,
+              "ci_high": 0.0169,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.105,
+            "mean_forecast": 0.115,
+            "single_forecast_yes_rate": 0.645,
+            "brier_simulator": {
+              "estimate": 0.0923,
+              "ci_low": 0.0703,
+              "ci_high": 0.1161,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.595,
+              "ci_low": 0.545,
+              "ci_high": 0.6426,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.094,
+              "ci_low": 0.0694,
+              "ci_high": 0.1186,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.5027,
+              "estimate_a": 0.0923,
+              "estimate_b": 0.595,
+              "ci_low": -0.5576,
+              "ci_high": -0.4416,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.9725,
+            "mean_forecast": 0.9557,
+            "single_forecast_yes_rate": 0.835,
+            "brier_simulator": {
+              "estimate": 0.027,
+              "ci_low": 0.0143,
+              "ci_high": 0.042,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.1875,
+              "ci_low": 0.1524,
+              "ci_high": 0.2225,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.0267,
+              "ci_low": 0.0123,
+              "ci_high": 0.043,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.1605,
+              "estimate_a": 0.027,
+              "estimate_b": 0.1875,
+              "ci_low": -0.1935,
+              "ci_high": -0.1248,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "retail_storefront": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 0,
+          "anchored_by": {
+            "demand": 400,
+            "rent_quote": 0,
+            "none": 0
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.783,
+            "ci_low": 0.7536,
+            "ci_high": 0.8114,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.7887,
+            "ci_low": 0.7532,
+            "ci_high": 0.8208,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.7994,
+            "ci_low": 0.7967,
+            "ci_high": 0.8021,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7981,
+            "ci_low": 0.7949,
+            "ci_high": 0.8016,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.2242,
+            "mean_abs_gap": {
+              "estimate": 0.0332,
+              "ci_low": 0.0309,
+              "ci_high": 0.0358,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.8797,
+            "mean_abs_gap": {
+              "estimate": 0.023,
+              "ci_low": 0.0211,
+              "ci_high": 0.0249,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.1925,
+            "mean_forecast": 0.2226,
+            "single_forecast_yes_rate": 0.63,
+            "brier_simulator": {
+              "estimate": 0.1499,
+              "ci_low": 0.1293,
+              "ci_high": 0.1698,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.5375,
+              "ci_low": 0.49,
+              "ci_high": 0.5851,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1554,
+              "ci_low": 0.131,
+              "ci_high": 0.1771,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3876,
+              "estimate_a": 0.1499,
+              "estimate_b": 0.5375,
+              "ci_low": -0.4446,
+              "ci_high": -0.3325,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.88,
+            "mean_forecast": 0.8812,
+            "single_forecast_yes_rate": 0.72,
+            "brier_simulator": {
+              "estimate": 0.0977,
+              "ci_low": 0.0774,
+              "ci_high": 0.1219,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.275,
+              "ci_low": 0.23,
+              "ci_high": 0.3225,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1056,
+              "ci_low": 0.0839,
+              "ci_high": 0.1293,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.1773,
+              "estimate_a": 0.0977,
+              "estimate_b": 0.275,
+              "ci_low": -0.2225,
+              "ci_high": -0.1343,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "short_term_rental": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 0,
+          "anchored_by": {
+            "demand": 0,
+            "rent_quote": 400,
+            "none": 0
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.7828,
+            "ci_low": 0.7562,
+            "ci_high": 0.8079,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.7749,
+            "ci_low": 0.7432,
+            "ci_high": 0.8049,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.7986,
+            "ci_low": 0.7959,
+            "ci_high": 0.8013,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7978,
+            "ci_low": 0.7947,
+            "ci_high": 0.801,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.1934,
+            "mean_abs_gap": {
+              "estimate": 0.0308,
+              "ci_low": 0.0285,
+              "ci_high": 0.0333,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.8845,
+            "mean_abs_gap": {
+              "estimate": 0.0232,
+              "ci_low": 0.0211,
+              "ci_high": 0.0255,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.205,
+            "mean_forecast": 0.1917,
+            "single_forecast_yes_rate": 0.6225,
+            "brier_simulator": {
+              "estimate": 0.1559,
+              "ci_low": 0.1351,
+              "ci_high": 0.1777,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.5325,
+              "ci_low": 0.4825,
+              "ci_high": 0.585,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.163,
+              "ci_low": 0.1394,
+              "ci_high": 0.185,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3766,
+              "estimate_a": 0.1559,
+              "estimate_b": 0.5325,
+              "ci_low": -0.4339,
+              "ci_high": -0.3199,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.8875,
+            "mean_forecast": 0.8845,
+            "single_forecast_yes_rate": 0.555,
+            "brier_simulator": {
+              "estimate": 0.0878,
+              "ci_low": 0.0704,
+              "ci_high": 0.1081,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.3925,
+              "ci_low": 0.3475,
+              "ci_high": 0.4425,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.0998,
+              "ci_low": 0.0778,
+              "ci_high": 0.1222,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3047,
+              "estimate_a": 0.0878,
+              "estimate_b": 0.3925,
+              "ci_low": -0.355,
+              "ci_high": -0.253,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        }
+      },
+      "pooled": {
+        "n_worlds": 2400,
+        "n_worlds_not_anchored": 142,
+        "anchored_by": {
+          "demand": 1737,
+          "rent_quote": 521,
+          "none": 142
+        },
+        "band_coverage_revenue": {
+          "estimate": 0.7843,
+          "ci_low": 0.7744,
+          "ci_high": 0.7946,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "alpha": 0.05,
+          "method": "percentile"
+        },
+        "band_coverage_net_income": {
+          "estimate": 0.8005,
+          "ci_low": 0.7886,
+          "ci_high": 0.8125,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "alpha": 0.05,
+          "method": "percentile"
+        },
+        "expected_band_coverage_revenue": {
+          "estimate": 0.7987,
+          "ci_low": 0.7976,
+          "ci_high": 0.7998,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "alpha": 0.05,
+          "method": "percentile"
+        },
+        "expected_band_coverage_net_income": {
+          "estimate": 0.7981,
+          "ci_low": 0.7968,
+          "ci_high": 0.7994,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "alpha": 0.05,
+          "method": "percentile"
+        },
+        "probability_gap_dscr_year2": {
+          "mean_true_probability": 0.2111,
+          "mean_abs_gap": {
+            "estimate": 0.031,
+            "ci_low": 0.03,
+            "ci_high": 0.032,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          }
+        },
+        "probability_gap_cash_negative_24m": {
+          "mean_true_probability": 0.8127,
+          "mean_abs_gap": {
+            "estimate": 0.0264,
+            "ci_low": 0.0254,
+            "ci_high": 0.0274,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          }
+        },
+        "dscr_year2": {
+          "outcome_rate": 0.1946,
+          "mean_forecast": 0.2097,
+          "single_forecast_yes_rate": 0.5883,
+          "brier_simulator": {
+            "estimate": 0.1405,
+            "ci_low": 0.1321,
+            "ci_high": 0.1493,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_single_forecast": {
+            "estimate": 0.4796,
+            "ci_low": 0.4596,
+            "ci_high": 0.4992,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_base_rate_in_sample": {
+            "estimate": 0.1567,
+            "ci_low": 0.1473,
+            "ci_high": 0.1664,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_simulator_minus_single_forecast": {
+            "estimate": -0.3391,
+            "estimate_a": 0.1405,
+            "estimate_b": 0.4796,
+            "ci_low": -0.361,
+            "ci_high": -0.3174,
+            "share_a_greater": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          }
+        },
+        "cash_negative_24m": {
+          "outcome_rate": 0.8175,
+          "mean_forecast": 0.8131,
+          "single_forecast_yes_rate": 0.4671,
+          "brier_simulator": {
+            "estimate": 0.1178,
+            "ci_low": 0.109,
+            "ci_high": 0.1259,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_single_forecast": {
+            "estimate": 0.4029,
+            "ci_low": 0.3821,
+            "ci_high": 0.4233,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_base_rate_in_sample": {
+            "estimate": 0.1492,
+            "ci_low": 0.1392,
+            "ci_high": 0.1595,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_simulator_minus_single_forecast": {
+            "estimate": -0.2851,
+            "estimate_a": 0.1178,
+            "estimate_b": 0.4029,
+            "ci_low": -0.305,
+            "ci_high": -0.263,
+            "share_a_greater": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          }
+        }
+      },
+      "reliability_dscr_year2_pooled": [
+        {
+          "bin": "[0.0, 0.2)",
+          "n_worlds": 1341,
+          "mean_forecast": 0.1058,
+          "observed_share": 0.0977
+        },
+        {
+          "bin": "[0.2, 0.4)",
+          "n_worlds": 789,
+          "mean_forecast": 0.2811,
+          "observed_share": 0.275
+        },
+        {
+          "bin": "[0.4, 0.6)",
+          "n_worlds": 220,
+          "mean_forecast": 0.4823,
+          "observed_share": 0.4136
+        },
+        {
+          "bin": "[0.6, 0.8)",
+          "n_worlds": 49,
+          "mean_forecast": 0.6651,
+          "observed_share": 0.551
+        },
+        {
+          "bin": "[0.8, 1.0]",
+          "n_worlds": 1,
+          "mean_forecast": 0.802,
+          "observed_share": 1.0
+        }
+      ]
+    },
+    "misspecified": {
+      "per_business_type": {
+        "car_wash": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 0,
+          "anchored_by": {
+            "demand": 400,
+            "rent_quote": 0,
+            "none": 0
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.5522,
+            "ci_low": 0.5151,
+            "ci_high": 0.5867,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.6683,
+            "ci_low": 0.6322,
+            "ci_high": 0.7061,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.5853,
+            "ci_low": 0.5809,
+            "ci_high": 0.5898,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.703,
+            "ci_low": 0.6984,
+            "ci_high": 0.7074,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.2553,
+            "mean_abs_gap": {
+              "estimate": 0.0541,
+              "ci_low": 0.0499,
+              "ci_high": 0.0585,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.7502,
+            "mean_abs_gap": {
+              "estimate": 0.0429,
+              "ci_low": 0.0391,
+              "ci_high": 0.0469,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.24,
+            "mean_forecast": 0.259,
+            "single_forecast_yes_rate": 0.635,
+            "brier_simulator": {
+              "estimate": 0.1651,
+              "ci_low": 0.1444,
+              "ci_high": 0.1857,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.49,
+              "ci_low": 0.4425,
+              "ci_high": 0.5375,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1824,
+              "ci_low": 0.16,
+              "ci_high": 0.2038,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3249,
+              "estimate_a": 0.1651,
+              "estimate_b": 0.49,
+              "ci_low": -0.3759,
+              "ci_high": -0.2736,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.7675,
+            "mean_forecast": 0.7352,
+            "single_forecast_yes_rate": 0.24,
+            "brier_simulator": {
+              "estimate": 0.1616,
+              "ci_low": 0.1408,
+              "ci_high": 0.1849,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.5475,
+              "ci_low": 0.5,
+              "ci_high": 0.5925,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1784,
+              "ci_low": 0.1554,
+              "ci_high": 0.1982,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3859,
+              "estimate_a": 0.1616,
+              "estimate_b": 0.5475,
+              "ci_low": -0.4371,
+              "ci_high": -0.3323,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "laundromat": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 1,
+          "anchored_by": {
+            "demand": 397,
+            "rent_quote": 2,
+            "none": 1
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.6263,
+            "ci_low": 0.594,
+            "ci_high": 0.6579,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.7246,
+            "ci_low": 0.6908,
+            "ci_high": 0.7578,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.5958,
+            "ci_low": 0.591,
+            "ci_high": 0.6009,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7032,
+            "ci_low": 0.6993,
+            "ci_high": 0.7071,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.3064,
+            "mean_abs_gap": {
+              "estimate": 0.0492,
+              "ci_low": 0.0455,
+              "ci_high": 0.0529,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.6949,
+            "mean_abs_gap": {
+              "estimate": 0.0445,
+              "ci_low": 0.0413,
+              "ci_high": 0.0481,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.2825,
+            "mean_forecast": 0.3227,
+            "single_forecast_yes_rate": 0.6125,
+            "brier_simulator": {
+              "estimate": 0.1876,
+              "ci_low": 0.1704,
+              "ci_high": 0.2062,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.45,
+              "ci_low": 0.4025,
+              "ci_high": 0.4975,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.2027,
+              "ci_low": 0.1811,
+              "ci_high": 0.2211,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.2624,
+              "estimate_a": 0.1876,
+              "estimate_b": 0.45,
+              "ci_low": -0.3103,
+              "ci_high": -0.2164,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.715,
+            "mean_forecast": 0.6748,
+            "single_forecast_yes_rate": 0.2425,
+            "brier_simulator": {
+              "estimate": 0.1889,
+              "ci_low": 0.1685,
+              "ci_high": 0.2072,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.5275,
+              "ci_low": 0.4775,
+              "ci_high": 0.58,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.2038,
+              "ci_low": 0.1824,
+              "ci_high": 0.2211,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3386,
+              "estimate_a": 0.1889,
+              "estimate_b": 0.5275,
+              "ci_low": -0.3897,
+              "ci_high": -0.2828,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "motel": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 141,
+          "anchored_by": {
+            "demand": 140,
+            "rent_quote": 119,
+            "none": 141
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.6222,
+            "ci_low": 0.5883,
+            "ci_high": 0.6551,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.7274,
+            "ci_low": 0.6923,
+            "ci_high": 0.761,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.6316,
+            "ci_low": 0.6265,
+            "ci_high": 0.6362,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7312,
+            "ci_low": 0.7272,
+            "ci_high": 0.735,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.1471,
+            "mean_abs_gap": {
+              "estimate": 0.0346,
+              "ci_low": 0.0319,
+              "ci_high": 0.0376,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.766,
+            "mean_abs_gap": {
+              "estimate": 0.0398,
+              "ci_low": 0.0363,
+              "ci_high": 0.0433,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.1625,
+            "mean_forecast": 0.1468,
+            "single_forecast_yes_rate": 0.385,
+            "brier_simulator": {
+              "estimate": 0.1221,
+              "ci_low": 0.0995,
+              "ci_high": 0.1459,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.3275,
+              "ci_low": 0.28,
+              "ci_high": 0.3725,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1361,
+              "ci_low": 0.1112,
+              "ci_high": 0.16,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.2054,
+              "estimate_a": 0.1221,
+              "estimate_b": 0.3275,
+              "ci_low": -0.252,
+              "ci_high": -0.1608,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.785,
+            "mean_forecast": 0.7476,
+            "single_forecast_yes_rate": 0.21,
+            "brier_simulator": {
+              "estimate": 0.1448,
+              "ci_low": 0.125,
+              "ci_high": 0.1636,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.59,
+              "ci_low": 0.5425,
+              "ci_high": 0.6401,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1688,
+              "ci_low": 0.1427,
+              "ci_high": 0.19,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.4452,
+              "estimate_a": 0.1448,
+              "estimate_b": 0.59,
+              "ci_low": -0.505,
+              "ci_high": -0.3879,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "restaurant_cafe": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 0,
+          "anchored_by": {
+            "demand": 400,
+            "rent_quote": 0,
+            "none": 0
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.6447,
+            "ci_low": 0.6122,
+            "ci_high": 0.677,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.7701,
+            "ci_low": 0.7346,
+            "ci_high": 0.8033,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.6118,
+            "ci_low": 0.6067,
+            "ci_high": 0.6168,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7528,
+            "ci_low": 0.749,
+            "ci_high": 0.7567,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.1314,
+            "mean_abs_gap": {
+              "estimate": 0.0315,
+              "ci_low": 0.0291,
+              "ci_high": 0.0339,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.9421,
+            "mean_abs_gap": {
+              "estimate": 0.021,
+              "ci_low": 0.0191,
+              "ci_high": 0.0227,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.11,
+            "mean_forecast": 0.115,
+            "single_forecast_yes_rate": 0.645,
+            "brier_simulator": {
+              "estimate": 0.0962,
+              "ci_low": 0.074,
+              "ci_high": 0.1178,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.61,
+              "ci_low": 0.5599,
+              "ci_high": 0.6575,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.0979,
+              "ci_low": 0.0736,
+              "ci_high": 0.1186,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.5138,
+              "estimate_a": 0.0962,
+              "estimate_b": 0.61,
+              "ci_low": -0.5652,
+              "ci_high": -0.4564,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.9575,
+            "mean_forecast": 0.9557,
+            "single_forecast_yes_rate": 0.835,
+            "brier_simulator": {
+              "estimate": 0.0408,
+              "ci_low": 0.0247,
+              "ci_high": 0.058,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.1975,
+              "ci_low": 0.1575,
+              "ci_high": 0.235,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.0407,
+              "ci_low": 0.0244,
+              "ci_high": 0.0586,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.1567,
+              "estimate_a": 0.0408,
+              "estimate_b": 0.1975,
+              "ci_low": -0.1914,
+              "ci_high": -0.1223,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "retail_storefront": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 0,
+          "anchored_by": {
+            "demand": 400,
+            "rent_quote": 0,
+            "none": 0
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.6041,
+            "ci_low": 0.5661,
+            "ci_high": 0.6376,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.7788,
+            "ci_low": 0.7424,
+            "ci_high": 0.8139,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.6051,
+            "ci_low": 0.5996,
+            "ci_high": 0.6104,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7488,
+            "ci_low": 0.7445,
+            "ci_high": 0.7526,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.224,
+            "mean_abs_gap": {
+              "estimate": 0.0373,
+              "ci_low": 0.0345,
+              "ci_high": 0.0405,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.8724,
+            "mean_abs_gap": {
+              "estimate": 0.0284,
+              "ci_low": 0.0263,
+              "ci_high": 0.0309,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.19,
+            "mean_forecast": 0.2226,
+            "single_forecast_yes_rate": 0.63,
+            "brier_simulator": {
+              "estimate": 0.152,
+              "ci_low": 0.1326,
+              "ci_high": 0.1734,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.54,
+              "ci_low": 0.4924,
+              "ci_high": 0.5875,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1539,
+              "ci_low": 0.131,
+              "ci_high": 0.1771,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.388,
+              "estimate_a": 0.152,
+              "estimate_b": 0.54,
+              "ci_low": -0.4415,
+              "ci_high": -0.3286,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.8825,
+            "mean_forecast": 0.8812,
+            "single_forecast_yes_rate": 0.72,
+            "brier_simulator": {
+              "estimate": 0.1006,
+              "ci_low": 0.08,
+              "ci_high": 0.124,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.3125,
+              "ci_low": 0.2675,
+              "ci_high": 0.355,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1037,
+              "ci_low": 0.0819,
+              "ci_high": 0.1292,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.2119,
+              "estimate_a": 0.1006,
+              "estimate_b": 0.3125,
+              "ci_low": -0.2545,
+              "ci_high": -0.1677,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        },
+        "short_term_rental": {
+          "n_worlds": 400,
+          "n_worlds_not_anchored": 0,
+          "anchored_by": {
+            "demand": 0,
+            "rent_quote": 400,
+            "none": 0
+          },
+          "band_coverage_revenue": {
+            "estimate": 0.6769,
+            "ci_low": 0.6448,
+            "ci_high": 0.706,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "band_coverage_net_income": {
+            "estimate": 0.7467,
+            "ci_low": 0.7139,
+            "ci_high": 0.781,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_revenue": {
+            "estimate": 0.6593,
+            "ci_low": 0.6551,
+            "ci_high": 0.6635,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "expected_band_coverage_net_income": {
+            "estimate": 0.7427,
+            "ci_low": 0.7391,
+            "ci_high": 0.7464,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "probability_gap_dscr_year2": {
+            "mean_true_probability": 0.1691,
+            "mean_abs_gap": {
+              "estimate": 0.0353,
+              "ci_low": 0.0327,
+              "ci_high": 0.0381,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "probability_gap_cash_negative_24m": {
+            "mean_true_probability": 0.8878,
+            "mean_abs_gap": {
+              "estimate": 0.0257,
+              "ci_low": 0.0233,
+              "ci_high": 0.0283,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "dscr_year2": {
+            "outcome_rate": 0.1725,
+            "mean_forecast": 0.1917,
+            "single_forecast_yes_rate": 0.6225,
+            "brier_simulator": {
+              "estimate": 0.1369,
+              "ci_low": 0.1147,
+              "ci_high": 0.1591,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.545,
+              "ci_low": 0.495,
+              "ci_high": 0.5925,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.1427,
+              "ci_low": 0.1167,
+              "ci_high": 0.1659,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.4081,
+              "estimate_a": 0.1369,
+              "estimate_b": 0.545,
+              "ci_low": -0.4584,
+              "ci_high": -0.3516,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          },
+          "cash_negative_24m": {
+            "outcome_rate": 0.9,
+            "mean_forecast": 0.8845,
+            "single_forecast_yes_rate": 0.555,
+            "brier_simulator": {
+              "estimate": 0.0851,
+              "ci_low": 0.0668,
+              "ci_high": 0.1055,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_single_forecast": {
+              "estimate": 0.41,
+              "ci_low": 0.365,
+              "ci_high": 0.4625,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_base_rate_in_sample": {
+              "estimate": 0.09,
+              "ci_low": 0.0651,
+              "ci_high": 0.1112,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            },
+            "brier_simulator_minus_single_forecast": {
+              "estimate": -0.3249,
+              "estimate_a": 0.0851,
+              "estimate_b": 0.41,
+              "ci_low": -0.3783,
+              "ci_high": -0.2776,
+              "share_a_greater": 0.0,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile"
+            }
+          }
+        }
+      },
+      "pooled": {
+        "n_worlds": 2400,
+        "n_worlds_not_anchored": 142,
+        "anchored_by": {
+          "demand": 1737,
+          "rent_quote": 521,
+          "none": 142
+        },
+        "band_coverage_revenue": {
+          "estimate": 0.6211,
+          "ci_low": 0.6074,
+          "ci_high": 0.6349,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "alpha": 0.05,
+          "method": "percentile"
+        },
+        "band_coverage_net_income": {
+          "estimate": 0.736,
+          "ci_low": 0.7215,
+          "ci_high": 0.7491,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "alpha": 0.05,
+          "method": "percentile"
+        },
+        "expected_band_coverage_revenue": {
+          "estimate": 0.6148,
+          "ci_low": 0.6127,
+          "ci_high": 0.6171,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "alpha": 0.05,
+          "method": "percentile"
+        },
+        "expected_band_coverage_net_income": {
+          "estimate": 0.7303,
+          "ci_low": 0.7284,
+          "ci_high": 0.7323,
+          "n_resamples": 1000,
+          "n_valid_resamples": 1000,
+          "seed": 42,
+          "alpha": 0.05,
+          "method": "percentile"
+        },
+        "probability_gap_dscr_year2": {
+          "mean_true_probability": 0.2056,
+          "mean_abs_gap": {
+            "estimate": 0.0403,
+            "ci_low": 0.0388,
+            "ci_high": 0.0417,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          }
+        },
+        "probability_gap_cash_negative_24m": {
+          "mean_true_probability": 0.8189,
+          "mean_abs_gap": {
+            "estimate": 0.0337,
+            "ci_low": 0.0325,
+            "ci_high": 0.035,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          }
+        },
+        "dscr_year2": {
+          "outcome_rate": 0.1929,
+          "mean_forecast": 0.2097,
+          "single_forecast_yes_rate": 0.5883,
+          "brier_simulator": {
+            "estimate": 0.1433,
+            "ci_low": 0.1351,
+            "ci_high": 0.1523,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_single_forecast": {
+            "estimate": 0.4938,
+            "ci_low": 0.4729,
+            "ci_high": 0.5154,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_base_rate_in_sample": {
+            "estimate": 0.1557,
+            "ci_low": 0.146,
+            "ci_high": 0.1654,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_simulator_minus_single_forecast": {
+            "estimate": -0.3504,
+            "estimate_a": 0.1433,
+            "estimate_b": 0.4938,
+            "ci_low": -0.3751,
+            "ci_high": -0.3285,
+            "share_a_greater": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          }
+        },
+        "cash_negative_24m": {
+          "outcome_rate": 0.8346,
+          "mean_forecast": 0.8131,
+          "single_forecast_yes_rate": 0.4671,
+          "brier_simulator": {
+            "estimate": 0.1203,
+            "ci_low": 0.1119,
+            "ci_high": 0.1289,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_single_forecast": {
+            "estimate": 0.4308,
+            "ci_low": 0.4104,
+            "ci_high": 0.4508,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_base_rate_in_sample": {
+            "estimate": 0.1381,
+            "ci_low": 0.1284,
+            "ci_high": 0.1479,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier_simulator_minus_single_forecast": {
+            "estimate": -0.3106,
+            "estimate_a": 0.1203,
+            "estimate_b": 0.4308,
+            "ci_low": -0.331,
+            "ci_high": -0.2896,
+            "share_a_greater": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          }
+        }
+      },
+      "reliability_dscr_year2_pooled": [
+        {
+          "bin": "[0.0, 0.2)",
+          "n_worlds": 1341,
+          "mean_forecast": 0.1058,
+          "observed_share": 0.1126
+        },
+        {
+          "bin": "[0.2, 0.4)",
+          "n_worlds": 789,
+          "mean_forecast": 0.2811,
+          "observed_share": 0.2395
+        },
+        {
+          "bin": "[0.4, 0.6)",
+          "n_worlds": 220,
+          "mean_forecast": 0.4823,
+          "observed_share": 0.4318
+        },
+        {
+          "bin": "[0.6, 0.8)",
+          "n_worlds": 49,
+          "mean_forecast": 0.6651,
+          "observed_share": 0.551
+        },
+        {
+          "bin": "[0.8, 1.0]",
+          "n_worlds": 1,
+          "mean_forecast": 0.802,
+          "observed_share": 1.0
+        }
+      ]
+    }
+  },
+  "timing": {
+    "note": "wall time on a shared 4-CPU machine used by several agents at once; see provenance.environment for the load average at the start and the end of the run",
+    "per_business_type": {
+      "car_wash": {
+        "paths_only_1000": {
+          "median_ms": 4.75,
+          "min_ms": 3.04,
+          "max_ms": 5.61,
+          "repeats": 15
+        },
+        "simulate_with_tornado_and_stress_1000": {
+          "median_ms": 232.15,
+          "min_ms": 196.03,
+          "max_ms": 293.92,
+          "repeats": 15
+        },
+        "tornado_inputs": 25
+      },
+      "laundromat": {
+        "paths_only_1000": {
+          "median_ms": 2.97,
+          "min_ms": 2.72,
+          "max_ms": 4.38,
+          "repeats": 15
+        },
+        "simulate_with_tornado_and_stress_1000": {
+          "median_ms": 169.53,
+          "min_ms": 148.92,
+          "max_ms": 189.06,
+          "repeats": 15
+        },
+        "tornado_inputs": 24
+      },
+      "motel": {
+        "paths_only_1000": {
+          "median_ms": 3.99,
+          "min_ms": 3.63,
+          "max_ms": 5.73,
+          "repeats": 15
+        },
+        "simulate_with_tornado_and_stress_1000": {
+          "median_ms": 269.08,
+          "min_ms": 214.07,
+          "max_ms": 309.14,
+          "repeats": 15
+        },
+        "tornado_inputs": 27
+      },
+      "restaurant_cafe": {
+        "paths_only_1000": {
+          "median_ms": 2.48,
+          "min_ms": 2.25,
+          "max_ms": 2.62,
+          "repeats": 15
+        },
+        "simulate_with_tornado_and_stress_1000": {
+          "median_ms": 154.28,
+          "min_ms": 136.74,
+          "max_ms": 181.95,
+          "repeats": 15
+        },
+        "tornado_inputs": 24
+      },
+      "retail_storefront": {
+        "paths_only_1000": {
+          "median_ms": 3.77,
+          "min_ms": 3.3,
+          "max_ms": 5.57,
+          "repeats": 15
+        },
+        "simulate_with_tornado_and_stress_1000": {
+          "median_ms": 251.99,
+          "min_ms": 208.66,
+          "max_ms": 301.73,
+          "repeats": 15
+        },
+        "tornado_inputs": 28
+      },
+      "short_term_rental": {
+        "paths_only_1000": {
+          "median_ms": 3.82,
+          "min_ms": 3.59,
+          "max_ms": 4.18,
+          "repeats": 15
+        },
+        "simulate_with_tornado_and_stress_1000": {
+          "median_ms": 219.12,
+          "min_ms": 201.13,
+          "max_ms": 306.8,
+          "repeats": 15
+        },
+        "tornado_inputs": 24
+      }
+    }
+  },
+  "example_run": {
+    "note": "SYNTHETIC validation world 0 of this business type (worlds.py); not a real site or plan",
+    "profile": "car_wash",
+    "world_anchored_by": "demand",
+    "n_paths": 1000,
+    "seed": 42,
+    "site_demand": {
+      "low": 238.21133992023732,
+      "mode": 382.69810605052044,
+      "high": 502.06575551967956,
+      "unit": "cars/day",
+      "status": "SYNTHETIC",
+      "source": "SYNTHETIC validation world (src/uwcopilot/studio/feasibility/worlds.py), world 0",
+      "coverage_score": null,
+      "competition_percentile": 0.88543316664022,
+      "percentiles": null,
+      "complete": true,
+      "missing": []
+    },
+    "plan": {
+      "opening_date": "2027-06-01",
+      "owner_equity": 1201993.33,
+      "capex": 2490063.62,
+      "price": 15.69,
+      "monthly_rent": 9260.34,
+      "paid_hours_per_month": null,
+      "hourly_wage": null,
+      "capacity": null,
+      "days_open_per_week": null,
+      "owner_draw_per_month": 0.0,
+      "assumption_overrides": {}
+    },
+    "loan": {
+      "amount": 1811191.3,
+      "term_months": 60,
+      "annual_rate_pct": 9.25,
+      "rate_type": "variable",
+      "rate_status": "SYNTHETIC",
+      "rate_source": "prime rate 6.25% (SYNTHETIC: SYNTHETIC prime rate of the generated city; NOT a published rate) + 3.0 points (spread is the ASSUMPTION mode (Not a lender quote. Replace with the lender's term sheet; the founder can type the quoted rate instead.))",
+      "monthly_payment": 37817.49,
+      "annual_debt_service": 453809.88
+    },
+    "planned_starting_cash": 523121.01,
+    "dscr_target": 1.25,
+    "p_dscr_at_least_target": {
+      "year_1": 0.245,
+      "year_2": 0.702,
+      "year_3": 0.697
+    },
+    "p_cash_negative_within_24_months": 0.248,
+    "break_even": {
+      "definition": "first month starting 3 months in a row with net income (NOI - debt service) >= 0",
+      "p10_month": 3,
+      "p50_month": 10,
+      "p90_month": 22,
+      "share_not_within_horizon": 0.085
+    },
+    "yearly": [
+      {
+        "year": 1,
+        "revenue_p10": 982812.74,
+        "revenue_p50": 1282306.11,
+        "revenue_p90": 1604697.99,
+        "noi_p10": 141815.87,
+        "noi_p50": 417189.17,
+        "noi_p90": 695347.24,
+        "net_income_p10": -312690.33,
+        "net_income_p50": -36915.28,
+        "net_income_p90": 241026.31,
+        "debt_service_p50": 453809.88,
+        "dscr_p10": 0.31,
+        "dscr_p50": 0.92,
+        "dscr_p90": 1.53
+      },
+      {
+        "year": 2,
+        "revenue_p10": 1351253.93,
+        "revenue_p50": 1739012.5,
+        "revenue_p90": 2139594.43,
+        "noi_p10": 411855.57,
+        "noi_p50": 703970.79,
+        "noi_p90": 1049579.96,
+        "net_income_p10": -44812.73,
+        "net_income_p50": 248182.88,
+        "net_income_p90": 593725.82,
+        "debt_service_p50": 453809.88,
+        "dscr_p10": 0.9,
+        "dscr_p50": 1.53,
+        "dscr_p90": 2.3
+      },
+      {
+        "year": 3,
+        "revenue_p10": 1331087.44,
+        "revenue_p50": 1736591.17,
+        "revenue_p90": 2150333.13,
+        "noi_p10": 379564.09,
+        "noi_p50": 715231.86,
+        "noi_p90": 1049323.98,
+        "net_income_p10": -78439.45,
+        "net_income_p50": 255598.75,
+        "net_income_p90": 589795.76,
+        "debt_service_p50": 453809.88,
+        "dscr_p10": 0.83,
+        "dscr_p50": 1.56,
+        "dscr_p90": 2.28
+      }
+    ],
+    "projected_dscr_base_case": 1.55,
+    "tornado_metric": "year-2 net income (NOI minus debt service), P50 across paths, USD",
+    "tornado_top_five": [
+      {
+        "rank": 1,
+        "name": "mature_demand",
+        "description": "Demand at the site once ramp-up is over (before seasonality)",
+        "unit": "cars/day",
+        "status": "SYNTHETIC",
+        "input_p10": 299.9555471296259,
+        "input_p90": 445.94474217159035,
+        "metric_at_p10": 41777.93725392838,
+        "metric_at_p90": 484015.4670727425,
+        "swing": 442237.52981881413,
+        "p_dscr_year2_at_p10": 0.331,
+        "p_dscr_year2_at_p90": 0.953
+      },
+      {
+        "rank": 2,
+        "name": "paid_hours_per_month",
+        "description": "Paid staff hours per month",
+        "unit": "paid staff hours per month",
+        "status": "ASSUMPTION",
+        "input_p10": 692.4283374069717,
+        "input_p90": 1925.543735346197,
+        "metric_at_p10": 410255.5032142488,
+        "metric_at_p90": 71199.59173254257,
+        "swing": 339055.91148170625,
+        "p_dscr_year2_at_p10": 0.921,
+        "p_dscr_year2_at_p90": 0.433
+      },
+      {
+        "rank": 3,
+        "name": "hourly_wage",
+        "description": "Hourly wage",
+        "unit": "USD/hour",
+        "status": "ASSUMPTION",
+        "input_p10": 16.716868690964343,
+        "input_p90": 24.62210049453413,
+        "metric_at_p10": 311055.5937225012,
+        "metric_at_p90": 185067.2872295009,
+        "swing": 125988.3064930003,
+        "p_dscr_year2_at_p10": 0.804,
+        "p_dscr_year2_at_p90": 0.605
+      },
+      {
+        "rank": 4,
+        "name": "days_open_per_week",
+        "description": "Days open per week",
+        "unit": "days/week",
+        "status": "ASSUMPTION",
+        "input_p10": 6.316227766016838,
+        "input_p90": 6.948683298050514,
+        "metric_at_p10": 188060.65803745875,
+        "metric_at_p90": 300098.0442489729,
+        "swing": 112037.38621151415,
+        "p_dscr_year2_at_p10": 0.635,
+        "p_dscr_year2_at_p90": 0.778
+      },
+      {
+        "rank": 5,
+        "name": "cost_ratio_utilities",
+        "description": "utilities cost as a share of revenue",
+        "unit": "share of revenue",
+        "status": "ASSUMPTION",
+        "input_p10": 0.07,
+        "input_p90": 0.1255051025721682,
+        "metric_at_p10": 291612.3893847306,
+        "metric_at_p90": 196942.2173280726,
+        "swing": 94670.17205665799,
+        "p_dscr_year2_at_p10": 0.776,
+        "p_dscr_year2_at_p90": 0.647
+      }
+    ],
+    "stress": [
+      {
+        "name": "revenue_stress",
+        "description": "Revenue 20% lower, NOI lower by the same dollars",
+        "applies": true,
+        "reason": "applied to every month of every simulated path, and to the year-2 P50 the lender's way",
+        "revenue_drop_share": 0.2,
+        "rate_add_pct": 0.0,
+        "min_dscr": 1.0,
+        "source": "SYNTHETIC Northwind guideline NBC-4.5 (applied to startup loans by NSP-4.2 of the SYNTHETIC startup program); levers and thresholds imported from agent/policy_credit.py",
+        "p_dscr_year2_at_least_min": 0.348,
+        "base_case_dscr": 0.78,
+        "base_case_meets_min": false
+      },
+      {
+        "name": "rate_stress",
+        "description": "Note rate 2.00 points higher for the whole loan",
+        "applies": true,
+        "reason": "applied to every month of every simulated path, and to the year-2 P50 the lender's way",
+        "revenue_drop_share": 0.0,
+        "rate_add_pct": 2.0,
+        "min_dscr": 1.1,
+        "source": "SYNTHETIC Northwind guideline NBC-4.5 (applied to startup loans by NSP-4.2 of the SYNTHETIC startup program); levers and thresholds imported from agent/policy_credit.py",
+        "p_dscr_year2_at_least_min": 0.772,
+        "base_case_dscr": 1.48,
+        "base_case_meets_min": true
+      }
+    ],
+    "notes": []
+  },
+  "real_metros": "not measured: no real outcome data exists for any metro, so no real-world accuracy can be computed",
+  "provenance": {
+    "git_sha": "1df0e0aab3f9d8135c328361f7abea280a7090b3",
+    "git_dirty": true,
+    "generated_at_utc": "2026-10-13T03:51:28+00:00",
+    "generated_by": "scripts/eval_studio_feasibility.py",
+    "prompts": {},
+    "corpus_checksum": "not applicable (no retrieval corpus is used)",
+    "eval_sets": {
+      "config/studio/feasibility/assumptions.yaml": "dfdb363c054c94a42fe2c4d9671dbea0c8221704b6db3987ecf2c0f668de4a48",
+      "config/studio/metros/synthetic_metro.yaml": "48a8e7953dc02e13e6ed89fe6f8eeaba24ec97514333dc37ef8855135c7ab726",
+      "config/studio/business_types/car_wash.yaml": "596f184aedac158cfa41ed4ec167c4e015b8622f3bb36fff2ef9763ac5bbebe7",
+      "config/studio/business_types/laundromat.yaml": "79a30a214a519697c8967f95cf3bca7c4209dc8aebddb53e64b0da6444595cf5",
+      "config/studio/business_types/motel.yaml": "8754df0ec807d43f46424c725f2377bd478e16ff576f389377e4fd33729e94a6",
+      "config/studio/business_types/restaurant_cafe.yaml": "b9f915afde3448b639f95f5654e433302797d90ddfc1c73228f5f8bac314abc9",
+      "config/studio/business_types/retail_storefront.yaml": "1ffc5407fd94a44820d061d0066c61b4988bc70470a3414ae773b95445f22b8b",
+      "config/studio/business_types/short_term_rental.yaml": "c4dc285fbce935b65908467dbc975c2a58486261f03749fa114907b1ce487cb6"
+    },
+    "models": [],
+    "data_snapshots": {
+      "studio_synthetic_metro": {
+        "metro": "synthetic_metro",
+        "data_label": "SYNTHETIC",
+        "seed": 20261012,
+        "generator_record_sha256": "86a5c3aba12e6ff741e480a26e1e650d80a8a5dde354a067085b5b572a111266"
+      }
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        0.94,
+        1.62,
+        2.26
+      ],
+      "load_average_end": [
+        1.38,
+        1.58,
+        2.18
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://api.census.gov/data/2024/acs/acs5/variables/B25003_003E.json",
+  "params": {},
+  "recorded_at_utc": "2026-10-12T19:38:48+00:00",
+  "content_type": "application/json;charset=utf-8",
+  "body_sha256": "e7f4876f5b7e81d220ffdc80177bdf5cfa3ea30f8cca5e139ffa8615290c67bd",
+  "full_body_sha256": "e7f4876f5b7e81d220ffdc80177bdf5cfa3ea30f8cca5e139ffa8615290c67bd",
+  "body": "{\n  \"name\": \"B25003_003E\",\n  \"label\": \"Estimate!!Total:!!Renter occupied\",\n  \"concept\": \"Tenure\",\n  \"predicateType\": \"int\",\n  \"group\": \"B25003\",\n  \"limit\": 0,\n  \"attributes\": \"B25003_003EA,B25003_003M,B25003_003MA\"\n}"
+}

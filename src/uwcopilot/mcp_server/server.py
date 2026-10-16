@@ -179,7 +179,8 @@ class ServerDependencies:
     - retriever_factory: returns the Retriever for searches (default: the real index and models, on first use).
     - matcher: a SanctionsMatcher; None runs the registry's own screen_entity handler (the full watchlists).
     - risk_api: the risk service client; None builds one from UWC_RISK_API_URL / UWC_RISK_API_TIMEOUT_S.
-    - guideline_store: the guideline documents (default: corpus/guidelines/).
+    - guideline_store: the guideline documents (default: corpus/guidelines/ only; the CLI also loads the
+      SYNTHETIC lending programs in corpus/programs/).
 
     The retriever is built on the first search and kept; close() releases its Qdrant client (the CLI calls it when
     the server stops, so a local index folder is unlocked cleanly).

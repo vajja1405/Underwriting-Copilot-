@@ -1,0 +1,4971 @@
+{
+  "data_label": "SYNTHETIC",
+  "description": "Document pipeline on SYNTHETIC packets: fields, citations, pages, checklist, contradictions, injections, latency and cost. Simulated documents only; no real-world accuracy claim.",
+  "evaluation_set": {
+    "note": "Generator synthetic-packets-v2, master seed 20261013. The v1 packets (seed 42) and their test split were inspected during the Phase 2 review, so v2 was generated with a new seed; error analysis for v2 was done on the dev split only.",
+    "split": "test",
+    "n_packets": 60,
+    "full_split": true,
+    "generator_version": "synthetic-packets-v2",
+    "test_truth_sha256": "474259082b709e8df866cf3b8d3bb36b18a9cd7a1527b02782da7c8fd6af5b1d",
+    "matches_committed_manifest": true,
+    "packet_ids": [
+      "PKT-C-009",
+      "PKT-C-010",
+      "PKT-C-012",
+      "PKT-C-013",
+      "PKT-C-015",
+      "PKT-C-023",
+      "PKT-C-026",
+      "PKT-C-042",
+      "PKT-C-045",
+      "PKT-C-046",
+      "PKT-C-052",
+      "PKT-C-055",
+      "PKT-C-072",
+      "PKT-C-083",
+      "PKT-C-084",
+      "PKT-C-086",
+      "PKT-C-087",
+      "PKT-C-097",
+      "PKT-C-098",
+      "PKT-C-108",
+      "PKT-C-110",
+      "PKT-C-113",
+      "PKT-C-116",
+      "PKT-C-117",
+      "PKT-C-119",
+      "PKT-C-123",
+      "PKT-C-125",
+      "PKT-C-130",
+      "PKT-C-131",
+      "PKT-C-144",
+      "PKT-I-001",
+      "PKT-I-008",
+      "PKT-I-018",
+      "PKT-I-020",
+      "PKT-I-026",
+      "PKT-I-027",
+      "PKT-I-028",
+      "PKT-I-033",
+      "PKT-I-037",
+      "PKT-I-039",
+      "PKT-I-040",
+      "PKT-I-042",
+      "PKT-I-046",
+      "PKT-I-047",
+      "PKT-I-057",
+      "PKT-I-059",
+      "PKT-I-060",
+      "PKT-I-073",
+      "PKT-I-080",
+      "PKT-I-083",
+      "PKT-I-084",
+      "PKT-I-101",
+      "PKT-I-103",
+      "PKT-I-113",
+      "PKT-I-117",
+      "PKT-I-120",
+      "PKT-I-123",
+      "PKT-I-125",
+      "PKT-I-139",
+      "PKT-I-146"
+    ]
+  },
+  "protocol": {
+    "bootstrap": {
+      "resamples": 1000,
+      "seed": 42,
+      "interval": "percentile 95%",
+      "unit": "packet"
+    },
+    "averaging": "micro (counts summed over packets)",
+    "documentation": "src/uwcopilot/docintel/evaluation.py, evaluation_problems.py, evaluation_summary.py"
+  },
+  "run": {
+    "extractors": [
+      "rules"
+    ],
+    "provider": null,
+    "model": null,
+    "workers_rules_run": 1,
+    "workers_forced_ocr_run": 2,
+    "wall_seconds": 1361.9
+  },
+  "rules": {
+    "n_packets": 60,
+    "packets_by_line": {
+      "credit": 30,
+      "insurance": 30
+    },
+    "fields": {
+      "note": "Micro-averaged over every value: bank-statement transaction rows are most of the values, so the overall F1 is mostly a transaction-table metric. See by_document_type, and the share of truth values per document type.",
+      "overall": {
+        "precision": {
+          "value": 0.9946,
+          "ci_low": 0.9906,
+          "ci_high": 0.9977,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9938,
+          "exact_ci_high": 0.9954,
+          "bootstrap_degenerate": false
+        },
+        "recall": {
+          "value": 0.9926,
+          "ci_low": 0.9874,
+          "ci_high": 0.9965,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9917,
+          "exact_ci_high": 0.9935,
+          "bootstrap_degenerate": false
+        },
+        "f1": {
+          "value": 0.9936,
+          "ci_low": 0.9889,
+          "ci_high": 0.9971,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "bootstrap_degenerate": false
+        },
+        "tp": 36093,
+        "fp": 195,
+        "fn": 268
+      },
+      "by_type": {
+        "money": {
+          "precision": {
+            "value": 0.9965,
+            "ci_low": 0.9934,
+            "ci_high": 0.9988,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9954,
+            "exact_ci_high": 0.9973,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.995,
+            "ci_low": 0.9911,
+            "ci_high": 0.9977,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9938,
+            "exact_ci_high": 0.996,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9957,
+            "ci_low": 0.9922,
+            "ci_high": 0.9983,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 16138,
+          "fp": 57,
+          "fn": 81
+        },
+        "percent": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9889,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 0.994,
+            "ci_low": 0.9812,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9784,
+            "exact_ci_high": 0.9993,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.997,
+            "ci_low": 0.9905,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 330,
+          "fp": 0,
+          "fn": 2
+        },
+        "date": {
+          "precision": {
+            "value": 0.9992,
+            "ci_low": 0.9985,
+            "ci_high": 0.9998,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9983,
+            "exact_ci_high": 0.9997,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9985,
+            "ci_low": 0.997,
+            "ci_high": 0.9994,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9973,
+            "exact_ci_high": 0.9992,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9989,
+            "ci_low": 0.9978,
+            "ci_high": 0.9996,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 7887,
+          "fp": 6,
+          "fn": 12
+        },
+        "identifier": {
+          "precision": {
+            "value": 0.9944,
+            "ci_low": 0.9887,
+            "ci_high": 0.9991,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9878,
+            "exact_ci_high": 0.9979,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9824,
+            "ci_low": 0.9685,
+            "ci_high": 0.9927,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9726,
+            "exact_ci_high": 0.9893,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9883,
+            "ci_low": 0.9789,
+            "ci_high": 0.9958,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 1058,
+          "fp": 6,
+          "fn": 19
+        },
+        "name": {
+          "precision": {
+            "value": 0.9978,
+            "ci_low": 0.9953,
+            "ci_high": 0.9995,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9945,
+            "exact_ci_high": 0.9994,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9968,
+            "ci_low": 0.9934,
+            "ci_high": 0.9994,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.993,
+            "exact_ci_high": 0.9988,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9973,
+            "ci_low": 0.9946,
+            "ci_high": 0.9995,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 1845,
+          "fp": 4,
+          "fn": 6
+        },
+        "code": {
+          "precision": {
+            "value": 0.9799,
+            "ci_low": 0.9647,
+            "ci_high": 0.9936,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9707,
+            "exact_ci_high": 0.9869,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9732,
+            "ci_low": 0.9525,
+            "ci_high": 0.9895,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9629,
+            "exact_ci_high": 0.9812,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9765,
+            "ci_low": 0.9586,
+            "ci_high": 0.9916,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 1270,
+          "fp": 26,
+          "fn": 35
+        },
+        "integer": {
+          "precision": {
+            "value": 0.925,
+            "ci_low": 0.8736,
+            "ci_high": 0.979,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9018,
+            "exact_ci_high": 0.9442,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9024,
+            "ci_low": 0.8383,
+            "ci_high": 0.9659,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.8771,
+            "exact_ci_high": 0.9241,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9136,
+            "ci_low": 0.8558,
+            "ci_high": 0.9726,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 592,
+          "fp": 48,
+          "fn": 64
+        },
+        "boolean": {
+          "precision": {
+            "value": 0.9808,
+            "ci_low": 0.9666,
+            "ci_high": 0.9947,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9659,
+            "exact_ci_high": 0.9904,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9791,
+            "ci_low": 0.9649,
+            "ci_high": 0.9927,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9638,
+            "exact_ci_high": 0.9892,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9799,
+            "ci_low": 0.966,
+            "ci_high": 0.9936,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 562,
+          "fp": 11,
+          "fn": 12
+        },
+        "free_text": {
+          "precision": {
+            "value": 0.9943,
+            "ci_low": 0.9909,
+            "ci_high": 0.997,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9921,
+            "exact_ci_high": 0.996,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9943,
+            "ci_low": 0.9909,
+            "ci_high": 0.997,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9921,
+            "exact_ci_high": 0.996,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9943,
+            "ci_low": 0.9909,
+            "ci_high": 0.997,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 6411,
+          "fp": 37,
+          "fn": 37
+        }
+      },
+      "by_document_type": {
+        "balance_sheet": {
+          "precision": {
+            "value": 0.9963,
+            "ci_low": 0.988,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9795,
+            "exact_ci_high": 0.9999,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9963,
+            "ci_low": 0.988,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9795,
+            "exact_ci_high": 0.9999,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9963,
+            "ci_low": 0.988,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 269,
+          "fp": 1,
+          "fn": 1,
+          "share_of_truth_values": 0.0074
+        },
+        "bank_statement": {
+          "precision": {
+            "value": 0.9987,
+            "ci_low": 0.9977,
+            "ci_high": 0.9996,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9983,
+            "exact_ci_high": 0.9991,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9985,
+            "ci_low": 0.9973,
+            "ci_high": 0.9995,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.998,
+            "exact_ci_high": 0.9989,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9986,
+            "ci_low": 0.9975,
+            "ci_high": 0.9995,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 27866,
+          "fp": 35,
+          "fn": 41,
+          "share_of_truth_values": 0.7675
+        },
+        "collateral_valuation": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.8723,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.8723,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "f1": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": true
+          },
+          "tp": 27,
+          "fp": 0,
+          "fn": 0,
+          "share_of_truth_values": 0.0007
+        },
+        "cover_email": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9757,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9757,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "f1": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": true
+          },
+          "tp": 150,
+          "fp": 0,
+          "fn": 0,
+          "share_of_truth_values": 0.0041
+        },
+        "credit_report": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9775,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9775,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "f1": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": true
+          },
+          "tp": 162,
+          "fp": 0,
+          "fn": 0,
+          "share_of_truth_values": 0.0045
+        },
+        "debt_schedule": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9866,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9866,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "f1": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": true
+          },
+          "tp": 273,
+          "fp": 0,
+          "fn": 0,
+          "share_of_truth_values": 0.0075
+        },
+        "formation_document": {
+          "precision": {
+            "value": 0.9958,
+            "ci_low": 0.9861,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.977,
+            "exact_ci_high": 0.9999,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9715,
+            "ci_low": 0.9234,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9423,
+            "exact_ci_high": 0.9885,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9835,
+            "ci_low": 0.9578,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 239,
+          "fp": 1,
+          "fn": 7,
+          "share_of_truth_values": 0.0068
+        },
+        "inspection_report": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.8843,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.8843,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "f1": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": true
+          },
+          "tp": 30,
+          "fp": 0,
+          "fn": 0,
+          "share_of_truth_values": 0.0008
+        },
+        "insurance_application": {
+          "precision": {
+            "value": 0.9989,
+            "ci_low": 0.9971,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9959,
+            "exact_ci_high": 0.9999,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9983,
+            "ci_low": 0.9962,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.995,
+            "exact_ci_high": 0.9996,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9986,
+            "ci_low": 0.9968,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 1763,
+          "fp": 2,
+          "fn": 3,
+          "share_of_truth_values": 0.0486
+        },
+        "loan_application": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9958,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9958,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "f1": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": true
+          },
+          "tp": 882,
+          "fp": 0,
+          "fn": 0,
+          "share_of_truth_values": 0.0243
+        },
+        "loss_run": {
+          "precision": {
+            "value": 0.9958,
+            "ci_low": 0.988,
+            "ci_high": 0.9996,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9923,
+            "exact_ci_high": 0.998,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9803,
+            "ci_low": 0.9576,
+            "ci_high": 0.9946,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9739,
+            "exact_ci_high": 0.9854,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.988,
+            "ci_low": 0.9727,
+            "ci_high": 0.997,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 2383,
+          "fp": 10,
+          "fn": 48,
+          "share_of_truth_values": 0.0669
+        },
+        "ownership_statement": {
+          "precision": {
+            "value": 0.9976,
+            "ci_low": 0.9916,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9866,
+            "exact_ci_high": 0.9999,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9976,
+            "ci_low": 0.9916,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9866,
+            "exact_ci_high": 0.9999,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9976,
+            "ci_low": 0.9916,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 412,
+          "fp": 1,
+          "fn": 1,
+          "share_of_truth_values": 0.0114
+        },
+        "photo_id": {
+          "precision": {
+            "value": 0.9884,
+            "ci_low": 0.9773,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9665,
+            "exact_ci_high": 0.9976,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9846,
+            "ci_low": 0.9719,
+            "ci_high": 0.9962,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9611,
+            "exact_ci_high": 0.9958,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9865,
+            "ci_low": 0.9754,
+            "ci_high": 0.9976,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 256,
+          "fp": 3,
+          "fn": 4,
+          "share_of_truth_values": 0.0072
+        },
+        "profit_and_loss": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9864,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9864,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "f1": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": true
+          },
+          "tp": 270,
+          "fp": 0,
+          "fn": 0,
+          "share_of_truth_values": 0.0074
+        },
+        "property_schedule": {
+          "precision": {
+            "value": 0.8609,
+            "ci_low": 0.7556,
+            "ci_high": 0.9592,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.8382,
+            "exact_ci_high": 0.8816,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.8436,
+            "ci_low": 0.7299,
+            "ci_high": 0.952,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.8201,
+            "exact_ci_high": 0.8651,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.8522,
+            "ci_low": 0.7429,
+            "ci_high": 0.9556,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 879,
+          "fp": 142,
+          "fn": 163,
+          "share_of_truth_values": 0.0287
+        },
+        "tax_return_summary": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9842,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9842,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "f1": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": true
+          },
+          "tp": 232,
+          "fp": 0,
+          "fn": 0,
+          "share_of_truth_values": 0.0064
+        }
+      },
+      "by_condition": {
+        "clean": {
+          "overall": {
+            "precision": {
+              "value": 1.0,
+              "ci_low": 1.0,
+              "ci_high": 1.0,
+              "n_packets": 60,
+              "n_resamples_used": 1000,
+              "exact_ci_low": 0.9999,
+              "exact_ci_high": 1.0,
+              "bootstrap_degenerate": true
+            },
+            "recall": {
+              "value": 1.0,
+              "ci_low": 1.0,
+              "ci_high": 1.0,
+              "n_packets": 60,
+              "n_resamples_used": 1000,
+              "exact_ci_low": 0.9999,
+              "exact_ci_high": 1.0,
+              "bootstrap_degenerate": true
+            },
+            "f1": {
+              "value": 1.0,
+              "ci_low": 1.0,
+              "ci_high": 1.0,
+              "n_packets": 60,
+              "n_resamples_used": 1000,
+              "bootstrap_degenerate": true
+            },
+            "tp": 33571,
+            "fp": 0,
+            "fn": 0
+          },
+          "by_type": {
+            "money": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9998,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9998,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 15314,
+              "fp": 0,
+              "fn": 0
+            },
+            "percent": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9842,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9842,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 232,
+              "fp": 0,
+              "fn": 0
+            },
+            "date": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9995,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9995,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 7485,
+              "fp": 0,
+              "fn": 0
+            },
+            "identifier": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9958,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9958,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 876,
+              "fp": 0,
+              "fn": 0
+            },
+            "name": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9976,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9976,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 1556,
+              "fp": 0,
+              "fn": 0
+            },
+            "code": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9961,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9961,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 935,
+              "fp": 0,
+              "fn": 0
+            },
+            "integer": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9926,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9926,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 496,
+              "fp": 0,
+              "fn": 0
+            },
+            "boolean": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9915,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9915,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 431,
+              "fp": 0,
+              "fn": 0
+            },
+            "free_text": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9994,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9994,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 6246,
+              "fp": 0,
+              "fn": 0
+            }
+          },
+          "by_document_type": {
+            "balance_sheet": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9837,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9837,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 225,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0067
+            },
+            "bank_statement": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9999,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9999,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 27295,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.8131
+            },
+            "collateral_valuation": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.8575,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.8575,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 24,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0007
+            },
+            "cover_email": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9757,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9757,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 150,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0045
+            },
+            "credit_report": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9757,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9757,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 150,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0045
+            },
+            "debt_schedule": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9823,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9823,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 207,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0062
+            },
+            "formation_document": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9752,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9752,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 147,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0044
+            },
+            "inspection_report": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.8677,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.8677,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 26,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0008
+            },
+            "insurance_application": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9975,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9975,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 1448,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0431
+            },
+            "loan_application": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9936,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9936,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 576,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0172
+            },
+            "loss_run": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9979,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9979,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 1725,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0514
+            },
+            "ownership_statement": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9871,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9871,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 285,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0085
+            },
+            "photo_id": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9749,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9749,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 145,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0043
+            },
+            "profit_and_loss": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9837,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9837,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 225,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0067
+            },
+            "property_schedule": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9953,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9953,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 783,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0233
+            },
+            "tax_return_summary": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9772,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9772,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 160,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0048
+            }
+          }
+        },
+        "scanned": {
+          "overall": {
+            "precision": {
+              "value": 0.9282,
+              "ci_low": 0.8888,
+              "ci_high": 0.9663,
+              "n_packets": 60,
+              "n_resamples_used": 1000,
+              "exact_ci_low": 0.9179,
+              "exact_ci_high": 0.9377,
+              "bootstrap_degenerate": false
+            },
+            "recall": {
+              "value": 0.9039,
+              "ci_low": 0.8568,
+              "ci_high": 0.9483,
+              "n_packets": 60,
+              "n_resamples_used": 1000,
+              "exact_ci_low": 0.8924,
+              "exact_ci_high": 0.9146,
+              "bootstrap_degenerate": false
+            },
+            "f1": {
+              "value": 0.9159,
+              "ci_low": 0.8736,
+              "ci_high": 0.9566,
+              "n_packets": 60,
+              "n_resamples_used": 1000,
+              "bootstrap_degenerate": false
+            },
+            "tp": 2522,
+            "fp": 195,
+            "fn": 268
+          },
+          "by_type": {
+            "money": {
+              "precision": {
+                "value": 0.9353,
+                "ci_low": 0.8908,
+                "ci_high": 0.9745,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.917,
+                "exact_ci_high": 0.9506,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9105,
+                "ci_low": 0.8591,
+                "ci_high": 0.954,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.89,
+                "exact_ci_high": 0.9283,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9227,
+                "ci_low": 0.8754,
+                "ci_high": 0.9635,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 824,
+              "fp": 57,
+              "fn": 81
+            },
+            "percent": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9631,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 0.98,
+                "ci_low": 0.9302,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9296,
+                "exact_ci_high": 0.9976,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9899,
+                "ci_low": 0.9638,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 98,
+              "fp": 0,
+              "fn": 2
+            },
+            "date": {
+              "precision": {
+                "value": 0.9853,
+                "ci_low": 0.9742,
+                "ci_high": 0.9952,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9683,
+                "exact_ci_high": 0.9946,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.971,
+                "ci_low": 0.9516,
+                "ci_high": 0.9869,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9499,
+                "exact_ci_high": 0.9849,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9781,
+                "ci_low": 0.9643,
+                "ci_high": 0.9906,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 402,
+              "fp": 6,
+              "fn": 12
+            },
+            "identifier": {
+              "precision": {
+                "value": 0.9681,
+                "ci_low": 0.9406,
+                "ci_high": 0.994,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9318,
+                "exact_ci_high": 0.9882,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9055,
+                "ci_low": 0.8478,
+                "ci_high": 0.9584,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.8563,
+                "exact_ci_high": 0.9421,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9357,
+                "ci_low": 0.8926,
+                "ci_high": 0.9749,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 182,
+              "fp": 6,
+              "fn": 19
+            },
+            "name": {
+              "precision": {
+                "value": 0.9863,
+                "ci_low": 0.9726,
+                "ci_high": 0.9967,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9654,
+                "exact_ci_high": 0.9963,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9797,
+                "ci_low": 0.9597,
+                "ci_high": 0.9962,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9563,
+                "exact_ci_high": 0.9925,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.983,
+                "ci_low": 0.9675,
+                "ci_high": 0.9963,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 289,
+              "fp": 4,
+              "fn": 6
+            },
+            "code": {
+              "precision": {
+                "value": 0.928,
+                "ci_low": 0.8777,
+                "ci_high": 0.9763,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.8962,
+                "exact_ci_high": 0.9524,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9054,
+                "ci_low": 0.8457,
+                "ci_high": 0.961,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.8709,
+                "exact_ci_high": 0.9332,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9166,
+                "ci_low": 0.8617,
+                "ci_high": 0.9681,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 335,
+              "fp": 26,
+              "fn": 35
+            },
+            "integer": {
+              "precision": {
+                "value": 0.6667,
+                "ci_low": 0.5362,
+                "ci_high": 0.864,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.5834,
+                "exact_ci_high": 0.743,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.6,
+                "ci_low": 0.4648,
+                "ci_high": 0.8067,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.5197,
+                "exact_ci_high": 0.6765,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.6316,
+                "ci_low": 0.4982,
+                "ci_high": 0.8342,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 96,
+              "fp": 48,
+              "fn": 64
+            },
+            "boolean": {
+              "precision": {
+                "value": 0.9225,
+                "ci_low": 0.8684,
+                "ci_high": 0.9778,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.8656,
+                "exact_ci_high": 0.9607,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9161,
+                "ci_low": 0.8584,
+                "ci_high": 0.9704,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.858,
+                "exact_ci_high": 0.9559,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9193,
+                "ci_low": 0.8638,
+                "ci_high": 0.973,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 131,
+              "fp": 11,
+              "fn": 12
+            },
+            "free_text": {
+              "precision": {
+                "value": 0.8168,
+                "ci_low": 0.7404,
+                "ci_high": 0.8821,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.7565,
+                "exact_ci_high": 0.8676,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.8168,
+                "ci_low": 0.7404,
+                "ci_high": 0.8821,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.7565,
+                "exact_ci_high": 0.8676,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.8168,
+                "ci_low": 0.7404,
+                "ci_high": 0.8821,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 165,
+              "fp": 37,
+              "fn": 37
+            }
+          },
+          "by_document_type": {
+            "balance_sheet": {
+              "precision": {
+                "value": 0.9778,
+                "ci_low": 0.9259,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 996,
+                "exact_ci_low": 0.8823,
+                "exact_ci_high": 0.9994,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9778,
+                "ci_low": 0.9259,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 996,
+                "exact_ci_low": 0.8823,
+                "exact_ci_high": 0.9994,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9778,
+                "ci_low": 0.9259,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 996,
+                "bootstrap_degenerate": false
+              },
+              "tp": 44,
+              "fp": 1,
+              "fn": 1,
+              "share_of_truth_values": 0.0161
+            },
+            "bank_statement": {
+              "precision": {
+                "value": 0.9422,
+                "ci_low": 0.9104,
+                "ci_high": 0.9704,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9206,
+                "exact_ci_high": 0.9594,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.933,
+                "ci_low": 0.8969,
+                "ci_high": 0.965,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9102,
+                "exact_ci_high": 0.9515,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9376,
+                "ci_low": 0.9042,
+                "ci_high": 0.9683,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 571,
+              "fp": 35,
+              "fn": 41,
+              "share_of_truth_values": 0.2194
+            },
+            "collateral_valuation": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 629,
+                "exact_ci_low": 0.2924,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true,
+                "interval_note": "n < 10: interval not informative"
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 629,
+                "exact_ci_low": 0.2924,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true,
+                "interval_note": "n < 10: interval not informative"
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 629,
+                "bootstrap_degenerate": true,
+                "interval_note": "n < 10: interval not informative"
+              },
+              "tp": 3,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0011
+            },
+            "credit_report": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 847,
+                "exact_ci_low": 0.7354,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 847,
+                "exact_ci_low": 0.7354,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 847,
+                "bootstrap_degenerate": true
+              },
+              "tp": 12,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0043
+            },
+            "debt_schedule": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9456,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9456,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 66,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0237
+            },
+            "formation_document": {
+              "precision": {
+                "value": 0.9892,
+                "ci_low": 0.9643,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9415,
+                "exact_ci_high": 0.9997,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9293,
+                "ci_low": 0.8135,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.8597,
+                "exact_ci_high": 0.9711,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9583,
+                "ci_low": 0.8917,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 92,
+              "fp": 1,
+              "fn": 7,
+              "share_of_truth_values": 0.0355
+            },
+            "inspection_report": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 889,
+                "exact_ci_low": 0.3976,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true,
+                "interval_note": "n < 10: interval not informative"
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 889,
+                "exact_ci_low": 0.3976,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true,
+                "interval_note": "n < 10: interval not informative"
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 889,
+                "bootstrap_degenerate": true,
+                "interval_note": "n < 10: interval not informative"
+              },
+              "tp": 4,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0014
+            },
+            "insurance_application": {
+              "precision": {
+                "value": 0.9937,
+                "ci_low": 0.9848,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 994,
+                "exact_ci_low": 0.9774,
+                "exact_ci_high": 0.9992,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9906,
+                "ci_low": 0.9839,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 994,
+                "exact_ci_low": 0.9727,
+                "exact_ci_high": 0.9981,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9921,
+                "ci_low": 0.9848,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 994,
+                "bootstrap_degenerate": false
+              },
+              "tp": 315,
+              "fp": 2,
+              "fn": 3,
+              "share_of_truth_values": 0.114
+            },
+            "loan_application": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.988,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.988,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 306,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.1097
+            },
+            "loss_run": {
+              "precision": {
+                "value": 0.985,
+                "ci_low": 0.9588,
+                "ci_high": 0.9986,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9726,
+                "exact_ci_high": 0.9928,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.932,
+                "ci_low": 0.8601,
+                "ci_high": 0.9801,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9109,
+                "exact_ci_high": 0.9494,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9578,
+                "ci_low": 0.9072,
+                "ci_high": 0.9884,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 658,
+              "fp": 10,
+              "fn": 48,
+              "share_of_truth_values": 0.253
+            },
+            "ownership_statement": {
+              "precision": {
+                "value": 0.9922,
+                "ci_low": 0.974,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 999,
+                "exact_ci_low": 0.9572,
+                "exact_ci_high": 0.9998,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9922,
+                "ci_low": 0.974,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 999,
+                "exact_ci_low": 0.9572,
+                "exact_ci_high": 0.9998,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9922,
+                "ci_low": 0.974,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 999,
+                "bootstrap_degenerate": false
+              },
+              "tp": 127,
+              "fp": 1,
+              "fn": 1,
+              "share_of_truth_values": 0.0459
+            },
+            "photo_id": {
+              "precision": {
+                "value": 0.9737,
+                "ci_low": 0.9412,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.925,
+                "exact_ci_high": 0.9945,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.9652,
+                "ci_low": 0.9286,
+                "ci_high": 0.9923,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9133,
+                "exact_ci_high": 0.9904,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.9694,
+                "ci_low": 0.9365,
+                "ci_high": 0.9947,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 111,
+              "fp": 3,
+              "fn": 4,
+              "share_of_truth_values": 0.0412
+            },
+            "profit_and_loss": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 996,
+                "exact_ci_low": 0.9213,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 996,
+                "exact_ci_low": 0.9213,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 996,
+                "bootstrap_degenerate": true
+              },
+              "tp": 45,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0161
+            },
+            "property_schedule": {
+              "precision": {
+                "value": 0.4034,
+                "ci_low": 0.1773,
+                "ci_high": 0.6379,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.3405,
+                "exact_ci_high": 0.4687,
+                "bootstrap_degenerate": false
+              },
+              "recall": {
+                "value": 0.3707,
+                "ci_low": 0.1591,
+                "ci_high": 0.6048,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.3117,
+                "exact_ci_high": 0.4326,
+                "bootstrap_degenerate": false
+              },
+              "f1": {
+                "value": 0.3863,
+                "ci_low": 0.168,
+                "ci_high": 0.6189,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": false
+              },
+              "tp": 96,
+              "fp": 142,
+              "fn": 163,
+              "share_of_truth_values": 0.0928
+            },
+            "tax_return_summary": {
+              "precision": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9501,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "recall": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "exact_ci_low": 0.9501,
+                "exact_ci_high": 1.0,
+                "bootstrap_degenerate": true
+              },
+              "f1": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n_packets": 60,
+                "n_resamples_used": 1000,
+                "bootstrap_degenerate": true
+              },
+              "tp": 72,
+              "fp": 0,
+              "fn": 0,
+              "share_of_truth_values": 0.0258
+            }
+          }
+        }
+      }
+    },
+    "fields_by_line": {
+      "credit": {
+        "precision": {
+          "value": 0.9987,
+          "ci_low": 0.9977,
+          "ci_high": 0.9995,
+          "n_packets": 30,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9982,
+          "exact_ci_high": 0.9991,
+          "bootstrap_degenerate": false
+        },
+        "recall": {
+          "value": 0.9983,
+          "ci_low": 0.9969,
+          "ci_high": 0.9993,
+          "n_packets": 30,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9977,
+          "exact_ci_high": 0.9987,
+          "bootstrap_degenerate": false
+        },
+        "f1": {
+          "value": 0.9985,
+          "ci_low": 0.9973,
+          "ci_high": 0.9994,
+          "n_packets": 30,
+          "n_resamples_used": 1000,
+          "bootstrap_degenerate": false
+        },
+        "tp": 30476,
+        "fp": 40,
+        "fn": 53
+      },
+      "insurance": {
+        "precision": {
+          "value": 0.9731,
+          "ci_low": 0.9522,
+          "ci_high": 0.991,
+          "n_packets": 30,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9686,
+          "exact_ci_high": 0.9772,
+          "bootstrap_degenerate": false
+        },
+        "recall": {
+          "value": 0.9631,
+          "ci_low": 0.9385,
+          "ci_high": 0.9856,
+          "n_packets": 30,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.958,
+          "exact_ci_high": 0.9678,
+          "bootstrap_degenerate": false
+        },
+        "f1": {
+          "value": 0.9681,
+          "ci_low": 0.9457,
+          "ci_high": 0.9884,
+          "n_packets": 30,
+          "n_resamples_used": 1000,
+          "bootstrap_degenerate": false
+        },
+        "tp": 5617,
+        "fp": 155,
+        "fn": 215
+      }
+    },
+    "rows": {
+      "transactions": {
+        "precision": {
+          "value": 0.9992,
+          "ci_low": 0.9983,
+          "ci_high": 0.9998,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9981,
+          "exact_ci_high": 0.9997,
+          "bootstrap_degenerate": false
+        },
+        "recall": {
+          "value": 0.9992,
+          "ci_low": 0.9983,
+          "ci_high": 0.9998,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9981,
+          "exact_ci_high": 0.9997,
+          "bootstrap_degenerate": false
+        },
+        "f1": {
+          "value": 0.9992,
+          "ci_low": 0.9983,
+          "ci_high": 0.9998,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "bootstrap_degenerate": false
+        },
+        "tp": 6173,
+        "fp": 5,
+        "fn": 5,
+        "exact_share_of_found": {
+          "value": 0.9969,
+          "ci_low": 0.9946,
+          "ci_high": 0.9988,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 6154,
+          "denominator": 6173,
+          "exact_ci_low": 0.9952,
+          "exact_ci_high": 0.9981,
+          "bootstrap_degenerate": false
+        }
+      },
+      "claims": {
+        "precision": {
+          "value": 0.993,
+          "ci_low": 0.9739,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9617,
+          "exact_ci_high": 0.9998,
+          "bootstrap_degenerate": false
+        },
+        "recall": {
+          "value": 0.966,
+          "ci_low": 0.9103,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9224,
+          "exact_ci_high": 0.9889,
+          "bootstrap_degenerate": false
+        },
+        "f1": {
+          "value": 0.9793,
+          "ci_low": 0.943,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "bootstrap_degenerate": false
+        },
+        "tp": 142,
+        "fp": 1,
+        "fn": 5,
+        "exact_share_of_found": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 142,
+          "denominator": 142,
+          "exact_ci_low": 0.9744,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true
+        }
+      },
+      "locations": {
+        "precision": {
+          "value": 0.8382,
+          "ci_low": 0.7167,
+          "ci_high": 0.9535,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.729,
+          "exact_ci_high": 0.9164,
+          "bootstrap_degenerate": false
+        },
+        "recall": {
+          "value": 0.8382,
+          "ci_low": 0.7167,
+          "ci_high": 0.9535,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.729,
+          "exact_ci_high": 0.9164,
+          "bootstrap_degenerate": false
+        },
+        "f1": {
+          "value": 0.8382,
+          "ci_low": 0.7167,
+          "ci_high": 0.9535,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "bootstrap_degenerate": false
+        },
+        "tp": 57,
+        "fp": 11,
+        "fn": 11,
+        "exact_share_of_found": {
+          "value": 0.9298,
+          "ci_low": 0.8474,
+          "ci_high": 0.9859,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 53,
+          "denominator": 57,
+          "exact_ci_low": 0.83,
+          "exact_ci_high": 0.9805,
+          "bootstrap_degenerate": false
+        }
+      }
+    },
+    "citations": {
+      "note": "page_level_on_correct_values is a sanity check: the rules extractor cites the page it read, so it is 1.0 by construction unless a printed form is missed. supported_all_values checks every extracted value (correct or not) against the printed text of the cited page. line_level_on_correct_values checks the cited line: same line number on text-layer pages, box within half a line after aligning a scanned page (evaluation_citations.py).",
+      "page_level_on_correct_values": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 36093,
+        "denominator": 36093,
+        "exact_ci_low": 0.9999,
+        "exact_ci_high": 1.0,
+        "bootstrap_degenerate": true
+      },
+      "cited_page_is_truth_page": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 36093,
+        "denominator": 36093,
+        "exact_ci_low": 0.9999,
+        "exact_ci_high": 1.0,
+        "bootstrap_degenerate": true
+      },
+      "supported_all_values": {
+        "value": 0.9984,
+        "ci_low": 0.9975,
+        "ci_high": 0.9992,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 36230,
+        "denominator": 36288,
+        "exact_ci_low": 0.9979,
+        "exact_ci_high": 0.9988,
+        "bootstrap_degenerate": false
+      },
+      "line_level_on_correct_values": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 35953,
+        "denominator": 35953,
+        "exact_ci_low": 0.9999,
+        "exact_ci_high": 1.0,
+        "bootstrap_degenerate": true
+      },
+      "line_level_unscored_values": 140,
+      "by_type": {
+        "money": {
+          "page_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 16138,
+            "denominator": 16138,
+            "exact_ci_low": 0.9998,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "supported": {
+            "value": 0.9996,
+            "ci_low": 0.9993,
+            "ci_high": 0.9999,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 16189,
+            "denominator": 16195,
+            "exact_ci_low": 0.9992,
+            "exact_ci_high": 0.9999,
+            "bootstrap_degenerate": false
+          },
+          "line_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 16130,
+            "denominator": 16130,
+            "exact_ci_low": 0.9998,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        },
+        "percent": {
+          "page_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 330,
+            "denominator": 330,
+            "exact_ci_low": 0.9889,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "supported": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 330,
+            "denominator": 330,
+            "exact_ci_low": 0.9889,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "line_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 330,
+            "denominator": 330,
+            "exact_ci_low": 0.9889,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        },
+        "date": {
+          "page_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 7887,
+            "denominator": 7887,
+            "exact_ci_low": 0.9995,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "supported": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 7893,
+            "denominator": 7893,
+            "exact_ci_low": 0.9995,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "line_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 7835,
+            "denominator": 7835,
+            "exact_ci_low": 0.9995,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        },
+        "identifier": {
+          "page_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1058,
+            "denominator": 1058,
+            "exact_ci_low": 0.9965,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "supported": {
+            "value": 0.9944,
+            "ci_low": 0.9887,
+            "ci_high": 0.9991,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1058,
+            "denominator": 1064,
+            "exact_ci_low": 0.9878,
+            "exact_ci_high": 0.9979,
+            "bootstrap_degenerate": false
+          },
+          "line_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1033,
+            "denominator": 1033,
+            "exact_ci_low": 0.9964,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        },
+        "name": {
+          "page_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1845,
+            "denominator": 1845,
+            "exact_ci_low": 0.998,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "supported": {
+            "value": 0.9978,
+            "ci_low": 0.9953,
+            "ci_high": 0.9995,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1845,
+            "denominator": 1849,
+            "exact_ci_low": 0.9945,
+            "exact_ci_high": 0.9994,
+            "bootstrap_degenerate": false
+          },
+          "line_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1815,
+            "denominator": 1815,
+            "exact_ci_low": 0.998,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        },
+        "code": {
+          "page_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1270,
+            "denominator": 1270,
+            "exact_ci_low": 0.9971,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "supported": {
+            "value": 0.9915,
+            "ci_low": 0.9835,
+            "ci_high": 0.9984,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1285,
+            "denominator": 1296,
+            "exact_ci_low": 0.9849,
+            "exact_ci_high": 0.9958,
+            "bootstrap_degenerate": false
+          },
+          "line_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1268,
+            "denominator": 1268,
+            "exact_ci_low": 0.9971,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        },
+        "integer": {
+          "page_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 592,
+            "denominator": 592,
+            "exact_ci_low": 0.9938,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "supported": {
+            "value": 0.9953,
+            "ci_low": 0.9882,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 637,
+            "denominator": 640,
+            "exact_ci_low": 0.9864,
+            "exact_ci_high": 0.999,
+            "bootstrap_degenerate": false
+          },
+          "line_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 591,
+            "denominator": 591,
+            "exact_ci_low": 0.9938,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        },
+        "boolean": {
+          "page_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 562,
+            "denominator": 562,
+            "exact_ci_low": 0.9935,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "supported": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 573,
+            "denominator": 573,
+            "exact_ci_low": 0.9936,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "line_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 561,
+            "denominator": 561,
+            "exact_ci_low": 0.9934,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        },
+        "free_text": {
+          "page_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 6411,
+            "denominator": 6411,
+            "exact_ci_low": 0.9994,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "supported": {
+            "value": 0.9957,
+            "ci_low": 0.993,
+            "ci_high": 0.9979,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 6420,
+            "denominator": 6448,
+            "exact_ci_low": 0.9937,
+            "exact_ci_high": 0.9971,
+            "bootstrap_degenerate": false
+          },
+          "line_level": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 6390,
+            "denominator": 6390,
+            "exact_ci_low": 0.9994,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        }
+      }
+    },
+    "page_classification": {
+      "all": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 949,
+        "denominator": 949,
+        "exact_ci_low": 0.9961,
+        "exact_ci_high": 1.0,
+        "bootstrap_degenerate": true
+      },
+      "clean": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 790,
+        "denominator": 790,
+        "exact_ci_low": 0.9953,
+        "exact_ci_high": 1.0,
+        "bootstrap_degenerate": true
+      },
+      "scanned": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 159,
+        "denominator": 159,
+        "exact_ci_low": 0.9771,
+        "exact_ci_high": 1.0,
+        "bootstrap_degenerate": true
+      }
+    },
+    "document_segmentation": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n_packets": 60,
+      "n_resamples_used": 1000,
+      "numerator": 870,
+      "denominator": 870,
+      "exact_ci_low": 0.9958,
+      "exact_ci_high": 1.0,
+      "bootstrap_degenerate": true
+    },
+    "checklist": {
+      "code_accuracy": {
+        "value": 0.9965,
+        "ci_low": 0.991,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 568,
+        "denominator": 570,
+        "exact_ci_low": 0.9874,
+        "exact_ci_high": 0.9996,
+        "bootstrap_degenerate": false
+      },
+      "packet_exact_match": {
+        "value": 0.9667,
+        "ci_low": 0.9167,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 58,
+        "denominator": 60,
+        "exact_ci_low": 0.8847,
+        "exact_ci_high": 0.9959,
+        "bootstrap_degenerate": false
+      },
+      "documents_provided_accuracy": {
+        "value": 0.9965,
+        "ci_low": 0.991,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 568,
+        "denominator": 570,
+        "exact_ci_low": 0.9874,
+        "exact_ci_high": 0.9996,
+        "bootstrap_degenerate": false
+      },
+      "by_code": {
+        "bank_statements_12_months": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 5
+        },
+        "beneficial_ownership_certification": {
+          "value": 0.9667,
+          "ci_low": 0.8889,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 29,
+          "denominator": 30,
+          "exact_ci_low": 0.8278,
+          "exact_ci_high": 0.9992,
+          "bootstrap_degenerate": false,
+          "truth_missing": 2
+        },
+        "beneficial_ownership_statement": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 1
+        },
+        "business_tax_returns_2_years": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 1
+        },
+        "collateral_documents": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 0
+        },
+        "cpa_reviewed_financials": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 4
+        },
+        "debt_schedule": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 1
+        },
+        "elevation_certificate": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 0
+        },
+        "formation_documents": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 2
+        },
+        "inspection_report": {
+          "value": 0.9667,
+          "ci_low": 0.88,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 29,
+          "denominator": 30,
+          "exact_ci_low": 0.8278,
+          "exact_ci_high": 0.9992,
+          "bootstrap_degenerate": false,
+          "truth_missing": 0
+        },
+        "loss_runs": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 4
+        },
+        "payoff_letters": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 0
+        },
+        "principal_photo_ids": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 2
+        },
+        "prior_carrier_history": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 0
+        },
+        "property_schedule": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 0
+        },
+        "revenue_and_payroll": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 0
+        },
+        "signed_application": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 60,
+          "denominator": 60,
+          "exact_ci_low": 0.9404,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 0
+        },
+        "ytd_pnl_and_balance_sheet": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 30,
+          "denominator": 30,
+          "exact_ci_low": 0.8843,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "truth_missing": 0
+        }
+      }
+    },
+    "check_status_counts": {
+      "account_conduct": {
+        "pass": 21,
+        "fail": 9,
+        "not_evaluated": 0
+      },
+      "balance_continuity": {
+        "pass": 24,
+        "fail": 6,
+        "not_evaluated": 0
+      },
+      "claims_history_consistency": {
+        "pass": 25,
+        "fail": 4,
+        "not_evaluated": 1
+      },
+      "debt_payment_consistency": {
+        "pass": 24,
+        "fail": 5,
+        "not_evaluated": 1
+      },
+      "embedded_instructions": {
+        "pass": 57,
+        "fail": 3,
+        "not_evaluated": 0
+      },
+      "fein_consistency": {
+        "pass": 29,
+        "fail": 1,
+        "not_evaluated": 30
+      },
+      "loss_run_coverage": {
+        "pass": 26,
+        "fail": 4,
+        "not_evaluated": 0
+      },
+      "loss_run_line_balance": {
+        "pass": 28,
+        "fail": 1,
+        "not_evaluated": 1
+      },
+      "loss_run_totals": {
+        "pass": 23,
+        "fail": 7,
+        "not_evaluated": 0
+      },
+      "loss_run_valuation_age": {
+        "pass": 30,
+        "fail": 0,
+        "not_evaluated": 0
+      },
+      "name_consistency": {
+        "pass": 55,
+        "fail": 5,
+        "not_evaluated": 0
+      },
+      "owner_consistency": {
+        "pass": 48,
+        "fail": 8,
+        "not_evaluated": 4
+      },
+      "required_documents": {
+        "pass": 41,
+        "fail": 19,
+        "not_evaluated": 0
+      },
+      "revenue_vs_deposits": {
+        "pass": 17,
+        "fail": 8,
+        "not_evaluated": 5
+      },
+      "statement_months_complete": {
+        "pass": 25,
+        "fail": 5,
+        "not_evaluated": 0
+      },
+      "tax_return_vs_pnl": {
+        "pass": 0,
+        "fail": 0,
+        "not_evaluated": 30
+      },
+      "tiv_consistency": {
+        "pass": 17,
+        "fail": 13,
+        "not_evaluated": 0
+      }
+    },
+    "contradictions": {
+      "note": "A contradiction matches an injected problem by type and a shared document or field. The *_evidence_correct metrics count a match only when its cited values on the problem's documents equal the true values (an OCR misread fails). duplicate_matches counts matches beyond the first for one problem; every matching contradiction counts as correct in precision.",
+      "recall": {
+        "value": 0.9412,
+        "ci_low": 0.8723,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 48,
+        "denominator": 51,
+        "exact_ci_low": 0.8376,
+        "exact_ci_high": 0.9877,
+        "bootstrap_degenerate": false
+      },
+      "precision": {
+        "value": 0.75,
+        "ci_low": 0.6027,
+        "ci_high": 0.8868,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 51,
+        "denominator": 68,
+        "exact_ci_low": 0.6302,
+        "exact_ci_high": 0.8471,
+        "bootstrap_degenerate": false
+      },
+      "recall_evidence_correct": {
+        "value": 0.902,
+        "ci_low": 0.8135,
+        "ci_high": 0.9773,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 46,
+        "denominator": 51,
+        "exact_ci_low": 0.7859,
+        "exact_ci_high": 0.9674,
+        "bootstrap_degenerate": false
+      },
+      "precision_evidence_correct": {
+        "value": 0.6912,
+        "ci_low": 0.5479,
+        "ci_high": 0.8182,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 47,
+        "denominator": 68,
+        "exact_ci_low": 0.5674,
+        "exact_ci_high": 0.7976,
+        "bootstrap_degenerate": false
+      },
+      "duplicate_matches": 3,
+      "by_type": {
+        "name_mismatch": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 987,
+            "numerator": 4,
+            "denominator": 4,
+            "exact_ci_low": 0.3976,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 0.8,
+            "ci_low": 0.3333,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 996,
+            "numerator": 4,
+            "denominator": 5,
+            "exact_ci_low": 0.2836,
+            "exact_ci_high": 0.9949,
+            "bootstrap_degenerate": false,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 987,
+            "numerator": 4,
+            "denominator": 4,
+            "exact_ci_low": 0.3976,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          }
+        },
+        "fein_mismatch": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 660,
+            "numerator": 1,
+            "denominator": 1,
+            "exact_ci_low": 0.025,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 660,
+            "numerator": 1,
+            "denominator": 1,
+            "exact_ci_low": 0.025,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 660,
+            "numerator": 1,
+            "denominator": 1,
+            "exact_ci_low": 0.025,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          }
+        },
+        "owner_mismatch": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 998,
+            "numerator": 6,
+            "denominator": 6,
+            "exact_ci_low": 0.5407,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 0.5833,
+            "ci_low": 0.2222,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 7,
+            "denominator": 12,
+            "exact_ci_low": 0.2767,
+            "exact_ci_high": 0.8483,
+            "bootstrap_degenerate": false
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 998,
+            "numerator": 6,
+            "denominator": 6,
+            "exact_ci_low": 0.5407,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          }
+        },
+        "prompt_injection": {
+          "recall": {
+            "value": 0.5,
+            "ci_low": 0.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 997,
+            "numerator": 3,
+            "denominator": 6,
+            "exact_ci_low": 0.1181,
+            "exact_ci_high": 0.8819,
+            "bootstrap_degenerate": false,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 941,
+            "numerator": 3,
+            "denominator": 3,
+            "exact_ci_low": 0.2924,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "recall_evidence_correct": {
+            "value": 0.1667,
+            "ci_low": 0.0,
+            "ci_high": 0.5714,
+            "n_packets": 60,
+            "n_resamples_used": 997,
+            "numerator": 1,
+            "denominator": 6,
+            "exact_ci_low": 0.0042,
+            "exact_ci_high": 0.6412,
+            "bootstrap_degenerate": false,
+            "interval_note": "n < 10: interval not informative"
+          }
+        },
+        "revenue_gap": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 999,
+            "numerator": 8,
+            "denominator": 8,
+            "exact_ci_low": 0.6306,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 999,
+            "numerator": 8,
+            "denominator": 8,
+            "exact_ci_low": 0.6306,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 999,
+            "numerator": 8,
+            "denominator": 8,
+            "exact_ci_low": 0.6306,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          }
+        },
+        "balance_discontinuity": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 864,
+            "numerator": 2,
+            "denominator": 2,
+            "exact_ci_low": 0.1581,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 0.5,
+            "ci_low": 0.0,
+            "ci_high": 0.8333,
+            "n_packets": 60,
+            "n_resamples_used": 997,
+            "numerator": 4,
+            "denominator": 8,
+            "exact_ci_low": 0.157,
+            "exact_ci_high": 0.843,
+            "bootstrap_degenerate": false,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 864,
+            "numerator": 2,
+            "denominator": 2,
+            "exact_ci_low": 0.1581,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          }
+        },
+        "debt_payment_mismatch": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 995,
+            "numerator": 5,
+            "denominator": 5,
+            "exact_ci_low": 0.4782,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 995,
+            "numerator": 5,
+            "denominator": 5,
+            "exact_ci_low": 0.4782,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 995,
+            "numerator": 5,
+            "denominator": 5,
+            "exact_ci_low": 0.4782,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          }
+        },
+        "loss_run_total_mismatch": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 981,
+            "numerator": 4,
+            "denominator": 4,
+            "exact_ci_low": 0.3976,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 0.5714,
+            "ci_low": 0.1667,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 4,
+            "denominator": 7,
+            "exact_ci_low": 0.1841,
+            "exact_ci_high": 0.901,
+            "bootstrap_degenerate": false,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 981,
+            "numerator": 4,
+            "denominator": 4,
+            "exact_ci_low": 0.3976,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          }
+        },
+        "paid_reserve_mismatch": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 631,
+            "numerator": 1,
+            "denominator": 1,
+            "exact_ci_low": 0.025,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 631,
+            "numerator": 1,
+            "denominator": 1,
+            "exact_ci_low": 0.025,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 631,
+            "numerator": 1,
+            "denominator": 1,
+            "exact_ci_low": 0.025,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          }
+        },
+        "tiv_mismatch": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 11,
+            "denominator": 11,
+            "exact_ci_low": 0.7151,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "precision": {
+            "value": 0.7857,
+            "ci_low": 0.5332,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 11,
+            "denominator": 14,
+            "exact_ci_low": 0.492,
+            "exact_ci_high": 0.9534,
+            "bootstrap_degenerate": false
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 11,
+            "denominator": 11,
+            "exact_ci_low": 0.7151,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          }
+        },
+        "claims_history_mismatch": {
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 952,
+            "numerator": 3,
+            "denominator": 3,
+            "exact_ci_low": 0.2924,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "precision": {
+            "value": 0.75,
+            "ci_low": 0.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 986,
+            "numerator": 3,
+            "denominator": 4,
+            "exact_ci_low": 0.1941,
+            "exact_ci_high": 0.9937,
+            "bootstrap_degenerate": false,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "recall_evidence_correct": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 952,
+            "numerator": 3,
+            "denominator": 3,
+            "exact_ci_low": 0.2924,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          }
+        }
+      },
+      "precision_by_packet_condition": {
+        "packets_without_scanned_pages": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 3,
+          "n_resamples_used": 1000,
+          "numerator": 5,
+          "denominator": 5,
+          "exact_ci_low": 0.4782,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true,
+          "interval_note": "n < 10: interval not informative"
+        },
+        "packets_with_scanned_pages": {
+          "value": 0.7302,
+          "ci_low": 0.5714,
+          "ci_high": 0.8667,
+          "n_packets": 57,
+          "n_resamples_used": 1000,
+          "numerator": 46,
+          "denominator": 63,
+          "exact_ci_low": 0.6035,
+          "exact_ci_high": 0.8343,
+          "bootstrap_degenerate": false
+        }
+      }
+    },
+    "benign_vs_unsupported": {
+      "note": "Headline accuracy counts 'unknown' as wrong (spec). designed_abstentions are problems the rules answer 'unknown' by design whatever the extraction (an unexplained TIV difference within the 15.0% HM-5.2 band); accuracy_excluding_designed_abstentions leaves them out. unknown_by_code says why each 'unknown' was given (possible_ocr_misread = the OCR review downgraded it). One matching contradiction represents each problem: evidence-correct first, then not 'unknown', then report order.",
+      "accuracy": {
+        "value": 0.9,
+        "ci_low": 0.7872,
+        "ci_high": 0.9768,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 36,
+        "denominator": 40,
+        "exact_ci_low": 0.7634,
+        "exact_ci_high": 0.9721,
+        "bootstrap_degenerate": false
+      },
+      "unknown_share": {
+        "value": 0.1,
+        "ci_low": 0.0232,
+        "ci_high": 0.2128,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 4,
+        "denominator": 40,
+        "exact_ci_low": 0.0279,
+        "exact_ci_high": 0.2366,
+        "bootstrap_degenerate": false
+      },
+      "accuracy_excluding_designed_abstentions": {
+        "value": 0.9231,
+        "ci_low": 0.8181,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 36,
+        "denominator": 39,
+        "exact_ci_low": 0.7913,
+        "exact_ci_high": 0.9838,
+        "bootstrap_degenerate": false
+      },
+      "designed_abstentions": 1,
+      "confusion_matrix": {
+        "benign": {
+          "benign": 16,
+          "unsupported": 0,
+          "unknown": 1
+        },
+        "unsupported": {
+          "benign": 0,
+          "unsupported": 20,
+          "unknown": 3
+        }
+      },
+      "unknown_by_code": {
+        "insufficient_evidence": 1,
+        "possible_ocr_misread": 3
+      },
+      "by_class": {
+        "benign": {
+          "accuracy": {
+            "value": 0.9412,
+            "ci_low": 0.8234,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 16,
+            "denominator": 17,
+            "exact_ci_low": 0.7131,
+            "exact_ci_high": 0.9985,
+            "bootstrap_degenerate": false
+          },
+          "unknown_share": {
+            "value": 0.0588,
+            "ci_low": 0.0,
+            "ci_high": 0.1766,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 1,
+            "denominator": 17,
+            "exact_ci_low": 0.0015,
+            "exact_ci_high": 0.2869,
+            "bootstrap_degenerate": false
+          }
+        },
+        "unsupported": {
+          "accuracy": {
+            "value": 0.8696,
+            "ci_low": 0.6667,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 20,
+            "denominator": 23,
+            "exact_ci_low": 0.6641,
+            "exact_ci_high": 0.9722,
+            "bootstrap_degenerate": false
+          },
+          "unknown_share": {
+            "value": 0.1304,
+            "ci_low": 0.0,
+            "ci_high": 0.3333,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 3,
+            "denominator": 23,
+            "exact_ci_low": 0.0278,
+            "exact_ci_high": 0.3359,
+            "bootstrap_degenerate": false
+          }
+        }
+      },
+      "by_problem_type": {
+        "claims_history_mismatch": {
+          "accuracy": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 952,
+            "numerator": 3,
+            "denominator": 3,
+            "exact_ci_low": 0.2924,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "unknown": 0
+        },
+        "debt_payment_mismatch": {
+          "accuracy": {
+            "value": 0.8,
+            "ci_low": 0.3333,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 995,
+            "numerator": 4,
+            "denominator": 5,
+            "exact_ci_low": 0.2836,
+            "exact_ci_high": 0.9949,
+            "bootstrap_degenerate": false,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "unknown": 1
+        },
+        "fein_mismatch": {
+          "accuracy": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 660,
+            "numerator": 1,
+            "denominator": 1,
+            "exact_ci_low": 0.025,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "unknown": 0
+        },
+        "loss_run_total_mismatch": {
+          "accuracy": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 887,
+            "numerator": 2,
+            "denominator": 2,
+            "exact_ci_low": 0.1581,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "unknown": 0
+        },
+        "name_mismatch": {
+          "accuracy": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 987,
+            "numerator": 4,
+            "denominator": 4,
+            "exact_ci_low": 0.3976,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "unknown": 0
+        },
+        "owner_mismatch": {
+          "accuracy": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 998,
+            "numerator": 6,
+            "denominator": 6,
+            "exact_ci_low": 0.5407,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "unknown": 0
+        },
+        "revenue_gap": {
+          "accuracy": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 999,
+            "numerator": 8,
+            "denominator": 8,
+            "exact_ci_low": 0.6306,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true,
+            "interval_note": "n < 10: interval not informative"
+          },
+          "unknown": 0
+        },
+        "tiv_mismatch": {
+          "accuracy": {
+            "value": 0.7273,
+            "ci_low": 0.4,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "numerator": 8,
+            "denominator": 11,
+            "exact_ci_low": 0.3903,
+            "exact_ci_high": 0.9398,
+            "bootstrap_degenerate": false
+          },
+          "unknown": 3
+        }
+      }
+    },
+    "injections": {
+      "recall": {
+        "value": 0.5,
+        "ci_low": 0.0,
+        "ci_high": 1.0,
+        "n_packets": 60,
+        "n_resamples_used": 997,
+        "numerator": 3,
+        "denominator": 6,
+        "exact_ci_low": 0.1181,
+        "exact_ci_high": 0.8819,
+        "bootstrap_degenerate": false,
+        "interval_note": "n < 10: interval not informative"
+      },
+      "by_technique": {
+        "approval_claim": {
+          "total": 2,
+          "detected": 2
+        },
+        "ignore_instructions": {
+          "total": 1,
+          "detected": 1
+        },
+        "novel_output_steering": {
+          "total": 2,
+          "detected": 0
+        },
+        "novel_software_note": {
+          "total": 1,
+          "detected": 0
+        }
+      },
+      "per_packet_false_positive_rate": {
+        "value": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 0,
+        "denominator": 60,
+        "exact_ci_low": 0.0,
+        "exact_ci_high": 0.0596,
+        "bootstrap_degenerate": true
+      },
+      "clean_packet_false_positive_rate": {
+        "value": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "n_packets": 60,
+        "n_resamples_used": 1000,
+        "numerator": 0,
+        "denominator": 54,
+        "exact_ci_low": 0.0,
+        "exact_ci_high": 0.066,
+        "bootstrap_degenerate": true
+      },
+      "false_hits": 0
+    },
+    "latency": {
+      "per_stage_ms": {
+        "text_layer": {
+          "p50": 429.54,
+          "p50_ci": [
+            239.69,
+            707.92
+          ],
+          "p95": 842.26,
+          "p95_ci": [
+            786.94,
+            865.09
+          ],
+          "n": 60
+        },
+        "ocr": {
+          "p50": 7860.14,
+          "p50_ci": [
+            5215.09,
+            8615.89
+          ],
+          "p95": 17839.44,
+          "p95_ci": [
+            12974.65,
+            18567.77
+          ],
+          "n": 60
+        },
+        "classify": {
+          "p50": 3.33,
+          "p50_ci": [
+            1.73,
+            4.1
+          ],
+          "p95": 5.47,
+          "p95_ci": [
+            5.11,
+            5.7
+          ],
+          "n": 60
+        },
+        "extract": {
+          "p50": 42.31,
+          "p50_ci": [
+            18.4,
+            44.58
+          ],
+          "p95": 139.07,
+          "p95_ci": [
+            69.05,
+            142.8
+          ],
+          "n": 60
+        },
+        "llm": {
+          "p50": 0.0,
+          "p50_ci": [
+            0.0,
+            0.0
+          ],
+          "p95": 0.0,
+          "p95_ci": [
+            0.0,
+            0.0
+          ],
+          "n": 60
+        },
+        "injection_scan": {
+          "p50": 21.35,
+          "p50_ci": [
+            10.05,
+            31.2
+          ],
+          "p95": 35.65,
+          "p95_ci": [
+            33.76,
+            38.14
+          ],
+          "n": 60
+        },
+        "checks": {
+          "p50": 11.18,
+          "p50_ci": [
+            3.52,
+            17.91
+          ],
+          "p95": 25.34,
+          "p95_ci": [
+            22.63,
+            26.83
+          ],
+          "n": 60
+        },
+        "contradictions": {
+          "p50": 0.43,
+          "p50_ci": [
+            0.32,
+            0.55
+          ],
+          "p95": 0.99,
+          "p95_ci": [
+            0.88,
+            1.18
+          ],
+          "n": 60
+        },
+        "total": {
+          "p50": 8610.17,
+          "p50_ci": [
+            5481.35,
+            9383.09
+          ],
+          "p95": 17995.29,
+          "p95_ci": [
+            13795.07,
+            19318.74
+          ],
+          "n": 60
+        }
+      },
+      "ocr_pages_total": 159,
+      "packets_with_ocr": 57,
+      "ocr_ms_per_page": {
+        "p50": 2822.22,
+        "p50_ci": [
+          2769.59,
+          2872.62
+        ],
+        "p95": 3177.38,
+        "p95_ci": [
+          3082.86,
+          3329.57
+        ],
+        "n": 57
+      },
+      "machine_load": {
+        "load_average_before": [
+          3.31,
+          3.51,
+          3.56
+        ],
+        "load_average_after": [
+          3.43,
+          3.55,
+          3.5
+        ]
+      },
+      "caveat": "Wall-clock times on the machine named in provenance.environment. They depend on the machine, on other work running at the same time (see machine_load: the 1/5/15-minute load average before and after this run) and on the number of worker processes; they are not a stable product figure."
+    },
+    "cost": {
+      "llm_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "usd_total": 0.0,
+      "usd_per_packet_mean": 0.0
+    }
+  },
+  "comparisons": {
+    "clean_vs_scanned_pages": {
+      "note": "Composition-confounded: scanned pages hold a different mix of document types than clean pages (see rules.fields.by_condition.<condition>.by_document_type), so this difference mixes scan degradation with that mix. text_layer_vs_forced_ocr reads the same pages both ways and isolates the OCR effect.",
+      "clean": {
+        "precision": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9999,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true
+        },
+        "recall": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9999,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true
+        },
+        "f1": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "bootstrap_degenerate": true
+        },
+        "tp": 33571,
+        "fp": 0,
+        "fn": 0
+      },
+      "scanned": {
+        "precision": {
+          "value": 0.9282,
+          "ci_low": 0.8888,
+          "ci_high": 0.9663,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.9179,
+          "exact_ci_high": 0.9377,
+          "bootstrap_degenerate": false
+        },
+        "recall": {
+          "value": 0.9039,
+          "ci_low": 0.8568,
+          "ci_high": 0.9483,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "exact_ci_low": 0.8924,
+          "exact_ci_high": 0.9146,
+          "bootstrap_degenerate": false
+        },
+        "f1": {
+          "value": 0.9159,
+          "ci_low": 0.8736,
+          "ci_high": 0.9566,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "bootstrap_degenerate": false
+        },
+        "tp": 2522,
+        "fp": 195,
+        "fn": 268
+      },
+      "f1_difference_clean_minus_scanned": {
+        "value": 0.0841,
+        "ci_low": 0.0434,
+        "ci_high": 0.1264,
+        "n_packets": 60,
+        "n_resamples_used": 1000
+      }
+    },
+    "text_layer_vs_forced_ocr": {
+      "scope": "values printed on clean (text-layer) pages and the page types of those pages, same packets",
+      "text_layer": {
+        "fields": {
+          "precision": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9999,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "recall": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.9999,
+            "exact_ci_high": 1.0,
+            "bootstrap_degenerate": true
+          },
+          "f1": {
+            "value": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": true
+          },
+          "tp": 33571,
+          "fp": 0,
+          "fn": 0
+        },
+        "page_classification": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 790,
+          "denominator": 790,
+          "exact_ci_low": 0.9953,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true
+        }
+      },
+      "forced_ocr": {
+        "fields": {
+          "precision": {
+            "value": 0.9892,
+            "ci_low": 0.983,
+            "ci_high": 0.9933,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.988,
+            "exact_ci_high": 0.9903,
+            "bootstrap_degenerate": false
+          },
+          "recall": {
+            "value": 0.9863,
+            "ci_low": 0.9787,
+            "ci_high": 0.9913,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "exact_ci_low": 0.985,
+            "exact_ci_high": 0.9875,
+            "bootstrap_degenerate": false
+          },
+          "f1": {
+            "value": 0.9878,
+            "ci_low": 0.9808,
+            "ci_high": 0.9923,
+            "n_packets": 60,
+            "n_resamples_used": 1000,
+            "bootstrap_degenerate": false
+          },
+          "tp": 33111,
+          "fp": 361,
+          "fn": 460
+        },
+        "page_classification": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n_packets": 60,
+          "n_resamples_used": 1000,
+          "numerator": 790,
+          "denominator": 790,
+          "exact_ci_low": 0.9953,
+          "exact_ci_high": 1.0,
+          "bootstrap_degenerate": true
+        },
+        "ocr_ms_per_page": {
+          "p50": 1755.58,
+          "p50_ci": [
+            1717.12,
+            1868.74
+          ],
+          "p95": 2138.44,
+          "p95_ci": [
+            2028.52,
+            2309.24
+          ],
+          "n": 60
+        },
+        "machine_load": {
+          "load_average_before": [
+            3.43,
+            3.55,
+            3.5
+          ],
+          "load_average_after": [
+            2.73,
+            3.23,
+            3.48
+          ]
+        }
+      },
+      "f1_difference_text_layer_minus_forced_ocr": {
+        "value": 0.0122,
+        "ci_low": 0.0077,
+        "ci_high": 0.0192,
+        "n_packets": 60,
+        "n_resamples_used": 1000
+      }
+    },
+    "rules_vs_hybrid": "not measured (no --provider run has been done: this run used the rules extractor only; `scripts/eval_docintel.py --provider ollama` would measure it)"
+  },
+  "coverage_notes": {
+    "checks_not_exercised": "check_status_counts shows checks that never pass or fail on these SYNTHETIC packets (always not_evaluated): their detection is not measured here. Known: tax_return_vs_pnl (NBC-9.1) compares only a P&L for the same calendar year as a tax return, and every generated P&L is trailing twelve months ending mid-year.",
+    "not_implemented": [
+      "NBC-6.2 name and date of birth on the photo ID against the application and the credit report: the application and credit report schemas carry no date of birth, so this match is not checked"
+    ]
+  },
+  "provenance": {
+    "git_sha": "271ca4d759f205ac457c6e692dc93de33269f632",
+    "git_dirty": true,
+    "generated_at_utc": "2026-10-14T00:58:15+00:00",
+    "generated_by": "scripts/eval_docintel.py",
+    "prompts": {},
+    "corpus_checksum": "not applicable (no retrieval corpus is used)",
+    "eval_sets": {
+      "eval/packets/manifest.json": "dfebadde1e201fbb579c52cc3d8bf16fb4a86d70d7c389c9b3a3470bb86cb587"
+    },
+    "models": [],
+    "data_snapshots": {
+      "tesseract_version": "tesseract 5.3.4",
+      "generator_version": "synthetic-packets-v2",
+      "test_truth_sha256": "474259082b709e8df866cf3b8d3bb36b18a9cd7a1527b02782da7c8fd6af5b1d",
+      "packet_seed": 20261013,
+      "bootstrap_seed": 42
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        3.31,
+        3.51,
+        3.56
+      ],
+      "load_average_end": [
+        2.59,
+        3.2,
+        3.47
+      ]
+    }
+  }
+}

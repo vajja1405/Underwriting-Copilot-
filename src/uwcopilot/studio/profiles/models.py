@@ -121,15 +121,34 @@ class Curve(StrictModel):
         return self
 
 
+class NaicsVerification(StrictModel):
+    """Where a NAICS code and its title were checked: a published code list, with its URL, date and SHA-256.
+
+    Written from the output of scripts/studio_verify_naics.py (results/studio_naics_check.json). It confirms that
+    the code exists in the list with this title; whether the code is the right one for the business type is still
+    the project author's choice.
+    """
+
+    publisher: str = Field(min_length=1)
+    list_name: str = Field(min_length=1)
+    url: str = Field(min_length=1)
+    retrieved_at_utc: str = Field(min_length=1)
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    published_title: str = Field(min_length=1, description="The list's title text for the code, as published")
+
+
 class NaicsCode(StrictModel):
     """A NAICS industry code used to query Business Patterns and BLS wages.
 
-    verified stays false until the code is checked against the Census NAICS reference (blocked in this build).
+    verified is true only when the code and its title were found in a published code list (verification says
+    which one). www.census.gov/naics answered 403 from the build environment (2026-10-12 and 2026-10-13), so the
+    list used is the BLS QCEW industry titles file.
     """
 
     code: str
     title: str = Field(min_length=1)
     verified: bool = False
+    verification: NaicsVerification | None = None
     note: str | None = None
 
     @field_validator("code")
@@ -139,6 +158,15 @@ class NaicsCode(StrictModel):
         if not NAICS_CODE.match(value):
             raise ValueError(f"NAICS code must be 2-6 digits (got {value!r})")
         return value
+
+    @model_validator(mode="after")
+    def verified_needs_a_record(self) -> "NaicsCode":
+        """verified: true needs the verification record; a record without verified: true is a contradiction."""
+        if self.verified and self.verification is None:
+            raise ValueError(f"NAICS {self.code}: verified is true but there is no verification record")
+        if self.verification is not None and not self.verified:
+            raise ValueError(f"NAICS {self.code}: a verification record is present but verified is false")
+        return self
 
 
 class DemandModel(StrictModel):

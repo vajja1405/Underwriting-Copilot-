@@ -1,41 +1,166 @@
 # Metro config (Founder Studio S1). Schema: src/uwcopilot/studio/metros/models.py.
-# UNVERIFIED: the official title, CBSA code and county list must come from the Census delineation file, which could
-# not be opened in this build (www.census.gov is blocked; see docs/studio/metros.md). Counties stay empty and
-# verified stays false until then; the model refuses counties without a delineation_source. With no data snapshot,
-# this metro runs in "limited mode" and every data factor is UNKNOWN.
+# The name, CBSA code, states and counties below were written by scripts/studio_fetch_delineation.py from the Census
+# Bureau delineation file recorded under `delineation` (URL, date, SHA-256 of the file). Do not edit them by hand;
+# re-run the script. Trade-area settings and enhancements are design choices of the project author. Without a data
+# snapshot this metro runs in "limited mode" (see results/studio_metro_coverage.json).
 id: new_york_ny_nj_pa
-name: "New York-Newark-Jersey City (title from the Studio plan, UNVERIFIED)"
+name: New York-Newark-Jersey City, NY-NJ
 data_label: PUBLIC
-verified: false
-states: [NY, NJ, PA]
-cbsa_code: null
-counties: []
-delineation_source: null
+verified: true
+states:
+- NY
+- NJ
+cbsa_code: '35620'
+cbsa_title_prefix: New York-Newark-Jersey City
+counties:
+- state_fips: '34'
+  county_fips: '023'
+  name: Middlesex County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '34'
+  county_fips: '025'
+  name: Monmouth County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '34'
+  county_fips: '029'
+  name: Ocean County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '34'
+  county_fips: '035'
+  name: Somerset County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '059'
+  name: Nassau County
+  state_name: New York
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '103'
+  name: Suffolk County
+  state_name: New York
+  central_or_outlying: central
+- state_fips: '34'
+  county_fips: '013'
+  name: Essex County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '34'
+  county_fips: '019'
+  name: Hunterdon County
+  state_name: New Jersey
+  central_or_outlying: outlying
+- state_fips: '34'
+  county_fips: '027'
+  name: Morris County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '34'
+  county_fips: '037'
+  name: Sussex County
+  state_name: New Jersey
+  central_or_outlying: outlying
+- state_fips: '34'
+  county_fips: '039'
+  name: Union County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '34'
+  county_fips: '003'
+  name: Bergen County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '34'
+  county_fips: '017'
+  name: Hudson County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '34'
+  county_fips: '031'
+  name: Passaic County
+  state_name: New Jersey
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '005'
+  name: Bronx County
+  state_name: New York
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '047'
+  name: Kings County
+  state_name: New York
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '061'
+  name: New York County
+  state_name: New York
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '079'
+  name: Putnam County
+  state_name: New York
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '081'
+  name: Queens County
+  state_name: New York
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '085'
+  name: Richmond County
+  state_name: New York
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '087'
+  name: Rockland County
+  state_name: New York
+  central_or_outlying: central
+- state_fips: '36'
+  county_fips: '119'
+  name: Westchester County
+  state_name: New York
+  central_or_outlying: central
+delineation:
+  source:
+    publisher: U.S. Census Bureau, Population Division
+    title: List 1. CORE BASED STATISTICAL AREAS (CBSAs), METROPOLITAN DIVISIONS, AND COMBINED STATISTICAL AREAS (CSAs), JULY
+      2023
+    date: July 2023
+    url: https://www2.census.gov/programs-surveys/metro-micro/geographies/reference-files/2023/delineation-files/list1_2023.xlsx
+    page_or_table: list1_2023.xlsx, first sheet, the 22 rows with CBSA Code 35620
+  file_name: list1_2023.xlsx
+  file_sha256: 952c4b1e78acbb54e6ec9412434b7602fedacbf021736351a63c181bdb753629
+  retrieved_at_utc: '2026-10-12T19:22:07+00:00'
+  generated_by: scripts/studio_fetch_delineation.py
 crs: EPSG:4326
 bbox: null
 trade_area:
   ring_multiplier: 0.6
   status: DESIGN_CHOICE
-  note: >-
-    Scales every profile's trade-area rings. Tighter rings for dense metros and wider rings for
-    car-dependent ones follow the Studio plan; the density premise itself is UNVERIFIED (docs/studio/metros.md).
+  note: Scales every profile's trade-area rings. Tighter rings for dense metros and wider rings for car-dependent ones follow
+    the Studio plan; the density premise itself is UNVERIFIED (docs/studio/metros.md).
 enhancements:
-  - kind: traffic_state
-    adapter: NY
-    enabled: true
-  - kind: traffic_state
-    adapter: NJ
-    enabled: true
-  - kind: traffic_state
-    adapter: PA
-    enabled: true
-  - kind: city_open_data
-    adapter: nyc
-    enabled: true
-  - kind: str_comps
-    adapter: new_york_city
-    enabled: true
+- kind: traffic_state
+  adapter: NY
+  enabled: true
+- kind: traffic_state
+  adapter: NJ
+  enabled: true
+- kind: traffic_state
+  adapter: PA
+  enabled: false
+  note: 'Disabled by scripts/studio_fetch_delineation.py: the delineation file lists no county of state PA in this metro.'
+- kind: city_open_data
+  adapter: nyc
+  enabled: true
+- kind: str_comps
+  adapter: new_york_city
+  enabled: true
 snapshot_date: null
 coverage_threshold: 0.8
 synthetic: null
-note: Expected v1 metro from the Studio plan; rank and title to confirm from the Census tables (docs/studio/metros.md).
+note: Rank 1 of 387 metropolitan statistical areas by POPESTIMATE2025 in cbsa-est2025-alldata.csv (written by scripts/studio_fetch_delineation.py;
+  see results/studio_metro_ranking.json).

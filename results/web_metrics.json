@@ -1,0 +1,1883 @@
+{
+  "description": "End-to-end flows (Playwright), axe-core accessibility scans and Lighthouse scores of a LOCAL Fundproof server, written by scripts/web_metrics.py. One entry per target; each says what was measured (target.label) and has its own provenance block. A target that is not listed here was not measured. The Hugging Face Space is not measured by this script.",
+  "runs": {
+    "local-container": {
+      "target": {
+        "kind": "local-container",
+        "label": "LOCAL Docker container on the machine that ran this script, started WITH the dev login (UWC_DEV_AUTH=1) so the script can sign in without Hugging Face OAuth. NOT the Hugging Face Space, which refuses the dev login: no internet hop, no Space proxy, not Space hardware.",
+        "url": "http://127.0.0.1:7862"
+      },
+      "reproducibility": {
+        "reproducible": true,
+        "reasons": [],
+        "server_git_sha": "271ca4d759f205ac457c6e692dc93de33269f632",
+        "head": "271ca4d759f205ac457c6e692dc93de33269f632",
+        "server_is_head": true,
+        "working_tree_dirty": true,
+        "working_tree_digest_sha256": "b3f4edadbef11cc4fdd1e10942a807672587c28d240a0cf85eea9ec31559dd3a",
+        "note": "Reproducible: rebuilding commit 271ca4d759f205ac457c6e692dc93de33269f632 with the Dockerfile gives the measured app."
+      },
+      "measured_at_utc": "2026-10-14T00:48:23+00:00",
+      "auth": {
+        "mode": "dev",
+        "note": "The browser signed in through the DEV LOGIN form (POST /api/auth/dev-login), which exists only when the server runs with UWC_DEV_AUTH=1 and is refused inside a Hugging Face Space. Hugging Face sign-in was not exercised.",
+        "username": "metrics-founder-c17f05"
+      },
+      "server": {
+        "version": "0.1.0",
+        "git_sha": "271ca4d759f205ac457c6e692dc93de33269f632",
+        "product_name": "Fundproof",
+        "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+        "dev_auth": true,
+        "is_space": false,
+        "payments_enabled": false
+      },
+      "browser": {
+        "chromium_version": "141.0.7390.37",
+        "playwright_version": "1.56.0",
+        "headless": "new headless (Playwright channel 'chromium')",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "axe_engine": "axe-core 4.13.0"
+      },
+      "demo_inputs": {
+        "label": "SYNTHETIC test inputs typed by this script (design choices, not data or benchmarks)",
+        "plan": {
+          "metro_id": "synthetic_metro",
+          "business_type_id": "laundromat",
+          "idea": "SYNTHETIC demo plan typed by scripts/web_metrics.py: a self-service laundromat with an attendant a few hours a day.",
+          "budget": "400000",
+          "equity": "150000",
+          "loan": "350000",
+          "term": "120",
+          "rate": "9"
+        },
+        "target_edits_percent": {
+          "p_dscr_min": "50",
+          "p_stressed_min": "30",
+          "p_cash_negative_max": "15"
+        },
+        "decision_rationale": "SYNTHETIC demo decision recorded by the web metrics script to test the review screen."
+      },
+      "e2e": {
+        "all_flows_passed": true,
+        "flows": [
+          {
+            "name": "signed_out",
+            "passed": true,
+            "steps": [
+              {
+                "name": "public_pages_load",
+                "passed": true,
+                "seconds": 5.838,
+                "detail": ""
+              },
+              {
+                "name": "signed_out_studio_asks_to_sign_in",
+                "passed": true,
+                "seconds": 1.637,
+                "detail": ""
+              },
+              {
+                "name": "unknown_page_is_404",
+                "passed": true,
+                "seconds": 1.544,
+                "detail": ""
+              }
+            ],
+            "facts": {},
+            "console_errors": [
+              {
+                "flow": "signed_out",
+                "step": "unknown_page_is_404",
+                "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+                "expected": true
+              }
+            ],
+            "api_errors": [],
+            "unexpected_console_errors": 0,
+            "unexpected_api_errors": 0
+          },
+          {
+            "name": "founder_synthetic_plan",
+            "passed": true,
+            "steps": [
+              {
+                "name": "dev_login_form",
+                "passed": true,
+                "seconds": 1.947,
+                "detail": ""
+              },
+              {
+                "name": "wizard_city",
+                "passed": true,
+                "seconds": 1.197,
+                "detail": ""
+              },
+              {
+                "name": "wizard_business_type",
+                "passed": true,
+                "seconds": 0.108,
+                "detail": ""
+              },
+              {
+                "name": "wizard_idea",
+                "passed": true,
+                "seconds": 0.073,
+                "detail": ""
+              },
+              {
+                "name": "wizard_money",
+                "passed": true,
+                "seconds": 0.15,
+                "detail": ""
+              },
+              {
+                "name": "wizard_sites",
+                "passed": true,
+                "seconds": 3.354,
+                "detail": "",
+                "suggest_areas_ms": 601.9
+              },
+              {
+                "name": "create_plan_and_results",
+                "passed": true,
+                "seconds": 1.1,
+                "detail": "",
+                "rendered_ms": 1099.2,
+                "create_answer_ms": 80.6,
+                "site_scores_answer_ms": 189.6,
+                "feasibility_answer_ms": 531.8,
+                "path_answer_ms": 916.5
+              },
+              {
+                "name": "results_page_labels",
+                "passed": true,
+                "seconds": 4.996,
+                "detail": ""
+              },
+              {
+                "name": "results_tables_open",
+                "passed": true,
+                "seconds": 4.019,
+                "detail": ""
+              },
+              {
+                "name": "edit_targets_and_apply_change",
+                "passed": true,
+                "seconds": 1.065,
+                "detail": "",
+                "apply_put_ms": 86.8,
+                "rerun_path_ms": 489.1,
+                "outcome": "applied the first change-set; the plan is version 2 and was re-run"
+              }
+            ],
+            "facts": {
+              "path_status_default_targets": "no_path_within_bounds",
+              "path_mode": "quick",
+              "path_status_edited_targets": "paths_found"
+            },
+            "console_errors": [],
+            "api_errors": [],
+            "unexpected_console_errors": 0,
+            "unexpected_api_errors": 0
+          },
+          {
+            "name": "lender_demo_decision",
+            "passed": true,
+            "steps": [
+              {
+                "name": "demo_queue",
+                "passed": true,
+                "seconds": 2.484,
+                "detail": ""
+              },
+              {
+                "name": "open_first_file",
+                "passed": true,
+                "seconds": 14.315,
+                "detail": "",
+                "file_answer_ms": 12953.1,
+                "rendered_ms": 12984.3
+              },
+              {
+                "name": "record_demo_decision",
+                "passed": true,
+                "seconds": 4.333,
+                "detail": "",
+                "decision_answer_ms": 302.0
+              }
+            ],
+            "facts": {
+              "file_id": "APP-C-001",
+              "line": "credit",
+              "reference_recommendation": "approve",
+              "your_reviewer_role": "underwriter",
+              "memo_writer": "template",
+              "memo_check_passed": true,
+              "guideline_search": {
+                "status": "ok",
+                "detail": "3 call(s) answered"
+              },
+              "screening_configured_lists": [
+                "ofac"
+              ],
+              "screening_lists_used": [
+                {
+                  "source": "OFAC",
+                  "file": "sdn.csv",
+                  "date": "2026-10-14"
+                },
+                {
+                  "source": "OFAC",
+                  "file": "alt.csv",
+                  "date": "2026-10-14"
+                }
+              ],
+              "screening_statuses": [
+                "clear"
+              ],
+              "action": "approve",
+              "final_status": "approved_by_human",
+              "record_label": "DEMO"
+            },
+            "console_errors": [],
+            "api_errors": [],
+            "unexpected_console_errors": 0,
+            "unexpected_api_errors": 0
+          },
+          {
+            "name": "error_paths",
+            "passed": true,
+            "steps": [
+              {
+                "name": "unknown_plan_says_not_found",
+                "passed": true,
+                "seconds": 1.972,
+                "detail": ""
+              },
+              {
+                "name": "wizard_requires_a_city",
+                "passed": true,
+                "seconds": 0.775,
+                "detail": ""
+              }
+            ],
+            "facts": {},
+            "console_errors": [
+              {
+                "flow": "error_paths",
+                "step": "unknown_plan_says_not_found",
+                "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+                "expected": true
+              }
+            ],
+            "api_errors": [
+              {
+                "flow": "error_paths",
+                "step": "unknown_plan_says_not_found",
+                "method": "GET",
+                "path": "/api/studio/projects/0000000000000000",
+                "status": 404,
+                "expected": true
+              }
+            ],
+            "unexpected_console_errors": 0,
+            "unexpected_api_errors": 0
+          },
+          {
+            "name": "founder_delete_plan",
+            "passed": true,
+            "steps": [
+              {
+                "name": "delete_plan",
+                "passed": true,
+                "seconds": 2.095,
+                "detail": ""
+              }
+            ],
+            "facts": {},
+            "console_errors": [
+              {
+                "flow": "founder_delete_plan",
+                "step": "delete_plan",
+                "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+                "expected": true
+              }
+            ],
+            "api_errors": [
+              {
+                "flow": "founder_delete_plan",
+                "step": "delete_plan",
+                "method": "GET",
+                "path": "/api/studio/projects/670990b06d375359",
+                "status": 404,
+                "expected": true
+              }
+            ],
+            "unexpected_console_errors": 0,
+            "unexpected_api_errors": 0
+          }
+        ]
+      },
+      "axe": {
+        "engine": "axe-core 4.13.0",
+        "rule_set": "axe-core's default rules (no runOnly); resultTypes violations + incomplete",
+        "color_schemes": [
+          "light",
+          "dark"
+        ],
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "totals": {
+          "scans": 32,
+          "critical_violation_rules": 0,
+          "critical_nodes": 0,
+          "serious_violation_rules": 0,
+          "serious_nodes": 0,
+          "scans_with_serious_or_critical": 0
+        },
+        "scans": [
+          {
+            "page": "landing (signed out)",
+            "path": "/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "landing (signed out)",
+            "path": "/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "signin (signed out)",
+            "path": "/signin/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "signin (signed out)",
+            "path": "/signin/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "about (signed out)",
+            "path": "/about/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "about (signed out)",
+            "path": "/about/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio (signed out)",
+            "path": "/studio/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio (signed out)",
+            "path": "/studio/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "404 page",
+            "path": "/this-page-does-not-exist/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "404 page",
+            "path": "/this-page-does-not-exist/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio plans list",
+            "path": "/studio/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio plans list",
+            "path": "/studio/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "wizard: city step",
+            "path": "/studio/new/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "wizard: city step",
+            "path": "/studio/new/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "wizard: sites step (map, list, suggestions)",
+            "path": "/studio/new/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "wizard: sites step (map, list, suggestions)",
+            "path": "/studio/new/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "wizard: review step",
+            "path": "/studio/new/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "wizard: review step",
+            "path": "/studio/new/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio results",
+            "path": "/studio/project/?id=<plan>",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio results",
+            "path": "/studio/project/?id=<plan>",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio results: chart tables open",
+            "path": "/studio/project/?id=<plan>",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio results: chart tables open",
+            "path": "/studio/project/?id=<plan>",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "lender demo queue",
+            "path": "/lender/",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "lender demo queue",
+            "path": "/lender/",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "lender file (before the decision)",
+            "path": "/lender/file/?id=<file>",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "lender file (before the decision)",
+            "path": "/lender/file/?id=<file>",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "lender file (after the decision)",
+            "path": "/lender/file/?id=<file>",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "lender file (after the decision)",
+            "path": "/lender/file/?id=<file>",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "lender file: decision record open",
+            "path": "/lender/file/?id=<file>",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "lender file: decision record open",
+            "path": "/lender/file/?id=<file>",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 1,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio results: unknown plan (error state)",
+            "path": "/studio/project/?id=<unknown>",
+            "color_scheme": "light",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          },
+          {
+            "page": "studio results: unknown plan (error state)",
+            "path": "/studio/project/?id=<unknown>",
+            "color_scheme": "dark",
+            "violations_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "nodes_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "incomplete_by_impact": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0
+            },
+            "serious_or_critical_rules": [],
+            "other_violation_rules": []
+          }
+        ]
+      },
+      "lighthouse": {
+        "version": "13.5.0",
+        "skipped": false,
+        "categories": [
+          "performance",
+          "accessibility",
+          "best-practices"
+        ],
+        "runs_per_page_and_preset": 3,
+        "method": "Lighthouse CLI attached over the DevTools port to the signed-in Chromium profile, --disable-storage-reset (keeps the session cookie), HTTP cache cleared through CDP before each run; 'mobile' is Lighthouse's default config (simulated throttling), 'desktop' is --preset=desktop",
+        "all_runs_scored": true,
+        "pages": [
+          {
+            "page": "landing",
+            "path": "/",
+            "preset": "mobile",
+            "runs": [
+              {
+                "scores": {
+                  "performance": 0.75,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 75,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 2118.3945,
+                  "largest-contentful-paint": 5740.263,
+                  "total-blocking-time": 152.00000000000045,
+                  "cumulative-layout-shift": 0.0012379898035239417,
+                  "speed-index": 2118.3945
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "mobile",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 11.7
+              },
+              {
+                "scores": {
+                  "performance": 0.81,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 81,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 2112.53925,
+                  "largest-contentful-paint": 4568.3595,
+                  "total-blocking-time": 81.5,
+                  "cumulative-layout-shift": 0.0012379898035239417,
+                  "speed-index": 2112.53925
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "mobile",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 11.9
+              },
+              {
+                "scores": {
+                  "performance": 0.76,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 76,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 2127.549,
+                  "largest-contentful-paint": 5940.366,
+                  "total-blocking-time": 94,
+                  "cumulative-layout-shift": 0.0012379898035239417,
+                  "speed-index": 2127.549
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "mobile",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 11.7
+              }
+            ],
+            "median": {
+              "scores": {
+                "performance": 0.76,
+                "accessibility": 1,
+                "best-practices": 1
+              },
+              "scores_0_100": {
+                "performance": 76,
+                "accessibility": 100,
+                "best-practices": 100
+              },
+              "metrics": {
+                "first-contentful-paint": 2118.3945,
+                "largest-contentful-paint": 5740.263,
+                "total-blocking-time": 94,
+                "cumulative-layout-shift": 0.0012379898035239417,
+                "speed-index": 2118.3945
+              },
+              "runs_with_scores": 3
+            }
+          },
+          {
+            "page": "landing",
+            "path": "/",
+            "preset": "desktop",
+            "runs": [
+              {
+                "scores": {
+                  "performance": 0.98,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 98,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 523.4562000000001,
+                  "largest-contentful-paint": 1176.9708,
+                  "total-blocking-time": 9,
+                  "cumulative-layout-shift": 0.0032343113562735316,
+                  "speed-index": 523.4562000000001
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "desktop",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 11.7
+              },
+              {
+                "scores": {
+                  "performance": 0.98,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 98,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 505.9956000000001,
+                  "largest-contentful-paint": 1077.3304,
+                  "total-blocking-time": 0,
+                  "cumulative-layout-shift": 0.0032343113562735316,
+                  "speed-index": 505.9956000000001
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "desktop",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 12.0
+              },
+              {
+                "scores": {
+                  "performance": 0.98,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 98,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 504.9999,
+                  "largest-contentful-paint": 1152.6666,
+                  "total-blocking-time": 0,
+                  "cumulative-layout-shift": 0.0032343113562735316,
+                  "speed-index": 504.9999
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "desktop",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 11.7
+              }
+            ],
+            "median": {
+              "scores": {
+                "performance": 0.98,
+                "accessibility": 1,
+                "best-practices": 1
+              },
+              "scores_0_100": {
+                "performance": 98,
+                "accessibility": 100,
+                "best-practices": 100
+              },
+              "metrics": {
+                "first-contentful-paint": 505.9956000000001,
+                "largest-contentful-paint": 1152.6666,
+                "total-blocking-time": 0,
+                "cumulative-layout-shift": 0.0032343113562735316,
+                "speed-index": 505.9956000000001
+              },
+              "runs_with_scores": 3
+            }
+          },
+          {
+            "page": "studio results",
+            "path": "/studio/project/?id=<plan>",
+            "preset": "mobile",
+            "runs": [
+              {
+                "scores": {
+                  "performance": 0.47,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 47,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 1081.5148,
+                  "largest-contentful-paint": 7600.2721999999985,
+                  "total-blocking-time": 1602.0000000000018,
+                  "cumulative-layout-shift": 0.0005158643595308912,
+                  "speed-index": 4102.355452211454
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "mobile",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 14.1
+              },
+              {
+                "scores": {
+                  "performance": 0.44,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 44,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 1067.4596,
+                  "largest-contentful-paint": 7855.1894,
+                  "total-blocking-time": 1523.3649000000005,
+                  "cumulative-layout-shift": 0.11230201259768399,
+                  "speed-index": 4349.2388680135655
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "mobile",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 14.1
+              },
+              {
+                "scores": {
+                  "performance": 0.42,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 42,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 1057.7093,
+                  "largest-contentful-paint": 7385.563949999998,
+                  "total-blocking-time": 1710.5,
+                  "cumulative-layout-shift": 0.11230201259768399,
+                  "speed-index": 5376.026515538688
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "mobile",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 14.2
+              }
+            ],
+            "median": {
+              "scores": {
+                "performance": 0.44,
+                "accessibility": 1,
+                "best-practices": 1
+              },
+              "scores_0_100": {
+                "performance": 44,
+                "accessibility": 100,
+                "best-practices": 100
+              },
+              "metrics": {
+                "first-contentful-paint": 1067.4596,
+                "largest-contentful-paint": 7600.2721999999985,
+                "total-blocking-time": 1602.0000000000018,
+                "cumulative-layout-shift": 0.11230201259768399,
+                "speed-index": 4349.2388680135655
+              },
+              "runs_with_scores": 3
+            }
+          },
+          {
+            "page": "studio results",
+            "path": "/studio/project/?id=<plan>",
+            "preset": "desktop",
+            "runs": [
+              {
+                "scores": {
+                  "performance": 0.88,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 88,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 451.63399999999996,
+                  "largest-contentful-paint": 1453.6339999999996,
+                  "total-blocking-time": 117.5,
+                  "cumulative-layout-shift": 0.13908724958409946,
+                  "speed-index": 1005.0726174383072
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "desktop",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 13.5
+              },
+              {
+                "scores": {
+                  "performance": 0.86,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 86,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 334.06955,
+                  "largest-contentful-paint": 1537.0695500000004,
+                  "total-blocking-time": 146,
+                  "cumulative-layout-shift": 0.13908724958409946,
+                  "speed-index": 1102.9595708817112
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "desktop",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 13.6
+              },
+              {
+                "scores": {
+                  "performance": 0.86,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 86,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 341.23055,
+                  "largest-contentful-paint": 1574.3073999999997,
+                  "total-blocking-time": 134,
+                  "cumulative-layout-shift": 0.13908724958409946,
+                  "speed-index": 1081.3497899238432
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "desktop",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 13.8
+              }
+            ],
+            "median": {
+              "scores": {
+                "performance": 0.86,
+                "accessibility": 1,
+                "best-practices": 1
+              },
+              "scores_0_100": {
+                "performance": 86,
+                "accessibility": 100,
+                "best-practices": 100
+              },
+              "metrics": {
+                "first-contentful-paint": 341.23055,
+                "largest-contentful-paint": 1537.0695500000004,
+                "total-blocking-time": 134,
+                "cumulative-layout-shift": 0.13908724958409946,
+                "speed-index": 1081.3497899238432
+              },
+              "runs_with_scores": 3
+            }
+          },
+          {
+            "page": "lender file",
+            "path": "/lender/file/?id=<file>",
+            "preset": "mobile",
+            "runs": [
+              {
+                "scores": {
+                  "performance": 0.8,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 80,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 1810.9364999999998,
+                  "largest-contentful-paint": 4780.291,
+                  "total-blocking-time": 133.5,
+                  "cumulative-layout-shift": 0.0005492335815006767,
+                  "speed-index": 1810.9364999999998
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "mobile",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 11.9
+              },
+              {
+                "scores": {
+                  "performance": 0.77,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 77,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 1812.9912000000002,
+                  "largest-contentful-paint": 4425.660800000001,
+                  "total-blocking-time": 307,
+                  "cumulative-layout-shift": 0.0005492335815006767,
+                  "speed-index": 1812.9912000000002
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "mobile",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 12.0
+              },
+              {
+                "scores": {
+                  "performance": 0.69,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 69,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 1823.59725,
+                  "largest-contentful-paint": 5918.7315,
+                  "total-blocking-time": 346.5,
+                  "cumulative-layout-shift": 0.0005492335815006767,
+                  "speed-index": 1823.59725
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "mobile",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 12.0
+              }
+            ],
+            "median": {
+              "scores": {
+                "performance": 0.77,
+                "accessibility": 1,
+                "best-practices": 1
+              },
+              "scores_0_100": {
+                "performance": 77,
+                "accessibility": 100,
+                "best-practices": 100
+              },
+              "metrics": {
+                "first-contentful-paint": 1812.9912000000002,
+                "largest-contentful-paint": 4780.291,
+                "total-blocking-time": 307,
+                "cumulative-layout-shift": 0.0005492335815006767,
+                "speed-index": 1812.9912000000002
+              },
+              "runs_with_scores": 3
+            }
+          },
+          {
+            "page": "lender file",
+            "path": "/lender/file/?id=<file>",
+            "preset": "desktop",
+            "runs": [
+              {
+                "scores": {
+                  "performance": 0.93,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 93,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 456.49595,
+                  "largest-contentful-paint": 1113.9973,
+                  "total-blocking-time": 0,
+                  "cumulative-layout-shift": 0.13894521079590227,
+                  "speed-index": 456.49595
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "desktop",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 12.1
+              },
+              {
+                "scores": {
+                  "performance": 0.95,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 95,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 298.9097,
+                  "largest-contentful-paint": 711.9096999999999,
+                  "total-blocking-time": 0,
+                  "cumulative-layout-shift": 0.13894521079590227,
+                  "speed-index": 298.9097
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "desktop",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 11.9
+              },
+              {
+                "scores": {
+                  "performance": 0.93,
+                  "accessibility": 1,
+                  "best-practices": 1
+                },
+                "scores_0_100": {
+                  "performance": 93,
+                  "accessibility": 100,
+                  "best-practices": 100
+                },
+                "metrics": {
+                  "first-contentful-paint": 456.48575,
+                  "largest-contentful-paint": 1160.9904999999999,
+                  "total-blocking-time": 19.5,
+                  "cumulative-layout-shift": 0.13894521079590227,
+                  "speed-index": 456.48575
+                },
+                "failed_weighted_audits": [],
+                "form_factor": "desktop",
+                "throttling_method": "simulate",
+                "lighthouse_version": "13.5.0",
+                "runtime_error": null,
+                "run_warnings": [],
+                "seconds": 12.1
+              }
+            ],
+            "median": {
+              "scores": {
+                "performance": 0.93,
+                "accessibility": 1,
+                "best-practices": 1
+              },
+              "scores_0_100": {
+                "performance": 93,
+                "accessibility": 100,
+                "best-practices": 100
+              },
+              "metrics": {
+                "first-contentful-paint": 456.48575,
+                "largest-contentful-paint": 1113.9973,
+                "total-blocking-time": 0,
+                "cumulative-layout-shift": 0.13894521079590227,
+                "speed-index": 456.48575
+              },
+              "runs_with_scores": 3
+            }
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "file": "docs/web/screenshots/e2e/studio-results-1280-light.png",
+          "note": "kept as Chromium wrote it (1297581 bytes; the pillow re-encode was not smaller)"
+        },
+        {
+          "file": "docs/web/screenshots/e2e/lender-decision-1280-light.png",
+          "note": "kept as Chromium wrote it (496342 bytes; the pillow re-encode was not smaller)"
+        },
+        {
+          "file": "docs/web/screenshots/e2e/error-unknown-plan-1280-light.png",
+          "note": "kept as Chromium wrote it (46748 bytes; the pillow re-encode was not smaller)"
+        }
+      ],
+      "docker_image": {
+        "image": "fundproof:dev",
+        "id": "sha256:20b3b04d9a6933a7822cee7d0b9f1440c126f5afa4ab023b85e3965e22b762ac",
+        "size_bytes_from_docker_image_inspect": 2572087031,
+        "size_from_docker_image_ls": "2.57GB",
+        "docker_image_ls_output": [
+          "IMAGE           ID             DISK USAGE   CONTENT SIZE   EXTRA",
+          "fundproof:dev   20b3b04d9a69       2.57GB          659MB   U"
+        ],
+        "docker_server_version": "29.8.2",
+        "note": "size_from_docker_image_ls is the DISK USAGE column (unpacked size on this machine); the CONTENT SIZE column in docker_image_ls_output is the compressed size of the image content."
+      },
+      "container": {
+        "name": "fundproof-metrics",
+        "image_id": "sha256:20b3b04d9a6933a7822cee7d0b9f1440c126f5afa4ab023b85e3965e22b762ac",
+        "state": "running",
+        "started_at": "2026-10-14T00:43:37.596277139Z"
+      },
+      "caveats": [
+        "A local run: the server and the browser share one machine (4 CPUs here, shared with other jobs; see provenance.environment). Timings and Lighthouse performance scores say nothing about the Space.",
+        "Sign-in used the DEV LOGIN (UWC_DEV_AUTH=1); Hugging Face OAuth was not exercised.",
+        "Lighthouse scores are listed per run with their median; no confidence interval is given because a few runs on one machine are not independent samples of anything wider.",
+        "axe-core finds only the problems that can be detected automatically; zero violations is not a statement of WCAG conformance. Its 'incomplete' items need a person to review them.",
+        "The founder plan, the lender decision and the edited targets are SYNTHETIC test inputs, not data."
+      ],
+      "provenance": {
+        "git_sha": "271ca4d759f205ac457c6e692dc93de33269f632",
+        "git_dirty": true,
+        "generated_at_utc": "2026-10-14T00:48:23+00:00",
+        "generated_by": "scripts/web_metrics.py",
+        "prompts": {},
+        "corpus_checksum": "not recorded (the guideline index inside the target is used; see the lender flow facts)",
+        "eval_sets": {},
+        "models": [],
+        "data_snapshots": {
+          "deployment_target": {
+            "kind": "local-container",
+            "url": "http://127.0.0.1:7862"
+          },
+          "tools": {
+            "lighthouse": "13.5.0",
+            "axe-core": "4.13.0",
+            "playwright": "1.56.0",
+            "chromium": "141.0.7390.37",
+            "node": "v22.22.0"
+          }
+        },
+        "packages": {
+          "python": "3.11.17",
+          "anthropic": "1.13.0",
+          "openai": "3.28.0",
+          "httpx": "0.28.1",
+          "pydantic": "2.14.0",
+          "pyyaml": "6.0.3",
+          "numpy": "2.4.6",
+          "scikit-learn": "1.9.1",
+          "lightgbm": "4.7.0",
+          "fastembed": "0.9.0",
+          "qdrant-client": "1.19.1",
+          "langgraph": "1.2.14",
+          "mcp": "2.3.0"
+        },
+        "environment": {
+          "cpu_count": 4,
+          "load_average_start": [
+            3.43,
+            3.55,
+            3.5
+          ],
+          "load_average_end": [
+            4.18,
+            4.03,
+            3.74
+          ]
+        }
+      }
+    }
+  }
+}

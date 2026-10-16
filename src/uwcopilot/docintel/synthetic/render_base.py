@@ -11,6 +11,10 @@ document). Pages are US Letter, portrait or landscape.
 
 The writer also works without a canvas (draw=False): it lays out the same rows and records the same text and
 citations but draws nothing. The --json-only mode uses that to build the truth without rendering a PDF.
+
+Page counts: a footer needs "of n" before the document is drawn. render_document() therefore lays a document out
+twice: first in counting mode (n_pages=None, nothing drawn) to learn how many pages it takes, then for real.
+Renderers must be pure functions of the case (no random draws), so both passes print exactly the same rows.
 """
 
 import io
@@ -211,7 +215,9 @@ class PageWriter:
         """Print the footer row and close the page."""
         footer = [
             Segment(SYNTHETIC_FOOTER, LEFT_MARGIN, size=FOOTER_SIZE),
-            Segment(f"Page {self.page_in_doc} of {self.document.n_pages}", self.right, size=FOOTER_SIZE, align="right"),
+            Segment(
+                f"Page {self.page_in_doc} of {self.document.pages_label}", self.right, size=FOOTER_SIZE, align="right"
+            ),
         ]
         self.draw_row(footer, FOOTER_BASELINE)
         if self.canvas is not None:
@@ -221,17 +227,25 @@ class PageWriter:
 
 @dataclass
 class DocumentWriter:
-    """All pages of one document. n_pages is planned before drawing so every footer can say 'Page i of n'."""
+    """All pages of one document. n_pages is planned before drawing so every footer can say 'Page i of n'.
+
+    n_pages None is counting mode: any number of pages may be added and close() does not check the count.
+    """
 
     doc_id: str
     first_page: int
-    n_pages: int
+    n_pages: int | None
     draw: bool
     page_size: tuple[float, float] = PORTRAIT
     canvas: Canvas | None = None
     records: list[PageRecord] = field(default_factory=list)
     buffer: io.BytesIO = field(default_factory=io.BytesIO)
     _open_page: PageWriter | None = None
+
+    @property
+    def pages_label(self) -> str:
+        """The "n" of "Page i of n" ("?" in counting mode, which is never drawn)."""
+        return "?" if self.n_pages is None else str(self.n_pages)
 
     def __post_init__(self) -> None:
         """Create the canvas (invariant=1 makes the PDF bytes depend only on the content)."""
@@ -247,7 +261,7 @@ class DocumentWriter:
         if self._open_page is not None:
             self.records.append(self._open_page.finish())
         page_in_doc = len(self.records) + 1
-        if page_in_doc > self.n_pages:
+        if self.n_pages is not None and page_in_doc > self.n_pages:
             raise LayoutError(f"{self.doc_id}: more pages than the {self.n_pages} planned")
         self._open_page = PageWriter(self, self.first_page + page_in_doc - 1, page_in_doc)
         return self._open_page
@@ -257,7 +271,7 @@ class DocumentWriter:
         if self._open_page is not None:
             self.records.append(self._open_page.finish())
             self._open_page = None
-        if len(self.records) != self.n_pages:
+        if self.n_pages is not None and len(self.records) != self.n_pages:
             raise LayoutError(f"{self.doc_id}: drew {len(self.records)} pages, planned {self.n_pages}")
         if self.canvas is None:
             return None
@@ -279,8 +293,3 @@ def wrap_text(text: str, font: str, size: float, width: float) -> list[str]:
     if current:
         lines.append(current)
     return lines
-
-
-def text_width(text: str, size: float = DEFAULT_SIZE, font: str = "Helvetica") -> float:
-    """Width of a text in points."""
-    return stringWidth(text, font, size)

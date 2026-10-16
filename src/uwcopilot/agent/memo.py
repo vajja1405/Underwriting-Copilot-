@@ -5,8 +5,11 @@ The LLM drafts; it does not decide. Its output is a MemoDraft:
 
 Prompt-injection defense in the prompt (the structural defenses are in tool_plan.py and graph.py):
 - the reference policy result and the evidence items are written by this code from structured data;
-- applicant free text (the notes) is placed in <untrusted_applicant_text> blocks, escaped so it cannot close the
-  block, and a flagged block carries a warning attribute; the system prompt says such text is data only;
+- applicant free text (the notes) is placed in <untrusted_applicant_text> blocks, normalized first
+  (uwcopilot.security.normalize.normalize_text: invisible characters, including a message hidden in Unicode tag
+  characters, are removed, NFKC is applied and lookalike letters are folded, so the model reads what a human reviewer
+  sees), then escaped so it cannot close the block; a flagged block carries a warning attribute; the system prompt
+  says such text is data only;
 - applicant and owner names are never put in the prompt (parties appear as APPLICANT, O1, O2, ...).
 
 The claim checker (claim_checker.py) verifies the answer afterwards; a memo that fails is regenerated once with
@@ -21,12 +24,13 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from uwcopilot.agent.applications import CreditApplication, InsuranceApplication
+from uwcopilot.agent.applications import AnyApplication
 from uwcopilot.agent.evidence import EvidenceItem
 from uwcopilot.agent.injection import InjectionHit
 from uwcopilot.agent.policy import PolicyResult
 from uwcopilot.agent.vocab import Recommendation
 from uwcopilot.llm.base import LLMMessage
+from uwcopilot.security.normalize import has_visible_text, normalize_text
 
 # Headroom for adaptive thinking, which counts toward max_tokens on current Claude models; a cut-off memo raises
 # IncompleteLLMResponse instead of being parsed (llm/base.py).
@@ -145,17 +149,18 @@ def render_evidence(evidence: dict[str, EvidenceItem]) -> str:
     return "\n".join(blocks)
 
 
-def render_untrusted(application: CreditApplication | InsuranceApplication, hits: list[InjectionHit]) -> str:
-    """The notes as quoted, escaped data. A flagged note keeps its warning attribute."""
-    if not application.notes.strip():
+def render_untrusted(application: AnyApplication, hits: list[InjectionHit]) -> str:
+    """The notes as quoted data: normalized, then escaped. A flagged note keeps its warning attribute."""
+    if not has_visible_text(application.notes):
         return f'<{UNTRUSTED_TAG} field="notes">(empty)</{UNTRUSTED_TAG}>'
     flagged = any(hit.field == "notes" for hit in hits)
     warning = f' flagged="true" warning="{escape_attribute(FLAG_WARNING)}"' if flagged else ""
-    return f'<{UNTRUSTED_TAG} field="notes"{warning}>\n{escape(application.notes)}\n</{UNTRUSTED_TAG}>'
+    notes = escape(normalize_text(application.notes))
+    return f'<{UNTRUSTED_TAG} field="notes"{warning}>\n{notes}\n</{UNTRUSTED_TAG}>'
 
 
 def build_memo_prompt(
-    application: CreditApplication | InsuranceApplication,
+    application: AnyApplication,
     policy: PolicyResult,
     evidence: dict[str, EvidenceItem],
     injection_hits: list[InjectionHit],

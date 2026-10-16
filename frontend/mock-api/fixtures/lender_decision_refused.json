@@ -1,0 +1,10 @@
+{
+ "body": {
+  "detail": "The checkpoint refused this decision.",
+  "reasons": [
+   "only a senior_underwriter may approve a startup file (NSP-9.1)",
+   "approval authority exceeded: underwriter may approve up to $0.00, this file is $250,000.00; refer it to a higher authority"
+  ]
+ },
+ "status": 422
+}

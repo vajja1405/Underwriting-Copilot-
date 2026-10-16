@@ -1,0 +1,173 @@
+{
+  "application_id": "APP-S-017",
+  "schema_version": "startup-application-v1",
+  "data_label": "SYNTHETIC",
+  "line": "startup_credit",
+  "institution": "northwind_business_credit",
+  "program": "northwind_startup_program",
+  "submitted_date": "2026-09-30",
+  "applicant": {
+    "business_name": "Bluebird Laundry Lounge LLC",
+    "business_type": "laundromat",
+    "industry": "laundromat",
+    "entity_type": "llc",
+    "state": "TX",
+    "formation_date": "2026-06-28",
+    "planned_opening_date": "2027-02-28",
+    "metro_id": "synthetic_metro",
+    "site_description": "Leased storefront unit in a neighborhood shopping strip in the synthetic metro (SYNTHETIC example)."
+  },
+  "owners": [
+    {
+      "owner_id": "O1",
+      "name": "Rowan Placeholder",
+      "entity_type": "person",
+      "ownership_pct": 60.0,
+      "country": "US",
+      "is_control_person": true,
+      "credit_score": 742,
+      "bankruptcy_within_7_years": false,
+      "years_relevant_experience": 6.0,
+      "experience_evidence_provided": true,
+      "tax_lien_unresolved": false,
+      "personal_guarantee": true
+    },
+    {
+      "owner_id": "O2",
+      "name": "Quinn Example",
+      "entity_type": "person",
+      "ownership_pct": 40.0,
+      "country": "US",
+      "is_control_person": false,
+      "credit_score": 640,
+      "bankruptcy_within_7_years": false,
+      "years_relevant_experience": 3.0,
+      "experience_evidence_provided": true,
+      "tax_lien_unresolved": false,
+      "personal_guarantee": true
+    }
+  ],
+  "loan_request": {
+    "product": "startup_term_loan",
+    "amount": 180000.0,
+    "term_months": 120,
+    "annual_rate_pct": 9.25,
+    "rate_type": "fixed",
+    "purpose": "build_out_and_equipment"
+  },
+  "sources_and_uses": {
+    "uses": {
+      "build_out": 64673.0,
+      "equipment": 101630.0,
+      "real_estate": 0.0,
+      "initial_inventory": 3696.0,
+      "soft_costs": 14782.0,
+      "working_capital_reserve": 65219.0,
+      "other": 0.0
+    },
+    "sources": {
+      "loan": 180000.0,
+      "owner_cash_equity": 70000.0,
+      "other": 0.0
+    },
+    "equity_verified_by_statements": true
+  },
+  "projections": {
+    "years": [
+      {
+        "year": 1,
+        "revenue_p10": 228000,
+        "revenue_p50": 285000,
+        "revenue_p90": 327750,
+        "noi_p10": -22273,
+        "noi_p50": 48977,
+        "noi_p90": 77477
+      },
+      {
+        "year": 2,
+        "revenue_p10": 304000,
+        "revenue_p50": 380000,
+        "revenue_p90": 437000,
+        "noi_p10": 13838,
+        "noi_p50": 108838,
+        "noi_p90": 146838
+      },
+      {
+        "year": 3,
+        "revenue_p10": 319200,
+        "revenue_p50": 399000,
+        "revenue_p90": 458850,
+        "noi_p10": 17795,
+        "noi_p50": 117545,
+        "noi_p90": 157445
+      }
+    ],
+    "monthly_fixed_costs": 14000.0,
+    "simulation": null
+  },
+  "material_assumptions": [
+    {
+      "name": "turns_per_machine_per_day",
+      "value": 4.5,
+      "unit": "turns/day",
+      "status": "ASSUMPTION",
+      "source": "synthetic example: comparable-site counts supplied by the founder",
+      "supporting_document_provided": true,
+      "tornado_rank": 1
+    },
+    {
+      "name": "price_per_wash",
+      "value": 4.25,
+      "unit": "USD/turn",
+      "status": "USER_STATED",
+      "source": "synthetic example: founder's planned price menu",
+      "supporting_document_provided": true,
+      "tornado_rank": 2
+    },
+    {
+      "name": "monthly_rent",
+      "value": 5200.0,
+      "unit": "USD/month",
+      "status": "USER_STATED",
+      "source": "synthetic example: landlord letter of intent",
+      "supporting_document_provided": true,
+      "tornado_rank": 3
+    },
+    {
+      "name": "utilities_share",
+      "value": 0.18,
+      "unit": "share",
+      "status": "ASSUMPTION",
+      "source": "unsourced planning range (synthetic example)",
+      "supporting_document_provided": false,
+      "tornado_rank": 4
+    }
+  ],
+  "collateral": [],
+  "documents_provided": [
+    "signed_application",
+    "business_plan",
+    "financial_projections",
+    "sources_and_uses_statement",
+    "personal_financial_statements",
+    "principal_photo_ids",
+    "formation_documents",
+    "beneficial_ownership_certification",
+    "equity_bank_statements",
+    "owner_resumes_and_references",
+    "lease_or_letter_of_intent",
+    "contractor_or_equipment_quotes"
+  ],
+  "notes": "Both owners will work in the business full time from the opening date.",
+  "ground_truth": {
+    "scenario": "credit_score_below_minimum_laundromat",
+    "expected_recommendation": "decline_for_review",
+    "expected_rules": [
+      "credit_score_below_minimum"
+    ],
+    "contains_injection": false,
+    "injection_kind": null,
+    "watchlist_derived_owners": [],
+    "rationale": "The lowest principal credit score is 640, below the 660 floor (NSP-2.2)."
+  }
+}

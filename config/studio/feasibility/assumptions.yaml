@@ -1,0 +1,116 @@
+# Feasibility simulator assumptions (Founder Studio S3). Schema: src/uwcopilot/studio/feasibility/assumptions.py.
+# These are the risks and levers that are NOT part of a business-type profile: price elasticity, month-to-month
+# demand noise, shocks (a competitor opening, a rate rise, a one-off repair or vacancy), build-out overruns and
+# payroll burden.
+# EVERY number below is an ASSUMPTION of the project author: a deliberately wide planning range, user-editable in
+# the app (Plan.assumption_overrides), with a note naming what should replace it. Nothing is SOURCED: no primary
+# source has been opened and cited for these numbers. A test fails if any field is marked SOURCED
+# (tests/studio/test_feasibility_assumptions.py).
+
+price_elasticity:
+  low: 0.2
+  mode: 0.8
+  high: 1.5
+  unit: "% fall in volume per 1% price rise, relative to the profile's reference price"
+  status: ASSUMPTION
+  source: null
+  note: No public source identified for these business types and sites; calibrate from the founder's price tests or outcome data (S9).
+
+monthly_noise_sd:
+  low: 0.03
+  mode: 0.08
+  high: 0.15
+  unit: standard deviation of log monthly demand around its expected level
+  status: ASSUMPTION
+  source: null
+  note: Replace with the spread of the founder's own monthly sales (or comparable sites') once a history exists.
+
+competitor_entry_annual_probability:
+  low: 0.03
+  mode: 0.12
+  high: 0.30
+  unit: probability per year that a same-type competitor opens in the trade area
+  status: ASSUMPTION
+  source: null
+  note: Replace with new-establishment counts for the industry in the metro (Census Business Patterns year-over-year) once a snapshot has them. The mode is moved by the site's competition percentile (see setup.py).
+
+competitor_entry_demand_loss:
+  low: 0.05
+  mode: 0.15
+  high: 0.30
+  unit: share of demand lost from the month a competitor opens
+  status: ASSUMPTION
+  source: null
+  note: No public source identified; calibrate from outcome data (S9).
+
+rate_shock_annual_probability:
+  low: 0.05
+  mode: 0.15
+  high: 0.30
+  unit: probability per year that the note rate of a variable-rate loan rises (no effect on a fixed-rate loan)
+  status: ASSUMPTION
+  source: null
+  note: A planning range, not a rate forecast. Replace with the lender's own rate scenarios.
+
+rate_shock_size_pct_points:
+  low: 0.5
+  mode: 1.5
+  high: 3.0
+  unit: percentage points added to the note rate when a rate shock happens
+  status: ASSUMPTION
+  source: null
+  note: A planning range, not a rate forecast. The lender stress preset separately applies the guideline's own +2.00 points (NBC-4.5).
+
+one_off_shock_annual_probability:
+  low: 0.05
+  mode: 0.12
+  high: 0.25
+  unit: probability per year of a one-off repair, closure or vacancy event
+  status: ASSUMPTION
+  source: null
+  note: No public source identified; replace with equipment-maker downtime data or the founder's insurance quote.
+
+one_off_shock_revenue_loss_share:
+  low: 0.10
+  mode: 0.30
+  high: 0.70
+  unit: share of that month's revenue lost in the month of the event
+  status: ASSUMPTION
+  source: null
+  note: No public source identified; calibrate from outcome data (S9).
+
+one_off_shock_repair_cost_share_of_capex:
+  low: 0.002
+  mode: 0.01
+  high: 0.03
+  unit: repair bill as a share of the planned build-out and equipment cost
+  status: ASSUMPTION
+  source: null
+  note: Replace with the equipment maker's service quote or the founder's insurance deductible.
+
+capex_overrun_share:
+  low: 0.0
+  mode: 0.05
+  high: 0.25
+  unit: build-out overrun as a share of the planned build-out and equipment cost
+  status: ASSUMPTION
+  source: null
+  note: Replace with the contingency line of the founder's contractor bids.
+
+payroll_burden_share:
+  low: 0.07
+  mode: 0.12
+  high: 0.20
+  unit: payroll taxes and benefits as a share of wages
+  status: ASSUMPTION
+  source: null
+  note: Replace with the founder's payroll provider quote (taxes depend on the state and the benefits offered).
+
+rate_spread_over_prime_pct:
+  low: 1.5
+  mode: 3.0
+  high: 4.5
+  unit: percentage points over the prime rate (the default note rate is prime + the mode)
+  status: ASSUMPTION
+  source: null
+  note: Not a lender quote. Replace with the lender's term sheet; the founder can type the quoted rate instead.

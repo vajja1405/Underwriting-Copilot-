@@ -25,6 +25,7 @@ from uwcopilot.risk.results import to_jsonable
 REPO = Path(render_reports.__file__).resolve().parents[1]
 TEMPLATE_PATH = REPO / "docs" / "templates" / "walkthrough_phase1.md"
 COMMITTED_RESULTS = REPO / "results" / "risk_metrics.json"
+COMMITTED_EVIDENCE = REPO / "results" / "evidence_metrics.json"
 
 URL = re.compile(r"https?://[^\s)\]]+")
 NUMBER = re.compile(r"(?<![\w.])-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:e-?\d+)?%?")
@@ -371,6 +372,8 @@ def test_write_reports_writes_every_file(tmp_path: Path) -> None:
         readme,
         walkthrough_template=TEMPLATE_PATH,
         walkthrough_path=tmp_path / "walkthrough_phase1.md",
+        evidence_path=tmp_path / "no_evidence_metrics.json",
+        docintel_path=tmp_path / "no_docintel_metrics.json",
     )
     assert {path.name for path in written} == {
         "credit_model_card.md",
@@ -421,7 +424,7 @@ def _same_text(on_disk: str, rendered: str, label: str) -> None:
 @pytest.mark.skipif(not COMMITTED_RESULTS.exists(), reason="no committed results file")
 def test_committed_documents_equal_a_fresh_render(template: str) -> None:
     """A hand-edited or stale number in a published document fails here, not only a number missing from the JSON."""
-    data = json.loads(COMMITTED_RESULTS.read_text())
+    data = render_reports.load_report_data(COMMITTED_RESULTS, COMMITTED_EVIDENCE)
     documents = render_reports.render_all(data, template)
     for name in ("credit_model_card.md", "insurance_model_card.md", "validation_report.md"):
         on_disk = (REPO / "docs" / "model_cards" / name).read_text(encoding="utf-8")
@@ -563,6 +566,100 @@ def test_documents_from_the_committed_results_hold_only_json_numbers(template: s
     template_numbers = set()
     for body in render_reports.render_all({}, template).values():
         template_numbers |= numbers_in(body)
-    data = json.loads(COMMITTED_RESULTS.read_text())
+    data = render_reports.load_report_data(COMMITTED_RESULTS, COMMITTED_EVIDENCE)
     documents = render_reports.render_all(data, template)
     assert untraceable_numbers(documents, data, template_numbers) == set()
+
+
+def evidence_results() -> dict[str, Any]:
+    """A small evidence_metrics.json with distinctive values (packets oracle mode and the simulator headline)."""
+    share = {"value": 0.98761, "ci_low": 0.97653, "ci_high": 0.99547, "numerator": 1123, "denominator": 1137}
+    paired = {"mean_difference": -1.23457, "ci_low": -1.45679, "ci_high": -1.01235, "n": 345}
+    return {
+        "packets": {"results": {"modes": {"oracle": {"claim_status": {"accuracy": share}}}}},
+        "simulator": {"results": {"headline": {"voi_minus_checklist": {"cost_weighted_requests": paired}}}},
+    }
+
+
+def test_evidence_rows_read_the_evidence_results(template: str) -> None:
+    data = {**minimal_results(), render_reports.EVIDENCE_KEY: evidence_results()}
+    readme = render_reports.render_all(data, template)["README results block"]
+    claim_row = next(line for line in readme.splitlines() if "oracle extraction" in line and "Claim-status" in line)
+    assert claim_row.endswith("| 0.9876 [0.9765, 0.9955] (1,123/1,137) |")
+    assert "same author; not held out" in claim_row
+    cost_row = next(line for line in readme.splitlines() if "test cases, documented priors" in line)
+    assert cost_row.endswith("| -1.2346 [-1.4568, -1.0124] (n=345) |")
+    # Rows without a result say so; the circular metric is not in the table.
+    lines = readme.splitlines()
+    pipeline_row = next(line for line in lines if "pipeline extraction" in line and "Claim-status" in line)
+    assert pipeline_row.endswith("| not measured |")
+    assert "top-3" not in readme and "not held out" in readme
+    template_numbers = set()
+    for body in render_reports.render_all({}, template).values():
+        template_numbers |= numbers_in(body)
+    assert untraceable_numbers({"README": readme}, data, template_numbers) == set()
+
+
+def test_a_degenerate_bootstrap_share_shows_its_exact_interval() -> None:
+    # 590/590: every resample gives 1.0, so the bootstrap interval [1, 1] would overstate the certainty.
+    degenerate = {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "numerator": 590,
+        "denominator": 590,
+        "exact_ci_low": 0.99378,
+        "exact_ci_high": 1.0,
+        "bootstrap_degenerate": True,
+    }
+    assert render_reports.share_interval(degenerate) == "1.0000 exact [0.9938, 1.0000] (590/590)"
+    without_exact = {key: value for key, value in degenerate.items() if not key.startswith("exact_")}
+    shown = render_reports.share_interval(without_exact)
+    assert shown.startswith("1.0000 (bootstrap interval degenerate") and "[1.0000, 1.0000]" not in shown
+    regular = {**degenerate, "value": 0.9, "ci_low": 0.8, "ci_high": 0.95, "bootstrap_degenerate": False}
+    assert render_reports.share_interval(regular) == "0.9000 [0.8000, 0.9500] (590/590)"
+
+
+def docintel_results() -> dict[str, Any]:
+    """A small docintel_metrics.json with distinctive values (field F1, contradiction recall and precision)."""
+    f1 = {"value": 0.97531, "ci_low": 0.96421, "ci_high": 0.98642, "bootstrap_degenerate": False}
+    recall = {"value": 0.92346, "ci_low": 0.85432, "ci_high": 0.97654, "numerator": 47, "denominator": 51}
+    return {"rules": {"fields": {"overall": {"f1": f1}}, "contradictions": {"recall": recall}}}
+
+
+def test_document_rows_read_the_docintel_results(template: str) -> None:
+    data = {**minimal_results(), render_reports.DOCINTEL_KEY: docintel_results()}
+    readme = render_reports.render_all(data, template)["README results block"]
+    lines = readme.splitlines()
+    assert next(line for line in lines if "Field F1" in line).endswith("| 0.9753 [0.9642, 0.9864] |")
+    assert next(line for line in lines if "Recall: injected" in line).endswith("| 0.9235 [0.8543, 0.9765] (47/51) |")
+    assert next(line for line in lines if "Precision: contradictions" in line).endswith("| not measured |")
+    assert "not built" not in readme
+    # Without the file, the rows say why they are not measured.
+    empty = render_reports.render_all(minimal_results(), template)["README results block"]
+    assert "not measured (results/docintel_metrics.json missing)" in empty
+    template_numbers = set()
+    for body in render_reports.render_all({}, template).values():
+        template_numbers |= numbers_in(body)
+    assert untraceable_numbers({"README": readme}, data, template_numbers) == set()
+
+
+def test_load_report_data_adds_the_docintel_results_when_present(tmp_path: Path) -> None:
+    risk = tmp_path / "risk.json"
+    risk.write_text(json.dumps({"fairness_demo": {"results": {}}}), encoding="utf-8")
+    missing = tmp_path / "missing.json"
+    assert render_reports.DOCINTEL_KEY not in render_reports.load_report_data(risk, missing, missing)
+    docintel = tmp_path / "docintel.json"
+    docintel.write_text(json.dumps(docintel_results()), encoding="utf-8")
+    data = render_reports.load_report_data(risk, missing, docintel)
+    assert data[render_reports.DOCINTEL_KEY] == docintel_results()
+
+
+def test_load_report_data_adds_the_evidence_results_when_present(tmp_path: Path) -> None:
+    risk = tmp_path / "risk.json"
+    risk.write_text(json.dumps({"fairness_demo": {"results": {}}}), encoding="utf-8")
+    assert render_reports.EVIDENCE_KEY not in render_reports.load_report_data(risk, tmp_path / "missing.json")
+    evidence = tmp_path / "evidence.json"
+    evidence.write_text(json.dumps(evidence_results()), encoding="utf-8")
+    data = render_reports.load_report_data(risk, evidence)
+    assert data[render_reports.EVIDENCE_KEY] == evidence_results() and "fairness_demo" in data

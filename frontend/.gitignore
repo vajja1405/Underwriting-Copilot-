@@ -1,0 +1,12 @@
+# Dependencies (installed from package-lock.json with `npm ci`)
+node_modules/
+
+# Next.js build output: .next/ is the build cache, out/ is the static export served by FastAPI
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Logs
+npm-debug.log*
+/public/vendor/

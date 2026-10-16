@@ -1,0 +1,13 @@
+{
+  "fixture_origin": "hand-written from documentation, NOT recorded from the live API - re-record when the host is reachable (values are SYNTHETIC)",
+  "note": "Shape of the Census Data API answer (array of arrays, header first). Needs CENSUS_API_KEY, not set in the build session. Tract 900200 carries a negative 'not available' code and 900300 a null.",
+  "url": "https://api.census.gov/data/2024/acs/acs5",
+  "params": {
+    "get": "NAME,B01003_001E,B11001_001E,B25003_003E,B19013_001E",
+    "for": "tract:*",
+    "in": "state:48 county:201"
+  },
+  "content_type": "application/json;charset=utf-8",
+  "body_sha256": "0d5259c1db1d67a29d71f5aa74c5dc21209e4b1ff58647f6fc2735b91156d327",
+  "body": "[[\"NAME\", \"B01003_001E\", \"B11001_001E\", \"B25003_003E\", \"B19013_001E\", \"state\", \"county\", \"tract\"], [\"Census Tract 9001; SYNTHETIC County; Texas\", \"4100\", \"1520\", \"690\", \"52000\", \"48\", \"201\", \"900100\"], [\"Census Tract 9002; SYNTHETIC County; Texas\", \"3650\", \"1410\", \"980\", \"-666666666\", \"48\", \"201\", \"900200\"], [\"Census Tract 9003; SYNTHETIC County; Texas\", \"0\", \"0\", \"0\", null, \"48\", \"201\", \"900300\"]]"
+}

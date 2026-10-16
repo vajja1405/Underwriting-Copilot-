@@ -1,0 +1,528 @@
+{
+ "annual_rate_default": {
+  "rule": "Leave the rate empty to use the metro's prime rate plus the spread assumption below (labelled ASSUMPTION in every result). When a metro has no prime rate (UNKNOWN), enter the lender's quoted rate.",
+  "spread_over_prime_pct": {
+   "high": 4.5,
+   "low": 1.5,
+   "mode": 3.0,
+   "note": "Not a lender quote. Replace with the lender's term sheet; the founder can type the quoted rate instead.",
+   "source": null,
+   "status": "ASSUMPTION",
+   "unit": "percentage points over the prime rate (the default note rate is prime + the mode)",
+   "value": null
+  },
+  "status": "ASSUMPTION"
+ },
+ "business_types": [
+  {
+   "build_out_assumed": 1970000.0,
+   "build_out_high": 4970000.0,
+   "build_out_low": 490000.0,
+   "build_out_note": "Sum of the profile's capex ranges (config/studio/business_types); with the budget left empty the simulation uses build_out_assumed, the sum of their most likely values. Contractor quotes replace them.",
+   "build_out_status": "ASSUMPTION",
+   "demand_unit": "cars/day",
+   "id": "car_wash",
+   "name": "Car wash (express tunnel and self-serve)"
+  },
+  {
+   "build_out_assumed": 500000.0,
+   "build_out_high": 1100000.0,
+   "build_out_low": 165000.0,
+   "build_out_note": "Sum of the profile's capex ranges (config/studio/business_types); with the budget left empty the simulation uses build_out_assumed, the sum of their most likely values. Contractor quotes replace them.",
+   "build_out_status": "ASSUMPTION",
+   "demand_unit": "machine turns/day",
+   "id": "laundromat",
+   "name": "Laundromat"
+  },
+  {
+   "build_out_assumed": 2630000.0,
+   "build_out_high": 7880000.0,
+   "build_out_low": 660000.0,
+   "build_out_note": "Sum of the profile's capex ranges (config/studio/business_types); with the budget left empty the simulation uses build_out_assumed, the sum of their most likely values. Contractor quotes replace them.",
+   "build_out_status": "ASSUMPTION",
+   "demand_unit": "room-nights/day",
+   "id": "motel",
+   "name": "Motel / small hotel"
+  },
+  {
+   "build_out_assumed": 284000.0,
+   "build_out_high": 745000.0,
+   "build_out_low": 98000.0,
+   "build_out_note": "Sum of the profile's capex ranges (config/studio/business_types); with the budget left empty the simulation uses build_out_assumed, the sum of their most likely values. Contractor quotes replace them.",
+   "build_out_status": "ASSUMPTION",
+   "demand_unit": "covers/day",
+   "id": "restaurant_cafe",
+   "name": "Restaurant / cafe / dessert shop (ice cream, coffee, bakery)"
+  },
+  {
+   "build_out_assumed": 225000.0,
+   "build_out_high": 620000.0,
+   "build_out_low": 73000.0,
+   "build_out_note": "Sum of the profile's capex ranges (config/studio/business_types); with the budget left empty the simulation uses build_out_assumed, the sum of their most likely values. Contractor quotes replace them.",
+   "build_out_status": "ASSUMPTION",
+   "demand_unit": "transactions/day",
+   "id": "retail_storefront",
+   "name": "Small retail storefront (convenience or specialty)"
+  },
+  {
+   "build_out_assumed": 29000.0,
+   "build_out_high": 112000.0,
+   "build_out_low": 6000.0,
+   "build_out_note": "Sum of the profile's capex ranges (config/studio/business_types); with the budget left empty the simulation uses build_out_assumed, the sum of their most likely values. Contractor quotes replace them.",
+   "build_out_status": "ASSUMPTION",
+   "demand_unit": "booked nights/month",
+   "id": "short_term_rental",
+   "name": "Short-term rental (Airbnb-style home or unit)"
+  }
+ ],
+ "default_target": {
+  "cash_months": 24,
+  "dscr_min": 1.25,
+  "p_cash_negative_max": 0.1,
+  "p_dscr_min": 0.8,
+  "p_stressed_min": 0.8,
+  "sources": {
+   "cash_months": "the S3 simulator's cash check (P(cash < 0 within 24 months)); design choice of the build plan (docs/studio/founder_studio_build_prompts.md Prompt S5 and the lead engineer's decision of 2026-10-13); editable; not a lender rule",
+   "dscr_min": "NSP-4.1 of the SYNTHETIC startup program = corpus/guidelines/northwind_business_credit.md NBC-4.2, term loan minimum decision DSCR (SYNTHETIC document of a fictional institution; also the NSP-4.1 threshold of the SYNTHETIC startup program)",
+   "p_cash_negative_max": "design choice of the build plan (docs/studio/founder_studio_build_prompts.md Prompt S5 and the lead engineer's decision of 2026-10-13); editable; not a lender rule",
+   "p_dscr_min": "design choice of the build plan (docs/studio/founder_studio_build_prompts.md Prompt S5 and the lead engineer's decision of 2026-10-13); editable; not a lender rule",
+   "p_stressed_min": "design choice of the build plan (docs/studio/founder_studio_build_prompts.md Prompt S5 and the lead engineer's decision of 2026-10-13); editable; not a lender rule",
+   "stress_revenue_share": "NSP-4.2 of the SYNTHETIC startup program (corpus/programs/northwind_startup_program.md), which applies the NBC-4.5 revenue stress of the SYNTHETIC Northwind guideline; constants imported from agent/policy_credit.py",
+   "stressed_dscr_min": "NSP-4.2 of the SYNTHETIC startup program (corpus/programs/northwind_startup_program.md), which applies the NBC-4.5 revenue stress of the SYNTHETIC Northwind guideline; constants imported from agent/policy_credit.py"
+  },
+  "stress_revenue_share": 0.2,
+  "stressed_dscr_min": 1.0,
+  "year": 2
+ },
+ "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+ "dscr_target": {
+  "label": "lender policy (SYNTHETIC Northwind guideline NBC-4.2); fixed in the web app, so every simulation is measured against the same threshold",
+  "source": "corpus/guidelines/northwind_business_credit.md NBC-4.2, term loan minimum decision DSCR (SYNTHETIC document of a fictional institution; also the NSP-4.1 threshold of the SYNTHETIC startup program)",
+  "value": 1.25
+ },
+ "levers": [
+  {
+   "default_bounds": {
+    "high": {
+     "basis": "project_cost",
+     "value": 0.2
+    },
+    "low": {
+     "basis": "project_cost",
+     "value": 0.0
+    }
+   },
+   "effort_weight": 2.0,
+   "kind": "amount",
+   "label": "Owner cash equity",
+   "name": "owner_equity",
+   "note": "Only counts if the founder really has this cash; the lender verifies equity with bank statements (NSP-3.1, SYNTHETIC program). The default upper bound (+20% of project cost) is a placeholder for the founder's own answer.",
+   "options": null,
+   "round_to": 500.0,
+   "status": "DESIGN_CHOICE",
+   "unit": "USD"
+  },
+  {
+   "default_bounds": {
+    "high": {
+     "basis": "project_cost",
+     "value": 0.1
+    },
+    "low": {
+     "basis": "project_cost",
+     "value": -0.25
+    }
+   },
+   "effort_weight": 1.0,
+   "kind": "amount",
+   "label": "Loan amount",
+   "name": "loan_amount",
+   "note": "Borrowing less lowers the payments and the cash at opening by the same dollars; borrowing more does the opposite.",
+   "options": null,
+   "round_to": 500.0,
+   "status": "DESIGN_CHOICE",
+   "unit": "USD"
+  },
+  {
+   "default_bounds": {
+    "high": {
+     "basis": "current",
+     "value": 0.0
+    },
+    "low": {
+     "basis": "current",
+     "value": -0.15
+    }
+   },
+   "effort_weight": 1.5,
+   "kind": "amount",
+   "label": "Build-out and equipment cost",
+   "name": "build_out_cost",
+   "note": "Only valid if the same business can be built for less (a lower quote, used equipment). A smaller build-out that also cuts capacity is not modeled, so the default bound is a 15% saving.",
+   "options": null,
+   "round_to": 500.0,
+   "status": "DESIGN_CHOICE",
+   "unit": "USD"
+  },
+  {
+   "default_bounds": {
+    "high": {
+     "basis": "project_cost",
+     "value": 0.2
+    },
+    "low": {
+     "basis": "absolute",
+     "value": 0.0
+    }
+   },
+   "effort_weight": 2.0,
+   "kind": "amount",
+   "label": "Cash reserve at opening",
+   "name": "working_capital_reserve",
+   "note": "Extra reserve is funded by the founder's own cash, so owner equity must stay inside its bounds too (with the default bounds that means this lever only adds cash). The low bound of 0 matters for the loan lever, whose change the reserve absorbs.",
+   "options": null,
+   "round_to": 500.0,
+   "status": "DESIGN_CHOICE",
+   "unit": "USD"
+  },
+  {
+   "default_bounds": {
+    "high": {
+     "basis": "current",
+     "value": 0.15
+    },
+    "low": {
+     "basis": "current",
+     "value": -0.15
+    }
+   },
+   "effort_weight": 1.5,
+   "kind": "price",
+   "label": "Price per unit of demand",
+   "name": "price",
+   "note": "Demand responds to price through the price elasticity, an ASSUMPTION range in config/studio/feasibility/assumptions.yaml; a price change is only as good as that assumption.",
+   "options": null,
+   "round_to": 0.25,
+   "status": "DESIGN_CHOICE",
+   "unit": "USD per demand unit"
+  },
+  {
+   "default_bounds": {
+    "high": {
+     "basis": "absolute",
+     "value": 7.0
+    },
+    "low": {
+     "basis": "absolute",
+     "value": 5.0
+    }
+   },
+   "effort_weight": 1.0,
+   "kind": "days",
+   "label": "Days open per week",
+   "name": "days_open_per_week",
+   "note": "Paid staff hours scale in proportion to open days (a design choice), so the lever needs a staffing plan typed by the founder; only for businesses whose demand is counted per open day.",
+   "options": null,
+   "round_to": 1.0,
+   "status": "DESIGN_CHOICE",
+   "unit": "days/week"
+  },
+  {
+   "default_bounds": {
+    "high": {
+     "basis": "absolute",
+     "value": 120.0
+    },
+    "low": {
+     "basis": "absolute",
+     "value": 60.0
+    }
+   },
+   "effort_weight": 0.5,
+   "kind": "term",
+   "label": "Loan term",
+   "name": "loan_term_months",
+   "note": "The lender sets the term; the founder can ask for a longer one. The default bounds are the SYNTHETIC startup program's term limits (NSP-8.1).",
+   "options": [
+    60,
+    72,
+    84,
+    96,
+    108,
+    120
+   ],
+   "round_to": null,
+   "status": "DESIGN_CHOICE",
+   "unit": "months"
+  },
+  {
+   "default_bounds": null,
+   "effort_weight": 0.3,
+   "kind": "site",
+   "label": "Candidate site (same metro)",
+   "name": "site",
+   "note": "Only sites the founder listed as candidates in the same metro, each with its own demand estimate; the demand estimate of a site is never edited.",
+   "options": null,
+   "round_to": null,
+   "status": "DESIGN_CHOICE",
+   "unit": "site"
+  }
+ ],
+ "limits": {
+  "annual_rate_pct_max": 30.0,
+  "idea_text_max_chars": 2000,
+  "loan_term_months_max": 360,
+  "loan_term_months_min": 24,
+  "max_sites": 3
+ },
+ "metros": [
+  {
+   "coverage_note": "Limited data (data coverage 0.68 is below the threshold 0.80). Factors without data are shown as UNKNOWN, never filled in.",
+   "data_label": "PUBLIC",
+   "id": "chicago_il_in",
+   "mode": "limited",
+   "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+   "n_tracts": 2292,
+   "name": "Chicago-Naperville-Elgin, IL-IN",
+   "prime_rate": {
+    "assumptions": [],
+    "factor": "prime_rate",
+    "high": null,
+    "low": null,
+    "reason": "FRED DPRIME on 2026-10-02",
+    "source": {
+     "data_label": "PUBLIC",
+     "dataset": "FRED series observations",
+     "geography": "United States",
+     "license_note": "Terms to verify at https://fred.stlouisfed.org/legal/ and the series page (not yet recorded)",
+     "origin": "cache",
+     "params": {
+      "file_type": "json",
+      "observation_start": "2026-08-29",
+      "series_id": "DPRIME"
+     },
+     "publisher": "Federal Reserve Bank of St. Louis (FRED)",
+     "retrieved_at": "2026-10-13T02:45:42Z",
+     "sha256": "6cca441e69c81e6f4d92bf14a1145f83bd66d57efaa7b579f771a693d6bf818e",
+     "source_id": "fred",
+     "url": "https://api.stlouisfed.org/fred/series/observations",
+     "vintage": "DPRIME observation of 2026-10-02"
+    },
+    "status": "DATA",
+    "unit": "percent",
+    "value": 7.0
+   },
+   "simulation_available": true,
+   "site_input": "address_or_map",
+   "supports_area_suggestions": true,
+   "verified": true
+  },
+  {
+   "coverage_note": "Limited data (data coverage 0.68 is below the threshold 0.80). Factors without data are shown as UNKNOWN, never filled in.",
+   "data_label": "PUBLIC",
+   "id": "dallas_fort_worth_tx",
+   "mode": "limited",
+   "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+   "n_tracts": 1704,
+   "name": "Dallas-Fort Worth-Arlington, TX",
+   "prime_rate": {
+    "assumptions": [],
+    "factor": "prime_rate",
+    "high": null,
+    "low": null,
+    "reason": "FRED DPRIME on 2026-10-02",
+    "source": {
+     "data_label": "PUBLIC",
+     "dataset": "FRED series observations",
+     "geography": "United States",
+     "license_note": "Terms to verify at https://fred.stlouisfed.org/legal/ and the series page (not yet recorded)",
+     "origin": "cache",
+     "params": {
+      "file_type": "json",
+      "observation_start": "2026-08-29",
+      "series_id": "DPRIME"
+     },
+     "publisher": "Federal Reserve Bank of St. Louis (FRED)",
+     "retrieved_at": "2026-10-13T02:45:42Z",
+     "sha256": "6cca441e69c81e6f4d92bf14a1145f83bd66d57efaa7b579f771a693d6bf818e",
+     "source_id": "fred",
+     "url": "https://api.stlouisfed.org/fred/series/observations",
+     "vintage": "DPRIME observation of 2026-10-02"
+    },
+    "status": "DATA",
+    "unit": "percent",
+    "value": 7.0
+   },
+   "simulation_available": true,
+   "site_input": "address_or_map",
+   "supports_area_suggestions": true,
+   "verified": true
+  },
+  {
+   "coverage_note": "Limited data (data coverage 0.68 is below the threshold 0.80). Factors without data are shown as UNKNOWN, never filled in.",
+   "data_label": "PUBLIC",
+   "id": "houston_tx",
+   "mode": "limited",
+   "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+   "n_tracts": 1615,
+   "name": "Houston-Pasadena-The Woodlands, TX",
+   "prime_rate": {
+    "assumptions": [],
+    "factor": "prime_rate",
+    "high": null,
+    "low": null,
+    "reason": "FRED DPRIME on 2026-10-02",
+    "source": {
+     "data_label": "PUBLIC",
+     "dataset": "FRED series observations",
+     "geography": "United States",
+     "license_note": "Terms to verify at https://fred.stlouisfed.org/legal/ and the series page (not yet recorded)",
+     "origin": "cache",
+     "params": {
+      "file_type": "json",
+      "observation_start": "2026-08-29",
+      "series_id": "DPRIME"
+     },
+     "publisher": "Federal Reserve Bank of St. Louis (FRED)",
+     "retrieved_at": "2026-10-13T02:45:42Z",
+     "sha256": "6cca441e69c81e6f4d92bf14a1145f83bd66d57efaa7b579f771a693d6bf818e",
+     "source_id": "fred",
+     "url": "https://api.stlouisfed.org/fred/series/observations",
+     "vintage": "DPRIME observation of 2026-10-02"
+    },
+    "status": "DATA",
+    "unit": "percent",
+    "value": 7.0
+   },
+   "simulation_available": true,
+   "site_input": "address_or_map",
+   "supports_area_suggestions": true,
+   "verified": true
+  },
+  {
+   "coverage_note": "Limited data (data coverage 0.68 is below the threshold 0.80). Factors without data are shown as UNKNOWN, never filled in.",
+   "data_label": "PUBLIC",
+   "id": "los_angeles_ca",
+   "mode": "limited",
+   "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+   "n_tracts": 3112,
+   "name": "Los Angeles-Long Beach-Anaheim, CA",
+   "prime_rate": {
+    "assumptions": [],
+    "factor": "prime_rate",
+    "high": null,
+    "low": null,
+    "reason": "FRED DPRIME on 2026-10-02",
+    "source": {
+     "data_label": "PUBLIC",
+     "dataset": "FRED series observations",
+     "geography": "United States",
+     "license_note": "Terms to verify at https://fred.stlouisfed.org/legal/ and the series page (not yet recorded)",
+     "origin": "cache",
+     "params": {
+      "file_type": "json",
+      "observation_start": "2026-08-29",
+      "series_id": "DPRIME"
+     },
+     "publisher": "Federal Reserve Bank of St. Louis (FRED)",
+     "retrieved_at": "2026-10-13T02:45:42Z",
+     "sha256": "6cca441e69c81e6f4d92bf14a1145f83bd66d57efaa7b579f771a693d6bf818e",
+     "source_id": "fred",
+     "url": "https://api.stlouisfed.org/fred/series/observations",
+     "vintage": "DPRIME observation of 2026-10-02"
+    },
+    "status": "DATA",
+    "unit": "percent",
+    "value": 7.0
+   },
+   "simulation_available": true,
+   "site_input": "address_or_map",
+   "supports_area_suggestions": true,
+   "verified": true
+  },
+  {
+   "coverage_note": "Limited data (data coverage 0.68 is below the threshold 0.80). Factors without data are shown as UNKNOWN, never filled in.",
+   "data_label": "PUBLIC",
+   "id": "new_york_ny_nj_pa",
+   "mode": "limited",
+   "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+   "n_tracts": 4928,
+   "name": "New York-Newark-Jersey City, NY-NJ",
+   "prime_rate": {
+    "assumptions": [],
+    "factor": "prime_rate",
+    "high": null,
+    "low": null,
+    "reason": "FRED DPRIME on 2026-10-02",
+    "source": {
+     "data_label": "PUBLIC",
+     "dataset": "FRED series observations",
+     "geography": "United States",
+     "license_note": "Terms to verify at https://fred.stlouisfed.org/legal/ and the series page (not yet recorded)",
+     "origin": "cache",
+     "params": {
+      "file_type": "json",
+      "observation_start": "2026-08-29",
+      "series_id": "DPRIME"
+     },
+     "publisher": "Federal Reserve Bank of St. Louis (FRED)",
+     "retrieved_at": "2026-10-13T02:45:42Z",
+     "sha256": "6cca441e69c81e6f4d92bf14a1145f83bd66d57efaa7b579f771a693d6bf818e",
+     "source_id": "fred",
+     "url": "https://api.stlouisfed.org/fred/series/observations",
+     "vintage": "DPRIME observation of 2026-10-02"
+    },
+    "status": "DATA",
+    "unit": "percent",
+    "value": 7.0
+   },
+   "simulation_available": true,
+   "site_input": "address_or_map",
+   "supports_area_suggestions": true,
+   "verified": true
+  },
+  {
+   "coverage_note": "SYNTHETIC demo city: generated data, not a real place.",
+   "data_label": "SYNTHETIC",
+   "id": "synthetic_metro",
+   "mode": "synthetic",
+   "mode_reason": "SYNTHETIC metro: generated data for demonstration and validation only",
+   "n_tracts": 300,
+   "name": "Synthetic Metro (SYNTHETIC)",
+   "prime_rate": {
+    "assumptions": [],
+    "factor": "prime_rate",
+    "high": null,
+    "low": null,
+    "reason": "SYNTHETIC prime rate of the generated city; NOT a published rate",
+    "source": {
+     "data_label": "SYNTHETIC",
+     "dataset": "SYNTHETIC city generator (src/uwcopilot/studio/data/synthetic_city.py)",
+     "geography": null,
+     "license_note": "SYNTHETIC data generated by this repository; no real place, person or business",
+     "origin": "synthetic",
+     "params": {
+      "extent_miles": "25.0",
+      "n_tracts": "300",
+      "seed": "20261012"
+     },
+     "publisher": "Underwriting Copilot project (generated, not a real place)",
+     "retrieved_at": "2026-10-13T23:44:21Z",
+     "sha256": "86a5c3aba12e6ff741e480a26e1e650d80a8a5dde354a067085b5b572a111266",
+     "source_id": "synthetic_city",
+     "url": "synthetic://synthetic_metro",
+     "vintage": "seed 20261012"
+    },
+    "status": "SYNTHETIC",
+    "unit": "percent",
+    "value": 6.25
+   },
+   "simulation_available": true,
+   "site_input": "map",
+   "supports_area_suggestions": true,
+   "verified": false
+  }
+ ],
+ "simulation_label": "simulated, based on stated assumptions",
+ "synthetic_label": "SYNTHETIC"
+}

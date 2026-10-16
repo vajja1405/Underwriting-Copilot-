@@ -1,0 +1,9 @@
+{
+  "fixture_origin": "hand-written from documentation, NOT recorded from the live API - re-record when the host is reachable (values are SYNTHETIC)",
+  "note": "Shape of a BLS API v2 answer. Needs BLS_API_KEY; the keyless quota was exhausted from the build environment.",
+  "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+  "params": {},
+  "content_type": "application/json",
+  "body_sha256": "2c436ef4a8391fb95fb78cc77075997969b8d963b541f3815807d8a788c7e2d8",
+  "body": "{\"status\": \"REQUEST_SUCCEEDED\", \"responseTime\": 50, \"message\": [], \"Results\": {\"series\": [{\"seriesID\": \"SYNTHETIC0001\", \"data\": [{\"year\": \"2025\", \"period\": \"A01\", \"periodName\": \"Annual\", \"value\": \"17.25\", \"footnotes\": [{}]}, {\"year\": \"2024\", \"period\": \"A01\", \"periodName\": \"Annual\", \"value\": \"-\", \"footnotes\": [{}]}]}]}}"
+}

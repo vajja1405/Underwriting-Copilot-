@@ -1,7 +1,9 @@
 """The evidence registry: every item a memo may cite, by id.
 
 Id families:
-- guideline sections, e.g. "NBC-4.2" or "HM-8.2" (text from corpus/guidelines, or from a retrieved hit);
+- guideline sections, e.g. "NBC-4.2" or "HM-8.2" (text from corpus/guidelines, or from a retrieved hit), and lending
+  program sections, e.g. "NSP-4.1" (text from corpus/programs; programs are not in the RAG index, so they are only
+  cited directly by the policy, never retrieved);
 - calculations from the reference policy, e.g. "CALC-dscr";
 - tool results, e.g. "TR-4" (one per executed tool call);
 - application facts, e.g. "APP-requested_amount" (structured fields only, written without names);
@@ -19,14 +21,24 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from uwcopilot.agent.applications import CreditApplication, InsuranceApplication, Location
+from uwcopilot.agent.applications import (
+    AnyApplication,
+    CollateralItem,
+    CreditApplication,
+    InsuranceApplication,
+    Location,
+    Owner,
+    StartupCreditApplication,
+)
 from uwcopilot.agent.credit_calculations import ADVANCE_RATES
-from uwcopilot.agent.injection import InjectionHit, free_text_fields
+from uwcopilot.agent.injection import InjectionHit, code_fields, free_text_fields
 from uwcopilot.agent.insurance_calculations import building_cost_per_sqft, location_tiv
 from uwcopilot.agent.policy import INJECTION_EVIDENCE_ID, PolicyResult, money, pct
+from uwcopilot.agent.programs import load_program_chunks
 from uwcopilot.agent.tool_runner import ToolResult
 from uwcopilot.rag.guidelines import load_guideline_chunks
 from uwcopilot.rag.prompt import detect_instruction_like_text
+from uwcopilot.security.normalize import has_visible_text
 
 EvidenceKind = Literal["guideline", "calculation", "tool_result", "application_fact", "check"]
 
@@ -45,8 +57,22 @@ class EvidenceItem(BaseModel):
 
 @lru_cache(maxsize=1)
 def guideline_sections() -> dict[str, tuple[str, str]]:
-    """{section id: (title, text)} for every section of both SYNTHETIC guideline documents."""
-    return {chunk.chunk_id: (chunk.title, chunk.text) for chunk in load_guideline_chunks()}
+    """{section id: (title, text)} for every section of the SYNTHETIC guidelines and lending programs.
+
+    Guidelines come from corpus/guidelines (the RAG corpus) and programs from corpus/programs (not indexed). A section
+    id may appear only once across both folders.
+    """
+    sections: dict[str, tuple[str, str]] = {}
+    for chunk in [*load_guideline_chunks(), *load_program_chunks()]:
+        if chunk.chunk_id in sections:
+            raise ValueError(f"section id {chunk.chunk_id} appears in more than one guideline or program document")
+        sections[chunk.chunk_id] = (chunk.title, chunk.text)
+    return sections
+
+
+def citable_section_ids() -> set[str]:
+    """Every guideline and program section id: the allowed citations for memo checks (e.g. SIG's allowed_sections)."""
+    return set(guideline_sections())
 
 
 def yes_no(value: bool) -> str:
@@ -54,19 +80,21 @@ def yes_no(value: bool) -> str:
     return "yes" if value else "no"
 
 
-def owners_fact(application: CreditApplication | InsuranceApplication) -> str:
+def owner_fact(owner: Owner) -> str:
+    """One owner by id with type, share and the fields the policy uses; the name is left out on purpose."""
+    text = f"{owner.owner_id}: {owner.entity_type}, {pct(owner.ownership_pct)}"
+    if owner.is_control_person:
+        text += ", control person"
+    if owner.credit_score is not None:
+        text += f", credit score {owner.credit_score}"
+    if owner.bankruptcy_within_7_years:
+        text += ", bankruptcy within 7 years"
+    return text
+
+
+def owners_fact(application: AnyApplication) -> str:
     """Owners by id with type, share and the fields the policy uses; names are left out on purpose."""
-    parts = []
-    for owner in application.owners:
-        text = f"{owner.owner_id}: {owner.entity_type}, {pct(owner.ownership_pct)}"
-        if owner.is_control_person:
-            text += ", control person"
-        if owner.credit_score is not None:
-            text += f", credit score {owner.credit_score}"
-        if owner.bankruptcy_within_7_years:
-            text += ", bankruptcy within 7 years"
-        parts.append(text)
-    return "; ".join(parts)
+    return "; ".join(owner_fact(owner) for owner in application.owners)
 
 
 def location_fact(location: Location, effective_year: int) -> str:
@@ -115,15 +143,20 @@ def loss_runs_fact(application: InsuranceApplication) -> str:
     return " | ".join(lines)
 
 
+def collateral_fact(collateral: list[CollateralItem]) -> str:
+    """Pledged collateral with its NBC-5.1 maximum advance rate ('' when there is none)."""
+    return "; ".join(
+        f"{item.collateral_type} {money(item.value)} "
+        f"(maximum advance rate {pct(ADVANCE_RATES[item.collateral_type] * 100)})"
+        for item in collateral
+    )
+
+
 def credit_facts(app: CreditApplication) -> dict[str, tuple[str, str]]:
     """{id: (title, text)} for the structured fields of a loan application."""
     statements = app.bank_statements
     months = sorted(item.month for item in statements.months)
-    collateral = "; ".join(
-        f"{item.collateral_type} {money(item.value)} "
-        f"(maximum advance rate {pct(ADVANCE_RATES[item.collateral_type] * 100)})"
-        for item in app.collateral
-    )
+    collateral = collateral_fact(app.collateral)
     debt = app.debt
     return {
         "APP-product": ("Product", f"Product: {app.product}"),
@@ -222,6 +255,118 @@ def insurance_facts(app: InsuranceApplication) -> dict[str, tuple[str, str]]:
     }
 
 
+def plain_number(value: float) -> str:
+    """A number without an exponent or trailing zeros: 0.006, 4500, 1250000.5."""
+    text = f"{value:.6f}".rstrip("0").rstrip(".")
+    return "0" if text in ("", "-0") else text
+
+
+def startup_owners_fact(app: StartupCreditApplication) -> str:
+    """Owners with the startup program fields (experience, evidence, guarantee, tax lien); no names."""
+    parts = []
+    for owner in app.owners:
+        text = (
+            f"{owner_fact(owner)}, relevant experience {plain_number(owner.years_relevant_experience)} years "
+            f"(resume and references {yes_no(owner.experience_evidence_provided)}), guarantee signed "
+            f"{yes_no(owner.personal_guarantee)}"
+        )
+        if owner.tax_lien_unresolved:
+            text += ", unresolved tax lien"
+        parts.append(text)
+    return "; ".join(parts)
+
+
+def sources_and_uses_fact(app: StartupCreditApplication) -> str:
+    """Uses by category, sources, totals and whether the equity is verified."""
+    uses = app.sources_and_uses.uses
+    sources = app.sources_and_uses.sources
+    use_text = ", ".join(f"{name} {money(value)}" for name, value in uses.model_dump().items())
+    debt_text = "".join(
+        f", {item.kind} {money(item.amount)} (monthly payment {money(item.monthly_payment)})"
+        for item in sources.other_debt
+    )
+    return (
+        f"Uses: {use_text}; total {money(uses.total())}. Sources: loan {money(sources.loan)}, owner cash equity "
+        f"{money(sources.owner_cash_equity)}{debt_text}, other (not repaid) {money(sources.other)}; total "
+        f"{money(sources.total())}. Owner cash equity marked as verified by bank statements: "
+        f"{yes_no(app.sources_and_uses.equity_verified_by_statements)}"
+    )
+
+
+def projections_fact(app: StartupCreditApplication) -> str:
+    """P10 / P50 / P90 revenue and NOI by year, and the monthly fixed costs."""
+    parts = [
+        f"year {item.year}: revenue P10 {money(item.revenue_p10)}, P50 {money(item.revenue_p50)}, P90 "
+        f"{money(item.revenue_p90)}; NOI P10 {money(item.noi_p10)}, P50 {money(item.noi_p50)}, P90 "
+        f"{money(item.noi_p90)}"
+        for item in app.projections.years
+    ]
+    parts.append(f"monthly fixed costs {money(app.projections.monthly_fixed_costs)}")
+    return " | ".join(parts)
+
+
+def simulation_fact(app: StartupCreditApplication) -> str:
+    """The information-only simulation outputs with their label and provenance (NSP-4.4)."""
+    simulation = app.projections.simulation
+    if simulation is None:
+        return "Simulation outputs: not provided"
+    return (
+        f"Simulation outputs ({simulation.label}; information only): probability "
+        f"{plain_number(simulation.p_dscr_ge_target_year2)} that year 2 DSCR is at least "
+        f"{plain_number(simulation.dscr_target)}; probability {plain_number(simulation.p_cash_negative_24m)} that "
+        f"cash falls below zero within 24 months; simulator {simulation.simulator_version}, {simulation.n_paths} "
+        f"paths, seed {simulation.seed}"
+    )
+
+
+def assumptions_fact(app: StartupCreditApplication) -> str:
+    """Each material assumption's value, unit, status, tornado rank and evidence flags (never its free-text source)."""
+    items = app.material_assumptions
+    if not items:
+        return "Material assumptions: none listed"
+    parts = []
+    for item in items:
+        rank = f"tornado rank {item.tornado_rank}" if item.tornado_rank is not None else "not ranked"
+        source_stated = yes_no(has_visible_text(item.source))  # the same presence bit as the NSP-4.3 rule
+        parts.append(
+            f"{item.name} = {plain_number(item.value)} {item.unit} ({item.status}; {rank}; supporting document "
+            f"{yes_no(item.supporting_document_provided)}; source stated {source_stated})"
+        )
+    return f"{len(items)} material assumptions: " + "; ".join(parts)
+
+
+def startup_facts(app: StartupCreditApplication) -> dict[str, tuple[str, str]]:
+    """{id: (title, text)} for the structured fields of a startup credit application (no names, no free text)."""
+    applicant = app.applicant
+    loan = app.loan_request
+    formation = applicant.formation_date.isoformat() if applicant.formation_date is not None else "not formed yet"
+    return {
+        "APP-product": ("Product", f"Product: {loan.product}"),
+        "APP-requested_amount": ("Requested amount", f"Requested amount: {money(loan.amount)}"),
+        "APP-term_months": ("Term", f"Term: {loan.term_months} months"),
+        "APP-note_rate_pct": ("Note rate", f"Note rate: {loan.annual_rate_pct:.2f}% ({loan.rate_type})"),
+        "APP-purpose": ("Purpose", f"Purpose: {loan.purpose}"),
+        "APP-business_type": ("Business type", f"Business type: {applicant.business_type}"),
+        "APP-industry": ("Industry", f"Industry code: {applicant.industry}"),
+        "APP-entity_type": ("Entity type", f"Entity type: {applicant.entity_type}"),
+        "APP-state": ("State", f"State of organization: {applicant.state}"),
+        "APP-metro_id": ("Metro", f"Metro: {applicant.metro_id}"),
+        "APP-formation_date": ("Formation date", f"Formation date: {formation}"),
+        "APP-planned_opening_date": (
+            "Opening date",
+            f"Planned or actual opening date: {applicant.planned_opening_date.isoformat()}",
+        ),
+        "APP-submitted_date": ("Submitted date", f"Submitted date: {app.submitted_date.isoformat()}"),
+        "APP-sources_and_uses": ("Sources and uses", sources_and_uses_fact(app)),
+        "APP-projections": ("Projections", f"Projections: {projections_fact(app)}"),
+        "APP-simulation": ("Simulation outputs", simulation_fact(app)),
+        "APP-material_assumptions": ("Material assumptions", assumptions_fact(app)),
+        "APP-documents_provided": ("Documents", f"Documents provided: {', '.join(app.documents_provided)}"),
+        "APP-owners": ("Owners", f"Owners: {startup_owners_fact(app)}"),
+        "APP-collateral": ("Collateral", f"Collateral: {collateral_fact(app.collateral) or 'none'}"),
+    }
+
+
 def tool_result_text(result: ToolResult) -> str:
     """A short factual summary of one tool result (no names)."""
     if result.status != "ok" or result.output is None:
@@ -249,17 +394,56 @@ def tool_result_text(result: ToolResult) -> str:
     return f"search_guidelines query {output['query']['query']!r}: {hits or 'no hits'}"
 
 
-def injection_check_text(application: CreditApplication | InsuranceApplication, hits: list[InjectionHit]) -> str:
+def injection_check_text(application: AnyApplication, hits: list[InjectionHit]) -> str:
     """What the injection screen checked and what it found (pattern names only, never the text)."""
-    checked = ", ".join(free_text_fields(application))
+    checked = ", ".join([*free_text_fields(application), *code_fields(application)])
     if not hits:
         return f"Injection screen checked {checked}: no instruction-like text found."
     found = "; ".join(f"{hit.field} ({', '.join(hit.patterns)})" for hit in hits)
     return f"Injection screen checked {checked}: instruction-like text found in {found}."
 
 
+# The evidence items whose text shows the simulator version (the APP fact and the two NSP-4.4 calculations).
+SIMULATOR_VERSION_EVIDENCE: tuple[str, ...] = (
+    "APP-simulation",
+    "CALC-startup_p_dscr_ge_target_year2",
+    "CALC-startup_p_cash_negative_24m",
+)
+
+
+def evidence_ids_for_code_field(field: str) -> tuple[str, ...]:
+    """The evidence items that show a startup code field (none for free text, which never enters the evidence)."""
+    if field.startswith("material_assumptions.") and field.endswith((".name", ".unit")):
+        return ("APP-material_assumptions",)
+    if field == "projections.simulation.simulator_version":
+        return SIMULATOR_VERSION_EVIDENCE
+    return ()
+
+
+def flagged_evidence(hits: list[InjectionHit]) -> dict[str, list[str]]:
+    """{evidence id: pattern names} for items that show a code field the injection screen flagged.
+
+    The flags become a warning attribute on the item in the memo prompt. Credit and insurance applications have no
+    code fields, so for them this is always empty.
+    """
+    flags: dict[str, set[str]] = {}
+    for hit in hits:
+        for evidence_id in evidence_ids_for_code_field(hit.field):
+            flags.setdefault(evidence_id, set()).update(hit.patterns)
+    return {evidence_id: sorted(names) for evidence_id, names in flags.items()}
+
+
+def application_facts(application: AnyApplication) -> dict[str, tuple[str, str]]:
+    """The APP-* facts for the application's line."""
+    if isinstance(application, CreditApplication):
+        return credit_facts(application)
+    if isinstance(application, StartupCreditApplication):
+        return startup_facts(application)
+    return insurance_facts(application)
+
+
 def build_evidence(
-    application: CreditApplication | InsuranceApplication,
+    application: AnyApplication,
     policy: PolicyResult,
     tool_results: list[ToolResult],
     injection_hits: list[InjectionHit],
@@ -291,6 +475,7 @@ def build_evidence(
         title, text = sections.get(section_id) or retrieved_text.get(section_id, (section_id, ""))
         if text:
             add(section_id, "guideline", title, text, detect_instruction_like_text(text))
+    code_flags = flagged_evidence(injection_hits)
     for calculation in policy.calculations:
         inputs = ", ".join(f"{name}={value}" for name, value in calculation.inputs.items())
         value = "not computable" if calculation.value is None else f"{calculation.value}"
@@ -299,11 +484,11 @@ def build_evidence(
             "calculation",
             calculation.label,
             f"{calculation.label} = {value}; inputs: {inputs or 'none'}",
+            code_flags.get(calculation.calc_id),
         )
     for result in tool_results:
         add(result.result_id, "tool_result", f"{result.tool} result", tool_result_text(result))
-    facts = credit_facts(application) if isinstance(application, CreditApplication) else insurance_facts(application)
-    for evidence_id, (title, text) in facts.items():
-        add(evidence_id, "application_fact", title, text)
+    for evidence_id, (title, text) in application_facts(application).items():
+        add(evidence_id, "application_fact", title, text, code_flags.get(evidence_id))
     add(INJECTION_EVIDENCE_ID, "check", "Injection screen", injection_check_text(application, injection_hits))
     return items

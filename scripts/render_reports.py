@@ -1,4 +1,5 @@
-"""Render the Phase 1 governance documents and the README results table from results/risk_metrics.json.
+"""Render the Phase 1 governance documents and the README results table from results/risk_metrics.json (and the
+Phase 2 and Phase 4 rows of that table from results/docintel_metrics.json and results/evidence_metrics.json).
 
 Usage:
     uv run python scripts/render_reports.py      # or: make reports
@@ -9,6 +10,16 @@ Writes (and overwrites):
     docs/model_cards/validation_report.md      tests, backtests, sensitivity analyses and the findings found
     docs/walkthrough_phase1.md                 from the hand-written template docs/templates/walkthrough_phase1.md
     README.md                                  only the block between <!-- RESULTS:START --> and <!-- RESULTS:END -->
+
+The README block's Evidence-to-Action Engine rows (Phase 4) and evidence-request simulator rows (innovation S5) read
+results/evidence_metrics.json, and its document extraction and contradiction rows (Phase 2) read
+results/docintel_metrics.json; load_report_data puts them under the keys "evidence_metrics" and "docintel_metrics"
+next to the risk sections. The model cards, the validation report and the walkthrough read only
+results/risk_metrics.json.
+
+A share whose bootstrap interval is degenerate (every resample gives the same share, as for a 100% metric) is shown
+with its exact Clopper-Pearson interval, labelled "exact", because a zero-width bootstrap interval overstates the
+certainty (share_interval).
 
 Ground rule 1: every number in these documents is read from the results JSON at render time. Nothing is
 typed by hand, rounded up or estimated, and anything missing prints "not measured" (with the reason when
@@ -35,6 +46,12 @@ from uwcopilot.risk.stability import DEFAULT_PSI_THRESHOLD, MODERATE_PSI_THRESHO
 NOT_MEASURED = "not measured"
 OWNER = "Rahul Vajja (portfolio project)"
 RESULTS_PATH = RESULTS_DIR / "risk_metrics.json"
+EVIDENCE_RESULTS_PATH = RESULTS_DIR / "evidence_metrics.json"
+DOCINTEL_RESULTS_PATH = RESULTS_DIR / "docintel_metrics.json"
+# The keys load_report_data puts results/evidence_metrics.json and results/docintel_metrics.json under (not risk
+# sections, so lookup adds no "results").
+EVIDENCE_KEY = "evidence_metrics"
+DOCINTEL_KEY = "docintel_metrics"
 MODEL_CARDS_DIR = DOCS_DIR / "model_cards"
 README_PATH = REPO_ROOT / "README.md"
 WALKTHROUGH_TEMPLATE = DOCS_DIR / "templates" / "walkthrough_phase1.md"
@@ -167,6 +184,40 @@ def interval(entry: Any, digits: int = 4) -> str:
     ):
         return not_measured_text(entry)
     return f"{entry['estimate']:.{digits}f} [{entry['ci_low']:.{digits}f}, {entry['ci_high']:.{digits}f}]"
+
+
+def share_interval(entry: Any, digits: int = 4) -> str:
+    """'value [ci_low, ci_high] (k/n)' from an evidence-metrics share (value, ci_low, ci_high, numerator,
+    denominator), or 'not measured'.
+
+    When the entry says bootstrap_degenerate (every resample gave the same share, so the bootstrap interval has zero
+    width), the exact Clopper-Pearson interval (exact_ci_low, exact_ci_high) is shown instead, as
+    'value exact [low, high]'; when those fields are missing, the text says the exact interval was not recorded.
+    """
+    if not isinstance(entry, Mapping) or not all(is_number(entry.get(key)) for key in ("value", "ci_low", "ci_high")):
+        return not_measured_text(entry)
+    if entry.get("bootstrap_degenerate") is True:
+        low, high = entry.get("exact_ci_low"), entry.get("exact_ci_high")
+        if is_number(low) and is_number(high):
+            shown = f"{entry['value']:.{digits}f} exact [{low:.{digits}f}, {high:.{digits}f}]"
+        else:
+            shown = f"{entry['value']:.{digits}f} (bootstrap interval degenerate; exact interval not recorded)"
+    else:
+        shown = f"{entry['value']:.{digits}f} [{entry['ci_low']:.{digits}f}, {entry['ci_high']:.{digits}f}]"
+    if is_number(entry.get("numerator")) and is_number(entry.get("denominator")):
+        shown += f" ({integer(entry['numerator'])}/{integer(entry['denominator'])})"
+    return shown
+
+
+def paired_interval(entry: Any, digits: int = 4) -> str:
+    """'mean difference [ci_low, ci_high] (n=N)' from a paired bootstrap result of the simulator, or 'not measured'."""
+    keys = ("mean_difference", "ci_low", "ci_high")
+    if not isinstance(entry, Mapping) or not all(is_number(entry.get(key)) for key in keys):
+        return not_measured_text(entry)
+    shown = f"{entry['mean_difference']:.{digits}f} [{entry['ci_low']:.{digits}f}, {entry['ci_high']:.{digits}f}]"
+    if is_number(entry.get("n")):
+        shown += f" (n={integer(entry['n'])})"
+    return shown
 
 
 def text(value: Any) -> str:
@@ -1846,9 +1897,8 @@ def readme_block(data: Mapping[str, Any]) -> str:
             "Adverse impact ratio, age under 25 vs 25 and over [95% CI]",
             interval(air, 3),
         ],
-        ["Document extraction", "Field F1", f"{NOT_MEASURED} (Phase 2 not built yet)"],
-        ["Contradiction detection", "Recall", f"{NOT_MEASURED} (Phase 2 not built yet)"],
-        ["Evidence-to-Action Engine", "Next-best-evidence top-3 accuracy", f"{NOT_MEASURED} (Phase 4 not built yet)"],
+        *docintel_rows(data),
+        *evidence_rows(data),
     ]
     lines = [
         *table(["Component", "Metric", "Value"], rows),
@@ -1857,8 +1907,125 @@ def readme_block(data: Mapping[str, Any]) -> str:
         f"{integer(lookup(data, 'insurance_frequency.bootstrap.n_resamples'))} resamples, seed "
         f"{text(lookup(data, 'insurance_frequency.bootstrap.seed'))}. Model cards and the validation report are in "
         "[docs/model_cards/](docs/model_cards/).",
+        "",
+        DOCINTEL_NOTE,
+        "",
+        EVIDENCE_NOTE,
     ]
     return "\n".join(lines)
+
+
+# Phase 2 rows: (component, metric label, path under results/docintel_metrics.json).
+DOCINTEL_METRICS: tuple[tuple[str, str, str], ...] = (
+    (
+        "Document extraction, rules extractor on the PDF (text layer, OCR on scans), SYNTHETIC test packets",
+        "Field F1, micro-averaged over every value [95% CI]",
+        "rules.fields.overall.f1",
+    ),
+    (
+        "Contradiction detection, same run",
+        "Recall: injected problems found [95% CI] (k/n problems)",
+        "rules.contradictions.recall",
+    ),
+    (
+        "Contradiction detection, same run",
+        "Precision: contradictions that match an injected problem [95% CI] (k/n contradictions)",
+        "rules.contradictions.precision",
+    ),
+)
+DOCINTEL_NOTE = (
+    "Document rows: written by the same script from `results/docintel_metrics.json` (`make eval-docintel`, the "
+    "Phase 2 pipeline on SYNTHETIC packets; [walkthrough](docs/walkthrough_phase2.md)). Bank-statement transaction "
+    "rows are most of the values, so the field F1 is mostly a transaction-table metric (per document type and page "
+    "condition in the JSON). A share marked exact shows the exact Clopper-Pearson interval, because its bootstrap "
+    "interval has zero width (every resample gave the same share). Simulated documents only: no real-world accuracy "
+    "claim."
+)
+
+# Phase 4 rows: (metric label, path under the packets section's results.modes.<mode>).
+EVIDENCE_PACKET_METRICS: tuple[tuple[str, str], ...] = (
+    (
+        "Claim-status agreement with the documented status rules (same author; not held out) [95% CI] (k/n claims)",
+        "claim_status.accuracy",
+    ),
+    (
+        "Calculation agreement with the as-documented application [95% CI] (k/n calculations)",
+        "calculation_agreement.agreement",
+    ),
+    (
+        "Top-ranked request answered with its hidden truth changes the recommendation [95% CI] (k/n)",
+        "top_request_reveal.changed",
+    ),
+    (
+        "Share of evaluable packets stable across every tested shock [95% CI] (k/n)",
+        "scenarios_and_stability.stable_share",
+    ),
+)
+EVIDENCE_MODES: tuple[tuple[str, str], ...] = (
+    ("oracle", "Evidence-to-Action Engine, oracle extraction (SYNTHETIC test packets)"),
+    ("pipeline", "Evidence-to-Action Engine, pipeline extraction from the PDF (SYNTHETIC test packets)"),
+)
+# Innovation S5 rows: (component, metric label, path under the simulator section's results).
+SIMULATOR_METRICS: tuple[tuple[str, str, str], ...] = (
+    (
+        "Evidence-request simulator (innovation S5), SYNTHETIC test cases, documented priors",
+        "VOI minus checklist: cost-weighted requests per case, paired [95% CI]",
+        "headline.voi_minus_checklist.cost_weighted_requests",
+    ),
+    (
+        "Evidence-request simulator (innovation S5), SYNTHETIC test cases, documented priors",
+        "VOI minus checklist: decision error vs the full-information recommendation, paired [95% CI]",
+        "headline.voi_minus_checklist.decision_error",
+    ),
+    (
+        "Evidence-request simulator, held-out family (claims history mismatch)",
+        "VOI minus checklist: cost-weighted requests per case, paired [95% CI]",
+        "held_out_family.all.paired_voi_minus_checklist.documented.cost_weighted_requests",
+    ),
+    (
+        "Evidence-request simulator, held-out family (claims history mismatch)",
+        "VOI minus checklist: decision error vs the full-information recommendation, paired [95% CI]",
+        "held_out_family.all.paired_voi_minus_checklist.documented.decision_error",
+    ),
+)
+EVIDENCE_NOTE = (
+    "Evidence-to-Action Engine and simulator rows: written by the same script from `results/evidence_metrics.json` "
+    "(sections `packets` from `make eval-evidence` and `simulator` from `make simulate-requests`); every case is "
+    "SYNTHETIC. Claim-status agreement compares the ledger with a status table written by the same author as the "
+    "ledger, so it measures agreement with the documented rules, not an independent truth; it is also NOT a held-out "
+    "measurement, because the table (v2) was written after the first test-split numbers had been seen "
+    "(`packets.results.protocol.development_note`). The simulator compares request policies against the reference "
+    "policy's full-information recommendation on cases with a hidden truth; a negative cost difference means the "
+    "VOI policy asked for less, and a positive decision-error difference means it ended on the wrong recommendation "
+    "more often than the checklist. Not claimable: real-world accuracy, time or cost savings, or that the VOI score "
+    "is optimal. The circular next-best-evidence agreement is in the JSON, labelled circular, and not shown here."
+)
+
+
+def docintel_rows(data: Mapping[str, Any]) -> list[list[str]]:
+    """The Phase 2 rows of the README table, read from data[DOCINTEL_KEY] ('not measured' when the document
+    pipeline results are missing)."""
+    rows = []
+    for component, metric, path in DOCINTEL_METRICS:
+        if DOCINTEL_KEY in data:
+            shown = share_interval(lookup(data, f"{DOCINTEL_KEY}.{path}"))
+        else:
+            shown = f"{NOT_MEASURED} (results/docintel_metrics.json missing)"
+        rows.append([component, metric, shown])
+    return rows
+
+
+def evidence_rows(data: Mapping[str, Any]) -> list[list[str]]:
+    """The Phase 4 and innovation S5 rows of the README table, read from data[EVIDENCE_KEY] ('not measured' when
+    the evidence results are missing)."""
+    rows = []
+    for metric, path in EVIDENCE_PACKET_METRICS:
+        for mode, component in EVIDENCE_MODES:
+            entry = lookup(data, f"{EVIDENCE_KEY}.packets.results.modes.{mode}.{path}")
+            rows.append([component, metric, share_interval(entry)])
+    for component, metric, path in SIMULATOR_METRICS:
+        rows.append([component, metric, paired_interval(lookup(data, f"{EVIDENCE_KEY}.simulator.results.{path}"))])
+    return rows
 
 
 def replace_readme_block(readme: str, block: str) -> str:
@@ -2065,15 +2232,33 @@ def render_all(data: Mapping[str, Any], walkthrough_template: str | None = None)
     return documents
 
 
+def load_report_data(
+    results_path: Path = RESULTS_PATH,
+    evidence_path: Path = EVIDENCE_RESULTS_PATH,
+    docintel_path: Path = DOCINTEL_RESULTS_PATH,
+) -> dict[str, Any]:
+    """The risk results, with results/evidence_metrics.json under EVIDENCE_KEY and results/docintel_metrics.json
+    under DOCINTEL_KEY when those files exist."""
+    data = dict(read_results(results_path))
+    if evidence_path.exists():
+        data[EVIDENCE_KEY] = read_results(evidence_path)
+    if docintel_path.exists():
+        data[DOCINTEL_KEY] = read_results(docintel_path)
+    return data
+
+
 def write_reports(
     results_path: Path = RESULTS_PATH,
     model_cards_dir: Path = MODEL_CARDS_DIR,
     readme_path: Path = README_PATH,
     walkthrough_template: Path | None = WALKTHROUGH_TEMPLATE,
     walkthrough_path: Path = WALKTHROUGH_PATH,
+    evidence_path: Path = EVIDENCE_RESULTS_PATH,
+    docintel_path: Path = DOCINTEL_RESULTS_PATH,
 ) -> list[Path]:
-    """Render everything from results_path and write the files. Returns the paths written."""
-    data = read_results(results_path)
+    """Render everything from results_path (and evidence_path / docintel_path for the README's Phase 4 and Phase 2
+    rows) and write the files. Returns the paths written."""
+    data = load_report_data(results_path, evidence_path, docintel_path)
     template = (
         walkthrough_template.read_text(encoding="utf-8")
         if walkthrough_template is not None and walkthrough_template.exists()
@@ -2101,13 +2286,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--results-path", type=Path, default=RESULTS_PATH)
     parser.add_argument("--model-cards-dir", type=Path, default=MODEL_CARDS_DIR)
     parser.add_argument("--readme", type=Path, default=README_PATH)
+    parser.add_argument("--evidence-path", type=Path, default=EVIDENCE_RESULTS_PATH)
+    parser.add_argument("--docintel-path", type=Path, default=DOCINTEL_RESULTS_PATH)
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     """Entry point for `make reports`."""
     args = parse_args(argv)
-    for path in write_reports(args.results_path, args.model_cards_dir, args.readme):
+    written = write_reports(
+        args.results_path,
+        args.model_cards_dir,
+        args.readme,
+        evidence_path=args.evidence_path,
+        docintel_path=args.docintel_path,
+    )
+    for path in written:
         try:
             shown = path.resolve().relative_to(REPO_ROOT)
         except ValueError:

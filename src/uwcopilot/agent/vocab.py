@@ -26,11 +26,19 @@ MATCHING_ACTION: dict[str, str] = {
 ReviewerRole = Literal["underwriter", "senior_underwriter"]
 REVIEWER_ROLES: tuple[str, ...] = ("underwriter", "senior_underwriter")
 
-# Business lines and the guideline document each one follows.
-Line = Literal["credit", "insurance"]
+# Every access role (security/rbac.py): the two reviewer roles plus two that may never decide a file. A
+# model_validator promotes models and signs migration certificates; an admin manages permissions and reads audit
+# logs. Roles are CLAIMED in this demo (no identity provider for the CLI or the agent).
+AccessRole = Literal["underwriter", "senior_underwriter", "model_validator", "admin"]
+ACCESS_ROLES: tuple[str, ...] = ("underwriter", "senior_underwriter", "model_validator", "admin")
+
+# Business lines and the guideline document each one follows. startup_credit follows the SYNTHETIC startup program
+# in corpus/programs/ (plus the Northwind sections it keeps); that document is not in the RAG index.
+Line = Literal["credit", "insurance", "startup_credit"]
 GUIDELINE_DOC_FOR_LINE: dict[str, str] = {
     "credit": "northwind_business_credit",
     "insurance": "harborline_mutual_commercial",
+    "startup_credit": "northwind_startup_program",
 }
 
 # Functions a file can be referred to, in the order a review queue is chosen (most urgent first).

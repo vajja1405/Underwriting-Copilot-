@@ -1,0 +1,115 @@
+# Path to approval (Founder Studio S5): the levers the search may move, with default bounds and effort weights.
+# Schema and loader: src/uwcopilot/studio/path_to_approval/levers.py.
+#
+# EVERY number in this file is a DESIGN_CHOICE of the project author (how far the search looks by default and how
+# "hard" a change is assumed to be for a founder). None is data and none is a benchmark. The founder can set their
+# own bounds for every lever (for example the most cash they can really add) and can lock any lever. Locking a dollar
+# lever freezes its amount: no other lever may move it either (space.py), so a lever balanced by a locked amount is
+# not available.
+#
+# A lever is a PLAN CHOICE the founder can make. The loader refuses any lever name that is not in the code's
+# allow-list (levers.LEVER_NAMES): facts (credit score, experience, other debt), assumption ranges, the site's
+# demand, the note rate and every verified figure can never be levers (guardrails.py).
+#
+# How the four dollar levers keep sources equal to uses (equity + loan + other debt = build-out + cash reserve):
+#   loan_amount              -> the cash reserve at opening absorbs the change (borrow less, keep less cash)
+#   owner_equity             -> the loan absorbs the change (put in more of your own cash, borrow that much less)
+#   build_out_cost           -> the loan absorbs the change (spend less on the build-out, borrow that much less)
+#   working_capital_reserve  -> owner equity absorbs the change (keep more cash, funded by your own cash)
+# Changes to several dollar levers add up, and every amount must stay inside its own bounds whichever lever moves
+# it (for example the reserve lever spends owner equity, so equity's upper bound holds for it too).
+#
+# A bound is written as {basis, value}:
+#   basis current       -> current value x (1 + value)
+#   basis project_cost  -> current value + value x total project cost
+#   basis absolute      -> value itself
+#
+# Effort of one change = effort_weight x size, where size is
+#   the dollars moved / total project cost (build-out + cash reserve) for the dollar levers,
+#   the relative change for price, opening days and loan term, and 1 for switching to another candidate site.
+# Change-sets are ranked by the number of levers changed first (one change is easier to make and to explain than
+# two), then by total effort.
+
+version: studio-levers-1
+status: DESIGN_CHOICE
+levers:
+  owner_equity:
+    label: Owner cash equity
+    unit: USD
+    kind: amount
+    balanced_by: loan_amount
+    default_bounds:
+      low: {basis: project_cost, value: 0.0}
+      high: {basis: project_cost, value: 0.20}
+    round_to: 500
+    effort_weight: 2.0
+    note: Only counts if the founder really has this cash; the lender verifies equity with bank statements (NSP-3.1, SYNTHETIC program). The default upper bound (+20% of project cost) is a placeholder for the founder's own answer.
+  loan_amount:
+    label: Loan amount
+    unit: USD
+    kind: amount
+    balanced_by: working_capital_reserve
+    default_bounds:
+      low: {basis: project_cost, value: -0.25}
+      high: {basis: project_cost, value: 0.10}
+    round_to: 500
+    effort_weight: 1.0
+    note: Borrowing less lowers the payments and the cash at opening by the same dollars; borrowing more does the opposite.
+  build_out_cost:
+    label: Build-out and equipment cost
+    unit: USD
+    kind: amount
+    balanced_by: loan_amount
+    default_bounds:
+      low: {basis: current, value: -0.15}
+      high: {basis: current, value: 0.0}
+    round_to: 500
+    effort_weight: 1.5
+    note: Only valid if the same business can be built for less (a lower quote, used equipment). A smaller build-out that also cuts capacity is not modeled, so the default bound is a 15% saving.
+  working_capital_reserve:
+    label: Cash reserve at opening
+    unit: USD
+    kind: amount
+    balanced_by: owner_equity
+    default_bounds:
+      low: {basis: absolute, value: 0}
+      high: {basis: project_cost, value: 0.20}
+    round_to: 500
+    effort_weight: 2.0
+    note: Extra reserve is funded by the founder's own cash, so owner equity must stay inside its bounds too (with the default bounds that means this lever only adds cash). The low bound of 0 matters for the loan lever, whose change the reserve absorbs.
+  price:
+    label: Price per unit of demand
+    unit: USD per demand unit
+    kind: price
+    default_bounds:
+      low: {basis: current, value: -0.15}
+      high: {basis: current, value: 0.15}
+    round_to: 0.25
+    effort_weight: 1.5
+    note: Demand responds to price through the price elasticity, an ASSUMPTION range in config/studio/feasibility/assumptions.yaml; a price change is only as good as that assumption.
+  days_open_per_week:
+    label: Days open per week
+    unit: days/week
+    kind: days
+    default_bounds:
+      low: {basis: absolute, value: 5}
+      high: {basis: absolute, value: 7}
+    round_to: 1
+    effort_weight: 1.0
+    note: Paid staff hours scale in proportion to open days (a design choice), so the lever needs a staffing plan typed by the founder; only for businesses whose demand is counted per open day.
+  loan_term_months:
+    label: Loan term
+    unit: months
+    kind: term
+    default_bounds:
+      low: {basis: absolute, value: 60}
+      high: {basis: absolute, value: 120}
+    options: [60, 72, 84, 96, 108, 120]
+    effort_weight: 0.5
+    note: The lender sets the term; the founder can ask for a longer one. The default bounds are the SYNTHETIC startup program's term limits (NSP-8.1).
+  site:
+    label: Candidate site (same metro)
+    unit: site
+    kind: site
+    effort_weight: 0.3
+    note: Only sites the founder listed as candidates in the same metro, each with its own demand estimate; the demand estimate of a site is never edited.

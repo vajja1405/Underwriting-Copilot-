@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "excerpt of a response recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py; fields kept: id, name, attribution, license, column field names",
+  "url": "https://data.cityofnewyork.us/api/views/w7w3-xahh.json",
+  "params": {},
+  "recorded_at_utc": "2026-10-12T19:38:52+00:00",
+  "content_type": "application/json; charset=utf-8",
+  "body_sha256": "2154034a28ffb2e348eb8b45b3fc54308c9b7482f54a568e41f31326c8699f74",
+  "full_body_sha256": "694aacb9080e8a6c5a8f1c0865b3b56d503095497f525341945363b14a2957d3",
+  "body": "{\n \"id\": \"w7w3-xahh\",\n \"name\": \"Issued Licenses\",\n \"attribution\": \"Department of Consumer and Worker Protection (DCWP)\",\n \"license\": null,\n \"columns\": [\n  \"license_nbr\",\n  \"business_name\",\n  \"dba_trade_name\",\n  \"business_unique_id\",\n  \"business_category\",\n  \"license_type\",\n  \"license_status\",\n  \"license_creation_date\",\n  \"lic_expir_dd\",\n  \"detail\",\n  \"contact_phone\",\n  \"address_type\",\n  \"address_building\",\n  \"address_street_name\",\n  \"address_street_name_2\",\n  \"street3\",\n  \"unit_type\",\n  \"apt_suite\",\n  \"address_city\",\n  \"address_state\",\n  \"address_zip\",\n  \"address_borough\",\n  \"community_board\",\n  \"council_district\",\n  \"bin\",\n  \"bbl\",\n  \"nta\",\n  \"census_block_2010_\",\n  \"census_tract\",\n  \"latitude\",\n  \"longitude\"\n ]\n}"
+}

@@ -5,6 +5,10 @@ read with the RAG module's own parser, so a section here has exactly the id, tit
 Long sections are NOT split here: get_guideline_section returns the whole section even when the index stores it
 in parts (for example HM-9.3).
 
+The SYNTHETIC lending programs in corpus/programs/ (the startup program, sections NSP-1.1 ... NSP-9.2) can be added
+with programs_dir: they are not in the RAG index, but startup memos cite them, so the server the CLI starts serves
+them too (cli.py). The default store reads corpus/guidelines/ only.
+
 Each document has a short code taken from its section ids ("NBC" for NBC-3.2, "HM" for HM-9.3). Resource URIs:
 - guidelines://NBC            the whole markdown document, SYNTHETIC banner included
 - guidelines://NBC/NBC-3.2    one section, with a one-line SYNTHETIC notice and its citation on top
@@ -51,10 +55,10 @@ def section_resource_uri(section_id: str) -> str:
     return f"{RESOURCE_SCHEME}://{section_code(section_id)}/{section_id}"
 
 
-def load_document(path: Path) -> GuidelineDocument:
-    """Parse one guideline file. All its section ids must share one code (the part before the dash)."""
+def load_document(path: Path, folder: str = "corpus/guidelines") -> GuidelineDocument:
+    """Parse one guideline (or program) file. All its section ids must share one code (the part before the dash)."""
     markdown = path.read_text(encoding="utf-8")
-    source_file = f"corpus/guidelines/{path.name}"
+    source_file = f"{folder}/{path.name}"
     sections = parse_guideline_markdown(markdown, source_file)
     codes = {section_code(section.chunk_id) for section in sections}
     if len(codes) != 1:
@@ -71,22 +75,36 @@ def load_document(path: Path) -> GuidelineDocument:
 
 
 class GuidelineStore:
-    """All guideline documents, indexed by code and by section id."""
+    """All guideline documents (and, when asked, the lending programs), indexed by code and by section id."""
 
-    def __init__(self, guidelines_dir: Path = GUIDELINES_DIR) -> None:
-        """Load every *.md file in guidelines_dir (sorted by name)."""
+    def __init__(self, guidelines_dir: Path = GUIDELINES_DIR, programs_dir: Path | None = None) -> None:
+        """Load every *.md file in guidelines_dir (sorted by name), then the programs in programs_dir if given.
+
+        In programs_dir, README.md describes the folder and is not a program. A document code or a section id may
+        appear only once across both folders.
+        """
         paths = sorted(guidelines_dir.glob("*.md"))
         if not paths:
             raise FileNotFoundError(f"No guideline markdown files in {guidelines_dir}.")
         self.documents: dict[str, GuidelineDocument] = {}
         self._sections: dict[str, tuple[GuidelineDocument, Chunk]] = {}
         for path in paths:
-            document = load_document(path)
-            if document.code in self.documents:
-                raise GuidelineFormatError(f"{document.source_file}: document code {document.code} is used twice.")
-            self.documents[document.code] = document
-            for section in document.sections:
-                self._sections[section.chunk_id] = (document, section)
+            self.add_document(load_document(path))
+        if programs_dir is not None:
+            for path in sorted(programs_dir.glob("*.md")):
+                if path.name != "README.md":
+                    self.add_document(load_document(path, folder="corpus/programs"))
+
+    def add_document(self, document: GuidelineDocument) -> None:
+        """Index one document; refuse a repeated document code or section id."""
+        if document.code in self.documents:
+            raise GuidelineFormatError(f"{document.source_file}: document code {document.code} is used twice.")
+        repeated = [section.chunk_id for section in document.sections if section.chunk_id in self._sections]
+        if repeated:
+            raise GuidelineFormatError(f"{document.source_file}: section ids already loaded: {repeated}.")
+        self.documents[document.code] = document
+        for section in document.sections:
+            self._sections[section.chunk_id] = (document, section)
 
     def section_ids(self) -> list[str]:
         """Every section id, document by document, in file order."""

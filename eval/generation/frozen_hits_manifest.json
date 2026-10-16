@@ -1,0 +1,141 @@
+{
+  "generated_at_utc": "2026-10-12T20:11:23+00:00",
+  "generated_by": "scripts/freeze_retrieval.py",
+  "retrieval_mode": "hybrid_rerank",
+  "reason": "requested: --mode hybrid_rerank",
+  "top_k": 5,
+  "corpus_checksum": "1a0f3d051a1f9ead4d3b0f288b2f521d8661b55e38e74ad79143dd8e302b4fea",
+  "guideline_only_corpus_checksum": "79a71528663e5c46548ef8281e45acda961e315508fe74077edd893c8be67302",
+  "corpus": {
+    "checksum_sha256": "1a0f3d051a1f9ead4d3b0f288b2f521d8661b55e38e74ad79143dd8e302b4fea",
+    "source_files": [
+      {
+        "path": "corpus/guidelines/harborline_mutual_commercial.md",
+        "doc_id": "harborline_mutual_commercial",
+        "sha256": "4aa8106afebdbd08d130e729d1a82c029aeda2f33e185079b1b8c23b6d816c85"
+      },
+      {
+        "path": "corpus/guidelines/northwind_business_credit.md",
+        "doc_id": "northwind_business_credit",
+        "sha256": "e4c809b493e74cd84a8bb2fca70fcc03b8e6c0f26439c500a5c82e82bcd88097"
+      },
+      {
+        "path": "data/raw/regulatory/frb_sr_26_2.pdf",
+        "doc_id": "frb_sr_26_2",
+        "sha256": "956b3bc642dac3b7a1ce6b2ac0f4fc1421b13d7b4f06db6fcfa022a90e7b38a7"
+      },
+      {
+        "path": "data/raw/regulatory/nydfs_circular_letter_2024_07.html",
+        "doc_id": "nydfs_cl_2024_07",
+        "sha256": "a7281dd99330ca6ffabd50d2f3e689479576d16f4eb6f8d3fda376ad42713a61"
+      }
+    ],
+    "missing_regulatory_files": []
+  },
+  "index": {
+    "points": 108,
+    "matches_current_source_files": true,
+    "qdrant": {
+      "mode": "local-embedded",
+      "qdrant_client_version": "1.19.1",
+      "server_version": null,
+      "url": null,
+      "path": "qdrant_storage",
+      "collection": "uwc_guidelines"
+    }
+  },
+  "models": {
+    "dense": {
+      "id": "BAAI/bge-small-en-v1.5",
+      "query_prefix": "Represent this sentence for searching relevant passages: "
+    },
+    "sparse": {
+      "id": "Qdrant/bm25"
+    },
+    "reranker": {
+      "id": "Xenova/ms-marco-MiniLM-L-6-v2"
+    }
+  },
+  "retrieval_params": {
+    "prefetch_limit": 20,
+    "rrf_k": 60,
+    "rerank_candidates": 20,
+    "dedup_margin": 5,
+    "mode": "hybrid_rerank",
+    "top_k": 5
+  },
+  "question_files": [
+    {
+      "path": "eval/rag_questions.jsonl",
+      "sha256": "d2737825e61614f9208d8fe8814a669664b8df2b8d9b94d060d402fb974c7a12",
+      "n": 113
+    },
+    {
+      "path": "eval/rag_unanswerable_extra.jsonl",
+      "sha256": "939ac01bf7b152aaeaad25f2025b304d8ca964b90c06801757ccf6ccc48cbafc",
+      "n": 20
+    }
+  ],
+  "n_questions": 133,
+  "n_by_category": {
+    "multi_section": 16,
+    "regulatory": 20,
+    "single_section": 67,
+    "unanswerable": 30
+  },
+  "questions_needing_regulatory_documents": {
+    "n": 22,
+    "ids": [
+      "MS15",
+      "MS16",
+      "RG01",
+      "RG02",
+      "RG03",
+      "RG04",
+      "RG05",
+      "RG06",
+      "RG07",
+      "RG08",
+      "RG09",
+      "RG10",
+      "RG11",
+      "RG12",
+      "RG13",
+      "RG14",
+      "RG15",
+      "RG16",
+      "RG17",
+      "RG18",
+      "RG19",
+      "RG20"
+    ]
+  },
+  "gold_in_top_k": {
+    "n_answerable": 103,
+    "all_gold_in_top_1": 65,
+    "all_gold_in_top_3": 86,
+    "all_gold_in_top_5": 90
+  },
+  "frozen_hits_path": "eval/generation/frozen_hits.jsonl",
+  "frozen_hits_sha256": "89b2b0c4dc2da1381da0ffc1ffb7d5af436f321a6533ff8cb76a8d134eb6c09b",
+  "environment": {
+    "packages": {
+      "python": "3.11.17",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "onnxruntime": "1.31.0",
+      "pydantic": "2.14.0"
+    },
+    "load_average_start": [
+      5.14,
+      5.31,
+      4.7
+    ],
+    "load_average_end": [
+      3.97,
+      5.68,
+      5.16
+    ]
+  },
+  "note": "No LLM was called. The hits are retrieval output over SYNTHETIC guidelines and the public regulatory documents; the generation evaluation reads only this file."
+}

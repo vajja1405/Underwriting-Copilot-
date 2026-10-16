@@ -157,3 +157,16 @@ def test_git_dirty_ignores_results_but_not_code(tmp_path: Path) -> None:
     assert git_dirty(tmp_path) is False
     (tmp_path / "code.py").write_text("x = 2\n", encoding="utf-8")
     assert git_dirty(tmp_path) is True
+
+
+def test_a_run_names_the_commit_it_started_on(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A commit made during a long run must not be recorded as the code that produced the numbers."""
+    from uwcopilot.governance import provenance as module
+
+    shas = iter(["a" * 40, "b" * 40])
+    monkeypatch.setattr(module, "git_sha", lambda repo_root=module.REPO_ROOT: next(shas))
+    monkeypatch.setattr(module, "git_dirty", lambda repo_root=module.REPO_ROOT: False)
+    run = RunProvenance.start("scripts/example.py")
+    block = run.finish()
+    assert block["git_sha"] == "a" * 40
+    assert block["git_dirty"] is True

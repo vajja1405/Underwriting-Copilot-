@@ -224,17 +224,30 @@ def provenance_block(
 
 
 class RunProvenance:
-    """Records the load average when a run starts, then builds the provenance block when it finishes."""
+    """Records the load average and the git state when a run starts, then builds the provenance block when it ends.
 
-    def __init__(self, generated_by: str, load_average_start: list[float] | None) -> None:
+    The commit is the one checked out when the run STARTED: a long run (an LLM evaluation) can outlast a commit, and
+    the block must name the code that produced the numbers. If the commit changed or the tree was dirty at either
+    end, git_dirty is True, so the hash alone is not trusted to pin the code.
+    """
+
+    def __init__(
+        self,
+        generated_by: str,
+        load_average_start: list[float] | None,
+        git_sha_start: str | None = None,
+        git_dirty_start: bool | str | None = None,
+    ) -> None:
         """Use RunProvenance.start(...) rather than calling this directly."""
         self.generated_by = generated_by
         self.load_average_start = load_average_start
+        self.git_sha_start = git_sha_start
+        self.git_dirty_start = git_dirty_start
 
     @classmethod
-    def start(cls, generated_by: str | None = None) -> "RunProvenance":
-        """Begin a run now: remember who is running and the current load average."""
-        return cls(generated_by or default_generated_by(), load_average())
+    def start(cls, generated_by: str | None = None, repo_root: Path = REPO_ROOT) -> "RunProvenance":
+        """Begin a run now: remember who is running, the current load average and the checked-out commit."""
+        return cls(generated_by or default_generated_by(), load_average(), git_sha(repo_root), git_dirty(repo_root))
 
     def finish(
         self,
@@ -246,8 +259,8 @@ class RunProvenance:
         corpus_checksum: str | None = None,
         repo_root: Path = REPO_ROOT,
     ) -> dict[str, Any]:
-        """The provenance block for this run, with the start and end load averages."""
-        return provenance_block(
+        """The provenance block for this run, with the start and end load averages and the start commit."""
+        block = provenance_block(
             prompts=prompts,
             eval_sets=eval_sets,
             models=models,
@@ -257,3 +270,10 @@ class RunProvenance:
             load_average_start=self.load_average_start,
             repo_root=repo_root,
         )
+        if self.git_sha_start is None:
+            return block
+        changed = self.git_sha_start != block["git_sha"]
+        block["git_sha"] = self.git_sha_start
+        if changed or self.git_dirty_start is True:
+            block["git_dirty"] = True
+        return block

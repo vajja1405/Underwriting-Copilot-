@@ -1,0 +1,11 @@
+{
+  "fixture_origin": "hand-written from documentation, NOT recorded from the live API - re-record when the host is reachable (values are SYNTHETIC)",
+  "note": "Row shape of the Business Licenses dataset (columns from the recorded metadata). Rows and positions are SYNTHETIC; the last row has no coordinates on purpose.",
+  "url": "https://data.cityofchicago.org/resource/r5kz-chrr.json",
+  "params": {
+    "$select": "license_description,business_activity,latitude,longitude,expiration_date"
+  },
+  "content_type": "application/json",
+  "body_sha256": "818874b6ebb3cea9ea9bfc310eb88dd3fa97e6eeccaa8342f0cc8fe5c6f896fc",
+  "body": "[{\"license_description\": \"Limited Business License\", \"business_activity\": \"Operation of a Hand Car Wash\", \"latitude\": \"10.001\", \"longitude\": \"-140.001\", \"expiration_date\": \"2027-05-15T00:00:00.000\"}, {\"license_description\": \"Limited Business License\", \"business_activity\": \"Operation of an Automatic Car Wash\", \"latitude\": \"10.030\", \"longitude\": \"-140.000\", \"expiration_date\": \"2027-01-15T00:00:00.000\"}, {\"license_description\": \"Limited Business License\", \"business_activity\": \"Operation of a Hand Car Wash\"}]"
+}

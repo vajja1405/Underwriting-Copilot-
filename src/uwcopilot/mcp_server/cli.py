@@ -7,6 +7,9 @@ stdout, so logging goes to stderr.
 --transport streamable-http serves MCP over HTTP at http://<host>:<port><path> instead. The HTTP server has no
 authentication, so it binds to 127.0.0.1 by default and refuses any other address unless --unsafe-allow-remote is
 given (then put it behind something that authenticates callers).
+
+The server started here serves the SYNTHETIC guidelines and the SYNTHETIC lending programs (corpus/programs/), so a
+client can fetch the [NSP-x.y] sections that startup memos cite.
 """
 
 import argparse
@@ -15,6 +18,8 @@ import logging
 import sys
 from collections.abc import Sequence
 
+from uwcopilot.agent.programs import PROGRAMS_DIR
+from uwcopilot.mcp_server.guideline_store import GuidelineStore
 from uwcopilot.mcp_server.server import ServerDependencies, build_server
 
 TRANSPORTS = ("stdio", "streamable-http")
@@ -73,7 +78,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         except UnsafeHostError as error:
             print(error, file=sys.stderr)
             return 2
-    dependencies = ServerDependencies()
+    # The guidelines plus the SYNTHETIC lending programs, so [NSP-x.y] citations in startup memos resolve.
+    dependencies = ServerDependencies(guideline_store=GuidelineStore(programs_dir=PROGRAMS_DIR))
     server = build_server(dependencies, log_level=args.log_level)
     try:
         if args.transport == "stdio":

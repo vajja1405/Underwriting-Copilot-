@@ -54,7 +54,21 @@ def test_ollama_base_url_loopback_or_https(url: str, expected: str) -> None:
     assert settings.ollama_base_url == expected
 
 
-@pytest.mark.parametrize("url", ["http://10.0.0.5:11434", "http://ollama:11434", "http://localhost.evil.example"])
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://10.0.0.5:11434",
+        "http://ollama:11434",
+        "http://localhost.evil.example",
+        "http://127.0.0.1.evil.com",
+        "http://localhost@evil.com",
+        # Loopback URLs that would send every request to the wrong path or fail inside httpx.
+        "http://127.0.0.1:11434#@evil.com",
+        "http://127.0.0.1:11434?x=1",
+        "http://127.0.0.1:11434\\evil.com",
+        "http://127.0.0.1:80:11434",
+    ],
+)
 def test_ollama_base_url_plain_http_to_another_host_is_refused(url: str) -> None:
     with pytest.raises(SettingsError):
         load_llm_settings(env_file=None, environ={"UWC_OLLAMA_BASE_URL": url})

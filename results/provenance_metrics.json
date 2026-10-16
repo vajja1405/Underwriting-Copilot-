@@ -3,7 +3,7 @@
   "numeric_checker": {
     "mutation_test": {
       "n_reference_sentences": 203,
-      "n_mutations": 791,
+      "n_mutations": 790,
       "n_controls": 290,
       "seed": 42,
       "regenerated_from_seed_matches_file": true,
@@ -37,29 +37,29 @@
         },
         "comparator_flip": {
           "n": 108,
-          "detected": 89,
-          "rate": 0.8241,
+          "detected": 88,
+          "rate": 0.8148,
           "wilson_ci95": [
-            0.7415,
-            0.8844
+            0.7312,
+            0.8768
           ]
         },
         "cross_section": {
-          "n": 176,
-          "detected": 176,
+          "n": 175,
+          "detected": 175,
           "rate": 1.0,
           "wilson_ci95": [
-            0.9786,
+            0.9785,
             1.0
           ]
         },
         "wrong_row": {
           "n": 55,
-          "detected": 10,
-          "rate": 0.1818,
+          "detected": 6,
+          "rate": 0.1091,
           "wilson_ci95": [
-            0.1019,
-            0.3033
+            0.051,
+            0.2183
           ]
         }
       },
@@ -88,27 +88,28 @@
         "unverifiable": 20
       },
       "known_blind_spot": "wrong_row: a value from another row of the same cited table looks traceable",
-      "development_note": "The checker was debugged on these reference sentences during development (sentence splitting around citations, soft line wraps, table header binding). The fixes were general, but the mutation set is not a held-out test, and the same author wrote the guidelines, the reference-sentence rules and the mutations."
+      "development_note": "The checker was debugged on these reference sentences during development (sentence splitting around citations, soft line wraps, table header binding). The fixes were general, but the mutation set is not a held-out test, and the same author wrote the guidelines, the reference-sentence rules and the mutations.",
+      "mutation_set_note": "Regenerated with scripts/make_mutations.py (seed 42) on 2026-10-13: the number normalizer now reads duration qualifiers ('12 consecutive months' is 12 months, not a count of 12), which changes the units of some section numbers and so the seeded draws. The reference sentences did not change. The checker fixes made at the same time (duration qualifiers, comparator ownership, table header binding) came from answer sentences found in the S1b review, and the later ones (coordinated values share a comparator, fraction words before a scale word) from a code review of those fixes; none came from this mutation set. Results written before 2026-10-13 were measured on the previous set (sha256 480af16a17cbfa4cd8fecca8fd6e9003cdb55175fcd5ae7d073a09ad3889e1d1, 791 mutations), so a before/after comparison across that date mixes a set change with checker changes. A checker-only comparison on one set is not measured by any committed script."
     },
     "incumbent_claim_checker": {
       "description": "uwcopilot.agent.claim_checker: a number is supported when some number in the cited section rounds to it at the written precision; no units, no comparators",
       "recall_by_type": {
         "value_perturb": {
           "n": 179,
-          "detected": 169,
-          "rate": 0.9441,
+          "detected": 170,
+          "rate": 0.9497,
           "wilson_ci95": [
-            0.9002,
-            0.9694
+            0.9072,
+            0.9733
           ]
         },
         "magnitude_x10": {
           "n": 184,
-          "detected": 174,
-          "rate": 0.9457,
+          "detected": 170,
+          "rate": 0.9239,
           "wilson_ci95": [
-            0.9029,
-            0.9702
+            0.8763,
+            0.9541
           ]
         },
         "unit_swap": {
@@ -130,12 +131,12 @@
           ]
         },
         "cross_section": {
-          "n": 176,
-          "detected": 148,
-          "rate": 0.8409,
+          "n": 175,
+          "detected": 161,
+          "rate": 0.92,
           "wilson_ci95": [
-            0.7797,
-            0.8876
+            0.8702,
+            0.9517
           ]
         },
         "wrong_row": {
@@ -303,15 +304,15 @@
   "memo": "not measured: needs the Phase 4 evidence ledger and LLM runs (pending)",
   "kyc_memo": "not measured: needs the Phase 4 evidence ledger and LLM runs (pending)",
   "provenance": {
-    "git_sha": "5bbfa4dc4de28dc18133bf71b595d6e881c6fc7e",
-    "git_dirty": true,
-    "generated_at_utc": "2026-10-12T18:43:06+00:00",
+    "git_sha": "0d03cdcfcb9f217003891f81a42e9dbcc5879c7e",
+    "git_dirty": false,
+    "generated_at_utc": "2026-10-16T15:15:49+00:00",
     "generated_by": "scripts/eval_provenance.py",
     "prompts": {},
     "corpus_checksum": "79a71528663e5c46548ef8281e45acda961e315508fe74077edd893c8be67302",
     "eval_sets": {
       "eval/provenance/reference_sentences.jsonl": "6670827a6cf4e2f8c4cb05d99cf6bd5847e94e6543397964d8029c5096adaa2d",
-      "eval/provenance/mutations.jsonl": "480af16a17cbfa4cd8fecca8fd6e9003cdb55175fcd5ae7d073a09ad3889e1d1",
+      "eval/provenance/mutations.jsonl": "9127302431e446ea5259c75331ead0941c617bf9316aa2a656ae6e1307e0a9ad",
       "eval/provenance/validator_adversarial.jsonl": "ec5aea78d573a1d826cd2fe18cde44aa688cdb6925a91f7193302204a8fb95eb"
     },
     "models": [],
@@ -334,14 +335,14 @@
     "environment": {
       "cpu_count": 4,
       "load_average_start": [
-        0.36,
-        0.27,
-        0.29
+        0.63,
+        0.7,
+        0.58
       ],
       "load_average_end": [
-        0.36,
-        0.27,
-        0.29
+        0.66,
+        0.71,
+        0.58
       ]
     }
   }

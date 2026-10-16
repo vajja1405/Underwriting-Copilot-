@@ -7,9 +7,17 @@ number come from?", it has to find the number, whatever way it was written:
 - percentages: "12%", "12 percent", "2.00 percentage points";
 - basis points: "200 bps", "200 basis points";
 - ratios: "1.25", "1.25x", "1.25 times";
-- durations: "24 months", "12-month", "2 years", "90 days";
+- durations: "24 months", "12-month", "2 years", "90 days", and with qualifier words between the number and a time
+  unit: "12 consecutive months", "the 5 most recent complete policy years", "60 consecutive days";
 - counts: "3 claims", "two principals";
 - number words: zero to ninety-nine, hundred, thousand, million, billion, and the fractions half, quarter, third.
+  "a"/"an" counts as one only before a scale or fraction word ("a hundred", "a quarter"); otherwise it is an
+  article and not part of the number ("A five-year loss ratio" is five years, not six). "and" inside a run of number
+  words is skipped ("one hundred and five" is 105, "two and a half" is 5/2). A fraction word ends the number unless
+  scale words follow it; those multiply the whole number, fraction included ("two and a half million" is 2,500,000,
+  "half a million" and "a half million" are 500,000). Any other number word after a fraction word starts a new
+  number. Known limits: two numbers joined by "and" read as one ("year four and three" gives 7); a fraction written
+  after a scale word is added, not multiplied ("one million and a half" gives 1,000,000.5, which matches nothing).
 
 Each mention becomes a NumberMention with an exact value (a Fraction, so "one third" stays exact) and a unit:
 USD, PERCENT, BPS, RATIO, MONTHS, YEARS, DAYS, COUNT or NONE (a bare number such as "1.25").
@@ -120,6 +128,13 @@ UNIT_WORDS: tuple[tuple[re.Pattern[str], Unit], ...] = (
     (re.compile(r"^[\s-]*(?:dollars?|usd)\b", re.IGNORECASE), "USD"),
     (re.compile(r"^\s*times\b", re.IGNORECASE), "RATIO"),
 )
+# "12 consecutive months", "the 5 most recent complete policy years": qualifier words that may sit between a number
+# and a TIME unit (days, months, years). The list is closed and short on purpose: "12 consecutive payments" stays a
+# count, and a qualifier never makes a number a percentage or an amount of money.
+DURATION_QUALIFIERS = re.compile(
+    r"^(?:\s+(?:consecutive|most\s+recent|complete|full|policy|tax|fiscal|trailing)\b)+", re.IGNORECASE
+)
+TIME_UNITS: tuple[str, ...] = ("DAYS", "MONTHS", "YEARS")
 # A following word that makes an integer a count ("3 claims"). Anything that is a unit or a connector is excluded.
 COUNT_NOUN = re.compile(r"^\s+(?!(?:or|and|to|of|in|on|per|the|a|an|is|are|was|were)\b)[A-Za-z][A-Za-z-]*")
 RANGE_CONNECTOR = re.compile(r"^\s*(?:to|-|–|—|through)\s*$", re.IGNORECASE)
@@ -178,23 +193,24 @@ WORD_RUN = re.compile(rf"\b(?:{NUMBER_WORD})(?:[\s-]+(?:{NUMBER_WORD}))*\b", re.
 NON_QUANTITY_ONE = re.compile(r"\b(?:no one|someone|anyone|everyone|one another|one of|each one|any one)\b", re.I)
 
 
-def words_to_value(words: list[str]) -> Fraction | None:
-    """Parse a run of number words ("two hundred fifty thousand", "one third", "a quarter") into a value.
+ARTICLES: tuple[str, ...] = ("a", "an")
+SCALE_OR_FRACTION: frozenset[str] = frozenset([*SCALE_WORDS, *FRACTION_WORDS])
 
-    Returns None when the run holds no quantity word (for example only "a" or "and").
+
+def integer_words_value(tokens: list[str]) -> int | None:
+    """'two hundred fifty thousand' -> 250000; 'a hundred' -> 100. None when no number word is present.
+
+    An article counts as one only right before a scale word ("a hundred", "a million"); otherwise it is skipped.
     """
-    tokens = [word.lower() for word in words if word.lower() not in ("and",)]
-    if not tokens or all(token in ("a", "an") for token in tokens):
-        return None
     total = 0
     current = 0
     seen_number = False
-    fraction: Fraction | None = None
-    for token in tokens:
-        if token in ("a", "an"):
-            current = max(current, 1) if not seen_number else current
-            continue
-        if token in UNITS_WORDS:
+    for index, token in enumerate(tokens):
+        next_token = tokens[index + 1] if index + 1 < len(tokens) else ""
+        if token in ARTICLES:
+            if next_token in SCALE_WORDS:
+                current = max(current, 1)
+        elif token in UNITS_WORDS:
             current += UNITS_WORDS[token]
             seen_number = True
         elif token in TENS_WORDS:
@@ -203,20 +219,44 @@ def words_to_value(words: list[str]) -> Fraction | None:
         elif token == "hundred":
             current = max(current, 1) * 100
             seen_number = True
-        elif token in ("thousand", "million", "billion"):
+        elif token in SCALE_WORDS:
             total += max(current, 1) * SCALE_WORDS[token]
             current = 0
             seen_number = True
-        elif token in FRACTION_WORDS:
-            numerator = max(current, 1)
-            fraction = numerator * FRACTION_WORDS[token]
-            current = 0
-            seen_number = True
-    if not seen_number:
+    return total + current if seen_number else None
+
+
+def words_to_value(words: list[str]) -> Fraction | None:
+    """Parse one number written in words ("two hundred fifty thousand", "one third", "two and a half") into a value.
+
+    Without a fraction word the words are a whole number. With one, the word right before the fraction word is its
+    numerator ("two thirds", "a quarter"; one when there is none, as in "half") and any words before that are a whole
+    part ("two and a half" is 5/2). Scale words after the fraction word multiply the whole result ("two and a half
+    million" is 2,500,000; "half a million" is 500,000). Returns None when the words hold no quantity (only "a" or
+    "and"), and when a word other than an article or a scale word follows the fraction word (word_groups never
+    passes such words: it starts a new number there).
+    """
+    tokens = [word.lower() for word in words if word.lower() != "and"]
+    if not tokens or all(token in ARTICLES for token in tokens):
         return None
-    if fraction is not None:
-        return Fraction(total) + fraction
-    return Fraction(total + current)
+    fraction_at = next((index for index, token in enumerate(tokens) if token in FRACTION_WORDS), None)
+    if fraction_at is None:
+        whole = integer_words_value(tokens)
+        return None if whole is None else Fraction(whole)
+    scales = [token for token in tokens[fraction_at + 1 :] if token not in ARTICLES]
+    if any(token not in SCALE_WORDS for token in scales):
+        return None
+    fraction = FRACTION_WORDS[tokens[fraction_at]]
+    before = tokens[:fraction_at]
+    numerator = 1
+    if before and (before[-1] in ARTICLES or before[-1] in UNITS_WORDS):
+        numerator = 1 if before[-1] in ARTICLES else UNITS_WORDS[before[-1]]
+        before = before[:-1]
+    whole_part = integer_words_value(before) if before else 0
+    multiplier = 1
+    for scale in scales:
+        multiplier *= SCALE_WORDS[scale]
+    return (Fraction(whole_part or 0) + numerator * fraction) * multiplier
 
 
 # --------------------------------------------------------------------------------------------------------------
@@ -233,15 +273,32 @@ def parse_digits(raw: str) -> Fraction:
 INNER_COMPARATOR = re.compile(r"^\s+or\s+(?:more|less|fewer|greater|longer|shorter|higher|lower)\b", re.IGNORECASE)
 
 
-def unit_after(text: str, end: int) -> tuple[Unit | None, int]:
-    """The unit word right after position end (an "or more"-style phrase may come first), and where it ends."""
-    skip = INNER_COMPARATOR.match(text[end : end + 40])
-    offset = skip.end() if skip else 0
-    tail = text[end + offset : end + offset + 40]
+def unit_word_at(text: str, position: int) -> tuple[Unit | None, int]:
+    """The unit word that starts at position (after optional spaces or a hyphen), and where it ends."""
+    tail = text[position : position + 40]
     for pattern, unit in UNIT_WORDS:
         match = pattern.match(tail)
         if match:
-            return unit, end + offset + match.end()
+            return unit, position + match.end()
+    return None, position
+
+
+def unit_after(text: str, end: int) -> tuple[Unit | None, int]:
+    """The unit word right after position end, and where it ends ((None, end) when there is none).
+
+    Two kinds of words may come between the number and its unit: an "or more"-style phrase ("3 or more months") and
+    duration qualifiers before a time unit ("12 consecutive months", "5 most recent complete policy years").
+    """
+    skip = INNER_COMPARATOR.match(text[end : end + 40])
+    position = end + (skip.end() if skip else 0)
+    unit, unit_end = unit_word_at(text, position)
+    if unit is not None:
+        return unit, unit_end
+    qualifiers = DURATION_QUALIFIERS.match(text[position : position + 80])
+    if qualifiers:
+        unit, unit_end = unit_word_at(text, position + qualifiers.end())
+        if unit in TIME_UNITS:
+            return unit, unit_end
     return None, end
 
 
@@ -280,24 +337,76 @@ def digit_mentions(original: str, masked: str) -> list[NumberMention]:
     return mentions
 
 
+def word_groups(run: re.Match[str]) -> list[tuple[int, int, list[str]]]:
+    """Split one run of number words into separate numbers: (start, end, words) for each.
+
+    An article ("a", "an") not followed by a scale or fraction word is left out, so "A five-year" starts at "five",
+    and an article between two number words separates them. A fraction word ends its number unless scale words follow
+    ("half a million" stays one number; in "one half two" the "two" is a new one). A leading or trailing "and" is left
+    out of the span.
+    """
+    words = [
+        (found.group(0).lower(), run.start() + found.start(), run.start() + found.end())
+        for found in re.finditer(r"[A-Za-z]+", run.group(0))
+    ]
+    groups: list[tuple[int, int, list[str]]] = []
+    current: list[tuple[str, int, int]] = []
+
+    def close() -> None:
+        while current and current[-1][0] in (*ARTICLES, "and"):
+            current.pop()  # a trailing article or "and" is not part of the number
+        if current:
+            groups.append((current[0][1], current[-1][2], [word for word, _, _ in current]))
+        current.clear()
+
+    for index, (word, start, end) in enumerate(words):
+        next_word = words[index + 1][0] if index + 1 < len(words) else ""
+        if word in ARTICLES and next_word not in SCALE_OR_FRACTION:
+            close()
+            continue
+        if word == "and" and not current:
+            continue  # a leading "and" is not part of the number
+        current.append((word, start, end))
+        if word in FRACTION_WORDS and not scale_follows(words, index):
+            close()
+    close()
+    return groups
+
+
+def scale_follows(words: list[tuple[str, int, int]], index: int) -> bool:
+    """True when the word after words[index] is a scale word, or an article and then a scale word ("half a million")."""
+    following = [word for word, _, _ in words[index + 1 : index + 3]]
+    if following and following[0] in SCALE_WORDS:
+        return True
+    return len(following) == 2 and following[0] in ARTICLES and following[1] in SCALE_WORDS
+
+
 def word_mentions(original: str, masked: str, taken: list[tuple[int, int]]) -> list[NumberMention]:
     """Numbers written in words, skipping spans already covered by digit mentions and non-quantity 'one'."""
     blocked = [(match.start(), match.end()) for match in NON_QUANTITY_ONE.finditer(masked)]
     mentions = []
-    for match in WORD_RUN.finditer(masked):
-        start, end = match.start(), match.end()
-        if any(start < b_end and end > b_start for b_start, b_end in [*taken, *blocked]):
-            continue
-        words = re.split(r"[\s-]+", match.group(0))
-        value = words_to_value(words)
-        if value is None:
-            continue
-        unit_word, unit_end = unit_after(masked, end)
-        unit: Unit = unit_word if unit_word is not None else "NONE"
-        if unit == "NONE" and COUNT_NOUN.match(masked[end : end + 40]) and value.denominator == 1:
-            unit = "COUNT"
-        mentions.append(NumberMention(original[start:unit_end], start, unit_end, value, unit))
+    for run in WORD_RUN.finditer(masked):
+        for start, end, words in word_groups(run):
+            mention = word_mention(original, masked, start, end, words, [*taken, *blocked])
+            if mention is not None:
+                mentions.append(mention)
     return mentions
+
+
+def word_mention(
+    original: str, masked: str, start: int, end: int, words: list[str], blocked: list[tuple[int, int]]
+) -> NumberMention | None:
+    """One number written in words at [start, end), with its unit; None when blocked or not a quantity."""
+    if any(start < b_end and end > b_start for b_start, b_end in blocked):
+        return None
+    value = words_to_value(words)
+    if value is None:
+        return None
+    unit_word, unit_end = unit_after(masked, end)
+    unit: Unit = unit_word if unit_word is not None else "NONE"
+    if unit == "NONE" and COUNT_NOUN.match(masked[end : end + 40]) and value.denominator == 1:
+        unit = "COUNT"
+    return NumberMention(original[start:unit_end], start, unit_end, value, unit)
 
 
 def propagate_range_units(text: str, mentions: list[NumberMention]) -> list[NumberMention]:

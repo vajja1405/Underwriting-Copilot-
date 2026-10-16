@@ -1,0 +1,218 @@
+{
+  "description": "Smoke checks and request latency of a running Fundproof deployment, written by scripts/smoke_deploy.py. One entry per target; each entry says what was measured (target.label) and has its own provenance block. A target that is not listed here was not measured.",
+  "runs": {
+    "local-container": {
+      "target": {
+        "kind": "local-container",
+        "label": "LOCAL Docker container on the machine that ran this script. NOT the Hugging Face Space: no internet hop, no Space proxy, not Space hardware.",
+        "url": "http://127.0.0.1:7860"
+      },
+      "measured_at_utc": "2026-10-14T00:25:57+00:00",
+      "method": {
+        "requests_per_path": 20,
+        "paths": [
+          "/api/health",
+          "/",
+          "/studio",
+          "/api/config",
+          "/api/me"
+        ],
+        "timeout_s": 30.0,
+        "wait_s": 120.0,
+        "poll_interval_s": 0.1,
+        "client": "httpx 0.28.1, one client, one request at a time",
+        "percentile": "nearest rank"
+      },
+      "all_checks_passed": true,
+      "checks": [
+        {
+          "name": "health_ok",
+          "passed": true,
+          "detail": "HTTP 200, status='ok'"
+        },
+        {
+          "name": "html_page /",
+          "passed": true,
+          "detail": "HTTP 200, html=True, content-security-policy=True, nosniff=True"
+        },
+        {
+          "name": "html_page /studio",
+          "passed": true,
+          "detail": "HTTP 200, html=True, content-security-policy=True, nosniff=True"
+        },
+        {
+          "name": "config_safe_for_deploy",
+          "passed": true,
+          "detail": "product_name='Fundproof', payments_enabled=False, dev_auth=False, hf_oauth=False, is_space=False, metros=6, business_types=6"
+        },
+        {
+          "name": "me_signed_out",
+          "passed": true,
+          "detail": "signed_in=False, auth_mode='none'"
+        },
+        {
+          "name": "unknown_api_is_json_404",
+          "passed": true,
+          "detail": "HTTP 404, content-type='application/json'"
+        },
+        {
+          "name": "no_rate_limited_requests",
+          "passed": true,
+          "detail": "0 of 106 requests got HTTP 429"
+        },
+        {
+          "name": "no_failed_requests",
+          "passed": true,
+          "detail": "0 of 106 requests got no response"
+        },
+        {
+          "name": "container_runs_image",
+          "passed": true,
+          "detail": "container fundproof-smoke: state=running, image matches --docker-image: True"
+        }
+      ],
+      "readiness": {
+        "ready": true,
+        "seconds_until_ready": 1.833,
+        "attempts": 18,
+        "ready_at_utc": "2026-10-14T00:25:57.158636+00:00",
+        "container_started_at": "2026-10-14T00:25:54.859095814Z",
+        "container_start_to_ready_s": 2.3
+      },
+      "first_request_ms": {
+        "/api/health": 2.25,
+        "/": 34.49,
+        "/studio": 4.2,
+        "/api/config": 131.06,
+        "/api/me": 2.47
+      },
+      "latency_ms": {
+        "/api/health": {
+          "n": 20,
+          "p50_ms": 1.72,
+          "p95_ms": 1.95,
+          "min_ms": 1.24,
+          "max_ms": 2.09
+        },
+        "/": {
+          "n": 20,
+          "p50_ms": 2.65,
+          "p95_ms": 6.55,
+          "min_ms": 1.96,
+          "max_ms": 7.2
+        },
+        "/studio": {
+          "n": 20,
+          "p50_ms": 2.57,
+          "p95_ms": 6.5,
+          "min_ms": 1.72,
+          "max_ms": 6.69
+        },
+        "/api/config": {
+          "n": 20,
+          "p50_ms": 1.82,
+          "p95_ms": 2.15,
+          "min_ms": 1.36,
+          "max_ms": 2.64
+        },
+        "/api/me": {
+          "n": 20,
+          "p50_ms": 1.8,
+          "p95_ms": 2.01,
+          "min_ms": 1.34,
+          "max_ms": 2.03
+        },
+        "all_paths": {
+          "n": 100,
+          "p50_ms": 1.93,
+          "p95_ms": 5.73,
+          "min_ms": 1.24,
+          "max_ms": 7.2
+        }
+      },
+      "status_counts": {
+        "/api/health": {
+          "200": 20
+        },
+        "/": {
+          "200": 20
+        },
+        "/studio": {
+          "200": 20
+        },
+        "/api/config": {
+          "200": 20
+        },
+        "/api/me": {
+          "200": 20
+        }
+      },
+      "server": {
+        "version": "0.1.0",
+        "git_sha": "271ca4d759f205ac457c6e692dc93de33269f632"
+      },
+      "docker_image": {
+        "image": "fundproof:dev",
+        "id": "sha256:20b3b04d9a6933a7822cee7d0b9f1440c126f5afa4ab023b85e3965e22b762ac",
+        "size_bytes_from_docker_image_inspect": 2572087031,
+        "size_from_docker_image_ls": "2.57GB",
+        "docker_image_ls_output": [
+          "IMAGE           ID             DISK USAGE   CONTENT SIZE   EXTRA",
+          "fundproof:dev   20b3b04d9a69       2.57GB          659MB   U"
+        ],
+        "docker_server_version": "29.8.2",
+        "note": "size_from_docker_image_ls is the DISK USAGE column (unpacked size on this machine); the CONTENT SIZE column in docker_image_ls_output is the compressed size of the image content."
+      },
+      "caveats": [
+        "One client sending one request at a time: this is a smoke test with timings, not a load test.",
+        "Latency includes the network between the measuring machine and the URL, and whatever else that machine was doing (see provenance.environment.load_average_*).",
+        "seconds_until_ready counts from the start of the script, not of the server. container_start_to_ready_s (local-container with --container only) counts from Docker's State.StartedAt, to within one poll interval.",
+        "p50 and p95 use the nearest-rank method over the samples listed in n."
+      ],
+      "provenance": {
+        "git_sha": "271ca4d759f205ac457c6e692dc93de33269f632",
+        "git_dirty": true,
+        "generated_at_utc": "2026-10-14T00:25:57+00:00",
+        "generated_by": "scripts/smoke_deploy.py",
+        "prompts": {},
+        "corpus_checksum": "not applicable (no retrieval corpus is used)",
+        "eval_sets": {},
+        "models": [],
+        "data_snapshots": {
+          "deployment_target": {
+            "kind": "local-container",
+            "url": "http://127.0.0.1:7860"
+          }
+        },
+        "packages": {
+          "python": "3.11.17",
+          "anthropic": "1.13.0",
+          "openai": "3.28.0",
+          "httpx": "0.28.1",
+          "pydantic": "2.14.0",
+          "pyyaml": "6.0.3",
+          "numpy": "2.4.6",
+          "scikit-learn": "1.9.1",
+          "lightgbm": "4.7.0",
+          "fastembed": "0.9.0",
+          "qdrant-client": "1.19.1",
+          "langgraph": "1.2.14",
+          "mcp": "2.3.0"
+        },
+        "environment": {
+          "cpu_count": 4,
+          "load_average_start": [
+            3.41,
+            2.84,
+            3.15
+          ],
+          "load_average_end": [
+            3.78,
+            2.93,
+            3.18
+          ]
+        }
+      }
+    }
+  }
+}

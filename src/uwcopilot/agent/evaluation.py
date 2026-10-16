@@ -30,8 +30,13 @@ from uwcopilot.rag.metrics import bootstrap_mean_ci, percentile
 
 N_RESAMPLES = 1000
 BOOTSTRAP_SEED = 42
-TRIGGER_ID = re.compile(r"\bR-(?:NBC|HM)-\d{2}\b")
-INJECTION_TARGET = {"credit": FRAUD_OPERATIONS, "insurance": SPECIAL_INVESTIGATIONS}
+TRIGGER_ID = re.compile(r"\bR-(?:NBC|HM|NSP)-\d{2}\b")
+INJECTION_TARGET = {"credit": FRAUD_OPERATIONS, "insurance": SPECIAL_INVESTIGATIONS, "startup_credit": FRAUD_OPERATIONS}
+# The lines of the Phase 5 evaluation set (eval/applications); the default keeps its trigger count at 31.
+DEFAULT_LINES: tuple[str, ...] = ("credit", "insurance")
+# NSP-7.3: the Northwind triggers the SYNTHETIC startup program keeps (ownership, identity, sanctions, adverse media,
+# integrity); every other R-NBC trigger is replaced by an R-NSP one for startup files.
+STARTUP_NORTHWIND_TRIGGERS = frozenset({"R-NBC-08", "R-NBC-09", "R-NBC-10", "R-NBC-11", "R-NBC-13"})
 
 
 def rate(values: list[bool] | list[float]) -> dict[str, Any]:
@@ -71,11 +76,27 @@ def latency_summary(values_ms: list[float]) -> dict[str, Any]:
     }
 
 
-def corpus_trigger_ids() -> list[str]:
-    """Every referral trigger id in the guideline corpus (R-NBC-01 ... R-HM-17)."""
+def trigger_applies(trigger: str, lines: tuple[str, ...]) -> bool:
+    """True when a referral trigger can apply to a file of one of these lines.
+
+    R-NBC triggers apply to credit, R-HM to insurance, and R-NSP plus the kept Northwind triggers to startup credit.
+    """
+    family = trigger.split("-")[1]
+    if family == "NBC" and "credit" in lines:
+        return True
+    if family == "HM" and "insurance" in lines:
+        return True
+    return "startup_credit" in lines and (family == "NSP" or trigger in STARTUP_NORTHWIND_TRIGGERS)
+
+
+def corpus_trigger_ids(lines: tuple[str, ...] = DEFAULT_LINES) -> list[str]:
+    """Every referral trigger id in the guideline and program documents that applies to these lines.
+
+    With the default lines (credit and insurance) these are R-NBC-01 ... R-HM-17.
+    """
     found: set[str] = set()
     for _title, text in guideline_sections().values():
-        found.update(TRIGGER_ID.findall(text))
+        found.update(trigger for trigger in TRIGGER_ID.findall(text) if trigger_applies(trigger, lines))
     return sorted(found)
 
 
@@ -146,9 +167,9 @@ def confusion(expected: list[str], predicted: list[str]) -> dict[str, dict[str, 
     return table
 
 
-def summarize_policy(cases: list[PolicyCase]) -> dict[str, Any]:
-    """Agreement, confusion matrix, mismatches and trigger coverage."""
-    all_triggers = corpus_trigger_ids()
+def summarize_policy(cases: list[PolicyCase], lines: tuple[str, ...] = DEFAULT_LINES) -> dict[str, Any]:
+    """Agreement, confusion matrix, mismatches and trigger coverage (of the triggers that apply to these lines)."""
+    all_triggers = corpus_trigger_ids(lines)
     exercised = sorted({trigger for case in cases for trigger in case.trigger_ids})
     return {
         "recommendation_agreement": rate([case.recommendation_match for case in cases]),

@@ -1,35 +1,103 @@
 # Metro config (Founder Studio S1). Schema: src/uwcopilot/studio/metros/models.py.
-# UNVERIFIED: the official title, CBSA code and county list must come from the Census delineation file, which could
-# not be opened in this build (www.census.gov is blocked; see docs/studio/metros.md). Counties stay empty and
-# verified stays false until then; the model refuses counties without a delineation_source. With no data snapshot,
-# this metro runs in "limited mode" and every data factor is UNKNOWN.
+# The name, CBSA code, states and counties below were written by scripts/studio_fetch_delineation.py from the Census
+# Bureau delineation file recorded under `delineation` (URL, date, SHA-256 of the file). Do not edit them by hand;
+# re-run the script. Trade-area settings and enhancements are design choices of the project author. Without a data
+# snapshot this metro runs in "limited mode" (see results/studio_metro_coverage.json).
 id: dallas_fort_worth_tx
-name: "Dallas-Fort Worth-Arlington (title from the Studio plan, UNVERIFIED)"
+name: Dallas-Fort Worth-Arlington, TX
 data_label: PUBLIC
-verified: false
-states: [TX]
-cbsa_code: null
-counties: []
-delineation_source: null
+verified: true
+states:
+- TX
+cbsa_code: '19100'
+cbsa_title_prefix: Dallas-Fort Worth-Arlington
+counties:
+- state_fips: '48'
+  county_fips: '085'
+  name: Collin County
+  state_name: Texas
+  central_or_outlying: central
+- state_fips: '48'
+  county_fips: '113'
+  name: Dallas County
+  state_name: Texas
+  central_or_outlying: central
+- state_fips: '48'
+  county_fips: '121'
+  name: Denton County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '139'
+  name: Ellis County
+  state_name: Texas
+  central_or_outlying: central
+- state_fips: '48'
+  county_fips: '231'
+  name: Hunt County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '257'
+  name: Kaufman County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '397'
+  name: Rockwall County
+  state_name: Texas
+  central_or_outlying: central
+- state_fips: '48'
+  county_fips: '251'
+  name: Johnson County
+  state_name: Texas
+  central_or_outlying: central
+- state_fips: '48'
+  county_fips: '367'
+  name: Parker County
+  state_name: Texas
+  central_or_outlying: outlying
+- state_fips: '48'
+  county_fips: '439'
+  name: Tarrant County
+  state_name: Texas
+  central_or_outlying: central
+- state_fips: '48'
+  county_fips: '497'
+  name: Wise County
+  state_name: Texas
+  central_or_outlying: outlying
+delineation:
+  source:
+    publisher: U.S. Census Bureau, Population Division
+    title: List 1. CORE BASED STATISTICAL AREAS (CBSAs), METROPOLITAN DIVISIONS, AND COMBINED STATISTICAL AREAS (CSAs), JULY
+      2023
+    date: July 2023
+    url: https://www2.census.gov/programs-surveys/metro-micro/geographies/reference-files/2023/delineation-files/list1_2023.xlsx
+    page_or_table: list1_2023.xlsx, first sheet, the 11 rows with CBSA Code 19100
+  file_name: list1_2023.xlsx
+  file_sha256: 952c4b1e78acbb54e6ec9412434b7602fedacbf021736351a63c181bdb753629
+  retrieved_at_utc: '2026-10-12T19:22:07+00:00'
+  generated_by: scripts/studio_fetch_delineation.py
 crs: EPSG:4326
 bbox: null
 trade_area:
   ring_multiplier: 1.5
   status: DESIGN_CHOICE
-  note: >-
-    Scales every profile's trade-area rings. Tighter rings for dense metros and wider rings for
-    car-dependent ones follow the Studio plan; the density premise itself is UNVERIFIED (docs/studio/metros.md).
+  note: Scales every profile's trade-area rings. Tighter rings for dense metros and wider rings for car-dependent ones follow
+    the Studio plan; the density premise itself is UNVERIFIED (docs/studio/metros.md).
 enhancements:
-  - kind: traffic_state
-    adapter: TX
-    enabled: true
-  - kind: city_open_data
-    adapter: dallas
-    enabled: true
-  - kind: str_comps
-    adapter: dallas
-    enabled: true
+- kind: traffic_state
+  adapter: TX
+  enabled: true
+- kind: city_open_data
+  adapter: dallas
+  enabled: true
+- kind: str_comps
+  adapter: dallas
+  enabled: true
 snapshot_date: null
 coverage_threshold: 0.8
 synthetic: null
-note: Expected v1 metro from the Studio plan; rank and title to confirm from the Census tables (docs/studio/metros.md).
+note: Rank 4 of 387 metropolitan statistical areas by POPESTIMATE2025 in cbsa-est2025-alldata.csv (written by scripts/studio_fetch_delineation.py;
+  see results/studio_metro_ranking.json).

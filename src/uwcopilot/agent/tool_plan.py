@@ -10,6 +10,13 @@ The plan for one application:
 - screen_entity: the applicant and every listed owner (NBC-6.3, HM-8.2);
 - score_risk: the credit model (loans) or the claim-frequency model (insurance), with known features; a feature the
   application does not provide is sent as None (UNKNOWN), never filled in.
+
+A startup credit file (the SYNTHETIC startup program, corpus/programs/) gets only the screening calls:
+- no search_guidelines: the program sections are not in the Qdrant index (the committed RAG corpus and its
+  checksum are unchanged), and the startup policy cites every section it applies directly by id; their text comes
+  from evidence.guideline_sections(). The memo writer may still ask for a Northwind guideline search;
+- no score_risk: no model in this repository was trained on startup loans, so a score would be out of scope. The
+  policy records the model PD as not applicable, with that reason (NSP-1.1), instead of calling the tool.
 """
 
 from typing import Any, Literal
@@ -19,8 +26,11 @@ from pydantic import BaseModel, ConfigDict, Field
 from uwcopilot.agent.applications import (
     CREDIT_INDUSTRIES,
     INSURANCE_CLASSES,
+    AnyApplication,
     CreditApplication,
     InsuranceApplication,
+    Party,
+    StartupCreditApplication,
     screened_parties,
 )
 from uwcopilot.agent.credit_calculations import months_between
@@ -49,8 +59,10 @@ class ToolRequest(BaseModel):
     party_id: str | None = None
 
 
-def guideline_queries(application: CreditApplication | InsuranceApplication) -> list[str]:
-    """Three fixed search queries, filled with code-list labels only."""
+def guideline_queries(application: AnyApplication) -> list[str]:
+    """Three fixed search queries, filled with code-list labels only (none for a startup file; see above)."""
+    if isinstance(application, StartupCreditApplication):
+        return []
     if isinstance(application, CreditApplication):
         product = PRODUCT_QUERY_LABELS[application.product]
         industry = CREDIT_INDUSTRIES[application.applicant.industry]
@@ -99,7 +111,19 @@ def insurance_features(application: InsuranceApplication) -> dict[str, Any]:
     }
 
 
-def plan_tool_calls(application: CreditApplication | InsuranceApplication) -> list[ToolRequest]:
+def screening_request(request_id: str, party: Party) -> ToolRequest:
+    """One screen_entity call for a party; the name is passed as data, the party appears by id in the purpose."""
+    return ToolRequest(
+        request_id=request_id,
+        tool="screen_entity",
+        arguments={"name": party.name, "entity_type": party.entity_type, "country": party.country},
+        origin="planner",
+        purpose=f"sanctions screening of {party.party_id} ({party.role})",
+        party_id=party.party_id,
+    )
+
+
+def plan_tool_calls(application: AnyApplication) -> list[ToolRequest]:
     """The full tool plan for one application, in a fixed order."""
     requests: list[ToolRequest] = []
     doc_id = GUIDELINE_DOC_FOR_LINE[application.line]
@@ -114,16 +138,9 @@ def plan_tool_calls(application: CreditApplication | InsuranceApplication) -> li
             )
         )
     for party in screened_parties(application):
-        requests.append(
-            ToolRequest(
-                request_id=f"plan-{len(requests) + 1}",
-                tool="screen_entity",
-                arguments={"name": party.name, "entity_type": party.entity_type, "country": party.country},
-                origin="planner",
-                purpose=f"sanctions screening of {party.party_id} ({party.role})",
-                party_id=party.party_id,
-            )
-        )
+        requests.append(screening_request(f"plan-{len(requests) + 1}", party))
+    if isinstance(application, StartupCreditApplication):
+        return requests  # no score_risk for startups (module docstring)
     if isinstance(application, CreditApplication):
         risk_arguments = {"product": "credit", "features": credit_features(application)}
     else:

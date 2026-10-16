@@ -41,10 +41,14 @@ class DecisionLog:
         self.path = path
 
     def records(self) -> list[dict[str, Any]]:
-        """Every record in file order (an empty list if the file does not exist yet)."""
+        """Every record in file order (an empty list if the file does not exist yet).
+
+        The file is split on "\n" only: str.splitlines() would also split on U+2028 or U+0085 inside a rationale,
+        which canonical_json writes raw, and cut that record in two.
+        """
         if not self.path.exists():
             return []
-        lines = self.path.read_text(encoding="utf-8").splitlines()
+        lines = self.path.read_text(encoding="utf-8").split("\n")
         return [json.loads(line) for line in lines if line.strip()]
 
     def find(self, record_id: str) -> dict[str, Any] | None:

@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://api.census.gov/data/2024/acs/acs5/variables/B11001_001E.json",
+  "params": {},
+  "recorded_at_utc": "2026-10-12T19:38:48+00:00",
+  "content_type": "application/json;charset=utf-8",
+  "body_sha256": "94516489d06e70ea0eaa413bd0ebf9c85c1585f73251595863d004edc5df5bfd",
+  "full_body_sha256": "94516489d06e70ea0eaa413bd0ebf9c85c1585f73251595863d004edc5df5bfd",
+  "body": "{\n  \"name\": \"B11001_001E\",\n  \"label\": \"Estimate!!Total:\",\n  \"concept\": \"Household Type (Including Living Alone)\",\n  \"predicateType\": \"int\",\n  \"group\": \"B11001\",\n  \"limit\": 0,\n  \"attributes\": \"B11001_001EA,B11001_001M,B11001_001MA\"\n}"
+}

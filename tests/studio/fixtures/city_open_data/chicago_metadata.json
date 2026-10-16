@@ -1,0 +1,10 @@
+{
+  "fixture_origin": "excerpt of a response recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py; fields kept: id, name, attribution, license, column field names",
+  "url": "https://data.cityofchicago.org/api/views/r5kz-chrr.json",
+  "params": {},
+  "recorded_at_utc": "2026-10-12T19:38:52+00:00",
+  "content_type": "application/json; charset=utf-8",
+  "body_sha256": "4833b6ae009b53a8c4566fbeb76eaf110d8ec2486b7dbf144433d205cf42c73a",
+  "full_body_sha256": "b7babf9dc9aaac6d03ee3c6c010ef2e5bbcf1fa1cf7f3bfd373fe513357c6a92",
+  "body": "{\n \"id\": \"r5kz-chrr\",\n \"name\": \"Business Licenses\",\n \"attribution\": \"City of Chicago\",\n \"license\": {\n  \"name\": \"See Terms of Use\"\n },\n \"columns\": [\n  \"id\",\n  \"license_id\",\n  \"account_number\",\n  \"site_number\",\n  \"legal_name\",\n  \"doing_business_as_name\",\n  \"address\",\n  \"city\",\n  \"state\",\n  \"zip_code\",\n  \"ward\",\n  \"precinct\",\n  \"ward_precinct\",\n  \"police_district\",\n  \"community_area\",\n  \"community_area_name\",\n  \"neighborhood\",\n  \"license_code\",\n  \"license_description\",\n  \"business_activity_id\",\n  \"business_activity\",\n  \"license_number\",\n  \"application_type\",\n  \"application_created_date\",\n  \"application_requirements_complete\",\n  \"payment_date\",\n  \"conditional_approval\",\n  \"license_start_date\",\n  \"expiration_date\",\n  \"license_approved_for_issuance\",\n  \"date_issued\",\n  \"license_status\",\n  \"license_status_change_date\",\n  \"ssa\",\n  \"latitude\",\n  \"longitude\",\n  \"location\",\n  \":@computed_region_vrxf_vc4k\",\n  \":@computed_region_awaf_s7ux\",\n  \":@computed_region_6mkv_f3dw\",\n  \":@computed_region_bdys_3d7i\",\n  \":@computed_region_43wa_7qmu\"\n ]\n}"
+}

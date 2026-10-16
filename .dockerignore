@@ -1,0 +1,43 @@
+# Docker build context for the Dockerfile at the repo root. ALLOW-LIST: everything is excluded, then only the
+# files the image needs are let back in. This keeps secrets (.env), downloaded data (data/), local caches
+# (.venv, node_modules, .cache, qdrant_storage), results/ and the git history out of the build context.
+
+# 1. Exclude everything.
+*
+
+# 2. Let back in what the Dockerfile copies. The eval/ and results/ entries are the Lender Desk demo's SYNTHETIC
+#    applications and the screening threshold; the first two scripts download the public lists and build the guideline
+#    index at build time (stage "assets"); the third builds the real metros' Studio snapshots when the build has the
+#    Census key secret (stage "studio-snapshots"). Nothing else under eval/, results/, scripts/ or data/ comes back.
+!pyproject.toml
+!uv.lock
+!README.md
+!src/
+!config/
+!corpus/
+!frontend/
+!eval/applications/
+!eval/startup_applications/
+!results/kyc_metrics.json
+!scripts/download_data.py
+!scripts/build_index.py
+!scripts/build_studio_snapshots.py
+
+# 3. Inside those folders, exclude build output, dependencies, caches and anything secret-looking.
+**/__pycache__
+**/*.py[cod]
+**/.env
+**/.env.*
+**/.DS_Store
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+frontend/npm-debug.log*
+# Frontend dev helpers that are not part of the build (screenshots need Python + Playwright; the mock API and its
+# recorded fixtures serve the pages without a backend).
+frontend/scripts/screenshots.py
+frontend/scripts/screenshots_mock.py
+frontend/scripts/record_mock_fixtures.py
+frontend/mock-api

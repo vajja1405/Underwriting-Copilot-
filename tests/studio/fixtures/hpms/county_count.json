@@ -1,0 +1,14 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://geo.dot.gov/server/rest/services/Hosted/HPMS_FULL_TX_2024/FeatureServer/0/query",
+  "params": {
+    "where": "county_id = 201 AND aadt > 0",
+    "returnCountOnly": "true",
+    "f": "json"
+  },
+  "recorded_at_utc": "2026-10-12T19:38:47+00:00",
+  "content_type": "application/json; charset=UTF-8",
+  "body_sha256": "bd692ca484f4a9ca764d68ac3901682ef4d3f4e0a2faa276bcb821eff40d5cd8",
+  "full_body_sha256": "bd692ca484f4a9ca764d68ac3901682ef4d3f4e0a2faa276bcb821eff40d5cd8",
+  "body": "{\"count\":29071}"
+}

@@ -1,0 +1,67 @@
+# Release gate configuration (docs/innovations.md, S1 and S3).
+#
+# This file is evidence, so its history matters: the `migration:` margins below were written BEFORE any challenger
+# run (R2) and must be committed before the challenger is evaluated. When a run starts, scripts/eval_generation.py
+# records the first commit holding the current content of the `migration:` section (its parsed content, so comments
+# and other sections do not count; governance/freeze_proof.py). scripts/llm_migration_gate.py refuses to certify a
+# migration when that commit is newer than the challenger's earliest generated answer, or when the section changed
+# since the challenger run, so the margins cannot be tuned after seeing the challenger's answers. Other sections
+# (controls, staleness rules) are added in Phase 6 / S3.
+#
+# Source of the margins: the "Gated metrics and margins (to commit before R2)" table in docs/innovations.md, S1
+# (planned 2026-10-10). They were chosen before any generation run, not fitted to data.
+
+migration:
+  # How the paired difference is computed: challenger minus champion, per question, percentile bootstrap that
+  # resamples questions (the same resampled questions for both models).
+  bootstrap:
+    resamples: 1000
+    seed: 42
+    confidence: 0.95
+    unit: question
+    method: percentile
+
+  # Non-inferiority rule with margin m, applied to the 95% CI of (challenger - champion):
+  #   higher_is_better: PASS if ci_low >= -m; FAIL if ci_high < -m; otherwise INCONCLUSIVE.
+  #   lower_is_better:  PASS if ci_high <= +m; FAIL if ci_low > +m; otherwise INCONCLUSIVE.
+  # INCONCLUSIVE blocks a release, like FAIL. The overall decision is PASS only if every gated metric passes.
+  # The decision is made on the CI bounds exactly as written to results/llm_migration_<A>_vs_<B>.json (rounded to
+  # 4 decimals), so anyone can re-derive it from the JSON.
+  decision_rule: non_inferiority
+
+  # population: which questions a metric is computed on (per-question values, 0/1 or a share).
+  #   keyed: questions in eval/rag_key_facts.jsonl (value = matched key facts / key facts)
+  #   unanswerable: unanswerable questions (eval/rag_questions.jsonl UA* + eval/rag_unanswerable_extra.jsonl)
+  #   answerable_gold_in_context: answerable questions whose gold references are all in the prompt's top-k hits
+  #   all: every evaluated question
+  gated_metrics:
+    key_fact_recall:
+      direction: higher_is_better
+      margin: 0.05
+      population: keyed
+    abstention_accuracy_unanswerable:
+      direction: higher_is_better
+      margin: 0.10
+      population: unanswerable
+    asserted_absence_error_rate:
+      direction: lower_is_better
+      margin: 0.05
+      population: answerable_gold_in_context
+    answers_with_fabricated_citation:
+      direction: lower_is_better
+      margin: 0.02
+      population: all
+    # Numbers the user wrote in the question are not counted (rag/generation_eval.py, numbers_from_question).
+    answers_with_untraceable_number:
+      direction: lower_is_better
+      margin: 0.05
+      population: all
+
+  # Reported in the certificate but never gated (docs/innovations.md S1: "Latency and tokens are reported but not
+  # gated").
+  reported_not_gated:
+    - latency_s
+    - tokens
+    - format_compliance
+    - false_abstention_rate
+    - uncited_factual_sentence_share

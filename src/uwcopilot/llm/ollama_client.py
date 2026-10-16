@@ -7,13 +7,22 @@ can see, and the OpenAI-compatible endpoint has no per-request way to set it.
 
 What the client does:
 - At start-up it reads the server version (GET /api/version) and the model digest (GET /api/tags). The digest
-  identifies the exact model weights, so it goes into the LLM cache key: re-importing a different model under
-  the same name never serves an old cached answer. If an expected digest is given, a mismatch stops the run.
+  identifies the exact model weights and the version identifies the runtime that runs them, so both go into the
+  LLM cache key: re-importing a different model under the same name, or upgrading Ollama, never serves an old
+  cached answer. If an expected digest is given, a mismatch stops the run.
 - Before each call, a context guard estimates the prompt size as est_upper = ceil(characters / 2) tokens. If
-  est_upper + num_predict > num_ctx, the call is refused with ContextBudgetExceeded (Ollama would otherwise
-  silently cut the start of the prompt). The estimate is a heuristic, not a guarantee, so after the call the
-  client also sets metadata["possible_truncation"] when prompt_eval_count + eval_count >= num_ctx. Ollama may
-  report a smaller prompt_eval_count when it reuses a cached prompt prefix; the count is recorded as reported.
+  est_upper + num_predict > num_ctx, the call is refused with ContextBudgetExceeded and no request is sent.
+  The estimate is NOT an upper bound. It ignores the chat template (Qwen adds its own default system prompt when
+  none is given: "Say hi" measured 31 prompt tokens on Ollama 0.40.3) and digit runs (Qwen uses one token per
+  digit, so numeric tables can need about twice the estimate). For prose it is conservative.
+- What Ollama 0.40.3 does when the estimate is too low (measured on this machine, 2026-10-12):
+  * a prompt longer than num_ctx is rejected with HTTP 400 "exceed_context_size_error". The client raises
+    ContextRejectedByServer, a ContextBudgetExceeded that also carries the server's n_prompt_tokens, so an eval
+    counts it as a context error and not as an HTTP error;
+  * a prompt that fits but leaves too little room for the answer is accepted, and generation silently shifts
+    the context (drops early tokens) once prompt + output reach num_ctx. The client therefore sets
+    metadata["possible_truncation"] when prompt_eval_count + eval_count >= num_ctx. Ollama may report a smaller
+    prompt_eval_count when it reuses a cached prompt prefix; the count is recorded as reported.
 - The response maps message.content to text, prompt_eval_count to input_tokens, eval_count to output_tokens and
   done_reason to stop_reason. A "length" stop (num_predict reached) raises IncompleteLLMResponse, like a
   max_tokens stop from the paid APIs. Raw durations, the digest and the Ollama version go into metadata.
@@ -41,9 +50,12 @@ DEFAULT_NUM_CTX = 4096
 DEFAULT_SEED = 42
 # One CPU-only server answers one request at a time; a long grounded answer under load can take minutes.
 DEFAULT_TIMEOUT_S = 600.0
-# The context guard's estimate: at most one token per CHARS_PER_TOKEN_ESTIMATE characters of prompt text.
+# The context guard's estimate: one token per CHARS_PER_TOKEN_ESTIMATE characters of prompt text. An estimate,
+# not a bound: digit runs and the chat template need more (see the module docstring).
 CHARS_PER_TOKEN_ESTIMATE = 2
 MAX_ERROR_TEXT_CHARS = 300
+# error.type of Ollama's HTTP 400 answer when the prompt alone does not fit in num_ctx (Ollama 0.40.3).
+CONTEXT_ERROR_TYPE = "exceed_context_size_error"
 
 
 class OllamaError(RuntimeError):
@@ -61,15 +73,33 @@ class OllamaDigestMismatch(OllamaError):
 class ContextBudgetExceeded(RuntimeError):
     """The prompt estimate plus the output budget does not fit in num_ctx, so the call was not made."""
 
-    def __init__(self, est_upper_tokens: int, num_predict: int, num_ctx: int) -> None:
-        """Keep the three numbers so callers can record why the call was refused."""
-        super().__init__(
+    def __init__(self, est_upper_tokens: int, num_predict: int, num_ctx: int, message: str | None = None) -> None:
+        """Keep the three numbers so callers can record why the call was refused. message replaces the default."""
+        default_message = (
             f"Prompt estimate {est_upper_tokens} tokens + num_predict {num_predict} > num_ctx {num_ctx}; "
             "the call was not made. Shorten the context (fewer or shorter passages) or raise num_ctx."
         )
+        super().__init__(message or default_message)
         self.est_upper_tokens = est_upper_tokens
         self.num_predict = num_predict
         self.num_ctx = num_ctx
+
+
+class ContextRejectedByServer(ContextBudgetExceeded):
+    """The guard's estimate passed, but Ollama rejected the prompt as longer than num_ctx (HTTP 400).
+
+    n_prompt_tokens is the server's own count (None if the reply did not include it). The estimate was too low
+    for this prompt, typically because of digit-heavy text or the chat template.
+    """
+
+    def __init__(self, est_upper_tokens: int, num_predict: int, num_ctx: int, n_prompt_tokens: int | None) -> None:
+        """Keep the guard's numbers and the server's prompt token count."""
+        message = (
+            f"Ollama rejected the prompt: {n_prompt_tokens} prompt tokens do not fit in num_ctx {num_ctx} "
+            f"(the guard estimated {est_upper_tokens}). Shorten the context or raise num_ctx."
+        )
+        super().__init__(est_upper_tokens, num_predict, num_ctx, message)
+        self.n_prompt_tokens = n_prompt_tokens
 
 
 @dataclass(frozen=True)
@@ -105,7 +135,10 @@ def strip_digest_prefix(digest: str) -> str:
 
 
 def estimate_prompt_tokens(system: str, messages: list[LLMMessage]) -> int:
-    """The context guard's prompt estimate: ceil(characters / 2) over the system prompt and all messages."""
+    """The context guard's prompt estimate: ceil(characters / 2) over the system prompt and all messages.
+
+    It is an estimate, not an upper bound: it does not count the chat template, and Qwen needs one token per digit.
+    """
     characters = len(system)
     for message in messages:
         characters += len(message.content)
@@ -162,6 +195,31 @@ def error_text(reply: httpx.Response) -> str:
     return reply.text[:MAX_ERROR_TEXT_CHARS]
 
 
+def context_overflow_details(reply: httpx.Response) -> dict[str, Any] | None:
+    """The error object of an HTTP 400 "exceed_context_size_error" reply, or None for any other reply.
+
+    Ollama 0.40.3 answers {"error": "<JSON text>"}, where the text is {"error": {"type": ..., "n_prompt_tokens":
+    ..., "n_ctx": ...}}. A plain object instead of the JSON text is accepted too.
+    """
+    if reply.status_code != 400:
+        return None
+    try:
+        payload = reply.json()
+    except ValueError:
+        return None
+    error = payload.get("error") if isinstance(payload, dict) else None
+    if isinstance(error, str):
+        try:
+            error = json.loads(error)
+        except ValueError:
+            return None
+    if isinstance(error, dict) and isinstance(error.get("error"), dict):
+        error = error["error"]
+    if isinstance(error, dict) and error.get("type") == CONTEXT_ERROR_TYPE:
+        return error
+    return None
+
+
 class OllamaClient:
     """LLMClient for models served by a local Ollama server (native API)."""
 
@@ -210,7 +268,16 @@ class OllamaClient:
             ) from error
         if reply.status_code != 200:
             raise OllamaError(f"Ollama GET {path} returned HTTP {reply.status_code}: {error_text(reply)}")
-        return reply.json()
+        try:
+            document = reply.json()
+        except ValueError as error:
+            raise OllamaError(
+                f"Ollama GET {path} at {self.base_url} did not return JSON (got {reply.text[:80]!r}). "
+                "Check that the base URL is the server root, without a path, query or fragment."
+            ) from error
+        if not isinstance(document, dict):
+            raise OllamaError(f"Ollama GET {path} returned {type(document).__name__}, not a JSON object.")
+        return document
 
     def _read_version(self) -> str:
         """The server's version string from GET /api/version."""
@@ -249,10 +316,13 @@ class OllamaClient:
     def request_fingerprint(self) -> dict[str, str]:
         """Settings that change the answer without being part of the prompt (part of the LLM cache key).
 
-        temperature and num_predict (max_tokens) are already in the cache key as call parameters.
+        temperature and num_predict (max_tokens) are already in the cache key as call parameters. The Ollama
+        version is included because a runtime upgrade can change answers even at temperature 0, and the provenance
+        block reports the version of the running server.
         """
         return {
             "base_url": self.base_url,
+            "ollama_version": self.runtime_version,
             "digest": self.digest,
             "num_ctx": str(self.options.num_ctx),
             "seed": str(self.options.seed),
@@ -285,8 +355,9 @@ class OllamaClient:
     ) -> LLMResponse:
         """Send one POST /api/chat request (stream off) and return the answer.
 
-        Raises ContextBudgetExceeded before the request when the prompt may not fit, OllamaError on a transport
-        or HTTP error, and IncompleteLLMResponse when the model stopped because num_predict was reached.
+        Raises ContextBudgetExceeded before the request when the prompt may not fit, ContextRejectedByServer
+        (a ContextBudgetExceeded) when Ollama rejects the prompt as longer than num_ctx, OllamaError on any other
+        transport or HTTP error, and IncompleteLLMResponse when the model stopped because num_predict was reached.
         """
         est_upper = self.check_context(system, messages, max_tokens)
         body = build_chat_body(self.model, system, messages, max_tokens, temperature, self.options)
@@ -298,6 +369,16 @@ class OllamaClient:
                 f"Ollama chat request to {self.base_url} failed ({type(error).__name__}). Is `ollama serve` running?"
             ) from error
         latency = time.perf_counter() - started
+        overflow = context_overflow_details(reply)
+        if overflow is not None:
+            server_count = overflow.get("n_prompt_tokens")
+            server_ctx = overflow.get("n_ctx")
+            raise ContextRejectedByServer(
+                est_upper,
+                max_tokens,
+                server_ctx if isinstance(server_ctx, int) else self.options.num_ctx,
+                server_count if isinstance(server_count, int) else None,
+            )
         if reply.status_code != 200:
             raise OllamaError(f"Ollama POST /api/chat returned HTTP {reply.status_code}: {error_text(reply)}")
         try:

@@ -1,0 +1,1346 @@
+{
+ "areas": [
+  {
+   "coverage_score": 0.9,
+   "demand_mode": 330.193,
+   "demand_unit": "machine turns/day",
+   "district": "downtown",
+   "factor_scores": {
+    "anchors": 93.67,
+    "commercial_rent": null,
+    "competition": 75.67,
+    "median_household_income": 89.43,
+    "renter_households": 87.5
+   },
+   "geoid": "SYN000092",
+   "lat": 10.004742078180668,
+   "lon": -140.0061056357697,
+   "overall_score": 84.6,
+   "rank": 1,
+   "reasons": [
+    "renter_households: 15,409 renter households within 1 mile (12 tracts). Percentile 88 of 300 locations in this metro (more is better): scores 88 of 100.",
+    "competition: 0 same-type places within 0.5 miles; nearest 0.6 miles; 2.07 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+    "median_household_income: household-weighted mean of tract median incomes within 1 mile: $52,782 (12 of 12 tracts publish a median). Percentile 11 of 298 locations in this metro (fewer is better): scores 89 of 100."
+   ],
+   "watch_out": null
+  },
+  {
+   "coverage_score": 0.9,
+   "demand_mode": 398.186,
+   "demand_unit": "machine turns/day",
+   "district": "downtown",
+   "factor_scores": {
+    "anchors": 85.5,
+    "commercial_rent": null,
+    "competition": 75.67,
+    "median_household_income": 71.31,
+    "renter_households": 91.83
+   },
+   "geoid": "SYN000047",
+   "lat": 9.975676112573735,
+   "lon": -140.0072707524447,
+   "overall_score": 82.3,
+   "rank": 2,
+   "reasons": [
+    "renter_households: 18,582 renter households within 1 mile (17 tracts). Percentile 92 of 300 locations in this metro (more is better): scores 92 of 100.",
+    "competition: 0 same-type places within 0.5 miles; nearest 0.5 miles; 0.83 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+    "median_household_income: household-weighted mean of tract median incomes within 1 mile: $59,312 (16 of 17 tracts publish a median). Percentile 29 of 298 locations in this metro (fewer is better): scores 71 of 100."
+   ],
+   "watch_out": null
+  },
+  {
+   "coverage_score": 0.9,
+   "demand_mode": 196.757,
+   "demand_unit": "machine turns/day",
+   "district": "downtown",
+   "factor_scores": {
+    "anchors": 72.33,
+    "commercial_rent": null,
+    "competition": 75.67,
+    "median_household_income": 97.48,
+    "renter_households": 77.17
+   },
+   "geoid": "SYN000000",
+   "lat": 10.025354489286281,
+   "lon": -140.00141398597611,
+   "overall_score": 79.5,
+   "rank": 3,
+   "reasons": [
+    "renter_households: 9,182 renter households within 1 mile (10 tracts). Percentile 77 of 300 locations in this metro (more is better): scores 77 of 100.",
+    "competition: 0 same-type places within 0.5 miles; nearest 0.5 miles; 1.57 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+    "median_household_income: household-weighted mean of tract median incomes within 1 mile: $45,810 (9 of 10 tracts publish a median). Percentile 3 of 298 locations in this metro (fewer is better): scores 97 of 100."
+   ],
+   "watch_out": null
+  },
+  {
+   "coverage_score": 0.9,
+   "demand_mode": 220.264,
+   "demand_unit": "machine turns/day",
+   "district": "inner ring",
+   "factor_scores": {
+    "anchors": 72.33,
+    "commercial_rent": null,
+    "competition": 75.67,
+    "median_household_income": 76.34,
+    "renter_households": 79.5
+   },
+   "geoid": "SYN000071",
+   "lat": 9.987303095324455,
+   "lon": -139.9708719922793,
+   "overall_score": 76.9,
+   "rank": 4,
+   "reasons": [
+    "renter_households: 10,279 renter households within 1 mile (11 tracts). Percentile 80 of 300 locations in this metro (more is better): scores 80 of 100.",
+    "competition: 0 same-type places within 0.5 miles; nearest 0.7 miles; 1.32 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+    "median_household_income: household-weighted mean of tract median incomes within 1 mile: $57,843 (11 of 11 tracts publish a median). Percentile 24 of 298 locations in this metro (fewer is better): scores 76 of 100."
+   ],
+   "watch_out": null
+  },
+  {
+   "coverage_score": 0.9,
+   "demand_mode": 320.657,
+   "demand_unit": "machine turns/day",
+   "district": "downtown",
+   "factor_scores": {
+    "anchors": 50.67,
+    "commercial_rent": null,
+    "competition": 75.67,
+    "median_household_income": 73.66,
+    "renter_households": 86.17
+   },
+   "geoid": "SYN000073",
+   "lat": 10.000089653352008,
+   "lon": -139.98625722794742,
+   "overall_score": 76.6,
+   "rank": 5,
+   "reasons": [
+    "renter_households: 14,964 renter households within 1 mile (15 tracts). Percentile 86 of 300 locations in this metro (more is better): scores 86 of 100.",
+    "competition: 0 same-type places within 0.5 miles; nearest 0.5 miles; 1.35 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+    "median_household_income: household-weighted mean of tract median incomes within 1 mile: $58,680 (15 of 15 tracts publish a median). Percentile 26 of 298 locations in this metro (fewer is better): scores 74 of 100."
+   ],
+   "watch_out": null
+  }
+ ],
+ "budget": {
+  "filters_tracts": false,
+  "notes": [
+   "No budget given.",
+   "The budget does not filter or rank tracts: there is no tract-level rent or build-out cost data. It is checked against the metro rent range and the profile's build-out range only."
+  ]
+ },
+ "data_label": "SYNTHETIC",
+ "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+ "excluded": [
+  {
+   "count": 2,
+   "reason": "required data UNKNOWN: median_household_income"
+  }
+ ],
+ "geojson": {
+  "features": [
+   {
+    "geometry": {
+     "coordinates": [
+      -140.006106,
+      10.004742
+     ],
+     "type": "Point"
+    },
+    "properties": {
+     "coverage_score": 0.9,
+     "data_label": "SYNTHETIC",
+     "district": "downtown",
+     "geoid": "SYN000092",
+     "kind": "tract_centroid",
+     "overall_score": 84.6,
+     "rank": 1,
+     "reasons": [
+      "renter_households: 15,409 renter households within 1 mile (12 tracts). Percentile 88 of 300 locations in this metro (more is better): scores 88 of 100.",
+      "competition: 0 same-type places within 0.5 miles; nearest 0.6 miles; 2.07 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+      "median_household_income: household-weighted mean of tract median incomes within 1 mile: $52,782 (12 of 12 tracts publish a median). Percentile 11 of 298 locations in this metro (fewer is better): scores 89 of 100."
+     ]
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      [
+       [
+        -139.991409,
+        10.004742
+       ],
+       [
+        -139.991535,
+        10.006631
+       ],
+       [
+        -139.99191,
+        10.008488
+       ],
+       [
+        -139.992528,
+        10.010281
+       ],
+       [
+        -139.993378,
+        10.011979
+       ],
+       [
+        -139.994446,
+        10.013553
+       ],
+       [
+        -139.995714,
+        10.014976
+       ],
+       [
+        -139.997159,
+        10.016224
+       ],
+       [
+        -139.998757,
+        10.017276
+       ],
+       [
+        -140.000482,
+        10.018113
+       ],
+       [
+        -140.002302,
+        10.018722
+       ],
+       [
+        -140.004187,
+        10.019091
+       ],
+       [
+        -140.006106,
+        10.019215
+       ],
+       [
+        -140.008024,
+        10.019091
+       ],
+       [
+        -140.009909,
+        10.018722
+       ],
+       [
+        -140.01173,
+        10.018113
+       ],
+       [
+        -140.013454,
+        10.017276
+       ],
+       [
+        -140.015052,
+        10.016224
+       ],
+       [
+        -140.016498,
+        10.014976
+       ],
+       [
+        -140.017765,
+        10.013553
+       ],
+       [
+        -140.018833,
+        10.011979
+       ],
+       [
+        -140.019683,
+        10.010281
+       ],
+       [
+        -140.020301,
+        10.008488
+       ],
+       [
+        -140.020676,
+        10.006631
+       ],
+       [
+        -140.020802,
+        10.004742
+       ],
+       [
+        -140.020676,
+        10.002853
+       ],
+       [
+        -140.020301,
+        10.000996
+       ],
+       [
+        -140.019683,
+        9.999203
+       ],
+       [
+        -140.018833,
+        9.997506
+       ],
+       [
+        -140.017765,
+        9.995931
+       ],
+       [
+        -140.016498,
+        9.994508
+       ],
+       [
+        -140.015052,
+        9.99326
+       ],
+       [
+        -140.013454,
+        9.992208
+       ],
+       [
+        -140.01173,
+        9.991371
+       ],
+       [
+        -140.009909,
+        9.990762
+       ],
+       [
+        -140.008024,
+        9.990393
+       ],
+       [
+        -140.006106,
+        9.990269
+       ],
+       [
+        -140.004187,
+        9.990393
+       ],
+       [
+        -140.002302,
+        9.990762
+       ],
+       [
+        -140.000482,
+        9.991371
+       ],
+       [
+        -139.998757,
+        9.992208
+       ],
+       [
+        -139.997159,
+        9.99326
+       ],
+       [
+        -139.995714,
+        9.994508
+       ],
+       [
+        -139.994446,
+        9.995931
+       ],
+       [
+        -139.993378,
+        9.997506
+       ],
+       [
+        -139.992528,
+        9.999203
+       ],
+       [
+        -139.99191,
+        10.000996
+       ],
+       [
+        -139.991535,
+        10.002853
+       ],
+       [
+        -139.991409,
+        10.004742
+       ]
+      ]
+     ],
+     "type": "Polygon"
+    },
+    "properties": {
+     "data_label": "SYNTHETIC",
+     "geoid": "SYN000092",
+     "kind": "market_ring",
+     "note": "approximate circle around the tract centroid; not a tract boundary",
+     "radius_miles": 1.0,
+     "rank": 1
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      -140.007271,
+      9.975676
+     ],
+     "type": "Point"
+    },
+    "properties": {
+     "coverage_score": 0.9,
+     "data_label": "SYNTHETIC",
+     "district": "downtown",
+     "geoid": "SYN000047",
+     "kind": "tract_centroid",
+     "overall_score": 82.3,
+     "rank": 2,
+     "reasons": [
+      "renter_households: 18,582 renter households within 1 mile (17 tracts). Percentile 92 of 300 locations in this metro (more is better): scores 92 of 100.",
+      "competition: 0 same-type places within 0.5 miles; nearest 0.5 miles; 0.83 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+      "median_household_income: household-weighted mean of tract median incomes within 1 mile: $59,312 (16 of 17 tracts publish a median). Percentile 29 of 298 locations in this metro (fewer is better): scores 71 of 100."
+     ]
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      [
+       [
+        -139.992576,
+        9.975676
+       ],
+       [
+        -139.992701,
+        9.977565
+       ],
+       [
+        -139.993076,
+        9.979422
+       ],
+       [
+        -139.993694,
+        9.981215
+       ],
+       [
+        -139.994544,
+        9.982913
+       ],
+       [
+        -139.995612,
+        9.984487
+       ],
+       [
+        -139.99688,
+        9.98591
+       ],
+       [
+        -139.998325,
+        9.987158
+       ],
+       [
+        -139.999923,
+        9.98821
+       ],
+       [
+        -140.001647,
+        9.989047
+       ],
+       [
+        -140.003467,
+        9.989656
+       ],
+       [
+        -140.005353,
+        9.990025
+       ],
+       [
+        -140.007271,
+        9.990149
+       ],
+       [
+        -140.009189,
+        9.990025
+       ],
+       [
+        -140.011074,
+        9.989656
+       ],
+       [
+        -140.012894,
+        9.989047
+       ],
+       [
+        -140.014618,
+        9.98821
+       ],
+       [
+        -140.016217,
+        9.987158
+       ],
+       [
+        -140.017662,
+        9.98591
+       ],
+       [
+        -140.018929,
+        9.984487
+       ],
+       [
+        -140.019997,
+        9.982913
+       ],
+       [
+        -140.020847,
+        9.981215
+       ],
+       [
+        -140.021465,
+        9.979422
+       ],
+       [
+        -140.02184,
+        9.977565
+       ],
+       [
+        -140.021966,
+        9.975676
+       ],
+       [
+        -140.02184,
+        9.973787
+       ],
+       [
+        -140.021465,
+        9.97193
+       ],
+       [
+        -140.020847,
+        9.970138
+       ],
+       [
+        -140.019997,
+        9.96844
+       ],
+       [
+        -140.018929,
+        9.966865
+       ],
+       [
+        -140.017662,
+        9.965442
+       ],
+       [
+        -140.016217,
+        9.964194
+       ],
+       [
+        -140.014618,
+        9.963142
+       ],
+       [
+        -140.012894,
+        9.962305
+       ],
+       [
+        -140.011074,
+        9.961696
+       ],
+       [
+        -140.009189,
+        9.961327
+       ],
+       [
+        -140.007271,
+        9.961203
+       ],
+       [
+        -140.005353,
+        9.961327
+       ],
+       [
+        -140.003467,
+        9.961696
+       ],
+       [
+        -140.001647,
+        9.962305
+       ],
+       [
+        -139.999923,
+        9.963142
+       ],
+       [
+        -139.998325,
+        9.964194
+       ],
+       [
+        -139.99688,
+        9.965442
+       ],
+       [
+        -139.995612,
+        9.966865
+       ],
+       [
+        -139.994544,
+        9.96844
+       ],
+       [
+        -139.993694,
+        9.970138
+       ],
+       [
+        -139.993076,
+        9.97193
+       ],
+       [
+        -139.992701,
+        9.973787
+       ],
+       [
+        -139.992576,
+        9.975676
+       ]
+      ]
+     ],
+     "type": "Polygon"
+    },
+    "properties": {
+     "data_label": "SYNTHETIC",
+     "geoid": "SYN000047",
+     "kind": "market_ring",
+     "note": "approximate circle around the tract centroid; not a tract boundary",
+     "radius_miles": 1.0,
+     "rank": 2
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      -140.001414,
+      10.025354
+     ],
+     "type": "Point"
+    },
+    "properties": {
+     "coverage_score": 0.9,
+     "data_label": "SYNTHETIC",
+     "district": "downtown",
+     "geoid": "SYN000000",
+     "kind": "tract_centroid",
+     "overall_score": 79.5,
+     "rank": 3,
+     "reasons": [
+      "renter_households: 9,182 renter households within 1 mile (10 tracts). Percentile 77 of 300 locations in this metro (more is better): scores 77 of 100.",
+      "competition: 0 same-type places within 0.5 miles; nearest 0.5 miles; 1.57 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+      "median_household_income: household-weighted mean of tract median incomes within 1 mile: $45,810 (9 of 10 tracts publish a median). Percentile 3 of 298 locations in this metro (fewer is better): scores 97 of 100."
+     ]
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      [
+       [
+        -139.986717,
+        10.025354
+       ],
+       [
+        -139.986842,
+        10.027244
+       ],
+       [
+        -139.987217,
+        10.0291
+       ],
+       [
+        -139.987835,
+        10.030893
+       ],
+       [
+        -139.988686,
+        10.032591
+       ],
+       [
+        -139.989754,
+        10.034165
+       ],
+       [
+        -139.991021,
+        10.035588
+       ],
+       [
+        -139.992467,
+        10.036837
+       ],
+       [
+        -139.994065,
+        10.037888
+       ],
+       [
+        -139.99579,
+        10.038726
+       ],
+       [
+        -139.99761,
+        10.039334
+       ],
+       [
+        -139.999496,
+        10.039704
+       ],
+       [
+        -140.001414,
+        10.039828
+       ],
+       [
+        -140.003332,
+        10.039704
+       ],
+       [
+        -140.005218,
+        10.039334
+       ],
+       [
+        -140.007038,
+        10.038726
+       ],
+       [
+        -140.008763,
+        10.037888
+       ],
+       [
+        -140.010361,
+        10.036837
+       ],
+       [
+        -140.011807,
+        10.035588
+       ],
+       [
+        -140.013074,
+        10.034165
+       ],
+       [
+        -140.014142,
+        10.032591
+       ],
+       [
+        -140.014993,
+        10.030893
+       ],
+       [
+        -140.015611,
+        10.0291
+       ],
+       [
+        -140.015986,
+        10.027244
+       ],
+       [
+        -140.016111,
+        10.025354
+       ],
+       [
+        -140.015986,
+        10.023465
+       ],
+       [
+        -140.015611,
+        10.021609
+       ],
+       [
+        -140.014993,
+        10.019816
+       ],
+       [
+        -140.014142,
+        10.018118
+       ],
+       [
+        -140.013074,
+        10.016544
+       ],
+       [
+        -140.011807,
+        10.015121
+       ],
+       [
+        -140.010361,
+        10.013872
+       ],
+       [
+        -140.008763,
+        10.01282
+       ],
+       [
+        -140.007038,
+        10.011983
+       ],
+       [
+        -140.005218,
+        10.011375
+       ],
+       [
+        -140.003332,
+        10.011005
+       ],
+       [
+        -140.001414,
+        10.010881
+       ],
+       [
+        -139.999496,
+        10.011005
+       ],
+       [
+        -139.99761,
+        10.011375
+       ],
+       [
+        -139.99579,
+        10.011983
+       ],
+       [
+        -139.994065,
+        10.01282
+       ],
+       [
+        -139.992467,
+        10.013872
+       ],
+       [
+        -139.991021,
+        10.015121
+       ],
+       [
+        -139.989754,
+        10.016544
+       ],
+       [
+        -139.988686,
+        10.018118
+       ],
+       [
+        -139.987835,
+        10.019816
+       ],
+       [
+        -139.987217,
+        10.021609
+       ],
+       [
+        -139.986842,
+        10.023465
+       ],
+       [
+        -139.986717,
+        10.025354
+       ]
+      ]
+     ],
+     "type": "Polygon"
+    },
+    "properties": {
+     "data_label": "SYNTHETIC",
+     "geoid": "SYN000000",
+     "kind": "market_ring",
+     "note": "approximate circle around the tract centroid; not a tract boundary",
+     "radius_miles": 1.0,
+     "rank": 3
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      -139.970872,
+      9.987303
+     ],
+     "type": "Point"
+    },
+    "properties": {
+     "coverage_score": 0.9,
+     "data_label": "SYNTHETIC",
+     "district": "inner ring",
+     "geoid": "SYN000071",
+     "kind": "tract_centroid",
+     "overall_score": 76.9,
+     "rank": 4,
+     "reasons": [
+      "renter_households: 10,279 renter households within 1 mile (11 tracts). Percentile 80 of 300 locations in this metro (more is better): scores 80 of 100.",
+      "competition: 0 same-type places within 0.5 miles; nearest 0.7 miles; 1.32 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+      "median_household_income: household-weighted mean of tract median incomes within 1 mile: $57,843 (11 of 11 tracts publish a median). Percentile 24 of 298 locations in this metro (fewer is better): scores 76 of 100."
+     ]
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      [
+       [
+        -139.956176,
+        9.987303
+       ],
+       [
+        -139.956302,
+        9.989192
+       ],
+       [
+        -139.956677,
+        9.991049
+       ],
+       [
+        -139.957295,
+        9.992842
+       ],
+       [
+        -139.958145,
+        9.99454
+       ],
+       [
+        -139.959213,
+        9.996114
+       ],
+       [
+        -139.960481,
+        9.997537
+       ],
+       [
+        -139.961926,
+        9.998785
+       ],
+       [
+        -139.963524,
+        9.999837
+       ],
+       [
+        -139.965248,
+        10.000674
+       ],
+       [
+        -139.967068,
+        10.001283
+       ],
+       [
+        -139.968954,
+        10.001652
+       ],
+       [
+        -139.970872,
+        10.001776
+       ],
+       [
+        -139.97279,
+        10.001652
+       ],
+       [
+        -139.974676,
+        10.001283
+       ],
+       [
+        -139.976496,
+        10.000674
+       ],
+       [
+        -139.97822,
+        9.999837
+       ],
+       [
+        -139.979818,
+        9.998785
+       ],
+       [
+        -139.981263,
+        9.997537
+       ],
+       [
+        -139.982531,
+        9.996114
+       ],
+       [
+        -139.983599,
+        9.99454
+       ],
+       [
+        -139.984449,
+        9.992842
+       ],
+       [
+        -139.985067,
+        9.991049
+       ],
+       [
+        -139.985442,
+        9.989192
+       ],
+       [
+        -139.985568,
+        9.987303
+       ],
+       [
+        -139.985442,
+        9.985414
+       ],
+       [
+        -139.985067,
+        9.983557
+       ],
+       [
+        -139.984449,
+        9.981765
+       ],
+       [
+        -139.983599,
+        9.980067
+       ],
+       [
+        -139.982531,
+        9.978492
+       ],
+       [
+        -139.981263,
+        9.977069
+       ],
+       [
+        -139.979818,
+        9.975821
+       ],
+       [
+        -139.97822,
+        9.974769
+       ],
+       [
+        -139.976496,
+        9.973932
+       ],
+       [
+        -139.974676,
+        9.973323
+       ],
+       [
+        -139.97279,
+        9.972954
+       ],
+       [
+        -139.970872,
+        9.97283
+       ],
+       [
+        -139.968954,
+        9.972954
+       ],
+       [
+        -139.967068,
+        9.973323
+       ],
+       [
+        -139.965248,
+        9.973932
+       ],
+       [
+        -139.963524,
+        9.974769
+       ],
+       [
+        -139.961926,
+        9.975821
+       ],
+       [
+        -139.960481,
+        9.977069
+       ],
+       [
+        -139.959213,
+        9.978492
+       ],
+       [
+        -139.958145,
+        9.980067
+       ],
+       [
+        -139.957295,
+        9.981765
+       ],
+       [
+        -139.956677,
+        9.983557
+       ],
+       [
+        -139.956302,
+        9.985414
+       ],
+       [
+        -139.956176,
+        9.987303
+       ]
+      ]
+     ],
+     "type": "Polygon"
+    },
+    "properties": {
+     "data_label": "SYNTHETIC",
+     "geoid": "SYN000071",
+     "kind": "market_ring",
+     "note": "approximate circle around the tract centroid; not a tract boundary",
+     "radius_miles": 1.0,
+     "rank": 4
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      -139.986257,
+      10.00009
+     ],
+     "type": "Point"
+    },
+    "properties": {
+     "coverage_score": 0.9,
+     "data_label": "SYNTHETIC",
+     "district": "downtown",
+     "geoid": "SYN000073",
+     "kind": "tract_centroid",
+     "overall_score": 76.6,
+     "rank": 5,
+     "reasons": [
+      "renter_households: 14,964 renter households within 1 mile (15 tracts). Percentile 86 of 300 locations in this metro (more is better): scores 86 of 100.",
+      "competition: 0 same-type places within 0.5 miles; nearest 0.5 miles; 1.35 per 10,000 residents in the market ring vs a metro median of 0.95. Percentile 24 of 300 locations in this metro (fewer is better): scores 76 of 100.",
+      "median_household_income: household-weighted mean of tract median incomes within 1 mile: $58,680 (15 of 15 tracts publish a median). Percentile 26 of 298 locations in this metro (fewer is better): scores 74 of 100."
+     ]
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      [
+       [
+        -139.971561,
+        10.00009
+       ],
+       [
+        -139.971687,
+        10.001979
+       ],
+       [
+        -139.972062,
+        10.003836
+       ],
+       [
+        -139.97268,
+        10.005628
+       ],
+       [
+        -139.97353,
+        10.007326
+       ],
+       [
+        -139.974598,
+        10.0089
+       ],
+       [
+        -139.975865,
+        10.010324
+       ],
+       [
+        -139.977311,
+        10.011572
+       ],
+       [
+        -139.978909,
+        10.012624
+       ],
+       [
+        -139.980633,
+        10.013461
+       ],
+       [
+        -139.982454,
+        10.01407
+       ],
+       [
+        -139.984339,
+        10.014439
+       ],
+       [
+        -139.986257,
+        10.014563
+       ],
+       [
+        -139.988175,
+        10.014439
+       ],
+       [
+        -139.990061,
+        10.01407
+       ],
+       [
+        -139.991881,
+        10.013461
+       ],
+       [
+        -139.993605,
+        10.012624
+       ],
+       [
+        -139.995204,
+        10.011572
+       ],
+       [
+        -139.996649,
+        10.010324
+       ],
+       [
+        -139.997917,
+        10.0089
+       ],
+       [
+        -139.998985,
+        10.007326
+       ],
+       [
+        -139.999835,
+        10.005628
+       ],
+       [
+        -140.000453,
+        10.003836
+       ],
+       [
+        -140.000828,
+        10.001979
+       ],
+       [
+        -140.000954,
+        10.00009
+       ],
+       [
+        -140.000828,
+        9.998201
+       ],
+       [
+        -140.000453,
+        9.996344
+       ],
+       [
+        -139.999835,
+        9.994551
+       ],
+       [
+        -139.998985,
+        9.992853
+       ],
+       [
+        -139.997917,
+        9.991279
+       ],
+       [
+        -139.996649,
+        9.989856
+       ],
+       [
+        -139.995204,
+        9.988607
+       ],
+       [
+        -139.993605,
+        9.987556
+       ],
+       [
+        -139.991881,
+        9.986718
+       ],
+       [
+        -139.990061,
+        9.98611
+       ],
+       [
+        -139.988175,
+        9.98574
+       ],
+       [
+        -139.986257,
+        9.985617
+       ],
+       [
+        -139.984339,
+        9.98574
+       ],
+       [
+        -139.982454,
+        9.98611
+       ],
+       [
+        -139.980633,
+        9.986718
+       ],
+       [
+        -139.978909,
+        9.987556
+       ],
+       [
+        -139.977311,
+        9.988607
+       ],
+       [
+        -139.975865,
+        9.989856
+       ],
+       [
+        -139.974598,
+        9.991279
+       ],
+       [
+        -139.97353,
+        9.992853
+       ],
+       [
+        -139.97268,
+        9.994551
+       ],
+       [
+        -139.972062,
+        9.996344
+       ],
+       [
+        -139.971687,
+        9.998201
+       ],
+       [
+        -139.971561,
+        10.00009
+       ]
+      ]
+     ],
+     "type": "Polygon"
+    },
+    "properties": {
+     "data_label": "SYNTHETIC",
+     "geoid": "SYN000073",
+     "kind": "market_ring",
+     "note": "approximate circle around the tract centroid; not a tract boundary",
+     "radius_miles": 1.0,
+     "rank": 5
+    },
+    "type": "Feature"
+   }
+  ],
+  "type": "FeatureCollection"
+ },
+ "metro_id": "synthetic_metro",
+ "metro_name": "Synthetic Metro (SYNTHETIC)",
+ "mode": "synthetic",
+ "mode_reason": "SYNTHETIC metro: generated data for demonstration and validation only",
+ "n_ranked": 298,
+ "n_tracts": 300,
+ "notes": [
+  "SYNTHETIC metro: generated data for demonstration and validation; not a real place.",
+  "Tracts are ranked by the same overall score as score_site at the tract centroid. Tracts missing required data are excluded, not guessed. A score ranks locations within this metro; it does not predict sales."
+ ],
+ "profile_id": "laundromat",
+ "scoring_method": "siteiq-v1: percentile rank within the metro per factor, weighted mean of the scored factors"
+}

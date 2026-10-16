@@ -1,0 +1,21 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-13 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://geo.dot.gov/server/rest/services/Hosted/HPMS_FULL_TX_2024/FeatureServer/0/query",
+  "params": {
+    "where": "county_id = 201 AND aadt > 0",
+    "f": "geojson",
+    "outFields": "route_id,routename,aadt,f_system,data_year",
+    "returnGeometry": "true",
+    "outSR": "4326",
+    "geometryPrecision": "5",
+    "maxAllowableOffset": "0.0001",
+    "orderByFields": "objectid",
+    "resultOffset": "0",
+    "resultRecordCount": "5"
+  },
+  "recorded_at_utc": "2026-10-13T14:43:25+00:00",
+  "content_type": "application/geo+json; charset=UTF-8",
+  "body_sha256": "64095f99a01c8a62e340bf3ce8e6382b84b173030cca0a2e5f417c6718c2c38e",
+  "full_body_sha256": "64095f99a01c8a62e340bf3ce8e6382b84b173030cca0a2e5f417c6718c2c38e",
+  "body": "{\"features\":[{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.64995,29.68959],[-95.64992,29.68959]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"080AA1503\",\"data_year\":2024,\"f_system\":4,\"routename\":null,\"aadt\":18411}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.76649,29.75524],[-95.76649,29.75526]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"080AA1850\",\"data_year\":2024,\"f_system\":4,\"routename\":null,\"aadt\":9060}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.54793,29.92878],[-95.54793,29.9288]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"102A10007\",\"data_year\":2024,\"f_system\":5,\"routename\":null,\"aadt\":2871}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.54793,29.9288],[-95.54797,29.93318],[-95.54811,29.93352],[-95.54844,29.93369],[-95.56452,29.93366]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"102A10007\",\"data_year\":2024,\"f_system\":5,\"routename\":null,\"aadt\":2871}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.56452,29.93366],[-95.56454,29.93366]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"102A10007\",\"data_year\":2024,\"f_system\":5,\"routename\":null,\"aadt\":2871}}],\"type\":\"FeatureCollection\",\"properties\":{\"exceededTransferLimit\":true}}"
+}

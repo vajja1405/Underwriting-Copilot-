@@ -1,0 +1,29 @@
+# Security policy for the underwriting copilot (Phase 5 B). Read by src/uwcopilot/security/config.py.
+# Everything here applies to SYNTHETIC demo data. Roles are CLAIMED in this demo: the CLI and the agent have no
+# identity provider, so these rules show how authority is enforced once a role is known; they do not prove who
+# someone is. See docs/security.md.
+version: 1
+
+# security.rbac.authorize("approve_file") lets an underwriter approve a file only up to this amount (USD); above it
+# only a senior_underwriter may. The amount is the requested amount for credit and startup credit, and the schedule
+# TIV for insurance. Values must be finite numbers, zero or more (.nan and .inf are refused).
+# NOTE: no runtime path calls authorize("approve_file") yet. At runtime the human checkpoint
+# (agent.hitl.validate_decision) enforces the same numbers from its own copy, agent.hitl.APPROVAL_LIMITS
+# (NBC-7.2, HM-9.2, NSP-9.1: an underwriter cannot approve any startup file, so that limit is 0).
+# tests/security/test_rbac.py fails if the two disagree, so editing this file alone changes nothing at runtime.
+senior_approval_above:
+  credit: 150000
+  insurance: 5000000
+  startup_credit: 0
+
+# Who may view a packet's documents and its extraction (page text, extracted fields, document checks,
+# contradictions). A principal needs BOTH a document-viewing role (underwriter or senior_underwriter; never
+# model_validator or admin) AND a grant here.
+packet_acl:
+  # Roles that may view the documents of a packet that has no entry of its own below.
+  default_roles: [underwriter, senior_underwriter]
+  # Per-packet entries REPLACE the default for that packet. Example (SYNTHETIC packet id):
+  #   PKT-C-024:
+  #     roles: [senior_underwriter]   # any senior underwriter
+  #     principals: [uw.jdoe]         # plus these principal ids (they still need a document-viewing role)
+  packets: {}

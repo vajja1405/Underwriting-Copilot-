@@ -38,8 +38,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send, interrupt
 
 from uwcopilot.agent.applications import (
-    CreditApplication,
-    InsuranceApplication,
+    AnyApplication,
     application_inputs,
     canonical_json,
     inputs_sha256,
@@ -59,7 +58,6 @@ from uwcopilot.agent.memo import (
     parse_memo,
 )
 from uwcopilot.agent.policy import (
-    POLICY_VERSION,
     InjectionFlag,
     PolicyInputs,
     PolicyResult,
@@ -151,7 +149,7 @@ class AgentDeps:
 # --------------------------------------------------------------------------------------------------------------
 
 
-def application_of(state: Mapping[str, Any]) -> CreditApplication | InsuranceApplication:
+def application_of(state: Mapping[str, Any]) -> AnyApplication:
     """The validated application from state."""
     return parse_application(state["application"])
 
@@ -499,7 +497,7 @@ def build_graph(deps: AgentDeps) -> StateGraph:
                 "stamp": FAKE_LLM_STAMP if fake else None,
                 "versions": {
                     "graph_version": GRAPH_VERSION,
-                    "policy_version": POLICY_VERSION,
+                    "policy_version": policy.policy_version,
                     "prompt_version": PROMPT_VERSION,
                     "llm_provider": deps.llm.provider,
                     "llm_model": deps.llm.model,

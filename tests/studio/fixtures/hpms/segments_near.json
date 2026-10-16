@@ -1,0 +1,24 @@
+{
+  "fixture_origin": "recorded from the live API on 2026-10-12 by tests/studio/fixtures/record_fixtures.py",
+  "url": "https://geo.dot.gov/server/rest/services/Hosted/HPMS_FULL_TX_2024/FeatureServer/0/query",
+  "params": {
+    "geometry": "-95.369483,29.760724",
+    "geometryType": "esriGeometryPoint",
+    "inSR": "4326",
+    "spatialRel": "esriSpatialRelIntersects",
+    "distance": "161",
+    "units": "esriSRUnit_Meter",
+    "where": "aadt > 0",
+    "outFields": "route_id,routename,aadt,f_system,data_year,begin_point,end_point",
+    "returnGeometry": "true",
+    "outSR": "4326",
+    "geometryPrecision": "6",
+    "resultRecordCount": "50",
+    "f": "geojson"
+  },
+  "recorded_at_utc": "2026-10-12T19:38:46+00:00",
+  "content_type": "application/geo+json; charset=UTF-8",
+  "body_sha256": "fe934ea99b44ab780dbf4886de174ab5ee19e304cc3eb49976f6ad66f4080122",
+  "full_body_sha256": "fe934ea99b44ab780dbf4886de174ab5ee19e304cc3eb49976f6ad66f4080122",
+  "body": "{\"features\":[{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.370846,29.76325],[-95.371054,29.763054],[-95.371467,29.76281],[-95.371615,29.762711],[-95.371738,29.76262],[-95.371907,29.762459],[-95.372017,29.762294],[-95.372078,29.762169],[-95.372112,29.762049],[-95.372121,29.761943],[-95.372115,29.761837],[-95.372089,29.761734],[-95.372049,29.76163],[-95.371994,29.761531],[-95.371917,29.761417],[-95.3718,29.761281],[-95.371635,29.761131],[-95.371407,29.760962],[-95.370066,29.7601]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"1629418090\",\"end_point\":0.306,\"begin_point\":0,\"data_year\":2024,\"f_system\":1,\"routename\":null,\"aadt\":6724}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.366329,29.765349],[-95.366563,29.764638],[-95.367268,29.763508],[-95.368765,29.761757],[-95.371272,29.758564]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"255832\",\"end_point\":36.056,\"begin_point\":35.5,\"data_year\":2024,\"f_system\":5,\"routename\":null,\"aadt\":1096}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.370094,29.760065],[-95.366025,29.757666],[-95.362779,29.755689]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"256779\",\"end_point\":36.189,\"begin_point\":35.75,\"data_year\":2024,\"f_system\":5,\"routename\":null,\"aadt\":4445}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.371129,29.764138],[-95.371088,29.764033],[-95.371022,29.763926],[-95.370659,29.763618],[-95.370466,29.763299],[-95.370128,29.762936],[-95.369962,29.76282],[-95.369728,29.762676],[-95.369265,29.762306],[-95.368754,29.761737]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"257065\",\"end_point\":1.427,\"begin_point\":1.209,\"data_year\":2024,\"f_system\":5,\"routename\":null,\"aadt\":3147}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.368754,29.761737],[-95.368737,29.761717],[-95.36869,29.761662]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"257065\",\"end_point\":1.434,\"begin_point\":1.427,\"data_year\":2024,\"f_system\":5,\"routename\":null,\"aadt\":2711}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.36869,29.761662],[-95.368521,29.761459],[-95.368368,29.76131],[-95.3682,29.761168],[-95.368021,29.761048],[-95.367202,29.760535],[-95.36633,29.760021],[-95.363736,29.758465],[-95.361168,29.756872],[-95.358584,29.755326],[-95.355407,29.75341]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"257065\",\"end_point\":2.418,\"begin_point\":1.434,\"data_year\":2024,\"f_system\":5,\"routename\":null,\"aadt\":2711}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.373742,29.76024],[-95.373589,29.760263],[-95.373158,29.760373],[-95.372923,29.760528],[-95.372728,29.760733],[-95.372527,29.760998],[-95.372405,29.761092],[-95.372062,29.761293],[-95.371861,29.761392],[-95.371672,29.761462],[-95.371419,29.761521],[-95.371061,29.761534],[-95.370739,29.761497],[-95.370455,29.761396],[-95.370182,29.761267],[-95.369906,29.76109],[-95.369491,29.760832]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"257260\",\"end_point\":36.058,\"begin_point\":35.756,\"data_year\":2024,\"f_system\":4,\"routename\":null,\"aadt\":7945}},{\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-95.369491,29.760832],[-95.367827,29.759844]],\"crs\":null},\"type\":\"Feature\",\"properties\":{\"route_id\":\"257260\",\"end_point\":36.179,\"begin_point\":36.058,\"data_year\":2024,\"f_system\":4,\"routename\":null,\"aadt\":7945}}],\"type\":\"FeatureCollection\",\"properties\":{\"exceededTransferLimit\":false}}"
+}

@@ -1,0 +1,96 @@
+{
+ "business_types": [
+  {
+   "display_name": "Car wash (express tunnel and self-serve)",
+   "id": "car_wash"
+  },
+  {
+   "display_name": "Laundromat",
+   "id": "laundromat"
+  },
+  {
+   "display_name": "Motel / small hotel",
+   "id": "motel"
+  },
+  {
+   "display_name": "Restaurant / cafe / dessert shop (ice cream, coffee, bakery)",
+   "id": "restaurant_cafe"
+  },
+  {
+   "display_name": "Small retail storefront (convenience or specialty)",
+   "id": "retail_storefront"
+  },
+  {
+   "display_name": "Short-term rental (Airbnb-style home or unit)",
+   "id": "short_term_rental"
+  }
+ ],
+ "business_types_note": null,
+ "data_labels": {
+  "public": "PUBLIC",
+  "simulation": "simulated, based on stated assumptions",
+  "synthetic": "SYNTHETIC"
+ },
+ "dev_auth": true,
+ "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+ "hf_oauth": false,
+ "is_space": false,
+ "metros": [
+  {
+   "data_label": "PUBLIC",
+   "id": "chicago_il_in",
+   "mode": "limited",
+   "mode_reason": "no data snapshot",
+   "name": "Chicago-Naperville-Elgin, IL-IN"
+  },
+  {
+   "data_label": "PUBLIC",
+   "id": "dallas_fort_worth_tx",
+   "mode": "limited",
+   "mode_reason": "no data snapshot",
+   "name": "Dallas-Fort Worth-Arlington, TX"
+  },
+  {
+   "data_label": "PUBLIC",
+   "id": "houston_tx",
+   "mode": "limited",
+   "mode_reason": "no data snapshot",
+   "name": "Houston-Pasadena-The Woodlands, TX"
+  },
+  {
+   "data_label": "PUBLIC",
+   "id": "los_angeles_ca",
+   "mode": "limited",
+   "mode_reason": "no data snapshot",
+   "name": "Los Angeles-Long Beach-Anaheim, CA"
+  },
+  {
+   "data_label": "PUBLIC",
+   "id": "new_york_ny_nj_pa",
+   "mode": "limited",
+   "mode_reason": "no data snapshot",
+   "name": "New York-Newark-Jersey City, NY-NJ"
+  },
+  {
+   "data_label": "SYNTHETIC",
+   "id": "synthetic_metro",
+   "mode": "synthetic",
+   "mode_reason": "SYNTHETIC metro: generated data for demonstration and validation only",
+   "name": "Synthetic Metro (SYNTHETIC)"
+  }
+ ],
+ "metros_note": null,
+ "payments_enabled": false,
+ "product_name": "Fundproof",
+ "roles": [
+  "founder",
+  "lender_reviewer",
+  "lender_senior",
+  "admin"
+ ],
+ "sides": [
+  "founder",
+  "lender"
+ ],
+ "space_url": null
+}

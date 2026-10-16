@@ -1,0 +1,57 @@
+{"id": "NB01", "gold_section": "NBC-1.1", "key_facts": [{"text": "$500,000", "kind": "number"}]}
+{"id": "NB02", "gold_section": "NBC-1.2", "key_facts": [{"text": "20%", "kind": "number"}, {"text": "principal", "kind": "term"}]}
+{"id": "NB03", "gold_section": "NBC-2.1", "key_facts": [{"text": "18 months", "kind": "number"}, {"text": "$225,000", "kind": "number"}, {"text": "exception", "kind": "term"}]}
+{"id": "NB04", "gold_section": "NBC-7.4", "key_facts": [{"text": "7 years", "kind": "number"}]}
+{"id": "NB05", "gold_section": "NBC-2.2", "key_facts": [{"text": "10%", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "NB06", "gold_section": "NBC-2.3", "key_facts": [{"text": "30%", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "NB07", "gold_section": "NBC-3.1", "key_facts": [{"text": "$500,000", "kind": "number"}, {"text": "CPA", "kind": "term"}]}
+{"id": "NB09", "gold_section": "NBC-3.2", "key_facts": [{"text": "12 months", "kind": "number"}, {"text": "request more information", "kind": "term", "alternates": ["missing statements", "missing months"]}]}
+{"id": "NB11", "gold_section": "NBC-3.4", "key_facts": [{"text": "10.0%", "kind": "number"}, {"text": "25.0%", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}, {"text": "written explanation", "kind": "term"}]}
+{"id": "NB12", "gold_section": "NBC-3.5", "key_facts": [{"text": "more than 6", "kind": "number"}]}
+{"id": "NB13", "gold_section": "NBC-4.1", "key_facts": [{"text": "12 months", "kind": "number"}, {"text": "10%", "kind": "number"}, {"text": "committed amount", "kind": "term"}]}
+{"id": "NB14", "gold_section": "NBC-4.2", "key_facts": [{"text": "1.25", "kind": "number"}, {"text": "1.10", "kind": "number"}, {"text": "two compensating factors", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "NB16", "gold_section": "NBC-4.4", "key_facts": [{"text": "90 days", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}, {"text": "stacking", "kind": "term"}]}
+{"id": "NB17", "gold_section": "NBC-4.5", "key_facts": [{"text": "2.00 percentage points", "kind": "number"}, {"text": "1.10", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "NB18", "gold_section": "NBC-5.1", "key_facts": [{"text": "60%", "kind": "number"}, {"text": "independent appraisal", "kind": "term"}]}
+{"id": "NB19", "gold_section": "NBC-6.1", "key_facts": [{"text": "5 percentage points", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}, {"text": "KYC Operations", "kind": "role"}]}
+{"id": "NB21", "gold_section": "NBC-6.3", "key_facts": [{"text": "Compliance", "kind": "role"}, {"text": "same business day", "kind": "term"}]}
+{"id": "NB22", "gold_section": "NBC-6.4", "key_facts": [{"text": "Senior Underwriter", "kind": "role"}, {"text": "unverified", "kind": "term"}]}
+{"id": "NB23", "gold_section": "NBC-7.1", "key_facts": [{"text": "decline authority", "kind": "term", "alternates": ["authority to decline"]}]}
+{"id": "NB24", "gold_section": "NBC-7.2", "key_facts": [{"text": "Chief Credit Officer", "kind": "role"}, {"text": "$1,000,000", "kind": "number"}]}
+{"id": "NB25", "gold_section": "NBC-7.3", "key_facts": [{"text": "resolved", "kind": "term", "alternates": ["resolves", "resolution", "cleared", "clears", "clearance"]}, {"text": "in writing", "kind": "term", "alternates": ["written"]}]}
+{"id": "NB26", "gold_section": "NBC-8.1", "key_facts": [{"text": "12.0%", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "NB27", "gold_section": "NBC-7.4", "key_facts": [{"text": "1 business day", "kind": "number"}, {"text": "exception register", "kind": "term"}]}
+{"id": "NB29", "gold_section": "NBC-8.2", "key_facts": [{"text": "15.0%", "kind": "number"}]}
+{"id": "NB30", "gold_section": "NBC-8.3", "key_facts": [{"text": "contact the applicant", "kind": "term", "alternates": ["contact the borrower", "contacting the applicant", "contacting the borrower", "contact applicants", "contact borrowers", "messages to the borrower", "message the borrower", "messages to the applicant"]}]}
+{"id": "NB31", "gold_section": "NBC-9.1", "key_facts": [{"text": "$1.00", "kind": "number"}, {"text": "Fraud Operations", "kind": "role"}]}
+{"id": "NB32", "gold_section": "NBC-9.2", "key_facts": [{"text": "Fraud Operations", "kind": "role"}, {"text": "document integrity", "kind": "term"}]}
+{"id": "NB33", "gold_section": "NBC-10.1", "key_facts": [{"text": "10 years", "kind": "number"}]}
+{"id": "HM01", "gold_section": "HM-1.1", "key_facts": [{"text": "$10,000,000", "kind": "number"}]}
+{"id": "HM02", "gold_section": "HM-1.2", "key_facts": [{"text": "replacement cost", "kind": "term"}, {"text": "business personal property", "kind": "term"}, {"text": "12 months", "kind": "number"}]}
+{"id": "HM03", "gold_section": "HM-2.1", "key_facts": [{"text": "Underwriting Manager", "kind": "role"}, {"text": "1950", "kind": "term"}]}
+{"id": "HM04", "gold_section": "HM-2.2", "key_facts": [{"text": "300 persons", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "HM05", "gold_section": "HM-2.3", "key_facts": [{"text": "6 months", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "HM06", "gold_section": "HM-3.1", "key_facts": [{"text": "$5,000,000", "kind": "number"}, {"text": "12 months", "kind": "number"}]}
+{"id": "HM09", "gold_section": "HM-4.1", "key_facts": [{"text": "$250,000", "kind": "number"}, {"text": "large-loss excess", "kind": "term"}]}
+{"id": "HM10", "gold_section": "HM-4.2", "key_facts": [{"text": "55.0%", "kind": "number"}, {"text": "70.0%", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "HM11", "gold_section": "HM-4.3", "key_facts": [{"text": "4 or more", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "HM13", "gold_section": "HM-5.2", "key_facts": [{"text": "5.0%", "kind": "number"}, {"text": "15.0%", "kind": "number"}, {"text": "corrected", "kind": "term"}]}
+{"id": "HM14", "gold_section": "HM-5.2", "key_facts": [{"text": "$190", "kind": "number"}]}
+{"id": "HM15", "gold_section": "HM-5.3", "key_facts": [{"text": "$2,500,000", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "HM16", "gold_section": "HM-6.1", "key_facts": [{"text": "2%", "kind": "number"}, {"text": "named-storm deductible", "kind": "term"}]}
+{"id": "HM17", "gold_section": "HM-6.2", "key_facts": [{"text": "elevation certificate", "kind": "term"}, {"text": "excluded", "kind": "term"}]}
+{"id": "HM18", "gold_section": "HM-7.1", "key_facts": [{"text": "payroll", "kind": "term"}]}
+{"id": "HM19", "gold_section": "HM-8.1", "key_facts": [{"text": "Underwriting Manager", "kind": "role"}]}
+{"id": "HM21", "gold_section": "HM-8.3", "key_facts": [{"text": "Compliance", "kind": "role"}, {"text": "SIU", "kind": "role"}]}
+{"id": "HM22", "gold_section": "HM-9.1", "key_facts": [{"text": "subjectivities", "kind": "term"}]}
+{"id": "HM23", "gold_section": "HM-9.2", "key_facts": [{"text": "Underwriting Manager", "kind": "role"}, {"text": "$150,000", "kind": "number"}]}
+{"id": "HM24", "gold_section": "HM-9.3", "key_facts": [{"text": "resolved", "kind": "term", "alternates": ["resolves", "resolution", "cleared", "clears", "clearance"]}, {"text": "in writing", "kind": "term", "alternates": ["written"]}]}
+{"id": "HM25", "gold_section": "HM-9.4", "key_facts": [{"text": "size of the departure", "kind": "term"}, {"text": "mitigating factors", "kind": "term"}]}
+{"id": "HM26", "gold_section": "HM-10.1", "key_facts": [{"text": "Model Governance", "kind": "role"}]}
+{"id": "HM27", "gold_section": "HM-10.2", "key_facts": [{"text": "quarterly", "kind": "term"}, {"text": "20.0%", "kind": "number"}]}
+{"id": "HM29", "gold_section": "HM-11.1", "key_facts": [{"text": "SIU", "kind": "role"}]}
+{"id": "HM30", "gold_section": "HM-11.2", "key_facts": [{"text": "SIU", "kind": "role"}, {"text": "document integrity", "kind": "term"}]}
+{"id": "HM31", "gold_section": "HM-12.1", "key_facts": [{"text": "5 years", "kind": "number"}]}
+{"id": "HM32", "gold_section": "HM-7.1", "key_facts": [{"text": "$2,000,000", "kind": "number"}]}
+{"id": "HM33", "gold_section": "HM-2.1", "key_facts": [{"text": "20 years", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}
+{"id": "HM34", "gold_section": "HM-10.1", "key_facts": [{"text": "25.0%", "kind": "number"}, {"text": "Senior Underwriter", "kind": "role"}]}

@@ -1,0 +1,11 @@
+{
+  "fixture_origin": "hand-written from documentation, NOT recorded from the live API - re-record when ORS_API_KEY is available (values are SYNTHETIC)",
+  "note": "Shape of an openrouteservice v2 isochrones GeoJSON answer (field names from IsochronesRequest.java and GeoJSONIsochroneProperties.java in github.com/GIScience/openrouteservice, main branch, read 2026-10-12). The polygons are SYNTHETIC squares around the SYNTHETIC metro's origin in open ocean; a live answer with the key was recorded on 2026-10-13 in isochrones_houston_recorded.json. This hand-written answer stays because the scoring tests need polygons around the SYNTHETIC metro's origin.",
+  "url": "https://api.openrouteservice.org/v2/isochrones/driving-car",
+  "params": {
+    "json": "(payload built by studio.siteiq.isochrones.isochrone_payload)"
+  },
+  "content_type": "application/geo+json;charset=UTF-8",
+  "body_sha256": "285a3237325ae80cc24ae58a37c17ecd824f29992efb2a1671b65c130708e65f",
+  "body": "{\"type\": \"FeatureCollection\", \"bbox\": [-140.06, 9.94, -139.94, 10.06], \"features\": [{\"type\": \"Feature\", \"properties\": {\"group_index\": 0, \"value\": 300.0, \"center\": [-140.0, 10.0]}, \"geometry\": {\"type\": \"Polygon\", \"coordinates\": [[[-140.02, 9.98], [-139.98, 9.98], [-139.98, 10.02], [-140.02, 10.02], [-140.02, 9.98]]]}}, {\"type\": \"Feature\", \"properties\": {\"group_index\": 0, \"value\": 600.0, \"center\": [-140.0, 10.0]}, \"geometry\": {\"type\": \"Polygon\", \"coordinates\": [[[-140.04, 9.96], [-139.96, 9.96], [-139.96, 10.04], [-140.04, 10.04], [-140.04, 9.96]]]}}, {\"type\": \"Feature\", \"properties\": {\"group_index\": 0, \"value\": 900.0, \"center\": [-140.0, 10.0]}, \"geometry\": {\"type\": \"Polygon\", \"coordinates\": [[[-140.06, 9.94], [-139.94, 9.94], [-139.94, 10.06], [-140.06, 10.06], [-140.06, 9.94]]]}}], \"metadata\": {\"service\": \"isochrones\", \"note\": \"hand-written SYNTHETIC answer\"}}"
+}
