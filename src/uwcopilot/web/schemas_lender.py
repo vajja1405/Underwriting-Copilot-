@@ -5,7 +5,7 @@ every response "SYNTHETIC DEMO". The agent's own models are reused where they ex
 calculations and passed checks; screening list snapshots), so the API shows exactly what the agent produced.
 """
 
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -153,7 +153,11 @@ class ActionCheck(BaseModel):
 
 
 class DecisionSummary(BaseModel):
-    """The essentials of a recorded DEMO decision."""
+    """The essentials of a recorded DEMO decision.
+
+    review_action and reason_codes come from governance.feedback, which also maps records stored before Phase 6
+    (from is_override and override_reason), so a user's older DEMO records still show them.
+    """
 
     record_id: str
     record_sha256: str
@@ -161,8 +165,18 @@ class DecisionSummary(BaseModel):
     final_status: str
     reviewer_role: str
     is_override: bool
+    review_action: Literal["accept", "override"] | None = None
+    reason_codes: list[str] = Field(default_factory=list)
     decided_at: str | None
     label: str = "DEMO"
+
+
+class OverrideReasonOut(BaseModel):
+    """One code of the fixed override reason list (config/override_reasons.yaml), for labels on the form."""
+
+    code: str
+    label: str
+    description: str
 
 
 class LenderFileResponse(BaseModel):
@@ -188,6 +202,7 @@ class LenderFileResponse(BaseModel):
     allowed_actions: list[str]
     action_checks: list[ActionCheck]
     override_reasons: list[str]
+    override_reason_options: list[OverrideReasonOut] = Field(default_factory=list)
     findings: list[Finding]
     checks_passed: list[CheckPassed]
     calculations: list[Calculation]
@@ -223,13 +238,19 @@ class SectionResponse(BaseModel):
 
 
 class DecisionRequest(BaseModel):
-    """POST /api/lender/files/{id}/decision. Who decides and in which role comes from the session, not the body."""
+    """POST /api/lender/files/{id}/decision. Who decides and in which role comes from the session, not the body.
+
+    reason_codes and reason_text are optional, so a form that sends only override_reason keeps working. Which codes
+    are allowed, and whether the action needs one, is checked by the agent's checkpoint (agent.hitl), not here.
+    """
 
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True, allow_inf_nan=False)
 
     action: ReviewerAction
     rationale: str = Field(min_length=10, max_length=2000)
     override_reason: str | None = Field(default=None, max_length=64)
+    reason_codes: list[Annotated[str, Field(max_length=64)]] = Field(default_factory=list, max_length=10)
+    reason_text: str | None = Field(default=None, max_length=1000)
 
 
 class DecisionResponse(BaseModel):
