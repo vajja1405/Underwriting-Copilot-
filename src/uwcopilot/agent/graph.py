@@ -22,6 +22,9 @@
   "override"), reason_codes from config/override_reasons.yaml and the optional reason_text (governance/feedback.py).
 - record_decision appends one chained, idempotent decision record. reviewer_label says who supplied the decision:
   "human" (the default) or, for example, "SIMULATED" when a script plays the reviewer (scripts/feedback_report.py).
+  The record carries a "lineage" block (governance/lineage.py): the model versions behind its score_risk calls and
+  their datasets' checksums, the SHA-256 of the memo prompt's source file, the eval-set versions and the results
+  files that validated them. scripts/lineage.py prints it and flags what is STALE.
 
 State is plain JSON data so the SQLite checkpointer can persist it; a run can be killed at the interrupt and resumed
 later from the same file by a new process (runner.py).
@@ -32,6 +35,7 @@ import operator
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Annotated, Any, TypedDict
 
 from langchain_core.runnables import RunnableConfig
@@ -39,6 +43,7 @@ from langgraph.errors import GraphInterrupt
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send, interrupt
 
+from uwcopilot.agent import memo as memo_module
 from uwcopilot.agent.applications import (
     AnyApplication,
     application_inputs,
@@ -71,6 +76,7 @@ from uwcopilot.agent.tool_plan import ToolRequest, plan_tool_calls
 from uwcopilot.agent.tool_runner import MAX_TOOL_CALLS, ApprovedCall, ToolResult, execute_call, vet_requests
 from uwcopilot.agent.vocab import FAKE_LLM_STAMP, SYNTHETIC_LABEL
 from uwcopilot.governance.feedback import FEEDBACK_VERSION, review_action_for
+from uwcopilot.governance.lineage import PromptSource, build_decision_lineage
 from uwcopilot.llm.base import IncompleteLLMResponse, LLMClient
 from uwcopilot.observability.redaction import PiiRedactor, redactor_for_application
 from uwcopilot.observability.tracing import AgentTracer, record_error, record_llm_response, set_output
@@ -133,11 +139,26 @@ def utc_now() -> datetime:
     return datetime.now(UTC)
 
 
+# The memo prompt lives in code, so its lineage hash is the SHA-256 of the source file that holds it.
+MEMO_PROMPT_SOURCE = PromptSource(
+    prompt_id="agent_memo_prompt",
+    path=Path(memo_module.__file__),
+    label=PROMPT_VERSION,
+    note="the memo prompt is SYSTEM_PROMPT and USER_TEMPLATE in this source file; the hash covers the whole file",
+)
+
+
+def decision_lineage(tool_results: list[dict[str, Any]]) -> dict[str, Any]:
+    """The lineage block of one decision (governance/lineage.py), with the memo prompt's source file."""
+    return build_decision_lineage(tool_results, prompts=(MEMO_PROMPT_SOURCE,))
+
+
 @dataclass
 class AgentDeps:
     """What the nodes need from outside: the LLM, tool handlers, the decision log, tracing and a clock.
 
     reviewer_label is written into every decision record: "human" unless a script plays the reviewer ("SIMULATED").
+    lineage_builder makes the record's lineage block from the decision's tool results (tests may pass a fixed one).
     """
 
     llm: LLMClient
@@ -150,6 +171,7 @@ class AgentDeps:
     max_tool_calls: int = MAX_TOOL_CALLS
     memo_max_tokens: int = MEMO_MAX_TOKENS
     reviewer_label: str = HUMAN_REVIEWER
+    lineage_builder: Callable[[list[dict[str, Any]]], dict[str, Any]] = decision_lineage
 
 
 # --------------------------------------------------------------------------------------------------------------
@@ -513,6 +535,7 @@ def build_graph(deps: AgentDeps) -> StateGraph:
                     "llm_provider": deps.llm.provider,
                     "llm_model": deps.llm.model,
                 },
+                "lineage": deps.lineage_builder(state.get("tool_results") or []),
                 "reviewer": decision,
                 "reviewer_label": deps.reviewer_label,
                 "rejected_reviewer_attempts": state.get("rejected_decisions") or [],

@@ -13,6 +13,14 @@ tool results, LLM answers and decision produces the same record and the same has
 Appending is idempotent: a record_id that is already in the file is not written again. That matters for
 crash recovery: if the process dies after writing but before LangGraph saves its checkpoint, the resumed run
 re-executes the record node and must not write a second record.
+
+Phase 6 added optional, versioned parts to the agent's records (records written before them still load, and readers
+treat a missing part as "not recorded"; the log format and schema_version stay the same):
+- "lineage": model versions, dataset checksums, prompt file hashes and eval-set versions behind the decision
+  (governance/lineage.py, lineage_version "lineage-v1"; scripts/lineage.py prints and checks it);
+- in "reviewer": review_action (accept or override), reason_codes, reason_text and feedback_version
+  (governance/feedback.py maps older records from is_override and override_reason);
+- "reviewer_label": "human", or "SIMULATED" when a script played the reviewer.
 """
 
 import hashlib

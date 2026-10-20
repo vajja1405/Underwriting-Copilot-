@@ -567,3 +567,11 @@ scan-secrets:  ## Scan every commit, merges included, for secrets (pinned gitlea
 	"$$tmp/gitleaks" detect --source . --config .gitleaks.toml --log-opts="$(GITLEAKS_LOG_OPTS)" \
 		--redact --verbose --no-banner; \
 	status=$$?; rm -rf "$$tmp"; exit $$status
+
+# Phase 6 (lineage + human feedback): print and check the lineage of one decision record (governance/lineage.py).
+# LOG is an agent decision log (.jsonl), RECORD a record_id in it. ARGS="--strict" exits 3 when anything is STALE;
+# ARGS="--no-data-files" skips hashing the raw data files.
+.PHONY: lineage
+
+lineage:  ## Print one decision record's lineage and flag STALE hashes: LOG=<log .jsonl> RECORD=<DR-id> [ARGS=--strict]
+	uv run python scripts/lineage.py $(LOG) $(RECORD) $(ARGS)
