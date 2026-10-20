@@ -571,7 +571,14 @@ scan-secrets:  ## Scan every commit, merges included, for secrets (pinned gitlea
 # Phase 6 (lineage + human feedback): print and check the lineage of one decision record (governance/lineage.py).
 # LOG is an agent decision log (.jsonl), RECORD a record_id in it. ARGS="--strict" exits 3 when anything is STALE;
 # ARGS="--no-data-files" skips hashing the raw data files.
-.PHONY: lineage
+# feedback-report: a SIMULATED reviewer (made-up probabilities, seed 42) decides the 65 SYNTHETIC agent applications
+# through the real checkpoint, offline (designed screening, no retrieval, no risk model, template memo; no LLM). Writes
+# data/governance/simulated_review_log.jsonl (gitignored) and sections "lineage" and "feedback" of
+# results/governance_metrics.json. The rates describe the simulation, not real reviewers.
+.PHONY: lineage feedback-report
 
 lineage:  ## Print one decision record's lineage and flag STALE hashes: LOG=<log .jsonl> RECORD=<DR-id> [ARGS=--strict]
 	uv run python scripts/lineage.py $(LOG) $(RECORD) $(ARGS)
+
+feedback-report:  ## SIMULATED reviewer on the 65 SYNTHETIC applications -> results/governance_metrics.json (lineage, feedback)
+	uv run python scripts/feedback_report.py
