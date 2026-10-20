@@ -1,0 +1,45 @@
+# The approved override reason list (Phase 6 C): the ONLY reason codes a reviewer may give at the human checkpoint.
+#
+# NBC-8.2 and HM-10.2 of the SYNTHETIC guidelines (corpus/guidelines/northwind_business_credit.md and
+# harborline_mutual_commercial.md) say every override records "at least one reason from the approved override reason
+# list" plus a free-text rationale. This file is that list. agent/hitl.py refuses any other code, and refuses an
+# override (an approve or decline that differs from the reference policy recommendation) without one.
+#
+# The codes are the five that agent/hitl.py accepted before Phase 6 (APPROVED_OVERRIDE_REASONS), unchanged, so
+# decision records written earlier keep meaning the same thing. NBC-8.2 names the first four as examples; the fifth
+# covers a referral (for example Compliance or KYC) that was resolved in writing before the decision.
+#
+# Changing this list changes what reviewers may record: add a code rather than renaming one (old records keep the old
+# code), and never reuse a code for a different meaning. Each entry has a code (lowercase, underscores), a short label
+# for a screen, and a description of when to use it. Free text belongs in the decision's rationale or reason_text,
+# never in a code.
+#
+# This is a demonstration on SYNTHETIC data, not a compliance program.
+
+version: override-reasons-v1
+reasons:
+  - code: documented_compensating_factor
+    label: Documented compensating factor
+    description: >-
+      A strength that the policy or the model does not weigh (for example strong liquidity, a guarantor or
+      collateral beyond the minimum) is documented in the file and offsets the weakness behind the recommendation.
+  - code: data_error_in_model_input
+    label: Data error in a model input
+    description: >-
+      A value the policy or the model used is wrong (for example a mistyped revenue figure or a misread document),
+      and the corrected value is documented in the file.
+  - code: information_not_available_to_model
+    label: Information not available to the model
+    description: >-
+      The reviewer has relevant, documented information that the policy and the model could not see (for example
+      a signed contract or a recent payment history received after the application).
+  - code: policy_exception_approved
+    label: Policy exception approved
+    description: >-
+      An exception to a guideline was approved in writing by someone with the authority to grant it, and the
+      approval is in the file.
+  - code: referral_resolved_in_writing
+    label: Referral resolved in writing
+    description: >-
+      A referral that drove the recommendation (for example to Compliance, KYC Operations or a Senior Underwriter)
+      was resolved, and the written resolution is in the file.

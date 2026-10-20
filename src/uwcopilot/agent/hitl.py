@@ -23,14 +23,20 @@ validate_decision() refuses, with reasons, a decision that the guidelines do not
   exceptions, cannot be approved at this checkpoint (NSP-9.1, NBC-7.2): its roles are underwriter and senior
   underwriter only, so the file must be referred. (The credit line does not enforce this yet.)
 - approving against a refer or decline-for-review recommendation is a policy exception: senior_underwriter only;
-- an approval or decline that differs from the recommendation is an override and needs an override_reason from the
-  approved list (NBC-8.2, HM-10.2). Referring or requesting information is never an override.
+- an approval or decline that differs from the recommendation is an override and needs at least one reason code from
+  the approved list in config/override_reasons.yaml (NBC-8.2, HM-10.2). Referring or requesting information is never
+  an override.
 A refused decision is recorded and the checkpoint asks again.
+
+Review feedback (Phase 6 C, governance/feedback.py): a decision may carry reason_codes (a list of approved codes) and
+an optional reason_text. The single override_reason of earlier versions is still accepted, and the two are kept in
+step: an override_reason is added to reason_codes, and the first reason code is copied to override_reason, so readers
+of either field see the same reason. The graph adds review_action ("accept" or "override") to the stored decision.
 """
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 from uwcopilot.agent.applications import AnyApplication, CreditApplication, StartupCreditApplication
 from uwcopilot.agent.insurance_calculations import schedule_tiv
@@ -45,6 +51,7 @@ from uwcopilot.agent.vocab import (
     ReviewerAction,
     ReviewerRole,
 )
+from uwcopilot.governance.feedback import override_reason_codes
 from uwcopilot.security.rbac import checkpoint_role_refusal
 
 # Approval limits by role: credit and startup credit use the requested exposure (NBC-7.2, NSP-9.1), insurance the
@@ -61,13 +68,9 @@ SENIOR_APPROVAL_ONLY_LINES = frozenset({"startup_credit"})
 HIGHER_AUTHORITY_LINES = frozenset({"startup_credit"})
 HIGHER_AUTHORITIES: tuple[str, ...] = (CHIEF_CREDIT_OFFICER, CREDIT_COMMITTEE)
 SENIOR_MAX_EXCEPTIONS = 1
-APPROVED_OVERRIDE_REASONS: tuple[str, ...] = (
-    "documented_compensating_factor",
-    "data_error_in_model_input",
-    "information_not_available_to_model",
-    "policy_exception_approved",
-    "referral_resolved_in_writing",
-)
+# The approved override reason codes (NBC-8.2, HM-10.2), read from config/override_reasons.yaml.
+APPROVED_OVERRIDE_REASONS: tuple[str, ...] = override_reason_codes()
+REASON_TEXT_MAX_LENGTH = 1000
 
 
 class HumanDecision(BaseModel):
@@ -80,6 +83,8 @@ class HumanDecision(BaseModel):
     role: ReviewerRole
     rationale: str = Field(min_length=10, max_length=2000)
     override_reason: str | None = None
+    reason_codes: list[str] = Field(default_factory=list, max_length=len(APPROVED_OVERRIDE_REASONS))
+    reason_text: str | None = Field(default=None, min_length=1, max_length=REASON_TEXT_MAX_LENGTH)
 
     @field_validator("override_reason")
     @classmethod
@@ -88,6 +93,26 @@ class HumanDecision(BaseModel):
         if value is not None and value not in APPROVED_OVERRIDE_REASONS:
             raise ValueError(f"override_reason must be one of {list(APPROVED_OVERRIDE_REASONS)}")
         return value
+
+    @field_validator("reason_codes")
+    @classmethod
+    def reason_codes_known(cls, codes: list[str]) -> list[str]:
+        """Every code comes from the approved list, and each code only once."""
+        unknown = [code for code in codes if code not in APPROVED_OVERRIDE_REASONS]
+        if unknown:
+            raise ValueError(f"unknown reason codes {unknown}; allowed: {list(APPROVED_OVERRIDE_REASONS)}")
+        if len(set(codes)) != len(codes):
+            raise ValueError("a reason code may be given only once")
+        return codes
+
+    @model_validator(mode="after")
+    def legacy_reason_kept_in_step(self) -> "HumanDecision":
+        """Keep the single override_reason and the reason_codes list in step (module docstring)."""
+        if self.override_reason is not None and self.override_reason not in self.reason_codes:
+            self.reason_codes = [self.override_reason, *self.reason_codes]
+        if self.override_reason is None and self.reason_codes:
+            self.override_reason = self.reason_codes[0]
+        return self
 
 
 def authority_exposure(application: AnyApplication) -> float:
@@ -172,8 +197,11 @@ def validate_decision(
             )
         if recommendation in ("refer", "decline_for_review") and not senior:
             errors.append("approving against a refer or decline-for-review recommendation needs a senior_underwriter")
-    if is_override(decision.action, recommendation) and decision.override_reason is None:
-        errors.append(f"this action overrides the recommendation {recommendation!r}; give an override_reason")
+    if is_override(decision.action, recommendation) and not decision.reason_codes:
+        errors.append(
+            f"this action overrides the recommendation {recommendation!r}; give an override_reason or reason_codes "
+            "from the approved list in config/override_reasons.yaml (NBC-8.2, HM-10.2)"
+        )
     if errors:
         return None, errors
     return decision, []
@@ -206,7 +234,10 @@ def final_status(action: str) -> str:
 RESUME_INSTRUCTIONS = (
     "Nothing is approved or declined until a human decides. Resume with "
     '{"action": "approve" | "decline" | "refer" | "request_more_information", "reviewer_id": "...", '
-    '"role": "underwriter" | "senior_underwriter", "rationale": "...", "override_reason": null}.'
+    '"role": "underwriter" | "senior_underwriter", "rationale": "...", "reason_codes": [], "reason_text": null}. '
+    "An override needs at least one reason code from config/override_reasons.yaml: "
+    + ", ".join(APPROVED_OVERRIDE_REASONS)
+    + "."
 )
 
 

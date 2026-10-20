@@ -18,8 +18,10 @@
   if it fails again it goes to the human with its problems listed. It is never silently dropped or fixed.
 - human_review always interrupts. Only a human's resume value can continue the run, and validate_decision()
   refuses decisions the guidelines do not allow (then the checkpoint asks again). Nothing auto-approves and
-  nothing auto-declines.
-- record_decision appends one chained, idempotent decision record.
+  nothing auto-declines. The accepted decision is stored with its review feedback: review_action ("accept" or
+  "override"), reason_codes from config/override_reasons.yaml and the optional reason_text (governance/feedback.py).
+- record_decision appends one chained, idempotent decision record. reviewer_label says who supplied the decision:
+  "human" (the default) or, for example, "SIMULATED" when a script plays the reviewer (scripts/feedback_report.py).
 
 State is plain JSON data so the SQLite checkpointer can persist it; a run can be killed at the interrupt and resumed
 later from the same file by a new process (runner.py).
@@ -68,12 +70,14 @@ from uwcopilot.agent.policy import (
 from uwcopilot.agent.tool_plan import ToolRequest, plan_tool_calls
 from uwcopilot.agent.tool_runner import MAX_TOOL_CALLS, ApprovedCall, ToolResult, execute_call, vet_requests
 from uwcopilot.agent.vocab import FAKE_LLM_STAMP, SYNTHETIC_LABEL
+from uwcopilot.governance.feedback import FEEDBACK_VERSION, review_action_for
 from uwcopilot.llm.base import IncompleteLLMResponse, LLMClient
 from uwcopilot.observability.redaction import PiiRedactor, redactor_for_application
 from uwcopilot.observability.tracing import AgentTracer, record_error, record_llm_response, set_output
 from uwcopilot.tools.registry import ToolHandler
 
 GRAPH_VERSION = "underwriting-graph-v1"
+HUMAN_REVIEWER = "human"
 MAX_MEMO_ATTEMPTS = 2
 MAX_LLM_TOOL_ROUNDS = 2
 NODES: tuple[str, ...] = (
@@ -131,7 +135,10 @@ def utc_now() -> datetime:
 
 @dataclass
 class AgentDeps:
-    """What the nodes need from outside: the LLM, tool handlers, the decision log, tracing and a clock."""
+    """What the nodes need from outside: the LLM, tool handlers, the decision log, tracing and a clock.
+
+    reviewer_label is written into every decision record: "human" unless a script plays the reviewer ("SIMULATED").
+    """
 
     llm: LLMClient
     tool_handlers: Mapping[str, ToolHandler]
@@ -142,6 +149,7 @@ class AgentDeps:
     max_llm_tool_rounds: int = MAX_LLM_TOOL_ROUNDS
     max_tool_calls: int = MAX_TOOL_CALLS
     memo_max_tokens: int = MEMO_MAX_TOKENS
+    reviewer_label: str = HUMAN_REVIEWER
 
 
 # --------------------------------------------------------------------------------------------------------------
@@ -451,10 +459,13 @@ def build_graph(deps: AgentDeps) -> StateGraph:
                 "status": "awaiting_review",
                 "rejected_decisions": [{"submitted": submitted, "errors": errors, "at": deps.clock().isoformat()}],
             }
+        overrides = is_override(decision.action, policy.recommendation)
         return {
             "human_decision": {
                 **decision.model_dump(),
-                "is_override": is_override(decision.action, policy.recommendation),
+                "is_override": overrides,
+                "review_action": review_action_for(overrides),
+                "feedback_version": FEEDBACK_VERSION,
                 "reference_recommendation": policy.recommendation,
                 "decided_at": deps.clock().isoformat(),
             },
@@ -503,6 +514,7 @@ def build_graph(deps: AgentDeps) -> StateGraph:
                     "llm_model": deps.llm.model,
                 },
                 "reviewer": decision,
+                "reviewer_label": deps.reviewer_label,
                 "rejected_reviewer_attempts": state.get("rejected_decisions") or [],
                 "reference_recommendation": policy.recommendation,
                 "final_status": final_status(decision["action"]),
