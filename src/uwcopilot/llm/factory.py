@@ -11,6 +11,10 @@ The hf_inference provider (Hugging Face Inference Providers, hf_inference_client
 built only when asked for by name AND UWC_HF_INFERENCE_ENABLED, HF_TOKEN and a model are set, and it goes through
 Cached(Budgeted(...)) like every paid provider, so a model without a verified price is refused before any request.
 It is not in settings.PROVIDERS, so UWC_LLM_PROVIDER cannot select it.
+The bedrock provider (AWS Bedrock Converse API, bedrock_client.py) is gated the same way: DISABLED by default, built
+only when asked for by name AND UWC_BEDROCK_ENABLED, UWC_BEDROCK_REGION, a model id and AWS credentials are present,
+and wrapped as Cached(Budgeted(...)), so a model without a verified price is refused before any request. boto3 is an
+optional extra and is imported only when this provider is built.
 """
 
 from collections.abc import Sequence
@@ -18,6 +22,13 @@ from typing import Any
 
 from uwcopilot.llm.anthropic_client import AnthropicClient
 from uwcopilot.llm.base import LLMClient
+from uwcopilot.llm.bedrock_client import (
+    BEDROCK_PROVIDER,
+    BedrockOptions,
+    BedrockSettings,
+    build_bedrock_client,
+    load_bedrock_settings,
+)
 from uwcopilot.llm.budget import BudgetedLLMClient, CostTracker, load_prices
 from uwcopilot.llm.cache import CachedLLMClient, LLMCache
 from uwcopilot.llm.fake_client import FakeLLM, FakeResponder
@@ -54,11 +65,14 @@ def get_llm_client(
     http_client: Any | None = None,
     ollama_options: OllamaOptions | None = None,
     hf_settings: HFInferenceSettings | None = None,
+    bedrock_settings: BedrockSettings | None = None,
+    bedrock_options: BedrockOptions | None = None,
+    bedrock_runtime: Any | None = None,
 ) -> LLMClient:
     """Build an LLM client.
 
-    provider: "anthropic", "openai", "ollama", "fake" (default: settings.provider, i.e. UWC_LLM_PROVIDER) or
-        "hf_inference" (only by name; disabled by default).
+    provider: "anthropic", "openai", "ollama", "fake" (default: settings.provider, i.e. UWC_LLM_PROVIDER),
+        "hf_inference" or "bedrock" (only by name; both disabled by default).
     settings: defaults to load_llm_settings() (repo .env plus project variables).
     model: overrides the model from settings.
     cost_tracker: share one tracker across clients so the cap covers the whole run.
@@ -68,10 +82,15 @@ def get_llm_client(
         httpx.Client with a MockTransport.
     ollama_options: num_ctx, seed, optional JSON-schema format and expected digest for the ollama provider.
     hf_settings: settings for provider "hf_inference" (default: load_hf_inference_settings(), from .env).
+    bedrock_settings: settings for provider "bedrock" (default: load_bedrock_settings(), from .env).
+    bedrock_options: optional structured-output JSON schema for the bedrock provider.
+    bedrock_runtime: test hook for provider "bedrock" (a boto3 bedrock-runtime client wrapped in botocore's Stubber).
 
     Raises MissingAPIKeyError when a paid provider has no API key; no request is attempted in that case.
     Provider "hf_inference" raises HFInferenceDisabled / HFInferenceTokenMissing / HFInferenceModelMissing (no request)
     unless it was explicitly enabled; see hf_inference_client.py.
+    Provider "bedrock" raises BedrockDisabled / BedrockRegionMissing / BedrockModelMissing / BedrockCredentialsMissing
+    (no request) unless it was explicitly enabled and set up; see bedrock_client.py.
     The ollama client contacts the local server when it is built (version and model digest).
     """
     settings = settings or load_llm_settings()
@@ -79,6 +98,12 @@ def get_llm_client(
         tracker = cost_tracker or cost_tracker_from_settings(settings)
         hf_client = build_hf_inference_client(hf_settings or load_hf_inference_settings(), model, http_client)
         return wrap_provider_client(hf_client, tracker, settings, use_cache)
+    if provider == BEDROCK_PROVIDER:
+        tracker = cost_tracker or cost_tracker_from_settings(settings)
+        bedrock = build_bedrock_client(
+            bedrock_settings or load_bedrock_settings(), model, bedrock_options, bedrock_runtime
+        )
+        return wrap_provider_client(bedrock, tracker, settings, use_cache)
     chosen = validate_provider(provider or settings.provider)
     chosen_model = model or settings.model_for(chosen)
     tracker = cost_tracker or cost_tracker_from_settings(settings)

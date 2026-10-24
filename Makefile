@@ -35,6 +35,26 @@ index:  ## Build the Qdrant index (guidelines + regulatory docs; needs `make dat
 eval-rag:  ## Evaluate dense/BM25/hybrid/hybrid+rerank retrieval (needs `make index`); writes results/rag_metrics.json
 	uv run python scripts/eval_rag.py
 
+# Same retrieval evaluation on Pinecone (Pinecone Local) and Weaviate, both in Docker (docs/rag_vectorstores.md).
+.PHONY: vectorstores-up vectorstores-down eval-rag-vectorstores
+
+PINECONE_LOCAL_IMAGE ?= ghcr.io/pinecone-io/pinecone-local:latest
+WEAVIATE_IMAGE ?= cr.weaviate.io/semitechnologies/weaviate:1.40.2
+
+vectorstores-up:  ## Start Pinecone Local (ports 5080-5090) and Weaviate (8080, gRPC 50051) in Docker
+	docker run -d --name fundproof-pinecone-local -e PORT=5080 -e PINECONE_HOST=localhost \
+		-p 5080-5090:5080-5090 $(PINECONE_LOCAL_IMAGE)
+	docker run -d --name fundproof-weaviate -p 8080:8080 -p 50051:50051 \
+		-e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true -e PERSISTENCE_DATA_PATH=/var/lib/weaviate \
+		-e DEFAULT_VECTORIZER_MODULE=none -e ENABLE_MODULES= -e CLUSTER_HOSTNAME=node1 \
+		$(WEAVIATE_IMAGE) --host 0.0.0.0 --port 8080 --scheme http
+
+vectorstores-down:  ## Stop and remove the Pinecone Local and Weaviate containers
+	docker rm -f fundproof-pinecone-local fundproof-weaviate
+
+eval-rag-vectorstores:  ## Qdrant vs Pinecone vs Weaviate retrieval eval (needs `make index vectorstores-up`)
+	uv run --extra vectorstores python scripts/eval_rag_vectorstores.py
+
 .PHONY: kyc-data eval-kyc
 
 kyc-data:  ## Make the SYNTHETIC KYC screening customers + ground truth (needs `make data`); data/processed/kyc/

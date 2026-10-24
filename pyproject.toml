@@ -47,6 +47,11 @@ dependencies = [
     "uvicorn>=0.54.0",
 ]
 
+[project.optional-dependencies]
+# Opt-in extras: install with `uv sync --extra bedrock` / `uv sync --extra vectorstores`.
+bedrock = ["boto3>=1.35"]
+vectorstores = ["pinecone>=7.0", "weaviate-client>=4.10"]
+
 [dependency-groups]
 dev = [
     "httpx2>=2.13.1",

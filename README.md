@@ -57,7 +57,7 @@ no rate from it. **In progress**: code is partial, unreviewed or not yet run. **
 | MCP server (the same tool allow-list) | Built + measured (smoke test) | 17/17 checks over stdio and 17/17 over streamable HTTP | [stdio](results/mcp_smoke_stdio.json), [HTTP](results/mcp_smoke_streamable_http.json) | [mcp.md](docs/mcp.md) |
 | RAG over SYNTHETIC guidelines + public regulations (Qdrant: dense, BM25, hybrid, rerank) | Retrieval built + measured; answers smoke only | Hybrid + rerank Recall@5 0.9078, MRR@10 0.8285 (103 questions); its recall gain over dense is not significant (the interval includes 0) | [rag_metrics.json](results/rag_metrics.json) | [RAG design](docs/rag_design.md), [GenAI](docs/walkthrough_genai.md) |
 | Numeric provenance checker + slot grammar (SIG) | Built + measured (mutation test) | Caught every value (179/179), x10 (184/184), unit (89/89) and cross-section (175/175) mutation (627 in all) with 0/290 false flags (0/203 unmutated, 0/87 rewrites); comparator flips 88/108; wrong row 6/55 (known blind spot). Tested on guideline sentences, not memos | [provenance_metrics.json](results/provenance_metrics.json) | [plan](docs/innovations.md), [fixes](docs/walkthrough_innovations_s1.md) |
-| LLM provider layer: Anthropic, OpenAI, Ollama, Hugging Face Inference (off by default), fake; cost cap, cache | Built; live calls smoke only | Anthropic and OpenAI never called (no key). Ollama runs: see [Language models](#language-models-what-has-actually-run) | [generation smoke](results/generation/smoke/generation_metrics_smoke.json) | [GenAI](docs/walkthrough_genai.md) |
+| LLM provider layer: Anthropic, OpenAI, Ollama, Hugging Face Inference (off by default), AWS Bedrock Converse (off by default), fake; cost cap, cache | Built; live calls smoke only | Anthropic and OpenAI never called (no key). Bedrock never called (no AWS credentials; tested with a stubbed runtime only). Ollama runs: see [Language models](#language-models-what-has-actually-run) | [generation smoke](results/generation/smoke/generation_metrics_smoke.json) | [GenAI](docs/walkthrough_genai.md) |
 | Prompt-injection containment (innovation S2) | Smoke only | Decision containment enforced by tests; tripwire flags 12/60 frozen payloads (no model); attack-success run: 3 of 240 planned calls | [detector](results/injection/injection_metrics_detector_only.json), [smoke](results/injection/smoke/injection_metrics_smoke.json) | [S2](docs/walkthrough_innovations_s2.md) |
 | Security (Phase 5 B): roles, packet permissions, encryption at rest, hash-chained audit events | Built, tests only | Several controls are written and tested but not yet called by an entry point a user runs | none | [security.md](docs/security.md) |
 | Observability: OpenTelemetry / OpenInference spans with PII redaction | Built, tests only | none | none | [Phase 5](docs/walkthrough_phase5.md) |
@@ -144,6 +144,8 @@ make web-dev             # http://localhost:3000, local DEV LOGIN (any username,
     fixes; the commit its provenance block names is not the code that ran, so the S4 walkthrough (section 6.2) says
     to treat it as approximate: [studio_evidence_metrics_ollama.json](results/studio_evidence_metrics_ollama.json).
 - **Hugging Face Inference**: off by default, never run.
+- **AWS Bedrock (Converse API)**: off by default, never run (no AWS credentials were configured); tested only against
+  a stubbed `bedrock-runtime` client. See [llm_bedrock.md](docs/llm_bedrock.md).
 - Not measured yet: LLM memo quality, answer faithfulness at full size, LLM cost and LLM latency.
 
 ## Architecture

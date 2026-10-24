@@ -73,3 +73,17 @@ models:
     output_usd_per_mtok: 0.0
     source: "local inference via Ollama; no API charge (CPU time reported separately)"
     checked_on: "2026-10-12"
+
+# AWS Bedrock (provider: bedrock, src/uwcopilot/llm/bedrock_client.py): NO ENTRY YET, on purpose.
+# Bedrock has its own price list (per model and per region). The claude-* entries above are Anthropic API prices and
+# are never used for Bedrock: Bedrock model ids are different strings, so they cannot match by accident.
+# No Bedrock price has been checked for this repository, so there is no Bedrock entry and the budget layer refuses
+# every Bedrock call with PriceNotVerified before any request is sent. To allow one model, add an entry keyed by the
+# EXACT id given in UWC_BEDROCK_MODEL (model id or inference profile id), with both prices copied from
+# https://aws.amazon.com/bedrock/pricing/ for the region in UWC_BEDROCK_REGION, and the date they were checked:
+#   <exact Bedrock model id>:
+#     provider: bedrock
+#     input_usd_per_mtok: null    # stays null (calls refused) until copied from the pricing page
+#     output_usd_per_mtok: null
+#     source: https://aws.amazon.com/bedrock/pricing/ (name the region)
+#     checked_on: "YYYY-MM-DD"

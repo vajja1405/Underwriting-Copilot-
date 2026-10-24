@@ -12,6 +12,7 @@ The pieces, in the order data flows through them:
 - search.py: the `search_guidelines` tool handler used by the tool registry, MCP server and agent.
 - prompt.py / citations.py / answer.py: grounded answering with delimited documents and a citation checker.
 - eval_set.py / metrics.py / evaluation.py: the retrieval evaluation used by scripts/eval_rag.py.
+- stores/: the same points, fusion and reranker on Pinecone and Weaviate, for scripts/eval_rag_vectorstores.py.
 
 Retrieved text is always data, never instructions (ground rule 8).
 """
