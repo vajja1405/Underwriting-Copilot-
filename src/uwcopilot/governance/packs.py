@@ -84,7 +84,12 @@ SR_26_2_FOOTNOTE_3 = (
     "document. However, the principles described in this guidance apply to traditional statistical and quantitative "
     "models and non-generative, non-agentic AI models."
 )
-# Quoted from the same section: what the guidance does not count as a model.
+# Quoted from section III: what model risk management may consist of for a model deemed immaterial.
+SR_26_2_IMMATERIAL = (
+    "identifying those models and monitoring model performance and conditions under which the use of those models "
+    "may become material"
+)
+# Quoted from section II: what the guidance does not count as a model.
 SR_26_2_NOT_A_MODEL = (
     "simple arithmetic calculations, such as those found within spreadsheets, as well as deterministic rule-based "
     "processes and software where there are no statistical, economic, or financial theories underpinning their "

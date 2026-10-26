@@ -30,7 +30,7 @@ from uwcopilot.governance.packs_bank import render_bank_model_risk, sr_26_2_rows
 from uwcopilot.governance.packs_genai import genai_control_rows, third_party_model_rows
 from uwcopilot.governance.packs_governance import monitoring_block
 from uwcopilot.governance.packs_insurance import naic_rows, render_insurance_ai_program
-from uwcopilot.governance.packs_inventory import INVENTORY, inventory_entry, materiality_tier
+from uwcopilot.governance.packs_inventory import INVENTORY, TIERING_RULE, inventory_entry, materiality_tier
 
 REPO = Path(__file__).resolve().parents[2]
 REGULATORY_DIR = REPO / "data" / "raw" / "regulatory"
@@ -707,6 +707,7 @@ def test_quoted_wording_matches_the_local_primary_sources() -> None:
     for quoted in (
         packs.SR_26_2_FOOTNOTE_3,
         packs.SR_26_2_NOT_A_MODEL,
+        packs.SR_26_2_IMMATERIAL,
         "does not set forth enforceable standards or prescriptive requirements",
         "most relevant to banking organizations with over $30 billion in total assets",
         "Model purpose, together with model exposure, determines model materiality",
@@ -799,6 +800,23 @@ def test_materiality_tier_rule(purpose: str, exposure: bool, designed: int, now:
     tier = materiality_tier(purpose, exposure)
     assert (tier.tier_as_designed, tier.tier_now) == (designed, now)
     assert purpose in tier.reason
+
+
+def test_tier_3_rule_does_not_claim_monitoring_that_no_code_does() -> None:
+    """P6-PACKS-6: has_exposure is a declared field and no inventory model's performance is monitored, so the rule
+    quotes what SR 26-2 lists for immaterial models (performance and conditions) and says only the listing is done."""
+    rule = " ".join(TIERING_RULE)
+    assert "monitored for the conditions under which it would become material" not in rule
+    assert f'"{packs.SR_26_2_IMMATERIAL}"' in rule
+    assert "monitoring model performance" in packs.SR_26_2_IMMATERIAL
+    assert "exposure is declared in `packs_inventory.py`, not monitored" in rule
+    assert "no inventory model's performance is monitored" in rule
+    for body in render_both({}).values():
+        assert "Only the first part is done here" in body
+    exposure_row = {row[0]: row[2] for row in sr_26_2_rows({})}[
+        "III. Inherent risk, exposure and purpose; materiality = purpose + exposure"
+    ]
+    assert "declared, not monitored" in exposure_row
 
 
 def test_unknown_purpose_is_refused() -> None:

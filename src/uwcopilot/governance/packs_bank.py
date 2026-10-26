@@ -98,7 +98,7 @@ def sr_26_2_rows(sources: Mapping[str, Any]) -> list[tuple[str, str, str]]:
         (
             "III. Inherent risk, exposure and purpose; materiality = purpose + exposure",
             "2. Materiality tiering",
-            "Rule stated (a design choice). Exposure: none (no portfolio).",
+            "Rule stated (a design choice). Exposure: none (no portfolio); declared, not monitored.",
         ),
         ("III. Aggregate model risk (common data, assumptions, methods)", "-", "Not assessed."),
         (
