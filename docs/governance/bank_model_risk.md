@@ -4,7 +4,7 @@
 > hand: every number is read from those files at render time, and anything not measured says so. Rerun
 > `make governance-packs` (or `make reports`) after any results run.
 
-**What this is.** A demonstration of how a model risk management pack could be laid out for the models of this repository. Applicability of any guidance cited here depends on the institution and its risk profile. This project is a demonstration, not a compliance program, and nothing in it claims compliance with any regulation or guidance. All data are public (Lending Club, freMTPL2 from OpenML 41214/41215, UCI Statlog German Credit, the OFAC SDN list and OpenSanctions) or SYNTHETIC / SIMULATED (the document packets, the agent applications, the reviewer decisions, the monitoring stream's drift, the champion/challenger loans and their outcomes). No real applicant, policyholder, reviewer or decision is involved.
+**What this is.** A demonstration of how a model risk management pack could be laid out for the models of this repository. Applicability of any guidance cited here depends on the institution and its risk profile. This project is a demonstration, not a compliance program, and nothing in it claims compliance with any regulation or guidance. All data are public (Lending Club, freMTPL2 from OpenML 41214/41215, UCI Statlog German Credit, the OFAC SDN list and OpenSanctions) or SYNTHETIC / SIMULATED (the document packets, the agent applications, the reviewer decisions, the monitoring stream's drift, the champion/challenger loans and their outcomes). The public loan and policy datasets are de-identified records of real loans, credit applicants and motor policies; the OFAC SDN list and OpenSanctions name real sanctioned persons and entities and are used only as screening references. Every application the agent screens, every reviewer and every decision here is SYNTHETIC or SIMULATED.
 
 **Regulatory basis.** Aligned to the structure of SR 26-2 / OCC Bulletin 2026-13 / FDIC FIL-15-2026, "Revised Guidance on Model Risk Management" (Federal Reserve, OCC and FDIC, April 17, 2026), which supersedes SR 11-7 and SR 21-8 ([Federal Reserve](https://www.federalreserve.gov/supervisionreg/srletters/SR2602.htm), [OCC](https://www.occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html), [FDIC](https://www.fdic.gov/news/financial-institution-letters/2026/agencies-revise-interagency-model-risk-management-guidance)). The date, the supersession, the applicability statement, the model definition and footnote 3 were checked against the local copy of the Federal Reserve's PDF, `data/raw/regulatory/frb_sr_26_2.pdf` (cover letter and interagency attachment, both dated April 17, 2026; downloaded by `make data-regulatory`, SHA-256 in `data/raw/checksums.jsonl`). The OCC Bulletin 2026-13 and FDIC FIL-15-2026 identifiers are taken from the agencies' pages listed in docs/build_prompts.md ("Regulatory references", checked against primary sources on 2026-10-10); they are not in the local copy and were not checked against it.
 
@@ -12,8 +12,9 @@
 
 - The agencies expect the guidance to be most relevant to banking organizations with over $30 billion in total assets, and it is risk-based: rigor scales with materiality. It "does not set forth enforceable standards or prescriptive requirements" (section I).
 - Models here: the four statistical models of the inventory (section 1).
-- Not models under its definition, which excludes "simple arithmetic calculations, such as those found within spreadsheets, as well as deterministic rule-based processes and software where there are no statistical, economic, or financial theories underpinning their design or use" (section II): the Phase 4 financial calculations and reconciliation rules, the agent's rule-based reference policy, the rules document extractor and the release gate. They are deterministic and are tested, not validated as models.
+- Not models under its definition, which excludes "simple arithmetic calculations, such as those found within spreadsheets, as well as deterministic rule-based processes and software where there are no statistical, economic, or financial theories underpinning their design or use" (section II): the Phase 4 financial calculations and reconciliation rules, the agent's rule-based reference policy, the rules document extractor and the release gate. They are deterministic and are tested, not validated as models. The rules extractor reads scanned pages through Tesseract OCR, a third-party pretrained model listed in section 1.
 - Outside its scope: generative and agentic AI (footnote 3). The LLM extraction and the agent are governed in section 7, not by stretching SR 26-2 to cover them.
+- Still within its principles: traditional statistical and quantitative models and non-generative, non-agentic AI models (footnote 3, last sentence). The third-party pretrained OCR and retrieval models of section 1 are non-generative; whether an institution treats such components as models depends on the institution. They are listed, not validated, here.
 
 ## Sources of the numbers
 
@@ -25,14 +26,14 @@ Every number below is read from these files when the pack is rendered. The git c
 | `results/risk_metrics.json` | `insurance_frequency` | 1, 3 | 2026-10-11T00:41:27+00:00 | `bbedb8d30fa8f4d761a926d70c61cf25d7771743` | yes |
 | `results/risk_metrics.json` | `insurance_severity` | 1, 3 | 2026-10-11T00:41:27+00:00 | `bbedb8d30fa8f4d761a926d70c61cf25d7771743` | yes |
 | `results/risk_metrics.json` | `fairness_demo` | 1, 3 | 2026-10-11T00:30:33+00:00 | `bbedb8d30fa8f4d761a926d70c61cf25d7771743` | yes |
-| `results/governance_metrics.json` | `monitoring` | 1, 4 | 2026-10-26T16:44:50+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
-| `results/governance_metrics.json` | `outcomes` | 5 | 2026-10-26T16:45:19+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
-| `results/governance_metrics.json` | `champion_challenger` | 1, 6 | 2026-10-26T16:45:19+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
-| `results/governance_metrics.json` | `release_gate` | 6 | 2026-10-26T16:45:20+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
-| `results/governance_metrics.json` | `lineage` | 7 | 2026-10-26T16:45:04+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
-| `results/governance_metrics.json` | `feedback` | 7 | 2026-10-26T16:45:04+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
-| `results/agent_metrics.json` | whole file | 7 | 2026-10-11T00:38:27+00:00 | `6fcdbb02243a2ac4e8217229573e9ffa24d47df0` | yes |
-| `results/docintel_metrics.json` | whole file | 7 | 2026-10-14T00:58:15+00:00 | `271ca4d759f205ac457c6e692dc93de33269f632` | yes |
+| `results/governance_metrics.json` | `monitoring` | 1, 4 | 2026-10-26T18:15:27+00:00 | `50acabe47d25b5315d8f1aa6a2507ba920539af7` | no |
+| `results/governance_metrics.json` | `outcomes` | 5 | 2026-10-26T18:14:18+00:00 | `50acabe47d25b5315d8f1aa6a2507ba920539af7` | no |
+| `results/governance_metrics.json` | `champion_challenger` | 1, 6 | 2026-10-26T18:14:18+00:00 | `50acabe47d25b5315d8f1aa6a2507ba920539af7` | no |
+| `results/governance_metrics.json` | `release_gate` | 6 | 2026-10-26T18:15:29+00:00 | `50acabe47d25b5315d8f1aa6a2507ba920539af7` | no |
+| `results/governance_metrics.json` | `lineage` | 7 | 2026-10-26T18:14:02+00:00 | `50acabe47d25b5315d8f1aa6a2507ba920539af7` | no |
+| `results/governance_metrics.json` | `feedback` | 7 | 2026-10-26T18:14:02+00:00 | `50acabe47d25b5315d8f1aa6a2507ba920539af7` | no |
+| `results/agent_metrics.json` | whole file | 1, 7 | 2026-10-11T00:38:27+00:00 | `6fcdbb02243a2ac4e8217229573e9ffa24d47df0` | yes |
+| `results/docintel_metrics.json` | whole file | 1, 7 | 2026-10-14T00:58:15+00:00 | `271ca4d759f205ac457c6e692dc93de33269f632` | yes |
 | `results/injection_metrics.json` | whole file | 7 | absent | not measured | not measured |
 | `results/injection/injection_metrics_detector_only.json` | whole file | 7 | 2026-10-13T23:26:54+00:00 | `38b6ca3f50dbb20d3d440d8977db951b26cd4b46` | yes |
 
@@ -124,9 +125,23 @@ The model status registry (`data/governance/model_status.json`, gitignored) also
 | `SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3` | scripts/champion_challenger.py (champion) | champion |
 | `SYNTHETIC-lc-pd-lightgbm-to2016-a9f6032da1` | scripts/champion_challenger.py (challenger) | challenger |
 
-Source: `results/governance_metrics.json`, section `monitoring`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
+Source: `results/governance_metrics.json`, section `monitoring`, written at git commit `50acabe47d25b5315d8f1aa6a2507ba920539af7` (uncommitted changes recorded by the script: no).
 
-Source: `results/governance_metrics.json`, section `champion_challenger`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
+Source: `results/governance_metrics.json`, section `champion_challenger`, written at git commit `50acabe47d25b5315d8f1aa6a2507ba920539af7` (uncommitted changes recorded by the script: no).
+
+### Third-party pretrained models (not in the inventory)
+
+The document extraction and the agent's guideline search run these pretrained, non-generative models as published. They return text or a ranking of retrieved text rather than the quantitative estimates of the models above, so they are not listed as inventory models; they were not validated by this project.
+
+| Third-party pretrained model (non-generative) | What it does here | Ran in the evaluations behind these results | Results file |
+|---|---|---|---|
+| Tesseract OCR (tesseract 5.3.4) | Reads pages without a text layer for the rules extractor (`docintel/ocr.py`); its default engine, used here, is a pretrained LSTM neural network | 159 of 949 pages read by OCR in the main rules run of the extraction evaluation; the rules extractor's F1 and citation support include those pages | `results/docintel_metrics.json` |
+| Dense text embedding model (fastembed; `rag/settings.py` DENSE_MODEL_ID) | Embeds guideline chunks and queries for the agent's guideline search (modes dense, hybrid, hybrid_rerank) | yes (the agent evaluation recorded retrieval mode `hybrid`) | `results/agent_metrics.json` |
+| Cross-encoder reranker (fastembed; `rag/settings.py` RERANK_MODEL_ID) | Reorders the retrieved guideline chunks (mode hybrid_rerank only) | no (the agent evaluation recorded retrieval mode `hybrid`) | `results/agent_metrics.json` |
+
+Source: `results/docintel_metrics.json`, written at git commit `271ca4d759f205ac457c6e692dc93de33269f632` (uncommitted changes recorded by the script: yes).
+
+Source: `results/agent_metrics.json`, written at git commit `6fcdbb02243a2ac4e8217229573e9ffa24d47df0` (uncommitted changes recorded by the script: yes).
 
 ## 2. Materiality tiering
 
@@ -136,21 +151,22 @@ The rule (`src/uwcopilot/governance/packs_inventory.py`):
 - Purpose consumer_decision (an input to a decision about one applicant or policyholder (credit, underwriting, pricing)): Tier 1 (high) as designed.
 - Purpose financial_risk (measures or prices financial risk for a portfolio without deciding on a person): Tier 2 (medium) as designed.
 - Purpose method_demonstration (demonstrates a method only; its output is never used for a decision): Tier 3 (low).
-- Tier now: the tier as designed if the model has exposure, otherwise Tier 3. No model in this repository has exposure (no portfolio, no production use), so every model is Tier 3 now and is handled as an immaterial model: identified in the inventory and monitored for the conditions under which it would become material.
+- Tier now: the tier as designed if the model has exposure, otherwise Tier 3. No model in this repository has exposure (no portfolio, no production use), so every model is Tier 3 now.
+- For a model deemed immaterial, SR 26-2 (section III) says model risk management may consist of "identifying those models and monitoring model performance and conditions under which the use of those models may become material". Only the first part is done here: every model is listed in the inventory, but its exposure is declared in `packs_inventory.py`, not monitored, and no inventory model's performance is monitored (the Phase 6 monitor watches a separate demonstration GLM).
 - This rule is a design choice of the project, not a rule from SR 26-2 or any other guidance.
 
 What each tier would require before and during real use (design choices):
 
 - Tier 1 (high): validation independent of the developer before first use; ongoing monitoring with alert thresholds (config/monitoring.yaml); outcomes analysis once outcomes mature; champion/challenger before any replacement, promoted only by a model_validator; required rows in the release gate; review at least yearly.
 - Tier 2 (medium): validation before first use by a qualified reviewer who did not build the model; ongoing monitoring; review at least every two years.
-- Tier 3 (low): listed in the inventory; the conditions under which its use would become material are monitored; never used for a decision.
+- Tier 3 (low): listed in the inventory; its performance and the conditions under which its use would become material are monitored; never used for a decision.
 
 | Model | Purpose as designed | Tier as designed | Tier now | What the tier as designed requires |
 |---|---|---|---|---|
 | Credit default (probability of default), Lending Club | `consumer_decision` | Tier 1 (high) | Tier 3 (low) | validation independent of the developer before first use; ongoing monitoring with alert thresholds (config/monitoring.yaml); outcomes analysis once outcomes mature; champion/challenger before any replacement, promoted only by a model_validator; required rows in the release gate; review at least yearly |
 | Motor claim frequency, freMTPL2 | `consumer_decision` | Tier 1 (high) | Tier 3 (low) | validation independent of the developer before first use; ongoing monitoring with alert thresholds (config/monitoring.yaml); outcomes analysis once outcomes mature; champion/challenger before any replacement, promoted only by a model_validator; required rows in the release gate; review at least yearly |
 | Motor claim severity, freMTPL2 | `consumer_decision` | Tier 1 (high) | Tier 3 (low) | validation independent of the developer before first use; ongoing monitoring with alert thresholds (config/monitoring.yaml); outcomes analysis once outcomes mature; champion/challenger before any replacement, promoted only by a model_validator; required rows in the release gate; review at least yearly |
-| Fairness testing demonstration, UCI German Credit | `method_demonstration` | Tier 3 (low) | Tier 3 (low) | listed in the inventory; the conditions under which its use would become material are monitored; never used for a decision |
+| Fairness testing demonstration, UCI German Credit | `method_demonstration` | Tier 3 (low) | Tier 3 (low) | listed in the inventory; its performance and the conditions under which its use would become material are monitored; never used for a decision |
 
 ## 3. Validation
 
@@ -215,7 +231,7 @@ Source: `results/risk_metrics.json`, section `fairness_demo`, written at git com
 
 ## 4. Ongoing monitoring
 
-The plan per model (population stability, calibration, discrimination, overrides) is in each model card. Phase 6 runs it on a SIMULATED stream: every threshold is in `config/monitoring.yaml`; a breach writes an alert record and marks the monitored model `under_review` in the model status registry.
+The plan per model (population stability, calibration, discrimination, overrides) is in each model card; it is not run for any inventory model. Phase 6 demonstrates input drift, score drift and calibration checks (no discrimination metric) on a SIMULATED stream for a separate demonstration GLM trained by `scripts/monitor.py`, which is not an inventory model (section 1 lists it with the Phase 6 demonstrations). Every threshold is in `config/monitoring.yaml`; a breach writes an alert record and marks the monitored model `under_review` in the model status registry.
 
 Data: SYNTHETIC; measured on a SIMULATED stream: PUBLIC freMTPL2 held-out policies with SYNTHETIC injected drift; indicators read from the latest results files.
 
@@ -224,33 +240,33 @@ Data: SYNTHETIC; measured on a SIMULATED stream: PUBLIC freMTPL2 held-out polici
 - Observed / predicted claims on the whole held-out pool: 1.0060 [0.9791, 1.0335] (exact (Garwood) Poisson 95% interval of the observed count / predicted).
 - No out-of-time stream: freMTPL2 has no date or policy-year field, so no real stream of new business and no out-of-time split exist. Windows are random draws from the held-out split and every drift is INJECTED (SYNTHETIC scenarios).
 
-Validation of the monitor on SIMULATED streams (rate [95% bootstrap CI over streams] (streams)):
+Validation of the monitor on SIMULATED streams (300 streams per scenario, 12 windows each, numbered from 0; drift, if any, from window 6 to the last window). Rate: [95% bootstrap CI over streams] (streams). Delay: windows from the start of the drift to the first alert, over the detected streams only. A delay cannot exceed the number of drifted windows minus one, and a stream with no alert by the last window is left out of the mean, so the mean delay is not a time to detection for every stream: read it with the detection rate and the delay counts.
 
-| Scenario | Drift injected | Measure | Rate [95% CI] (streams) | Mean delay, windows [95% CI] |
-|---|---|---|---|---|
-| `no_drift` | no | false alert rate | 0.0033 [0.0000, 0.0100] (1/300) | not applicable |
-| `covariate_shift_young_drivers` | yes | detection rate | 1.0000 (300/300; zero-width bootstrap interval, exact interval not recorded) | 0.00 [0.00, 0.00] |
-| `covariate_shift_young_drivers_mild` | yes | detection rate | 0.0000 (0/300; zero-width bootstrap interval, exact interval not recorded) | not measured |
-| `covariate_shift_region` | yes | detection rate | 1.0000 (300/300; zero-width bootstrap interval, exact interval not recorded) | 0.00 [0.00, 0.00] |
-| `claim_rate_up_25pct` | yes | detection rate | 0.9933 [0.9833, 1.0000] (298/300) | 0.80 [0.67, 0.93] |
-| `claim_rate_up_10pct` | yes | detection rate | 0.1633 [0.1233, 0.2100] (49/300) | 2.47 [1.94, 3.00] |
+| Scenario | Drift injected | Measure | Rate [95% CI] (streams) | Mean delay among detected streams, windows [95% CI] (detected of all streams) | Detected streams by delay (windows: streams) |
+|---|---|---|---|---|---|
+| `no_drift` | no | false alert rate | 0.0033 [0.0000, 0.0100] (1/300) | not applicable | not applicable |
+| `covariate_shift_young_drivers` | yes | detection rate | 1.0000 exact [0.9878, 1.0000] (300/300) | 0.00 (300 of 300 streams detected; zero-width bootstrap interval) | 0: 300 |
+| `covariate_shift_young_drivers_mild` | yes | detection rate | 0.0000 exact [0.0000, 0.0122] (0/300) | not applicable (no stream was detected, so there is no delay to report) | not applicable |
+| `covariate_shift_region` | yes | detection rate | 1.0000 exact [0.9878, 1.0000] (300/300) | 0.00 (300 of 300 streams detected; zero-width bootstrap interval) | 0: 300 |
+| `claim_rate_up_25pct` | yes | detection rate | 0.9933 [0.9833, 1.0000] (298/300) | 0.80 [0.67, 0.93] (298 of 300 streams detected) | 0: 173, 1: 59, 2: 33, 3: 22, 4: 9, 5: 2 |
+| `claim_rate_up_10pct` | yes | detection rate | 0.1633 [0.1233, 0.2100] (49/300) | 2.47 [1.94, 3.00] (49 of 300 streams detected) | 0: 11, 1: 8, 2: 7, 3: 6, 4: 4, 5: 13 |
 
-- Demonstration stream `covariate_shift_young_drivers`: 6 alert records this run (log `data/governance/monitoring_alerts.jsonl`); model status not registered before the run -> under_review.
+- Demonstration stream `covariate_shift_young_drivers`: 6 alert records this run (log `data/governance/monitoring_alerts.jsonl`); model status under_review -> under_review.
 - Credit model: not measured (The Lending Club data and every trained credit model are absent from this checkout (downloading them needs a Kaggle key). results/risk_metrics.json keeps the credit results measured earlier, but no credit application stream could be scored here, so the credit model is not monitored.).
 
-Indicators read from the latest results files (single values, not a stream):
+Indicators the monitor read from the results files when it ran (single values, not a stream; a missing value shows the status and note the monitor recorded):
 
 | Indicator | Component | Value | Level |
 |---|---|---|---|
 | citation_support_rate | document_extraction | 0.9984 [0.9975, 0.9992] | ok |
 | ocr_page_share | document_extraction | 0.1675 | ok |
-| low_confidence_field_share | document_extraction | not measured | not measured |
+| low_confidence_field_share | document_extraction | not available (the file has no field-confidence metric) | not available |
 | required_escalations_escalated | agent | 1.0000 (zero-width interval) | ok |
 | escalation_share | agent | 0.9231 | no rule (reported only) |
-| unsupported_claim_rate | agent | not measured | not measured |
-| override_rate | review_feedback | not measured | not measured |
+| unsupported_claim_rate | agent | not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made | not measured |
+| override_rate | review_feedback | 0.1385 [0.0615, 0.2308] | warn |
 
-Source: `results/governance_metrics.json`, section `monitoring`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
+Source: `results/governance_metrics.json`, section `monitoring`, written at git commit `50acabe47d25b5315d8f1aa6a2507ba920539af7` (uncommitted changes recorded by the script: no).
 
 ## 5. Outcomes analysis
 
@@ -270,10 +286,10 @@ Data: SYNTHETIC outcomes joined to SIMULATED decisions on SYNTHETIC Lending Club
 
 - Approved and defaulted: 1,010 of 4,632 approved decisions with an outcome.
 - Recorded PD calibration: ECE 0.0138 [0.0099, 0.0261], Brier 0.1736 [0.1688, 0.1785], observed / expected defaults 1.0245.
-- Every decision has outcomes here only because the SYNTHETIC rows are all issued loans. In a real portfolio a declined application produces no outcome, so default rates for non-approved decisions exist only for files that were later booked (selective labels).
+- Every decision type, including declines, can have an outcome here only because the SYNTHETIC rows are all issued loans; loans not yet finished stay pending. In a real portfolio a declined application produces no outcome, so default rates for non-approved decisions exist only for files that were later booked (selective labels).
 - The recorded PD is the champion's PD; its calibration here uses the same finished 2017-2018 rows as the champion's ECE in section champion_challenger, so the two must agree.
 
-Source: `results/governance_metrics.json`, section `outcomes`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
+Source: `results/governance_metrics.json`, section `outcomes`, written at git commit `50acabe47d25b5315d8f1aa6a2507ba920539af7` (uncommitted changes recorded by the script: no).
 
 ## 6. Change management
 
@@ -306,7 +322,7 @@ Data: SYNTHETIC Lending Club-shaped loans (risk/data/lending_club.py synthetic_a
 | champion | `SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3` | champion |
 | challenger | `SYNTHETIC-lc-pd-lightgbm-to2016-a9f6032da1` | challenger |
 
-Source: `results/governance_metrics.json`, section `champion_challenger`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
+Source: `results/governance_metrics.json`, section `champion_challenger`, written at git commit `50acabe47d25b5315d8f1aa6a2507ba920539af7` (uncommitted changes recorded by the script: no).
 
 ### Release gate
 
@@ -323,8 +339,8 @@ Source: `results/governance_metrics.json`, section `champion_challenger`, writte
 | `agent_reached_human_checkpoint` | PASS | value | 1.0000 | 1.0000 | 1 >= 1 (target 1 - tolerance 0) |
 | `agent_decisions_without_human` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
 | `studio_decisions_without_human` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
-| `llm_citation_accuracy` | NOT_MEASURED | value | not measured | not measured | not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made |
-| `llm_unsupported_claim_rate` | NOT_MEASURED | value | not measured | not measured | not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made |
+| `llm_citation_accuracy` | NOT_MEASURED | value | not measured | not measured | llm_dependent.citation_accuracy: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made |
+| `llm_unsupported_claim_rate` | NOT_MEASURED | value | not measured | not measured | llm_dependent.unsupported_claim_rate: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made |
 | `docintel_citation_support_ci_low` | PASS | ci_bound | 0.9975 | 0.9975 | 0.9975 >= 0.9955 (baseline - tolerance 0.002) |
 | `injection_asr_l1` | NOT_MEASURED | value | not measured | not measured | injection_metrics.json is absent |
 | `injection_asr_l2` | NOT_MEASURED | value | not measured | not measured | injection_metrics.json is absent |
@@ -332,7 +348,7 @@ Source: `results/governance_metrics.json`, section `champion_challenger`, writte
 | `studio_pdf_untraced_numbers` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
 | `studio_narrative_untraced_numbers` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
 
-Source: `results/governance_metrics.json`, section `release_gate`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
+Source: `results/governance_metrics.json`, section `release_gate`, written at git commit `50acabe47d25b5315d8f1aa6a2507ba920539af7` (uncommitted changes recorded by the script: no).
 
 ### Versions recorded with every decision
 
@@ -340,9 +356,9 @@ Each decision record carries the model version, the dataset checksums, the promp
 
 ## 7. The LLM extraction and the agent: governed outside SR 26-2
 
-SR 26-2, footnote 3 (local copy, section II): "Generative AI and agentic AI models are novel and rapidly evolving. As such, they are not within the scope of this guidance. Nonetheless, a banking organization's risk management and governance practices should guide the determination of appropriate governance and controls for any tools, processes, or systems not covered in this document."
+SR 26-2, footnote 3 in full (local copy, section II): "Generative AI and agentic AI models are novel and rapidly evolving. As such, they are not within the scope of this guidance. Nonetheless, a banking organization's risk management and governance practices should guide the determination of appropriate governance and controls for any tools, processes, or systems not covered in this document. However, the principles described in this guidance apply to traditional statistical and quantitative models and non-generative, non-agentic AI models."
 
-The LLM field extraction (`docintel/extract_llm*.py`) and the underwriting agent (`agent/graph.py`: tool calls and the memo) are generative and agentic AI, so SR 26-2 does not cover them. Following the footnote's last sentence, the project governs them with its own controls: a human decides every file, the agent may only call allow-listed tools, document text is data and never instructions, and a change of LLM or prompt is to be certified by `scripts/llm_migration_gate.py` and signed by a model_validator before release (no such change has been evaluated here). No LLM was available for the results below: every LLM-dependent measure says not measured.
+The LLM field extraction (`docintel/extract_llm*.py`) and the underwriting agent (`agent/graph.py`: tool calls and the memo) are generative and agentic AI, so SR 26-2 does not cover them. Following the footnote's third sentence, the project governs them with its own controls: a human decides every file, the agent may only call allow-listed tools, document text is data and never instructions, and a change of LLM or prompt is to be certified by `scripts/llm_migration_gate.py` and signed by a model_validator before release (a manual step: neither CI nor the release gate checks for a certificate; no such change has been evaluated here). LLM use recorded for the results below: agent memo writer: fake:fake-llm (deterministic template memo, FAKE LLM — test mode); extraction LLM provider: none (extractors run: rules). Every LLM-dependent measure that was not run says not measured.
 
 ### Controls on the agent
 
@@ -356,13 +372,13 @@ The LLM field extraction (`docintel/extract_llm*.py`) and the underwriting agent
 | Injection tripwire recall on the frozen payloads (a tripwire, not an attack success rate) | agent/injection.py detect | 0.2000 [0.1183, 0.3178] (12/60, Wilson 95%) | `results/injection/injection_metrics_detector_only.json` |
 | Injection detector on the SYNTHETIC applications: recall / false-positive rate | agent/injection.py detect; a detected injection is escalated | 0.8571 [0.5714, 1.0000] (n=7) / 0.0345 [0.0000, 0.0862] (n=58) | `results/agent_metrics.json` |
 | Recommendation agrees with the rule-based reference policy (deterministic path) | agent/policy.py decide_recommendation; scripts/eval_agent.py | 0.9846 [0.9538, 1.0000] (n=65) | `results/agent_metrics.json` |
-| An LLM or prompt change needs a migration certificate signed by a model_validator | scripts/llm_migration_gate.py (non-inferiority margins in config/release_gate.yaml); security/rbac.py sign_migration_certificate | not measured (no `results/llm_migration_*.json` certificate exists: no LLM migration was evaluated) | `results/llm_migration_*.json` |
+| An LLM or prompt change is to be certified by a migration certificate signed by a model_validator (a process step) | Not enforced: scripts/llm_migration_gate.py is run by hand (non-inferiority margins in config/release_gate.yaml), and neither CI nor the release gate checks that a certificate exists when the prompt or the LLM changes; security/rbac.py sign_migration_certificate only restricts who may sign (model_validator) | not measured (no `results/llm_migration_*.json` certificate exists: no LLM migration was evaluated) | `results/llm_migration_*.json` |
 
 ### Quality of the extraction and of the memo
 
 | Measure | Value | Results file |
 |---|---|---|
-| Field extraction F1, rules extractor (deterministic; not an LLM) | 0.9936 [0.9889, 0.9971] | `results/docintel_metrics.json` |
+| Field extraction F1, rules extractor (deterministic rules, not an LLM; scanned pages read by Tesseract OCR) | 0.9936 [0.9889, 0.9971] | `results/docintel_metrics.json` |
 | Field extraction, LLM (hybrid) extractor vs rules | not measured (no --provider run has been done: this run used the rules extractor only; `scripts/eval_docintel.py --provider ollama` would measure it) | `results/docintel_metrics.json` |
 | Extractors run | rules | `results/docintel_metrics.json` |
 | Memo citation accuracy (LLM memo) | not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made | `results/agent_metrics.json` |
@@ -382,9 +398,9 @@ Source: `results/injection/injection_metrics_detector_only.json`, written at git
 
 - Data: SYNTHETIC applications; SIMULATED reviewer actions; measured on the SIMULATED decision log written by this run.
 - Records with a lineage block: 65 of 65; by status: current_where_checkable: 65.
-- Each record's lineage hashes were compared with the working tree right after the records were written, so matching hashes are expected. not_checkable items are files that are not present here (the Lending Club data needs a Kaggle key; some raw files were not kept); they are not assumed to match.
+- Each record's lineage hashes were compared with the working tree right after the records were written, so matching hashes are expected. not_checkable items are files that are not present here (the Lending Club data needs a Kaggle key; some raw files were not kept) or parts the record could not record; they are not assumed to match. The code commit is recorded but not compared; the decision-logic files (policy, approval checkpoint, graph) are compared by hash.
 
-Source: `results/governance_metrics.json`, section `lineage`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
+Source: `results/governance_metrics.json`, section `lineage`, written at git commit `50acabe47d25b5315d8f1aa6a2507ba920539af7` (uncommitted changes recorded by the script: no).
 
 ### Reviewer feedback (SIMULATED reviewer)
 
@@ -402,7 +418,7 @@ Data: SYNTHETIC applications; SIMULATED reviewer actions. These rates describe t
 | `policy_exception_approved` | 1 |
 | `referral_resolved_in_writing` | 6 |
 
-Source: `results/governance_metrics.json`, section `feedback`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
+Source: `results/governance_metrics.json`, section `feedback`, written at git commit `50acabe47d25b5315d8f1aa6a2507ba920539af7` (uncommitted changes recorded by the script: no).
 
 ## 8. Map to the structure of SR 26-2
 
@@ -411,18 +427,18 @@ Section numbers are those of the local copy of the attachment. "Status here" des
 | SR 26-2 (section) | Where in this project | Status here |
 |---|---|---|
 | II. Purpose and scope: model definition; most relevant above $30 billion in total assets | Scope (above) | Stated. Whether the guidance applies depends on the institution. |
-| III. Inherent risk, exposure and purpose; materiality = purpose + exposure | 2. Materiality tiering | Rule stated (a design choice). Exposure: none (no portfolio). |
+| III. Inherent risk, exposure and purpose; materiality = purpose + exposure | 2. Materiality tiering | Rule stated (a design choice). Exposure: none (no portfolio); declared, not monitored. |
 | III. Aggregate model risk (common data, assumptions, methods) | - | Not assessed. |
 | III. Effective challenge by objective, independent experts | 3. Validation | Not performed: one developer built and tested every model. |
 | IV. Model development: purpose, data, out-of-sample and out-of-time testing | Model cards; 3. Validation | Credit: out-of-time test. Insurance and German Credit: random split only (no date field). |
 | IV. Model use: limitations, use beyond the intended purpose | 1. Inventory (not for); model card limitations | Documented. |
 | V. Validation: conceptual soundness | Model cards (methodology); docs/model_cards/validation_report.md | Developer testing only. |
 | V. Outcomes analysis | 5. Outcomes analysis | Held-out backtests in the model cards; outcome join: SYNTHETIC outcomes joined to SIMULATED decisions (section 5). |
-| V. Ongoing model monitoring | 4. Ongoing monitoring | SIMULATED stream on freMTPL2; the credit model is not monitored (data absent). |
+| V. Ongoing model monitoring | 4. Ongoing monitoring | SIMULATED stream on a separate demonstration freMTPL2 GLM only (input, score and calibration drift; no discrimination metric); none of the inventory models (section 1) is monitored. |
 | VI. Governance and controls: policies, roles and responsibilities | 6. Change management; security/rbac.py | Roles enforced in code; roles are claimed (no identity provider) and one person holds them all. Champion/challenger: SYNTHETIC champion/challenger compared (section 6). Release gate: release gate run against the reviewed baseline (section 6). |
 | VI. Model inventory | 1. Model inventory; model status registry | Listed. |
 | VI. Documentation | Model cards, validation report, this pack | Rendered from results files; a test compares the committed copies with a fresh render. |
-| VII. Vendor and other third-party products | Open-source libraries (LightGBM, scikit-learn, statsmodels) and public data | No vendor model is used. Library versions are recorded in each results section's metadata. |
+| VII. Vendor and other third-party products | Open-source libraries (LightGBM, scikit-learn, statsmodels) and public data; third-party pretrained OCR and retrieval models (section 1) | No vendor model is used by the inventory models. The pretrained OCR and retrieval models are listed with their recorded use in these results and are not validated here. Library versions are recorded in each results section's metadata. |
 | Footnote 3: generative and agentic AI are not within the scope | 7. The LLM extraction and the agent | Governed by this project's own controls, not by SR 26-2. |
 
 ## Applicability

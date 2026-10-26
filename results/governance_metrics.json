@@ -168,7 +168,7 @@
         "score": "predicted_frequency: predicted claims per policy-year",
         "cache": {
           "cache_file": "data/governance/monitoring/frequency_glm.json",
-          "loaded_from_cache": false,
+          "loaded_from_cache": true,
           "model_file_sha256": "998004016bc3fb392b7ec786281b9a1d524d74bfb81b0c3eca1beaa961266d7f",
           "fingerprint": {
             "data_files_sha256": {
@@ -280,7 +280,11 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 8.438913231780051e-05,
+            "exact_ci_high": 0.018431252048067885,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": "1 of 300 streams: the bootstrap interval is too narrow; read the exact interval"
           },
           "warn_rate": {
             "estimate": 0.8733333333333333,
@@ -292,7 +296,11 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.8303070926415046,
+            "exact_ci_high": 0.9087815762542462,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": null
           },
           "warn_rate_by_check": {
             "input_drift": {
@@ -305,7 +313,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "score_drift": {
               "estimate": 0.0,
@@ -317,7 +329,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "calibration_ratio": {
               "estimate": 0.87,
@@ -329,7 +345,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.8265951605527668,
+              "exact_ci_high": 0.9058988093684294,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": null
             },
             "calibration_ece": {
               "estimate": 0.0033333333333333335,
@@ -341,7 +361,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 8.438913231780051e-05,
+              "exact_ci_high": 0.018431252048067885,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "1 of 300 streams: the bootstrap interval is too narrow; read the exact interval"
             }
           },
           "false_alert_rate_by_check": {
@@ -355,7 +379,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "score_drift": {
               "estimate": 0.0,
@@ -367,7 +395,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "calibration_ratio": {
               "estimate": 0.0033333333333333335,
@@ -379,7 +411,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 8.438913231780051e-05,
+              "exact_ci_high": 0.018431252048067885,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "1 of 300 streams: the bootstrap interval is too narrow; read the exact interval"
             },
             "calibration_ece": {
               "estimate": 0.0,
@@ -391,7 +427,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             }
           }
         },
@@ -415,10 +455,19 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.9877790253057065,
+            "exact_ci_high": 1.0,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
           },
           "detection_delay_windows": {
             "unit": "windows after the drift started (0 = the first drifted window)",
+            "mean_over": "detected streams only: streams with no alert after the drift started are left out",
+            "n_streams": 300,
+            "n_detected_streams": 300,
+            "max_possible_delay": 5,
+            "max_possible_delay_reason": "the stream ends max_possible_delay windows after the drift starts; a later alert is not observed, so that stream counts as not detected",
             "mean": {
               "estimate": 0.0,
               "ci_low": 0.0,
@@ -431,9 +480,107 @@
             },
             "median": 0.0,
             "max": 0,
-            "n_detected_streams": 300,
+            "streams_at_max_possible_delay": 0,
             "streams_by_delay": {
               "0": 300
+            },
+            "detected_within_windows": {
+              "0": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "1": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "2": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "3": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "4": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "5": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              }
             }
           },
           "pre_drift_false_alert_rate": {
@@ -446,7 +593,11 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.0,
+            "exact_ci_high": 0.01222097469429355,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
           },
           "detection_rate_by_check": {
             "input_drift": {
@@ -459,7 +610,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.9877790253057065,
+              "exact_ci_high": 1.0,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "score_drift": {
               "estimate": 0.0,
@@ -471,7 +626,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "calibration_ratio": {
               "estimate": 0.013333333333333334,
@@ -483,7 +642,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0036445140520665223,
+              "exact_ci_high": 0.03378489626191785,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": null
             },
             "calibration_ece": {
               "estimate": 0.0,
@@ -495,7 +658,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             }
           }
         },
@@ -519,11 +686,119 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.0,
+            "exact_ci_high": 0.01222097469429355,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
           },
           "detection_delay_windows": {
             "status": "not available",
-            "reason": "no stream was detected, so there is no delay to report"
+            "reason": "no stream was detected, so there is no delay to report",
+            "unit": "windows after the drift started (0 = the first drifted window)",
+            "mean_over": "detected streams only: streams with no alert after the drift started are left out",
+            "n_streams": 300,
+            "n_detected_streams": 0,
+            "max_possible_delay": 5,
+            "max_possible_delay_reason": "the stream ends max_possible_delay windows after the drift starts; a later alert is not observed, so that stream counts as not detected",
+            "detected_within_windows": {
+              "0": {
+                "estimate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "numerator": 0,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.0,
+                "exact_ci_high": 0.01222097469429355,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "1": {
+                "estimate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "numerator": 0,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.0,
+                "exact_ci_high": 0.01222097469429355,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "2": {
+                "estimate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "numerator": 0,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.0,
+                "exact_ci_high": 0.01222097469429355,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "3": {
+                "estimate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "numerator": 0,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.0,
+                "exact_ci_high": 0.01222097469429355,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "4": {
+                "estimate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "numerator": 0,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.0,
+                "exact_ci_high": 0.01222097469429355,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "5": {
+                "estimate": 0.0,
+                "ci_low": 0.0,
+                "ci_high": 0.0,
+                "numerator": 0,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.0,
+                "exact_ci_high": 0.01222097469429355,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              }
+            }
           },
           "pre_drift_false_alert_rate": {
             "estimate": 0.0,
@@ -535,7 +810,11 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.0,
+            "exact_ci_high": 0.01222097469429355,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
           },
           "detection_rate_by_check": {
             "input_drift": {
@@ -548,7 +827,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "score_drift": {
               "estimate": 0.0,
@@ -560,7 +843,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "calibration_ratio": {
               "estimate": 0.0,
@@ -572,7 +859,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "calibration_ece": {
               "estimate": 0.0,
@@ -584,7 +875,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             }
           }
         },
@@ -608,10 +903,19 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.9877790253057065,
+            "exact_ci_high": 1.0,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
           },
           "detection_delay_windows": {
             "unit": "windows after the drift started (0 = the first drifted window)",
+            "mean_over": "detected streams only: streams with no alert after the drift started are left out",
+            "n_streams": 300,
+            "n_detected_streams": 300,
+            "max_possible_delay": 5,
+            "max_possible_delay_reason": "the stream ends max_possible_delay windows after the drift starts; a later alert is not observed, so that stream counts as not detected",
             "mean": {
               "estimate": 0.0,
               "ci_low": 0.0,
@@ -624,9 +928,107 @@
             },
             "median": 0.0,
             "max": 0,
-            "n_detected_streams": 300,
+            "streams_at_max_possible_delay": 0,
             "streams_by_delay": {
               "0": 300
+            },
+            "detected_within_windows": {
+              "0": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "1": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "2": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "3": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "4": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              },
+              "5": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "numerator": 300,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9877790253057065,
+                "exact_ci_high": 1.0,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
+              }
             }
           },
           "pre_drift_false_alert_rate": {
@@ -639,7 +1041,11 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.0,
+            "exact_ci_high": 0.01222097469429355,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
           },
           "detection_rate_by_check": {
             "input_drift": {
@@ -652,7 +1058,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.9877790253057065,
+              "exact_ci_high": 1.0,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "300 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "score_drift": {
               "estimate": 0.0,
@@ -664,7 +1074,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "calibration_ratio": {
               "estimate": 0.006666666666666667,
@@ -676,7 +1090,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0008083864127997918,
+              "exact_ci_high": 0.02387349757217365,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": null
             },
             "calibration_ece": {
               "estimate": 0.0,
@@ -688,7 +1106,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             }
           }
         },
@@ -712,10 +1134,19 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.9761265024278264,
+            "exact_ci_high": 0.9991916135872002,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": null
           },
           "detection_delay_windows": {
             "unit": "windows after the drift started (0 = the first drifted window)",
+            "mean_over": "detected streams only: streams with no alert after the drift started are left out",
+            "n_streams": 300,
+            "n_detected_streams": 298,
+            "max_possible_delay": 5,
+            "max_possible_delay_reason": "the stream ends max_possible_delay windows after the drift starts; a later alert is not observed, so that stream counts as not detected",
             "mean": {
               "estimate": 0.7953020134228188,
               "ci_low": 0.6711409395973155,
@@ -728,7 +1159,7 @@
             },
             "median": 0.0,
             "max": 5,
-            "n_detected_streams": 298,
+            "streams_at_max_possible_delay": 2,
             "streams_by_delay": {
               "0": 173,
               "1": 59,
@@ -736,6 +1167,104 @@
               "3": 22,
               "4": 9,
               "5": 2
+            },
+            "detected_within_windows": {
+              "0": {
+                "estimate": 0.5766666666666667,
+                "ci_low": 0.5233333333333333,
+                "ci_high": 0.6334166666666665,
+                "numerator": 173,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.5185631902234467,
+                "exact_ci_high": 0.6332407570448912,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "1": {
+                "estimate": 0.7733333333333333,
+                "ci_low": 0.7266666666666667,
+                "ci_high": 0.8233333333333334,
+                "numerator": 232,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.7217091548877628,
+                "exact_ci_high": 0.8194691833657309,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "2": {
+                "estimate": 0.8833333333333333,
+                "ci_low": 0.85,
+                "ci_high": 0.9167499999999998,
+                "numerator": 265,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.8414936728167545,
+                "exact_ci_high": 0.91737743306946,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "3": {
+                "estimate": 0.9566666666666667,
+                "ci_low": 0.9333333333333333,
+                "ci_high": 0.98,
+                "numerator": 287,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.927038535779718,
+                "exact_ci_high": 0.9767281589953176,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "4": {
+                "estimate": 0.9866666666666667,
+                "ci_low": 0.9733333333333334,
+                "ci_high": 0.9966666666666667,
+                "numerator": 296,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9662151037380822,
+                "exact_ci_high": 0.9963554859479334,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "5": {
+                "estimate": 0.9933333333333333,
+                "ci_low": 0.9833333333333333,
+                "ci_high": 1.0,
+                "numerator": 298,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.9761265024278264,
+                "exact_ci_high": 0.9991916135872002,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              }
             }
           },
           "pre_drift_false_alert_rate": {
@@ -748,7 +1277,11 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.0,
+            "exact_ci_high": 0.01222097469429355,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
           },
           "detection_rate_by_check": {
             "input_drift": {
@@ -761,7 +1294,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "score_drift": {
               "estimate": 0.0,
@@ -773,7 +1310,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "calibration_ratio": {
               "estimate": 0.9933333333333333,
@@ -785,7 +1326,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.9761265024278264,
+              "exact_ci_high": 0.9991916135872002,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": null
             },
             "calibration_ece": {
               "estimate": 0.0,
@@ -797,7 +1342,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             }
           }
         },
@@ -821,10 +1370,19 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.12334431516706468,
+            "exact_ci_high": 0.21012027379924464,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": null
           },
           "detection_delay_windows": {
             "unit": "windows after the drift started (0 = the first drifted window)",
+            "mean_over": "detected streams only: streams with no alert after the drift started are left out",
+            "n_streams": 300,
+            "n_detected_streams": 49,
+            "max_possible_delay": 5,
+            "max_possible_delay_reason": "the stream ends max_possible_delay windows after the drift starts; a later alert is not observed, so that stream counts as not detected",
             "mean": {
               "estimate": 2.4693877551020407,
               "ci_low": 1.9382653061224493,
@@ -837,7 +1395,7 @@
             },
             "median": 2.0,
             "max": 5,
-            "n_detected_streams": 49,
+            "streams_at_max_possible_delay": 13,
             "streams_by_delay": {
               "0": 11,
               "1": 8,
@@ -845,6 +1403,104 @@
               "3": 6,
               "4": 4,
               "5": 13
+            },
+            "detected_within_windows": {
+              "0": {
+                "estimate": 0.03666666666666667,
+                "ci_low": 0.016666666666666666,
+                "ci_high": 0.06,
+                "numerator": 11,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.018443460812459775,
+                "exact_ci_high": 0.0646585181962982,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "1": {
+                "estimate": 0.06333333333333334,
+                "ci_low": 0.03666666666666667,
+                "ci_high": 0.09008333333333325,
+                "numerator": 19,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.038558019828376075,
+                "exact_ci_high": 0.0971381966071201,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "2": {
+                "estimate": 0.08666666666666667,
+                "ci_low": 0.056666666666666664,
+                "ci_high": 0.12,
+                "numerator": 26,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.05739483254705112,
+                "exact_ci_high": 0.12440736286509173,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "3": {
+                "estimate": 0.10666666666666667,
+                "ci_low": 0.07,
+                "ci_high": 0.14333333333333334,
+                "numerator": 32,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.07411235947328816,
+                "exact_ci_high": 0.1472370164205434,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "4": {
+                "estimate": 0.12,
+                "ci_low": 0.08333333333333333,
+                "ci_high": 0.16,
+                "numerator": 36,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.0854788022917196,
+                "exact_ci_high": 0.16224394233024284,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              },
+              "5": {
+                "estimate": 0.16333333333333333,
+                "ci_low": 0.12333333333333334,
+                "ci_high": 0.21,
+                "numerator": 49,
+                "denominator": 300,
+                "n_resamples": 1000,
+                "seed": 42,
+                "confidence": 0.95,
+                "method": "percentile bootstrap",
+                "unit": "stream",
+                "exact_ci_low": 0.12334431516706468,
+                "exact_ci_high": 0.21012027379924464,
+                "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+                "bootstrap_interval_note": null
+              }
             }
           },
           "pre_drift_false_alert_rate": {
@@ -857,7 +1513,11 @@
             "seed": 42,
             "confidence": 0.95,
             "method": "percentile bootstrap",
-            "unit": "stream"
+            "unit": "stream",
+            "exact_ci_low": 0.0,
+            "exact_ci_high": 0.01222097469429355,
+            "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+            "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
           },
           "detection_rate_by_check": {
             "input_drift": {
@@ -870,7 +1530,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "score_drift": {
               "estimate": 0.0,
@@ -882,7 +1546,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             },
             "calibration_ratio": {
               "estimate": 0.16333333333333333,
@@ -894,7 +1562,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.12334431516706468,
+              "exact_ci_high": 0.21012027379924464,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": null
             },
             "calibration_ece": {
               "estimate": 0.0,
@@ -906,7 +1578,11 @@
               "seed": 42,
               "confidence": 0.95,
               "method": "percentile bootstrap",
-              "unit": "stream"
+              "unit": "stream",
+              "exact_ci_low": 0.0,
+              "exact_ci_high": 0.01222097469429355,
+              "exact_method": "Clopper-Pearson (exact binomial; streams counted as independent)",
+              "bootstrap_interval_note": "0 of 300 streams: zero-width bootstrap interval; read the exact interval"
             }
           }
         }
@@ -1520,7 +2196,7 @@
             "predicted_claims": 228.26155024716533,
             "level": "alert",
             "alert_ids": [
-              "MON-20261026T164450Z-0001"
+              "MON-20261026T181527Z-0001"
             ],
             "checks": [
               {
@@ -1621,7 +2297,7 @@
             "predicted_claims": 230.32747689137872,
             "level": "alert",
             "alert_ids": [
-              "MON-20261026T164450Z-0002"
+              "MON-20261026T181527Z-0002"
             ],
             "checks": [
               {
@@ -1722,7 +2398,7 @@
             "predicted_claims": 224.35304684308255,
             "level": "alert",
             "alert_ids": [
-              "MON-20261026T164450Z-0003"
+              "MON-20261026T181527Z-0003"
             ],
             "checks": [
               {
@@ -1823,7 +2499,7 @@
             "predicted_claims": 228.13801559364,
             "level": "alert",
             "alert_ids": [
-              "MON-20261026T164450Z-0004"
+              "MON-20261026T181527Z-0004"
             ],
             "checks": [
               {
@@ -1924,7 +2600,7 @@
             "predicted_claims": 224.57394573981745,
             "level": "alert",
             "alert_ids": [
-              "MON-20261026T164450Z-0005"
+              "MON-20261026T181527Z-0005"
             ],
             "checks": [
               {
@@ -2025,7 +2701,7 @@
             "predicted_claims": 231.85130958887004,
             "level": "alert",
             "alert_ids": [
-              "MON-20261026T164450Z-0006"
+              "MON-20261026T181527Z-0006"
             ],
             "checks": [
               {
@@ -2128,7 +2804,7 @@
             "sha256": "99fa6dbbe9619c61945cd07dc9a6c3a0c3482d529480d9613e912e1565897a28"
           },
           "results/governance_metrics.json": {
-            "sha256": null
+            "sha256": "aa27e9272c7a099009be28fc4c9f3a38f14622a0ccd32d01c8de71d50535ca07"
           }
         },
         "values": [
@@ -2225,26 +2901,42 @@
           {
             "name": "override_rate",
             "component": "review_feedback",
-            "source": "results/governance_metrics.json: section 'feedback', key override_rate",
-            "status": "not available",
-            "value": null,
-            "interval": null,
-            "level": null,
-            "rule": null,
-            "detail": {},
-            "note": "results/governance_metrics.json has no 'feedback' section (the feedback track has not run)"
+            "source": "results/governance_metrics.json: section 'feedback', summary.override_rate",
+            "status": "measured",
+            "value": 0.1385,
+            "interval": [
+              0.0615,
+              0.2308
+            ],
+            "level": "warn",
+            "rule": "warn >= 0.1, alert > 0.2",
+            "detail": {
+              "feedback_section_git_commit": "50acabe47d25b5315d8f1aa6a2507ba920539af7",
+              "feedback_section_generated_at_utc": "2026-10-26T18:14:02+00:00",
+              "feedback_section_sha256": "55241a7423066585adee23fd2634e9ad9157a2e0fc4bc3ce8d16ac6fecdfb02e",
+              "override_reasons": {
+                "documented_compensating_factor": 1,
+                "data_error_in_model_input": 2,
+                "information_not_available_to_model": 2,
+                "policy_exception_approved": 1,
+                "referral_resolved_in_writing": 6
+              },
+              "overrides": 9,
+              "decisions": 65
+            },
+            "note": "SIMULATED reviewer decisions (feedback track); CI copied from the file."
           }
         ]
       },
       "alerts": {
         "log": "data/governance/monitoring_alerts.jsonl",
-        "run_id": "20261026T164450Z",
+        "run_id": "20261026T181527Z",
         "n_alerts_this_run": 6,
         "records": [
           {
-            "alert_id": "MON-20261026T164450Z-0001",
-            "created_at_utc": "2026-10-26T16:44:50Z",
-            "run_id": "20261026T164450Z",
+            "alert_id": "MON-20261026T181527Z-0001",
+            "created_at_utc": "2026-10-26T18:15:27Z",
+            "run_id": "20261026T181527Z",
             "data_label": "SYNTHETIC",
             "component": "fremtpl2_frequency_model",
             "model_id": "fremtpl2-frequency-glm-monitoring-v1",
@@ -2258,9 +2950,9 @@
             "action": "mark_under_review"
           },
           {
-            "alert_id": "MON-20261026T164450Z-0002",
-            "created_at_utc": "2026-10-26T16:44:50Z",
-            "run_id": "20261026T164450Z",
+            "alert_id": "MON-20261026T181527Z-0002",
+            "created_at_utc": "2026-10-26T18:15:27Z",
+            "run_id": "20261026T181527Z",
             "data_label": "SYNTHETIC",
             "component": "fremtpl2_frequency_model",
             "model_id": "fremtpl2-frequency-glm-monitoring-v1",
@@ -2274,9 +2966,9 @@
             "action": "mark_under_review"
           },
           {
-            "alert_id": "MON-20261026T164450Z-0003",
-            "created_at_utc": "2026-10-26T16:44:50Z",
-            "run_id": "20261026T164450Z",
+            "alert_id": "MON-20261026T181527Z-0003",
+            "created_at_utc": "2026-10-26T18:15:27Z",
+            "run_id": "20261026T181527Z",
             "data_label": "SYNTHETIC",
             "component": "fremtpl2_frequency_model",
             "model_id": "fremtpl2-frequency-glm-monitoring-v1",
@@ -2290,9 +2982,9 @@
             "action": "mark_under_review"
           },
           {
-            "alert_id": "MON-20261026T164450Z-0004",
-            "created_at_utc": "2026-10-26T16:44:50Z",
-            "run_id": "20261026T164450Z",
+            "alert_id": "MON-20261026T181527Z-0004",
+            "created_at_utc": "2026-10-26T18:15:27Z",
+            "run_id": "20261026T181527Z",
             "data_label": "SYNTHETIC",
             "component": "fremtpl2_frequency_model",
             "model_id": "fremtpl2-frequency-glm-monitoring-v1",
@@ -2306,9 +2998,9 @@
             "action": "mark_under_review"
           },
           {
-            "alert_id": "MON-20261026T164450Z-0005",
-            "created_at_utc": "2026-10-26T16:44:50Z",
-            "run_id": "20261026T164450Z",
+            "alert_id": "MON-20261026T181527Z-0005",
+            "created_at_utc": "2026-10-26T18:15:27Z",
+            "run_id": "20261026T181527Z",
             "data_label": "SYNTHETIC",
             "component": "fremtpl2_frequency_model",
             "model_id": "fremtpl2-frequency-glm-monitoring-v1",
@@ -2322,9 +3014,9 @@
             "action": "mark_under_review"
           },
           {
-            "alert_id": "MON-20261026T164450Z-0006",
-            "created_at_utc": "2026-10-26T16:44:50Z",
-            "run_id": "20261026T164450Z",
+            "alert_id": "MON-20261026T181527Z-0006",
+            "created_at_utc": "2026-10-26T18:15:27Z",
+            "run_id": "20261026T181527Z",
             "data_label": "SYNTHETIC",
             "component": "fremtpl2_frequency_model",
             "model_id": "fremtpl2-frequency-glm-monitoring-v1",
@@ -2342,8 +3034,8 @@
       "model_status": {
         "registry": "data/governance/model_status.json",
         "model_id": "fremtpl2-frequency-glm-monitoring-v1",
-        "registration": "registered as champion by this run",
-        "status_before_run": null,
+        "registration": "already registered",
+        "status_before_run": "under_review",
         "status_after_run": "under_review",
         "history": [
           {
@@ -2391,17 +3083,17 @@
       ],
       "report": "results/monitoring_report.html",
       "runtime_seconds": {
-        "split and model (train or load cache)": 17.55,
-        "score and bin the held-out pool": 4.24,
-        "validation streams": 47.41,
-        "demonstration stream, indicators and alerts": 0.03,
-        "total": 69.24
+        "split and model (train or load cache)": 0.82,
+        "score and bin the held-out pool": 6.93,
+        "validation streams": 55.44,
+        "demonstration stream, indicators and alerts": 0.04,
+        "total": 63.26
       }
     },
     "metadata": {
-      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_commit": "50acabe47d25b5315d8f1aa6a2507ba920539af7",
       "git_worktree_dirty": false,
-      "generated_at_utc": "2026-10-26T16:44:50+00:00",
+      "generated_at_utc": "2026-10-26T18:15:27+00:00",
       "python_version": "3.11.17",
       "package_versions": {
         "numpy": "2.4.6",
@@ -2454,7 +3146,7 @@
       "data_label": "SYNTHETIC applications; SIMULATED reviewer actions",
       "status": "measured on the SIMULATED decision log written by this run",
       "lineage_version": "lineage-v1",
-      "interpretation": "Each record's lineage hashes were compared with the working tree right after the records were written, so matching hashes are expected. not_checkable items are files that are not present here (the Lending Club data needs a Kaggle key; some raw files were not kept); they are not assumed to match.",
+      "interpretation": "Each record's lineage hashes were compared with the working tree right after the records were written, so matching hashes are expected. not_checkable items are files that are not present here (the Lending Club data needs a Kaggle key; some raw files were not kept) or parts the record could not record; they are not assumed to match. The code commit is recorded but not compared; the decision-logic files (policy, approval checkpoint, graph) are compared by hash.",
       "checks": {
         "lineage_version": "lineage-v1",
         "records_read": 65,
@@ -2464,7 +3156,7 @@
         },
         "checks_by_status": {
           "not_checkable": 130,
-          "ok": 913
+          "ok": 1628
         },
         "stale_items": {},
         "not_checkable_items": {
@@ -2511,9 +3203,9 @@
       }
     },
     "metadata": {
-      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_commit": "50acabe47d25b5315d8f1aa6a2507ba920539af7",
       "git_worktree_dirty": false,
-      "generated_at_utc": "2026-10-26T16:45:04+00:00",
+      "generated_at_utc": "2026-10-26T18:14:02+00:00",
       "python_version": "3.11.17",
       "package_versions": {
         "numpy": "2.4.6",
@@ -2720,9 +3412,9 @@
       }
     },
     "metadata": {
-      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_commit": "50acabe47d25b5315d8f1aa6a2507ba920539af7",
       "git_worktree_dirty": false,
-      "generated_at_utc": "2026-10-26T16:45:04+00:00",
+      "generated_at_utc": "2026-10-26T18:14:02+00:00",
       "python_version": "3.11.17",
       "package_versions": {
         "numpy": "2.4.6",
@@ -3365,7 +4057,7 @@
           "champion": {
             "model_id": "SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3",
             "role_in_this_comparison": "champion",
-            "registration": "registered as champion by this run",
+            "registration": "already registered; status left unchanged",
             "status_in_registry": "champion",
             "history": [
               {
@@ -3387,7 +4079,7 @@
           "challenger": {
             "model_id": "SYNTHETIC-lc-pd-lightgbm-to2016-a9f6032da1",
             "role_in_this_comparison": "challenger",
-            "registration": "registered as challenger by this run",
+            "registration": "already registered; status left unchanged",
             "status_in_registry": "challenger",
             "history": [
               {
@@ -3412,9 +4104,9 @@
       }
     },
     "metadata": {
-      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_commit": "50acabe47d25b5315d8f1aa6a2507ba920539af7",
       "git_worktree_dirty": false,
-      "generated_at_utc": "2026-10-26T16:45:19+00:00",
+      "generated_at_utc": "2026-10-26T18:14:18+00:00",
       "python_version": "3.11.17",
       "package_versions": {
         "numpy": "2.4.6",
@@ -3714,14 +4406,14 @@
         }
       },
       "caveats": [
-        "Every decision has outcomes here only because the SYNTHETIC rows are all issued loans. In a real portfolio a declined application produces no outcome, so default rates for non-approved decisions exist only for files that were later booked (selective labels).",
+        "Every decision type, including declines, can have an outcome here only because the SYNTHETIC rows are all issued loans; loans not yet finished stay pending. In a real portfolio a declined application produces no outcome, so default rates for non-approved decisions exist only for files that were later booked (selective labels).",
         "The recorded PD is the champion's PD; its calibration here uses the same finished 2017-2018 rows as the champion's ECE in section champion_challenger, so the two must agree."
       ]
     },
     "metadata": {
-      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_commit": "50acabe47d25b5315d8f1aa6a2507ba920539af7",
       "git_worktree_dirty": false,
-      "generated_at_utc": "2026-10-26T16:45:19+00:00",
+      "generated_at_utc": "2026-10-26T18:14:18+00:00",
       "python_version": "3.11.17",
       "package_versions": {
         "numpy": "2.4.6",
@@ -3756,7 +4448,7 @@
         "file": "config/release_gate.yaml",
         "section": "gate"
       },
-      "config_gate_section_sha256": "3b5fc077cfc874e70454859e81c256911c048887e750701590f6eb8e92aaf311",
+      "config_gate_section_sha256": "76d086921f0b4c0e04e842aca1eb8111e5fc0672a56e9f85b06afe0a5c0155d7",
       "baseline": {
         "dir": "results/baseline",
         "manifest_git_commit": "fb7eb1d0bf2863801fff87121afff21c1043e9e8",
@@ -3779,6 +4471,10 @@
           "tolerance": 0.005,
           "target": null,
           "required": true,
+          "preconditions": [
+            "credit.results.model_selection.chosen == \"lightgbm\""
+          ],
+          "preconditions_unmet": [],
           "limit": 0.7072662969509443,
           "headroom": 0.0050000000000000044,
           "current": {
@@ -3806,7 +4502,7 @@
             }
           },
           "why_critical": "Discrimination of the probability-of-default model that ranks credit applicants. The lower CI bound is gated, not the point estimate, so a release must keep the conservative end of the interval. The tolerance equals the minimum AUC gain the model-selection rule treats as material (credit.results.model_selection.min_auc_gain).",
-          "note": ""
+          "note": "The paths name LightGBM, the model the selection rule chose. The precondition pins that choice to a fixed value rather than to the baseline's, so a flip still fails after a reviewed baseline update: the row must then be pointed at the newly chosen model's paths and this value changed with it."
         },
         {
           "id": "insurance_frequency_deviance_ci_high",
@@ -3822,6 +4518,10 @@
           "tolerance": 0.005,
           "target": null,
           "required": true,
+          "preconditions": [
+            "insurance_frequency.results.preferred_model.name == \"lgbm\""
+          ],
+          "preconditions_unmet": [],
           "limit": 0.4632742546386005,
           "headroom": 0.0050000000000000044,
           "current": {
@@ -3849,7 +4549,7 @@
             }
           },
           "why_critical": "Fit of the claim-frequency model that drives the expected-loss price. Deviance is lower-is-better, so the upper CI bound is gated. The tolerance is below the LightGBM-over-GLM deviance gain recorded on the same test split (insurance_frequency.results.test_metrics.lgbm_minus_glm), so a regression that erases most of the reason for preferring LightGBM blocks a release.",
-          "note": "The path names the model preferred when the baseline was made (preferred_model.name = lgbm). freMTPL2 has no date field, so this is a random-split test, not an out-of-time test."
+          "note": "The paths name the preferred model, LightGBM (preferred_model.name = lgbm); the precondition fails the row when another model is preferred (see credit_auc_ci_low for why the value is fixed). freMTPL2 has no date field, so this is a random-split test, not an out-of-time test."
         },
         {
           "id": "insurance_severity_deviance_ci_high",
@@ -3865,6 +4565,10 @@
           "tolerance": 0.02,
           "target": null,
           "required": true,
+          "preconditions": [
+            "insurance_severity.results.preferred_model.name == \"glm\""
+          ],
+          "preconditions_unmet": [],
           "limit": 1.2765070336184257,
           "headroom": 0.020000000000000018,
           "current": {
@@ -3892,7 +4596,7 @@
             }
           },
           "why_critical": "Fit of the claim-severity model, the other factor of the expected-loss price. The tolerance is wider than the frequency row's because mean Gamma deviance is on a different, larger scale than mean Poisson deviance.",
-          "note": "The path names the model preferred when the baseline was made (preferred_model.name = glm). Random-split test (freMTPL2 has no date field)."
+          "note": "The paths name the preferred model, the Gamma GLM (preferred_model.name = glm); the precondition fails the row when another model is preferred. Random-split test (freMTPL2 has no date field)."
         },
         {
           "id": "agent_required_escalations",
@@ -3908,6 +4612,11 @@
           "tolerance": 0.0,
           "target": 1.0,
           "required": true,
+          "preconditions": [
+            "applications.limited_to_first == null",
+            "applications.set_sha256 == the baseline's value"
+          ],
+          "preconditions_unmet": [],
           "limit": 1.0,
           "headroom": 0.0,
           "current": {
@@ -3951,6 +4660,11 @@
           "tolerance": 0.0,
           "target": 1.0,
           "required": true,
+          "preconditions": [
+            "applications.limited_to_first == null",
+            "applications.set_sha256 == the baseline's value"
+          ],
+          "preconditions_unmet": [],
           "limit": 1.0,
           "headroom": 0.0,
           "current": {
@@ -3994,6 +4708,11 @@
           "tolerance": 0.0,
           "target": 0.0,
           "required": true,
+          "preconditions": [
+            "applications.limited_to_first == null",
+            "applications.set_sha256 == the baseline's value"
+          ],
+          "preconditions_unmet": [],
           "limit": 0.0,
           "headroom": 0.0,
           "current": {
@@ -4037,6 +4756,8 @@
           "tolerance": 0.0,
           "target": 0.0,
           "required": true,
+          "preconditions": [],
+          "preconditions_unmet": [],
           "limit": 0.0,
           "headroom": 0.0,
           "current": {
@@ -4070,87 +4791,97 @@
           "id": "llm_citation_accuracy",
           "title": "LLM memo citation accuracy",
           "status": "NOT_MEASURED",
-          "reason": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+          "reason": "llm_dependent.citation_accuracy: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
           "file": "results/agent_metrics.json",
-          "value_path": "llm_dependent.citation_accuracy",
-          "ci_bound_path": null,
+          "value_path": "llm_dependent.citation_accuracy.value",
+          "ci_bound_path": "llm_dependent.citation_accuracy.ci_low",
           "gate_on": "value",
           "direction": "higher_is_better",
           "kind": "baseline_relative",
           "tolerance": 0.02,
           "target": null,
           "required": false,
+          "preconditions": [
+            "applications.limited_to_first == null",
+            "applications.set_sha256 == the baseline's value"
+          ],
+          "preconditions_unmet": [],
           "limit": null,
           "headroom": null,
           "current": {
             "value": {
               "state": "not_measured",
               "value": null,
-              "detail": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
+              "detail": "llm_dependent.citation_accuracy: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
             },
             "ci_bound": {
               "state": "not_measured",
               "value": null,
-              "detail": "no CI bound path in the row"
+              "detail": "llm_dependent.citation_accuracy: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
             }
           },
           "baseline": {
             "value": {
               "state": "not_measured",
               "value": null,
-              "detail": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
+              "detail": "llm_dependent.citation_accuracy: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
             },
             "ci_bound": {
               "state": "not_measured",
               "value": null,
-              "detail": "no CI bound path in the row"
+              "detail": "llm_dependent.citation_accuracy: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
             }
           },
           "why_critical": "A memo that cites the wrong guideline misleads the human reviewer. Not measured while no LLM has been run; the gate lists it as NOT_MEASURED and never fills in a value.",
-          "note": ""
+          "note": "When an LLM is run, scripts/eval_agent.py writes this metric as a block {value, ci_low, ci_high, n} (agent/evaluation.py, rate()), so the paths name the number inside it. Until then the metric is the text \"not measured: ...\", and a path that meets that text on the way is read as NOT_MEASURED."
         },
         {
           "id": "llm_unsupported_claim_rate",
           "title": "LLM memo unsupported-claim rate",
           "status": "NOT_MEASURED",
-          "reason": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+          "reason": "llm_dependent.unsupported_claim_rate: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
           "file": "results/agent_metrics.json",
-          "value_path": "llm_dependent.unsupported_claim_rate",
-          "ci_bound_path": null,
+          "value_path": "llm_dependent.unsupported_claim_rate.value",
+          "ci_bound_path": "llm_dependent.unsupported_claim_rate.ci_high",
           "gate_on": "value",
           "direction": "lower_is_better",
           "kind": "baseline_relative",
           "tolerance": 0.02,
           "target": null,
           "required": false,
+          "preconditions": [
+            "applications.limited_to_first == null",
+            "applications.set_sha256 == the baseline's value"
+          ],
+          "preconditions_unmet": [],
           "limit": null,
           "headroom": null,
           "current": {
             "value": {
               "state": "not_measured",
               "value": null,
-              "detail": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
+              "detail": "llm_dependent.unsupported_claim_rate: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
             },
             "ci_bound": {
               "state": "not_measured",
               "value": null,
-              "detail": "no CI bound path in the row"
+              "detail": "llm_dependent.unsupported_claim_rate: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
             }
           },
           "baseline": {
             "value": {
               "state": "not_measured",
               "value": null,
-              "detail": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
+              "detail": "llm_dependent.unsupported_claim_rate: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
             },
             "ci_bound": {
               "state": "not_measured",
               "value": null,
-              "detail": "no CI bound path in the row"
+              "detail": "llm_dependent.unsupported_claim_rate: not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
             }
           },
           "why_critical": "Claims the evidence does not support are the main generative-AI failure in a memo. Not measured while no LLM has been run.",
-          "note": ""
+          "note": "The same block shape as llm_citation_accuracy (rate() writes {value, ci_low, ci_high, n})."
         },
         {
           "id": "docintel_citation_support_ci_low",
@@ -4166,6 +4897,12 @@
           "tolerance": 0.002,
           "target": null,
           "required": true,
+          "preconditions": [
+            "evaluation_set.split == \"test\"",
+            "evaluation_set.full_split == true",
+            "evaluation_set.test_truth_sha256 == the baseline's value"
+          ],
+          "preconditions_unmet": [],
           "limit": 0.9955,
           "headroom": 0.0020000000000000018,
           "current": {
@@ -4209,6 +4946,12 @@
           "tolerance": 0.05,
           "target": null,
           "required": false,
+          "preconditions": [
+            "status == \"measured\"",
+            "payloads.file_sha256 == the baseline's value",
+            "layers.L1.n_scored == layers.L1.n_expected"
+          ],
+          "preconditions_unmet": [],
           "limit": null,
           "headroom": null,
           "current": {
@@ -4252,6 +4995,12 @@
           "tolerance": 0.05,
           "target": null,
           "required": false,
+          "preconditions": [
+            "status == \"measured\"",
+            "payloads.file_sha256 == the baseline's value",
+            "layers.L2.n_scored == layers.L2.n_expected"
+          ],
+          "preconditions_unmet": [],
           "limit": null,
           "headroom": null,
           "current": {
@@ -4295,6 +5044,8 @@
           "tolerance": 0.0,
           "target": 0.0,
           "required": true,
+          "preconditions": [],
+          "preconditions_unmet": [],
           "limit": 0.0,
           "headroom": 0.0,
           "current": {
@@ -4338,6 +5089,8 @@
           "tolerance": 0.0,
           "target": 0.0,
           "required": true,
+          "preconditions": [],
+          "preconditions_unmet": [],
           "limit": 0.0,
           "headroom": 0.0,
           "current": {
@@ -4381,6 +5134,8 @@
           "tolerance": 0.0,
           "target": 0.0,
           "required": true,
+          "preconditions": [],
+          "preconditions_unmet": [],
           "limit": 0.0,
           "headroom": 0.0,
           "current": {
@@ -4471,15 +5226,16 @@
         "The gate reads numbers other scripts wrote to results/*.json and recomputes none of them. They come from evaluations on SYNTHETIC data (packets, applications, founder scenarios) and on public data (Lending Club, freMTPL2); none is a production measurement.",
         "NOT_MEASURED rows are listed, never counted as passing: the metric has no value in the current results or the baseline (for example the LLM-dependent metrics, because no LLM was run).",
         "Injection: action-level containment (injected text cannot make the agent take a decision) is enforced by tests/security/test_containment.py in the CI test job, which the release-gate job waits for; that is a test result, not an attack success rate. The per-layer attack success rates are gated only when results/injection_metrics.json exists; they hold for the frozen payload set only.",
+        "Preconditions (config/release_gate.yaml) are checked before a measured number is compared: a partial injection run, an agent run on the first N applications, a dev-split or subset document run, another evaluation set than the baseline's, or a chosen model other than the one a row's paths name makes the row FAIL instead of being compared with the full reviewed baseline.",
         "git_dirty warnings do not fail the gate today: most committed results files were written from a working tree with uncommitted changes. They are listed so the files can be regenerated at a clean commit.",
         "STALE (evidence measured on another prompt, corpus or model than HEAD, docs/innovations.md S3) is not checked: this gate recomputes no provenance hash.",
         "This is a demonstration of a release gate, not a compliance programme; whether such a gate is adequate depends on the institution and its risk profile."
       ]
     },
     "metadata": {
-      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_commit": "50acabe47d25b5315d8f1aa6a2507ba920539af7",
       "git_worktree_dirty": false,
-      "generated_at_utc": "2026-10-26T16:45:20+00:00",
+      "generated_at_utc": "2026-10-26T18:15:29+00:00",
       "python_version": "3.11.17",
       "package_versions": {
         "numpy": "2.4.6",
