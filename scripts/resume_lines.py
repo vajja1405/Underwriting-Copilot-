@@ -8,7 +8,8 @@ hand, rounded up or estimated. Per-person lines come only from config/contributi
 Usage:
     uv run python scripts/resume_lines.py
     uv run python scripts/resume_lines.py --results-dir results --contributions config/contributions.yaml
-Exit codes: 0 printed; 2 config/contributions.yaml is malformed or names an unknown component.
+Exit codes: 0 printed; 2 config/contributions.yaml is malformed (not valid YAML, not a mapping, or a top-level key
+other than "owners") or names an unknown component.
 """
 
 import argparse
