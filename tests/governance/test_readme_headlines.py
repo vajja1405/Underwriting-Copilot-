@@ -17,6 +17,7 @@ import pytest
 from test_render_reports import displayed_forms, json_leaves, numbers_in, without_json_strings
 from uwcopilot.governance import readme_headlines as headlines
 from uwcopilot.governance.packs import lookup
+from uwcopilot.studio.business_metrics.report import LLM_COST_NOT_REPORTED, cost_per_package
 
 REPO = Path(__file__).resolve().parents[2]
 RESULTS = REPO / "results"
@@ -60,7 +61,7 @@ def marked_not_measured(value: Any) -> bool:
 
 def file_reason(reason: str, strings: list[str]) -> bool:
     """True when a "not measured" reason is one the module writes itself or comes from a text in the file."""
-    if reason in (headlines.NO_FILE, headlines.NO_REASON) or MISSING_PATH.match(reason):
+    if reason in (headlines.NO_FILE, headlines.NO_REASON, headlines.NO_VALUE) or MISSING_PATH.match(reason):
         return True
     return any(reason in string for string in strings)
 
@@ -283,6 +284,33 @@ def test_the_checks_catch_a_typed_number_a_foreign_reason_and_a_missing_label() 
         "SYNTHETIC",
         "SIMULATED",
     }
+
+
+def test_an_entry_recorded_as_null_is_not_reported_as_missing() -> None:
+    metric = "Decisions recorded without a human"
+    path = "deterministic_path.decisions_recorded_without_a_human"
+    recorded_as_null = {"decisions_recorded_without_a_human": None}
+    null = {headlines.AGENT: {"data_label": "SYNTHETIC", "deterministic_path": recorded_as_null}}
+    missing = {headlines.AGENT: {"data_label": "SYNTHETIC", "deterministic_path": {}}}
+    assert row_with(null, headlines.AGENT, metric).value == "not measured (no value recorded)"
+    assert row_with(missing, headlines.AGENT, metric).value == f"not measured (no `{path}` in the file)"
+    check_rows(null)
+    check_rows(missing)
+    assert headlines.has_entry({"rows": [None]}, "rows.0") and not headlines.has_entry({"rows": []}, "rows.0")
+    assert headlines.has_entry({"a": {"b": None}}, "a.b") and not headlines.has_entry({"a": None}, "a.b")
+
+
+def test_a_null_llm_cost_gives_the_reason_the_file_records() -> None:
+    # The block report.cost_per_package writes when a package's narrative was not the template: a null cost.
+    not_template = cost_per_package([{"narrative": {"no_llm_called": False, "provider": "ollama"}}])
+    assert not_template["llm_cost_usd_per_package"] is None
+    sources = {headlines.STUDIO_BUSINESS: {"data_label": "SYNTHETIC", "cost_per_package": not_template}}
+    row = row_with(sources, headlines.STUDIO_BUSINESS, "Language-model cost per package")
+    assert row.value == f"not measured ({LLM_COST_NOT_REPORTED})"
+    check_rows(sources)
+    # Without a basis next to it, a null cost says no value was recorded (not that the entry is missing).
+    del not_template["llm_cost_basis"]
+    assert row_with(sources, headlines.STUDIO_BUSINESS, row.metric).value == "not measured (no value recorded)"
 
 
 def test_reason_layouts_and_short_reasons() -> None:

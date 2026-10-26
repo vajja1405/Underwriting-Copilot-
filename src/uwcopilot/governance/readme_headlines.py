@@ -13,8 +13,10 @@ Every value is read from its results file at render time, with the interval that
 - a value with no interval says so.
 
 A metric that the file marks "not measured" prints "not measured (<the reason recorded in the file>)"; a missing file
-prints "not measured (no results file)" and a missing entry "not measured (no `<path>` in the file)". Runs on a
-handful of cases (smoke runs and the local-model narrative run) show counts only, never a rate.
+prints "not measured (no results file)" and a missing entry "not measured (no `<path>` in the file)". An entry the
+file records as null is not a missing entry: it prints the reason the file records next to it when the row names
+one (Spec.null_reason), else "not measured (no value recorded)". Runs on a handful of cases (smoke runs and the
+local-model narrative run) show counts only, never a rate.
 
 Ground rule 1: nothing in this table is typed by hand. tests/governance/test_readme_headlines.py checks that every
 number in a row appears in the row's source file, that no row reports a value the file marks "not measured", and
@@ -113,12 +115,17 @@ class Headline:
 @dataclass(frozen=True)
 class Spec:
     """How to read one row: the JSON paths in the results file, and a function that turns their values into text
-    (it receives one argument per path, in order)."""
+    (it receives one argument per path, in order).
+
+    null_reason is the path of a text in the same file that says why a value of the row may be null (for example
+    "cost_per_package.llm_cost_basis" next to a null LLM cost); without it a null value prints NO_VALUE.
+    """
 
     component: str
     metric: str
     paths: tuple[str, ...]
     show: Callable[..., str]
+    null_reason: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -176,6 +183,29 @@ def not_measured(reason: str) -> str:
 def missing_path(path: str) -> str:
     """The reason given when a results file has no entry at path."""
     return f"no `{path}` in the file"
+
+
+def has_entry(document: Any, path: str) -> bool:
+    """True when the file has an entry at path, even one whose value is JSON null.
+
+    lookup() returns None both for a missing entry and for a null value; this tells the two apart.
+    """
+    parent_path, _, key = path.rpartition(".")
+    parent = lookup(document, parent_path) if parent_path else document
+    if isinstance(parent, Mapping):
+        return key in parent
+    if isinstance(parent, list):
+        return key.isdigit() and int(key) < len(parent)
+    return False
+
+
+def null_value_reason(document: Any, reason_path: str | None) -> str:
+    """Why an entry the file records as null has no value: the first clause of the text at reason_path when the file
+    has one there, else NO_VALUE."""
+    text = lookup(document, reason_path) if reason_path else None
+    if not isinstance(text, str) or not text.strip():
+        return NO_VALUE
+    return not_measured_reason(text) or short_reason(text)
 
 
 # ---------------------------------------------------------------------------
@@ -318,8 +348,8 @@ def counts_only(entry: Any) -> str:
 
 
 def spec_row(sources: Mapping[str, Any], source: str, spec: Spec) -> Headline:
-    """One row: 'not measured' with the reason when the file is missing, a path is missing or the file marks a value
-    not measured; otherwise spec.show applied to the values at spec.paths."""
+    """One row: 'not measured' with the reason when the file is missing, a path is missing, the file records a value
+    as null or marks it not measured; otherwise spec.show applied to the values at spec.paths."""
     data = sources.get(source)
     if data is None:
         return Headline(spec.component, spec.metric, not_measured(NO_FILE), source, spec.paths)
@@ -327,7 +357,11 @@ def spec_row(sources: Mapping[str, Any], source: str, spec: Spec) -> Headline:
     for path in spec.paths:
         value = lookup(data, path)
         if value is None:
-            return Headline(spec.component, spec.metric, not_measured(missing_path(path)), source, spec.paths)
+            if has_entry(data, path):
+                reason = null_value_reason(data, spec.null_reason)
+            else:
+                reason = missing_path(path)
+            return Headline(spec.component, spec.metric, not_measured(reason), source, spec.paths)
         reason = not_measured_reason(value)
         if reason is not None:
             return Headline(spec.component, spec.metric, not_measured(reason), source, spec.paths)
@@ -743,6 +777,9 @@ def llm_cost_text(cost: Any, basis: Any) -> str:
 
 BUSINESS_COMPONENT = "Founder Studio end to end (Studio S12), golden SYNTHETIC founder scenarios"
 RULE_S = "headline.evidence_coverage_rule_s"
+# The LLM cost is null when a package's narrative was not the template; the basis next to it then says why.
+LLM_COST_PATH = "cost_per_package.llm_cost_usd_per_package"
+LLM_COST_BASIS_PATH = "cost_per_package.llm_cost_basis"
 STUDIO_BUSINESS_SPECS: tuple[Spec, ...] = (
     one_path(
         BUSINESS_COMPONENT,
@@ -761,8 +798,9 @@ STUDIO_BUSINESS_SPECS: tuple[Spec, ...] = (
     Spec(
         BUSINESS_COMPONENT,
         "Language-model cost per package",
-        ("cost_per_package.llm_cost_usd_per_package", "cost_per_package.llm_cost_basis"),
+        (LLM_COST_PATH, LLM_COST_BASIS_PATH),
         llm_cost_text,
+        null_reason=LLM_COST_BASIS_PATH,
     ),
     one_path(BUSINESS_COMPONENT, "Compute cost per package", "cost_per_package.compute_cost", plain_text),
     one_path("Founder Studio with real people", "Usability test", "usability_test", plain_text),
