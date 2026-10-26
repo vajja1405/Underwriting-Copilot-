@@ -40,6 +40,36 @@ jobs:
       - name: Test (pytest)
         run: uv run pytest
 
+  # Phase 6 D: release gate. Compares the committed results/*.json with the reviewed baseline in results/baseline/
+  # (rows, directions and tolerances: the `gate:` section of config/release_gate.yaml) and fails on any FAIL or MISSING
+  # row. Offline: it reads committed JSON only; no data download, model or LLM. It runs after lint-and-test, so a
+  # passing gate also means the containment tests (tests/security/test_containment.py) passed.
+  release-gate:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      UV_LOCKED: "1"
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Install uv and Python 3.11
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          version: "0.11.32"
+          python-version: "3.11"
+          # Restores the environment lint-and-test cached (same uv.lock key); that job finished first, so the key
+          # already exists and this job does not save a cache of its own.
+          enable-cache: true
+
+      - name: Install dependencies from the lockfile
+        run: uv sync --locked
+
+      - name: Release gate (committed results vs results/baseline)
+        run: make release-gate
+
   # Studio S8: known vulnerabilities in the locked Python dependencies. Fails on any finding (accepted ones are listed,
   # with a reason, in PIP_AUDIT_IGNORE in the Makefile). Needs only uv, not the project's environment: pip-audit and
   # its dependencies come from tools/pip-audit/requirements.txt, each pinned with SHA-256 hashes.
