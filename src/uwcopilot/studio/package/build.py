@@ -57,14 +57,31 @@ MONTHLY_MONTHS = 12
 ClientFactory = Callable[[str, str | None], LLMClient]
 
 
+# Path-search run diagnostics: they depend on the machine and on the in-process simulation cache, not on the plan,
+# and the package prints none of them, so they are left out of the inputs hash.
+SEARCH_DIAGNOSTICS: tuple[str, ...] = ("runtime_ms", "evaluations", "cache_hits")
+
+
+def hashed_project(project: FounderProject) -> dict[str, Any]:
+    """The project as JSON without the path search's run diagnostics (SEARCH_DIAGNOSTICS)."""
+    dumped = project.model_dump(mode="json")
+    path_result = dumped.get("path_result")
+    search = path_result.get("search") if isinstance(path_result, dict) else None
+    if isinstance(search, dict):
+        for name in SEARCH_DIAGNOSTICS:
+            search.pop(name, None)
+    return dumped
+
+
 def inputs_sha256(project: FounderProject, ledger: Ledger, narrative: NarrativeResult) -> str:
     """SHA-256 of everything the package prints from (the package's inputs hash, and so its id).
 
     The project alone is not enough: the ledger also holds the metro data the package was built with, and the
-    narrative draft depends on who wrote it. Two packages share an id only when they print the same thing.
+    narrative draft depends on who wrote it. Two packages share an id only when they print the same thing, and the
+    same plan built twice gets the same id (the search's run time and cache counts are not hashed).
     """
     payload = {
-        "project": project.model_dump(mode="json"),
+        "project": hashed_project(project),
         "ledger": ledger.model_dump(mode="json"),
         "narrative_draft": narrative.draft,
         "schema_version": PACKAGE_SCHEMA_VERSION,

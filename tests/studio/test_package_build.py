@@ -32,6 +32,15 @@ def test_the_same_project_gives_the_same_package() -> None:
     assert build_package(project(METRO, TYPE)) == package(METRO, TYPE)
 
 
+def test_the_same_plan_gets_the_same_id_whatever_the_search_run_time_and_cache() -> None:
+    built = project(METRO, TYPE)
+    assert built.path_result is not None
+    search = built.path_result.search.model_copy(update={"runtime_ms": 98765.43, "evaluations": 1, "cache_hits": 7})
+    rerun = built.model_copy(update={"path_result": built.path_result.model_copy(update={"search": search})})
+    assert rerun.path_result.search.runtime_ms != built.path_result.search.runtime_ms
+    assert build_package(rerun).package_id == package(METRO, TYPE).package_id
+
+
 def test_the_package_id_changes_when_the_metro_data_changes() -> None:
     other_city = get_fabric(METRO, seed=SYNTHETIC_OTHER_SEED)
     rebuilt = build_package(project(METRO, TYPE), fabric=other_city)
