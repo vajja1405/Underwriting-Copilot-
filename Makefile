@@ -655,3 +655,16 @@ governance-results:  ## Phase 6 producers in order: feedback-report, champion-ch
 	$(MAKE) champion-challenger
 	$(MAKE) monitor
 	$(MAKE) release-gate ARGS=--write-results; gate_status=$$?; $(MAKE) governance-packs && exit $$gate_status
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Phase 8 / Studio S12 track: resume lines (scripts/resume_lines.py, src/uwcopilot/resume/). Prints "Projects" bullets
+# built only from results/*.json to stdout, and every bullet or clause it left out, with the reason, to stderr (a metric
+# not measured, or one this project must not claim). Per-person lines come only from config/contributions.yaml, never
+# from git history. Offline; reads committed files only. ARGS for example "--contributions path/to/file.yaml".
+.PHONY: resume-lines resume-lines-test
+
+resume-lines:  ## Print honest resume bullets from results/*.json (+ per-person lines from config/contributions.yaml)
+	uv run python scripts/resume_lines.py $(ARGS)
+
+resume-lines-test:  ## Resume-lines tests only (offline; fixture results folder and the committed results)
+	uv run pytest -q tests/resume

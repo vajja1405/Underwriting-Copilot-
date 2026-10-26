@@ -1,0 +1,28 @@
+# Who owns which part of Fundproof, for the per-person resume lines of scripts/resume_lines.py
+# (`make resume-lines`, Studio S12).
+#
+# Why this file exists: git history cannot say who built what. Claude Code is the implementer, so almost every
+# commit is authored by "Claude", and the owners' own work (specs, build prompts, evaluation protocol, reviews) is
+# not visible as commit authorship. The script therefore never infers ownership. Each owner lists the component ids
+# they own; the script prints a person's bullets only for the components listed here. Both owners may list the same
+# component (joint work): the script then marks the line as joint. An unknown id stops the script with exit code 2.
+#
+# Component ids (one per resume bullet):
+#   evidence_platform     Lender Desk: evidence-driven copilot (contradictions, request policy, human checkpoint)
+#   credit_model          Lender Desk: Lending Club credit default model
+#   insurance_models      Lender Desk: freMTPL2 frequency-severity models
+#   document_extraction   Lender Desk: document extraction, citations and injection measurements
+#   kyc_screening         Lender Desk: sanctions screening
+#   governance            Lender Desk: release gate and drift monitoring
+#   studio_platform       Founder Studio: metros, data coverage and the web app
+#   studio_feasibility    Founder Studio: Monte Carlo feasibility simulator
+#   studio_provenance     Founder Studio: provenance-locked narrative, package and handoff
+#   studio_path           Founder Studio: path-to-approval search
+#   studio_siteiq         Founder Studio: SiteIQ site scoring
+#
+# Empty by default: the owners fill it in themselves, for example
+#   Rahul Vajja: [evidence_platform, credit_model]
+# Until then the script prints only the shared bullets and a note asking for this file to be filled in.
+owners:
+  Rahul Vajja: []
+  Bhavani Adula: []
