@@ -606,9 +606,26 @@ def test_measured_injection_layers_and_certificates_are_shown() -> None:
     assert (
         layers == "L0: 0.3500 [0.2414, 0.4767] (21/60, Wilson 95%); L2: not measured (no scored answer for this layer)"
     )
-    assert rows["An LLM or prompt change needs a migration certificate signed by a model_validator"] == (
-        "`results/llm_migration_a_vs_b.json`"
+    certificate = (
+        "An LLM or prompt change is to be certified by a migration certificate signed by a model_validator "
+        "(a process step)"
     )
+    assert rows[certificate] == "`results/llm_migration_a_vs_b.json`"
+
+
+def test_migration_certificate_is_not_listed_as_an_enforced_control() -> None:
+    """P6-PACKS-5: nothing in CI or the release gate requires a certificate when the prompt or LLM changes, so the
+    'How it is enforced' cell says it is not enforced, and the bank text calls it a manual step."""
+    enforcement = {row[0]: row[1] for row in genai_control_rows(full_sources())}
+    cell = enforcement[
+        "An LLM or prompt change is to be certified by a migration certificate signed by a model_validator "
+        "(a process step)"
+    ]
+    assert cell.startswith("Not enforced: scripts/llm_migration_gate.py is run by hand")
+    assert "neither CI nor the release gate checks that a certificate exists" in cell
+    bank = render_bank_model_risk(full_sources())
+    assert "a manual step: neither CI nor the release gate checks for a certificate" in bank
+    assert "needs a migration certificate signed by a model_validator" not in bank
 
 
 # ---------------------------------------------------------------------------

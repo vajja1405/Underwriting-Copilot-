@@ -220,9 +220,12 @@ def genai_control_rows(sources: Mapping[str, Any]) -> list[list[str]]:
             agent,
         ],
         [
-            "An LLM or prompt change needs a migration certificate signed by a model_validator",
-            "scripts/llm_migration_gate.py (non-inferiority margins in config/release_gate.yaml); security/rbac.py "
-            "sign_migration_certificate",
+            "An LLM or prompt change is to be certified by a migration certificate signed by a model_validator "
+            "(a process step)",
+            "Not enforced: scripts/llm_migration_gate.py is run by hand (non-inferiority margins in "
+            "config/release_gate.yaml), and neither CI nor the release gate checks that a certificate exists when "
+            "the prompt or the LLM changes; security/rbac.py sign_migration_certificate only restricts who may sign "
+            "(model_validator)",
             _migration_certificates(sources),
             "`results/llm_migration_*.json`",
         ],

@@ -411,8 +411,9 @@ def genai_section(sources: Mapping[str, Any]) -> list[str]:
         "calls and the memo) are generative and agentic AI, so SR 26-2 does not cover them. Following the footnote's "
         "third sentence, the project governs them with its own controls: a human decides every file, the agent may "
         "only call allow-listed tools, document text is data and never instructions, and a change of LLM or prompt "
-        "is to be certified by `scripts/llm_migration_gate.py` and signed by a model_validator before release (no "
-        "such change has been evaluated here). LLM use recorded for the results below: "
+        "is to be certified by `scripts/llm_migration_gate.py` and signed by a model_validator before release (a "
+        "manual step: neither CI nor the release gate checks for a certificate; no such change has been evaluated "
+        "here). LLM use recorded for the results below: "
         f"{llm_use(sources)}. Every LLM-dependent measure that was not run says not measured.",
         "",
         "### Controls on the agent",
