@@ -30,6 +30,7 @@ STATIC_PHRASES: tuple[str, ...] = (
     "L0",
     "L1",
     "L2",
+    "B0",
 )
 
 # Wording a bullet must never contain, with the reason. Checked on every bullet by BulletDraft.finish().

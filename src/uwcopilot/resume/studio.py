@@ -22,6 +22,14 @@ SITEIQ = "studio_siteiq_metrics.json"
 BUSINESS = "studio_business_metrics.json"
 MISSPECIFIED = "misspecified"
 
+# docs/studio/s12_baseline.md (section 2 and M2 "Reading") requires this caveat wherever the Studio vs B0 comparison
+# is shown. Fixed wording, no number: it follows from the definitions, not from a measurement.
+B0_CAVEAT = (
+    "B0 is a construction from the same SYNTHETIC inputs, not a sample of real plans, and most of the rule S gap "
+    "follows from the definitions (rule S credits the model runs and formulas the ledger records, and B0 has no "
+    "ledger)"
+)
+
 Built = tuple[Bullet | None, list[Omission]]
 
 
@@ -37,7 +45,11 @@ def platform_bullet(results: ResultsFolder) -> Built:
     metros = dig(ranking, "configured_metros")
     ranked = number_at(ranking, "metropolitan_areas_ranked")
     business_types = dig(results.load(PATHS), "settings", "business_types")
-    if dig(ranking, "configured_equals_top_five") is True and isinstance(metros, list) and ranked is not None:
+    top_five = dig(ranking, "configured_equals_top_five")
+    if top_five is False:
+        # A measured "no": the clause would be untrue, and "not measured" would be untrue too.
+        draft.omit("supported metros", f"results/{RANKING} says the configured metros are not the top five")
+    elif top_five is True and isinstance(metros, list) and ranked is not None:
         types_text = f"{count(len(business_types))} business types in " if isinstance(business_types, list) else ""
         draft.add(
             f"covers {types_text}the {count(len(metros))} largest US metro areas by Census Bureau population estimates "
@@ -135,10 +147,15 @@ def provenance_bullet(results: ResultsFolder) -> Built:
     if rate is None or hits is None or total is None or scenarios is None:
         draft.omit("narrative numbers traced", missing_reason(evidence, EVIDENCE, "headline"), core=True)
         return draft.finish()
-    writer = "template writer, no LLM" if evidence.get("provider") == "template" else f"{evidence.get('provider')}"
+    # The template writer types every number from the ledger, so its numbers trace by construction (the results
+    # file's scope says so); the rate shows the construction holds, not how often a model writes a wrong number.
+    if evidence.get("provider") == "template":
+        writer = "the template writer and no LLM (by construction for the template)"
+    else:
+        writer = f"narrative provider {evidence.get('provider')}"
     draft.add(
         f"{count(hits)} of {count(total)} narrative numbers traced to the ledger claim their sentence cites "
-        f"({interval(rate)}) across {count(scenarios)} SYNTHETIC scenarios ({writer})",
+        f"({interval(rate)}) across {count(scenarios)} SYNTHETIC scenarios with {writer}",
         EVIDENCE,
     )
     add_handoff(draft, results.load(HANDOFF))
@@ -161,14 +178,27 @@ def add_handoff(draft: BulletDraft, handoff: dict[str, Any] | None) -> None:
         )
     reached = estimate_at(handoff, "all_cases", "reached_human_checkpoint")
     without_human = number_at(handoff, "all_cases", "decisions_recorded_without_a_human")
-    if reached is None or reached.n is None or without_human is None or reached.value != 1.0:
-        draft.omit("handoff human checkpoint", missing_reason(handoff, HANDOFF, "all_cases"))
+    if reached is None or reached.n is None:
+        reason = missing_reason(handoff, HANDOFF, "all_cases", "reached_human_checkpoint")
+        draft.omit("handoff human checkpoint", reason)
         return
-    draft.add(
-        f"all {count(reached.n)} handoff cases stopped at a human checkpoint and {count(without_human)} decisions "
-        "were recorded without a human",
-        HANDOFF,
-    )
+    if without_human is None:
+        reason = missing_reason(handoff, HANDOFF, "all_cases", "decisions_recorded_without_a_human")
+        draft.omit("handoff human checkpoint", reason)
+        return
+    # A measured rate below 1.0 is quoted with its interval, never hidden as "not measured".
+    if reached.value == 1.0:
+        draft.add(
+            f"all {count(reached.n)} handoff cases stopped at a human checkpoint and {count(without_human)} "
+            "decisions were recorded without a human",
+            HANDOFF,
+        )
+    else:
+        draft.add(
+            f"{interval(reached)} of {count(reached.n)} handoff cases stopped at a human checkpoint; "
+            f"{count(without_human)} decisions were recorded without a human",
+            HANDOFF,
+        )
 
 
 def path_bullet(results: ResultsFolder) -> Built:
@@ -189,7 +219,11 @@ def path_bullet(results: ResultsFolder) -> Built:
     if compliant is None:
         draft.omit("program-compliant path rate", missing_reason(metrics, PATHS, "headline"))
     else:
-        draft.add(f"{interval(compliant)} when every startup-program rule must also hold", PATHS)
+        # The metric covers only the program rules the search checks (NSP-3.1 equity injection, NSP-8.1 loan
+        # amount and term; definitions.path_found_and_program_compliant_rate), not every program rule.
+        draft.add(
+            f"{interval(compliant)} when the SYNTHETIC startup program's equity and loan rules must also hold", PATHS
+        )
     return draft.finish()
 
 
@@ -217,25 +251,73 @@ def siteiq_bullet(results: ResultsFolder) -> Built:
     return draft.finish()
 
 
+def sites_scored(this_run: Any) -> tuple[int, int] | None:
+    """(scenarios where SiteIQ scored a site, all scenarios), summed over the metros of this run, or None."""
+    if not isinstance(this_run, dict) or not this_run:
+        return None
+    scored, total = 0, 0
+    for row in this_run.values():
+        site_scored, scenarios = number_at(row, "site_scored"), number_at(row, "scenarios")
+        if site_scored is None or scenarios is None:
+            return None
+        scored += int(site_scored)
+        total += int(scenarios)
+    return scored, total
+
+
+def b0_built_without(draft: BulletDraft, metrics: dict[str, Any] | None) -> str:
+    """The Studio parts B0 is built without; SiteIQ is named only with the number of scenarios it scored a site in.
+
+    Real-metro scenarios on a machine without the metro snapshots run without SiteIQ, so "Studio scored a site" is
+    true only for the scenarios the results file counts (data_coverage_by_metro.this_run.<metro>.site_scored).
+    """
+    sites = sites_scored(dig(metrics, "data_coverage_by_metro", "this_run"))
+    if sites is None:
+        reason = missing_reason(metrics, BUSINESS, "data_coverage_by_metro", "this_run")
+        draft.omit("scenarios with a site scored", reason)
+        return "the simulation or the ledger"
+    scored, total = sites
+    return (
+        f"the simulation, the ledger or SiteIQ (which scored a site in {count(scored)} of {count(total)} Studio "
+        "scenarios)"
+    )
+
+
 def business_bullet(results: ResultsFolder) -> Built:
-    """S12 end to end: printed figures with a checkable source vs the baseline B0, and the time to an audited PDF."""
+    """S12 end to end: figures with a source vs the baseline B0 (rules S and E), and the time to an audited PDF."""
     draft = BulletDraft(
         "studio_business",
         STUDIO,
         "Founder Studio end-to-end evaluation against a baseline defined before the first run",
     )
     metrics = results.load(BUSINESS)
-    studio = estimate_at(metrics, "headline", "evidence_coverage_rule_s", "studio")
-    baseline = estimate_at(metrics, "headline", "evidence_coverage_rule_s", "baseline_b0")
-    scenarios = number_at(metrics, "headline", "evidence_coverage_rule_s", "studio", "scenarios")
-    if studio is None or baseline is None or scenarios is None:
-        draft.omit("evidence coverage vs baseline", missing_reason(metrics, BUSINESS, "headline"), core=True)
+    rule_s = dig(metrics, "headline", "evidence_coverage_rule_s")
+    rule_e = dig(metrics, "headline", "evidence_coverage_rule_e")
+    studio_s, baseline_s = estimate_at(rule_s, "studio"), estimate_at(rule_s, "baseline_b0")
+    studio_e, baseline_e = estimate_at(rule_e, "studio"), estimate_at(rule_e, "baseline_b0")
+    scenarios = number_at(rule_s, "studio", "scenarios")
+    if studio_s is None or baseline_s is None or scenarios is None:
+        reason = missing_reason(metrics, BUSINESS, "headline", "evidence_coverage_rule_s")
+        draft.omit("evidence coverage vs baseline", reason, core=True)
         return draft.finish()
+    if studio_e is None or baseline_e is None:
+        # Rule S alone shows mostly the gap its definition creates, so it is quoted only next to rule E.
+        reason = missing_reason(metrics, BUSINESS, "headline", "evidence_coverage_rule_e")
+        draft.omit("evidence coverage vs baseline (rule E)", reason, core=True)
+        return draft.finish()
+    without = b0_built_without(draft, metrics)
     draft.add(
-        f"{interval(studio)} of printed figures carry a checkable source vs {interval(baseline)} for a plan made "
-        f"without the site scoring, the simulation and the ledger, on {count(scenarios)} SYNTHETIC scenarios",
+        f"on {count(scenarios)} SYNTHETIC scenarios, {interval(studio_s)} of printed figures carry a checkable source "
+        f"(rule S) vs {interval(baseline_s)} for B0, a plan built from the same founder inputs and documents "
+        f"without {without}",
         BUSINESS,
     )
+    draft.add(
+        f"{interval(studio_e)} vs {interval(baseline_e)} under the stricter rule E (figures backed by a document "
+        "page, a public-data row or a section of the SYNTHETIC startup program or the Studio's own targets)",
+        BUSINESS,
+    )
+    draft.add_context(B0_CAVEAT)
     median = estimate_at(metrics, "headline", "time_to_complete_package_median_s")
     if median is None:
         draft.omit("time to a complete package", missing_reason(metrics, BUSINESS, "headline"))
