@@ -60,11 +60,36 @@ def fmt_interval(interval: Sequence[float] | None, digits: int = 4) -> str:
 
 
 def fmt_rate(rate: dict[str, Any] | None) -> str:
-    """'0.0133 [0.0033, 0.0267] (4/300)' for a rate dict written by monitoring_stream.rate_with_ci."""
+    """'0.0133 [0.0033, 0.0267] (4/300)' for a rate dict written by monitoring_stream.rate_with_ci.
+
+    When the rate carries a bootstrap_interval_note (0, 1, n - 1 or n streams counted, so the bootstrap interval is
+    zero-width or too narrow), the exact interval follows: '0.0033 [0.0000, 0.0100] (1/300); exact [0.0001, 0.0184]'.
+    """
     if not rate or "estimate" not in rate:
         return NOT_AVAILABLE
     interval = fmt_interval([rate["ci_low"], rate["ci_high"]])
-    return f"{fmt(rate['estimate'])} {interval} ({rate['numerator']}/{rate['denominator']})"
+    text = f"{fmt(rate['estimate'])} {interval} ({rate['numerator']}/{rate['denominator']})"
+    if rate.get("bootstrap_interval_note"):
+        text += f"; exact {fmt_interval([rate.get('exact_ci_low'), rate.get('exact_ci_high')])}"
+    return text
+
+
+def fmt_delay(delay: dict[str, Any]) -> str:
+    """Mean delay among detected streams with its CI, n and the cap, or 'not applicable (no stream detected)'.
+
+    '2.47 [1.94, 3.00] (49 of 300 streams detected; 13 at the maximum of 5)'. A zero-width interval says so.
+    """
+    mean = delay.get("mean")
+    if not mean:
+        return "not applicable (no stream detected)"
+    text = f"{fmt(mean['estimate'], 2)} {fmt_interval([mean['ci_low'], mean['ci_high']], 2)}"
+    text += f" ({delay.get('n_detected_streams')} of {delay.get('n_streams')} streams detected"
+    if delay.get("max_possible_delay") is not None:
+        text += f"; {delay.get('streams_at_max_possible_delay')} at the maximum of {delay['max_possible_delay']}"
+    text += ")"
+    if mean["ci_low"] == mean["ci_high"]:
+        text += "; zero-width bootstrap interval: every detected stream had the same delay"
+    return text
 
 
 def table(headers: Sequence[str], rows: Sequence[Sequence[Any]]) -> str:
@@ -245,16 +270,13 @@ def validation_section(payload: dict[str, Any]) -> list[str]:
     """False alert rate, detection rate and delay per scenario."""
     design = payload["stream_design"]
     bootstrap = payload["config"]["bootstrap"]
+    start = design["drift_start_window"]
+    max_delay = design["n_windows"] - 1 - start
     rows = []
+    within_rows = []
     for name, summary in payload["validation"].items():
         if summary["drifted"]:
             delay = summary["detection_delay_windows"]
-            mean = delay.get("mean")
-            mean_text = (
-                f"{fmt(mean['estimate'], 2)} {fmt_interval([mean['ci_low'], mean['ci_high']], 2)}"
-                if mean
-                else NOT_AVAILABLE
-            )
             by_check = ", ".join(
                 f"{check} {fmt(rate['estimate'], 3)}" for check, rate in summary["detection_rate_by_check"].items()
             )
@@ -265,12 +287,14 @@ def validation_section(payload: dict[str, Any]) -> list[str]:
                     summary["n_streams"],
                     "detection rate",
                     fmt_rate(summary["detection_rate"]),
-                    mean_text,
-                    fmt(delay.get("median"), 1),
+                    fmt_delay(delay),
+                    fmt(delay.get("median"), 1) if delay.get("mean") else "not applicable",
                     fmt_rate(summary["pre_drift_false_alert_rate"]),
                     by_check,
                 ]
             )
+            within = delay.get("detected_within_windows", {})
+            within_rows.append([name, *(fmt_rate(within.get(str(k))) for k in range(max_delay + 1))])
         else:
             by_check = ", ".join(
                 f"{check} {fmt(rate['estimate'], 3)}" for check, rate in summary["false_alert_rate_by_check"].items()
@@ -298,22 +322,34 @@ def validation_section(payload: dict[str, Any]) -> list[str]:
         "streams",
         "rate",
         "estimate [95% CI] (streams)",
-        "mean delay, windows [95% CI]",
-        "median delay",
+        f"mean delay among detected streams, windows [95% CI] (n detected; capped at {max_delay})",
+        "median delay among detected streams",
         "pre-drift false alert rate",
         "share of streams alerted, by check",
     ]
+    within_headers = ["scenario (SYNTHETIC)", *(f"delay <= {k} [95% CI] (streams)" for k in range(max_delay + 1))]
     return [
         "<h2>Validation of the monitor on SIMULATED streams</h2>",
         paragraph(
             f"{design['n_streams_per_scenario']} streams per scenario, {design['n_windows']} windows of "
-            f"{design['window_size']} policies; drift (if any) from window {design['drift_start_window']}. "
+            f"{design['window_size']} policies; drift (if any) from window {start}. "
             "A stream alerts when any check reaches level alert in any window. CIs: percentile bootstrap over "
-            f"streams ({bootstrap['resamples']} resamples, seed {bootstrap['seed']}, {bootstrap['confidence']:.0%})."
+            f"streams ({bootstrap['resamples']} resamples, seed {bootstrap['seed']}, {bootstrap['confidence']:.0%}). "
+            "Where 0, 1, n-1 or n of the n streams count, that interval is zero-width or too narrow, so the exact "
+            "(Clopper-Pearson) interval follows it ('exact [..]')."
+        ),
+        paragraph(
+            f"Detection delay = first drifted window with an alert minus window {start} (0 = caught in the first "
+            f"drifted window). The streams end at window {design['n_windows'] - 1}, so the delay is at most "
+            f"{max_delay}: a stream that would alert later counts as not detected. The mean and median delay cover "
+            "the detected streams only; the second table divides by all streams of the scenario."
         ),
         paragraph(design["no_time_field"]),
         image(validation_chart(payload["validation"]), "Share of streams with an alert per scenario"),
         table(headers, rows),
+        f"<h3>Share of all streams with an alert within k windows of the drift start (delay &lt;= k, k = 0 to "
+        f"{max_delay})</h3>",
+        table(within_headers, within_rows),
     ]
 
 
@@ -376,8 +412,20 @@ def demonstration_section(payload: dict[str, Any]) -> list[str]:
     ]
 
 
+def fmt_detail(detail: dict[str, Any] | None) -> str:
+    """An indicator's detail as text: 'key: value; key: a 1, b 2' (a nested dict becomes 'name count' pairs)."""
+    if not detail:
+        return "-"
+    parts = []
+    for key, value in detail.items():
+        if isinstance(value, dict):
+            value = ", ".join(f"{name} {count}" for name, count in value.items()) or "none"
+        parts.append(f"{key}: {fmt(value)}")
+    return "; ".join(parts)
+
+
 def indicators_section(payload: dict[str, Any]) -> list[str]:
-    """Extraction, agent and reviewer indicators read from the results files."""
+    """Extraction, agent and reviewer indicators read from the results files (reviewer override reasons included)."""
     rows = [
         [
             item["component"],
@@ -389,11 +437,12 @@ def indicators_section(payload: dict[str, Any]) -> list[str]:
             item["rule"] or "-",
             item["source"],
             item["note"],
+            fmt_detail(item.get("detail")),
         ]
         for item in payload["indicators"]["values"]
     ]
     sources = [[name, info["sha256"] or "file not present"] for name, info in payload["indicators"]["sources"].items()]
-    headers = ["component", "indicator", "status", "value", "interval", "level", "rule", "source", "note"]
+    headers = ["component", "indicator", "status", "value", "interval", "level", "rule", "source", "note", "detail"]
     return [
         "<h2>Extraction, agent and reviewer indicators (latest results files)</h2>",
         paragraph("Single values from the latest evaluation runs on SYNTHETIC data, not a stream."),

@@ -5,15 +5,17 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from monitoring_test_helpers import run_paths, small_config, write_inputs
+from monitoring_test_helpers import run_paths, simulated_feedback_summary, small_config, write_inputs
 
 import monitor
 from uwcopilot.governance.model_status import ModelEntry, ModelStatusStore
 from uwcopilot.governance.monitoring import read_alerts
 from uwcopilot.governance.monitoring_config import MonitoringConfig
+from uwcopilot.governance.monitoring_indicators import override_indicator_problems
 from uwcopilot.governance.monitoring_model import glm_from_dict, glm_to_dict
 from uwcopilot.risk.data.fremtpl2 import prepare_fremtpl2, synthetic_fremtpl2_frames
 from uwcopilot.risk.insurance import fit_frequency_glm
+from uwcopilot.risk.results import update_results
 
 
 @pytest.fixture(scope="module")
@@ -106,6 +108,30 @@ def test_a_family_already_in_use_leaves_alerts_record_only(tmp_path: Path) -> No
     assert payload["model_status"]["registration"].startswith("not registered")
     assert all(record["action"] == "record_only" for record in payload["alerts"]["records"])
     assert store.status("other-model") == "champion"
+
+
+def test_the_monitor_reads_a_feedback_section_written_before_it(tmp_path: Path) -> None:
+    """P6-STAT-1 and P6-STAT-2 end to end: feedback first, then the monitor (the order of make governance-results)."""
+    policies, files, results_dir = write_inputs(tmp_path)
+    paths = run_paths(tmp_path, results_dir)
+    summary = simulated_feedback_summary([["referral_resolved_in_writing"], ["policy_exception_approved"]], 14)
+    update_results(paths.results, "feedback", {"data_label": "SYNTHETIC", "summary": summary})
+    document = small_config().model_dump(mode="json")
+    document["stream"]["n_streams"] = 1
+    payload = monitor.run(MonitoringConfig.model_validate(document), policies, files, paths)
+
+    override = {item["name"]: item for item in payload["indicators"]["values"]}["override_rate"]
+    assert (override["status"], override["value"], override["level"]) == ("measured", 0.125, "warn")
+    assert override["detail"]["override_reasons"]["policy_exception_approved"] == 1
+    assert payload["indicators"]["sources"]["results/governance_metrics.json"]["sha256"] is not None
+    assert "override_reasons: " in paths.report.read_text(encoding="utf-8")
+    assert override_indicator_problems(json.loads(paths.results.read_text(encoding="utf-8"))) == []
+
+    # The feedback track runs again after the monitor: the file's two sections no longer agree.
+    rerun = simulated_feedback_summary([["referral_resolved_in_writing"]], 14)
+    update_results(paths.results, "feedback", {"data_label": "SYNTHETIC", "summary": rerun})
+    (problem,) = override_indicator_problems(json.loads(paths.results.read_text(encoding="utf-8")))
+    assert "differs" in problem
 
 
 @pytest.mark.integration
