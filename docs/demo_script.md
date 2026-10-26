@@ -39,8 +39,8 @@ in `frontend/components/` or `frontend/lib/`.
 | `make studio-package PACKAGE_METRO=synthetic_metro PACKAGE_TYPE=laundromat` | The lender-ready package PDF for one golden SYNTHETIC scenario, written to `data/studio_packages/synthetic_metro_laundromat.pdf` (gitignored). Exits with an error if any number in the PDF text is untraced | Python only; offline |
 | `make agent-demo` | Optional, command line: the agent on `eval/applications/APP-C-027.json` stops at the human checkpoint, then a scripted Refer by a senior underwriter | `make index eval-kyc` first (README) |
 | `make run-evidence` | Optional, command line: the document path (text layer, OCR, extraction, contradictions) and the Evidence-to-Action Engine on packet `PKT-C-024` (the Makefile default `PACKET`); writes a decision record and its Markdown and HTML views under `data/processed/evidence/` | `make packets` once |
-| `make studio-business-metrics` | Writes `results/studio_business_metrics.json`: the first closing number (rule S) and the package time. The other two closing numbers come from `make studio-feasibility` and `make eval-agent`. Do not run any of them during the demo: the committed S12 run took 357.9 s (`results/studio_business_metrics.json`, `configuration.runtime_s`) | `make data` for the handoff check, or `ARGS=--skip-handoff` |
-| `make resume-lines` | Preparation: prints the resume bullets the results files support; a bullet whose metric was not measured is left out | committed `results/` |
+| `make studio-business-metrics` | Writes `results/studio_business_metrics.json`: the first closing number (rule S, with rule E beside it) and the package time. The other two closing numbers come from `make studio-feasibility` and `make eval-agent`. Do not run any of them during the demo: the committed S12 run, at commit `6fcfad9` (`provenance.git_sha`, `git_dirty` false), took 317.7 s (`results/studio_business_metrics.json`, `configuration.runtime_s`; machine wall clock, it varies by run). It names the screening lists its handoff check loaded and the SHA-256 of each (`configuration.handoff_consistency_check`, `provenance.data_snapshots.screening_list_snapshots`) | `make data` for the handoff check, or `ARGS=--skip-handoff` |
+| `make resume-lines` | Preparation: prints the resume bullets the results files support; a metric that was not measured or cannot be claimed is left out and listed with its reason under "Left out" | committed `results/` |
 | `/` | Landing page: opening line | - |
 | `/signin/` | DEV LOGIN form: "Username", "Role", "Sign in (dev)" | `make web-dev` (sets `UWC_DEV_AUTH=1`) |
 | `/studio/new/` | The wizard. Steps: City, Business type, Your idea, Money, Sites, Review. Buttons "Continue", "Create plan" | signed in |
@@ -313,10 +313,11 @@ record (DEMO)" appears. [Open "Read the record".]
 ### 3.12 2:30-3:00 Close: three measured numbers
 
 > "Three numbers from the results files, all on SYNTHETIC data. Printed figures with a checkable source: 0.8482,
-> interval 0.8388 to 0.8587, against 0.0251 for a baseline plan; most of that gap comes from how a source is defined.
-> The simulator's Brier score, lower is better: 0.1405 against 0.4796 for a single-point forecast, on SYNTHETIC
-> worlds only. And across 65 SYNTHETIC lender files, no decision was recorded without a person. Nothing here was
-> tested with real users or real loans."
+> interval 0.8388 to 0.8587, against 0.0255 for a baseline plan we built from the same inputs. That baseline is a
+> construction, not real plans, and most of the gap comes from how a source is defined; under the stricter rule it is
+> 0.057 against 0.0255, and that gap also comes mostly from the definitions. The simulator's Brier score, lower is
+> better: 0.1405 against 0.4796 for a single-point forecast, on SYNTHETIC worlds only. And across 65 SYNTHETIC lender
+> files, no decision was recorded without a person. Nothing here was tested with real users or real loans."
 
 Section 4 has the source of each number and what it does not show. Know it before you say the line.
 
@@ -329,15 +330,18 @@ decisions.
 
 | Number said | Value [95% interval] | File and key | What it does not show |
 |---|---|---|---|
-| Printed figures with a checkable source (rule S), Studio vs baseline B0 | Studio 0.8482 [0.8388, 0.8587] (12222 of 14410 figures, 36 scenarios); B0 0.0251 [0.0182, 0.032]; difference 0.8231 [0.8118, 0.8352] | `results/studio_business_metrics.json`, `headline.evidence_coverage_rule_s` | Most of the gap follows from the definitions: model estimates and calculations count for Studio because the ledger records their run or formula, and B0 prints no such record ([s12_baseline.md](studio/s12_baseline.md), M2). On the stricter rule E (a document page, a public-data row or a program or target section) it is 0.057 [0.0545, 0.0597] vs 0.0251 [0.0182, 0.032] (`headline.evidence_coverage_rule_e`). B0 is a construction, not a sample of real plans. No usability test with real people was run (`headline.usability_test`: "not measured"). |
+| Printed figures with a checkable source (rule S), Studio vs baseline B0; rule E beside it | Rule S: Studio 0.8482 [0.8388, 0.8587] (12222 of 14410 figures, 36 scenarios); B0 0.0255 [0.0185, 0.0325] (33 of 1296 figures); difference, paired over scenarios, 0.8227 [0.8113, 0.8347]. Rule E: Studio 0.057 [0.0545, 0.0597] (821 of 14410); B0 0.0255 [0.0185, 0.0325] (33 of 1296); difference 0.0315 [0.0254, 0.0377] | `results/studio_business_metrics.json`, `headline.evidence_coverage_rule_s` and `headline.evidence_coverage_rule_e` | B0 is a construction from the same SYNTHETIC inputs and documents, not a sample of real plans, and the gap under both rules follows mostly from the definitions ([s12_baseline.md](studio/s12_baseline.md), section 2, M2 and M3). Rule S credits model estimates and calculations because the ledger records their run or formula; B0 prints no such record. Rule E removes that credit but has its own: program and target sections. 724 of Studio's 821 rule E figures are VERIFIED policy claims, sections of the SYNTHETIC startup program and the Studio's own targets (`evidence_coverage.studio_figures_by_status_kind_and_verdict`, `VERIFIED/policy/sourced`), and B0 prints none. The one comparison on the same population, the founder's typed figures backed by a document, is 0.1315 [0.0958, 0.1693] (33 of 251) for both, equal by construction (`headline.founder_figures_backed_by_a_document`). B0 is "a plan made without SiteIQ", yet SiteIQ scored a site in only the 6 SYNTHETIC-metro scenarios and in 0 of the 30 real-metro ones in this run (`data_coverage_by_metro.this_run`, `site_scored`; it depends on which metro snapshots exist on the machine that ran the script). No usability test with real people was run (`headline.usability_test`: "not measured"). |
 | Brier score for P(year-2 DSCR >= 1.25), simulator vs a single-point forecast | 0.1405 [0.1321, 0.1493] vs 0.4796 [0.4596, 0.4992] (2,400 well-specified SYNTHETIC worlds) | `results/studio_feasibility_metrics.json`, `headline[0]` (`condition` `well_specified`): `brier_dscr_year2_simulator`, `brier_dscr_year2_single_forecast` | Nothing about real businesses: the worlds are SYNTHETIC, with known ground truth. The in-sample base rate, a forecast that ignores the plan, scores 0.1567 [0.1473, 0.1664] (`brier_dscr_year2_base_rate_in_sample`), close to the simulator. Misspecified worlds: 0.1433 [0.1351, 0.1523] vs 0.4938 [0.4729, 0.5154] (`headline[1]`). |
 | Decisions recorded without a person (Lender Desk agent) | 0 of 65 SYNTHETIC applications; all 60 required escalations escalated (value 1.0, bootstrap interval [1.0, 1.0], n 60) | `results/agent_metrics.json`, `deterministic_path.decisions_recorded_without_a_human`, `deterministic_path.cases`, `deterministic_path.escalation.all_required_escalations` | A bootstrap interval collapses to one point when every case passes, so it says little about the true rate. End-to-end routing agreed with the designed labels on only 0.7538 [0.6462, 0.8462] (n 65, `end_to_end_routing_agreement_with_designed_labels`). The labels were designed by the same project. LLM memo quality, citation accuracy and LLM cost are "not measured" (`llm_dependent`). |
 
 Other numbers you may be asked for (all in the README Results section, generated from the results files):
 
-- Time from inputs to an audited PDF package: median 7.199 s [6.767, 7.494] over 36 scenarios
+- Time from inputs to an audited PDF package: median 6.227 s [6.106, 6.456] over 36 scenarios
   (`results/studio_business_metrics.json`, `headline.time_to_complete_package_median_s`). It is a machine wall-clock
-  time on a shared machine, not a user's time: nobody's time was observed (`headline.time_label`).
+  time on a shared machine, measured at commit `6fcfad9`, and it varies by run; it is not a user's time: nobody's time
+  was observed (`headline.time_label`).
+- Complete packages (an audited PDF, no untraced number in the package or PDF text, every page labelled): 36 of 36,
+  Wilson 95% [0.9036, 1.0] (`results/studio_business_metrics.json`, `time_to_complete_package.complete_packages`).
 - Golden packages that reached the agent's human checkpoint: 36 of 36, Wilson 95% [0.9036, 1.0]
   (`results/studio_handoff_metrics.json`, `golden_founder_scenarios.reached_human_checkpoint`).
 - Web app on the LOCAL container: 5 of 5 Playwright flows passed; axe found 0 serious or critical issues in 32 scans
@@ -351,16 +355,17 @@ Other numbers you may be asked for (all in the README Results section, generated
 | "It's live, try it at ..." / "It's on Hugging Face." | "It runs locally. The Space is set up, but no deploy has run, so there is no public URL." | README, "Web app and deployment": Not deployed. |
 | "Production-ready", "lenders use it", "our customers". | "A demonstrator on SYNTHETIC data, with no production users." | README synthetic data notice. |
 | "The AI wrote this memo" / "an LLM reviewed the file." | "A deterministic template wrote the memo. No language model ran in this demo." | `results/agent_metrics.json`, `llm_dependent`; README, "Language models: what has actually run". |
-| "There's an X% chance this loan is approved." (any gauge read as approval odds) | "In this many of the simulated futures ... simulated, based on stated assumptions." | Studio rule E. The gauges are simulation counts, not approval odds. |
-| "You should take this plan" / "go to this lender." | "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions." | Studio rule C. |
+| "There's an X% chance this loan is approved." (any gauge read as approval odds) | "In this many of the simulated futures ... simulated, based on stated assumptions." | Rule E of the Studio addendum in CLAUDE.md (not the evidence rule E of section 4). The gauges are simulation counts, not approval odds. |
+| "You should take this plan" / "go to this lender." | "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions." | Rule C of the Studio addendum in CLAUDE.md. |
 | "The path to approval gets you approved." | "It reaches planning targets the founder can edit. A lender runs its own rules." | The page says so in "Step 3". |
 | "The copilot approved / declined / referred the file." | "A person decided at the checkpoint. This is a DEMO record." | Rule 8 in CLAUDE.md. |
 | "Screening cleared this applicant." | "It found no possible match in the lists it searched. Only a person clears or confirms a match." | The screening note on the page. |
 | "The Lender Desk reads the bank statements and cites the pages." | "The web demo uses SYNTHETIC structured applications. The document path with page citations runs on the command line (`make run-evidence`)." | README: the packet path is not wired into the web app. |
 | "Our credit model scored this file." | "The risk model shows 'unavailable' here. It is not applied to these SYNTHETIC commercial files." | The domain gap in [risk_service.md](risk_service.md). |
 | "SiteIQ finds the best site." | "It ranks sites on public-data factors and shows its data coverage. On SYNTHETIC cities it beat a one-factor baseline for 1 of 6 business types." | README S2 row; `results/studio_siteiq_metrics.json`, `by_business_type`. |
-| "This is real Dallas (or any city) data." about the demo city | "The SYNTHETIC demo city is generated and describes no real place." | Studio rule D; README synthetic notice. |
-| "It saves underwriters hours" / "a founder gets a package in seconds." | "Time savings were not measured. The 7.199 s median is a script's machine time, not a person's." | `results/studio_business_metrics.json`, `headline.time_label`. |
+| "This is real Dallas (or any city) data." about the demo city | "The SYNTHETIC demo city is generated and describes no real place." | Rule D of the Studio addendum in CLAUDE.md; README synthetic notice. |
+| "Studio plans are far better sourced than real founders' plans." | "B0 is a plan we built from the same SYNTHETIC inputs, not a sample of real plans. Under both rules, S and E, most of the gap follows from how a source is defined." | `results/studio_business_metrics.json`: `evidence_coverage.reading` (rule S) and `evidence_coverage.studio_figures_by_status_kind_and_verdict` (rule E: 724 of Studio's 821 rule E figures are `VERIFIED/policy/sourced`, program and target sections B0 never prints); README, S12 row; [s12_baseline.md](studio/s12_baseline.md), section 2. |
+| "It saves underwriters hours" / "a founder gets a package in seconds." | "Time savings were not measured. The 6.227 s median is a script's machine time on one run, not a person's." | `results/studio_business_metrics.json`, `headline.time_label`. |
 | "It complies with SR 26-2 / fair-lending rules / WCAG." | "It is a demonstration, not a compliance program." See section 9. | Rule 10 in CLAUDE.md. |
 | "We ran it in the cloud." | "Everything in this demo runs locally. No cloud deployment and no hosted language model ran." | README, "Web app and deployment" and "Language models: what has actually run". |
 | "We tested it with founders." | "No usability test with real people has been run." | `results/studio_business_metrics.json`, `headline.usability_test`. |
@@ -404,7 +409,8 @@ the human checkpoint, then resumes with a scripted Refer by a senior underwriter
   reads the PDFs (text layer, OCR where needed), runs the reference policy, the stress scenarios and the
   next-best-evidence ranking, and appends a decision record. It prints ids, codes and numbers only; the readable record
   is in `data/processed/evidence/records/`. Say: "This is the document path. It is not wired into the web app yet."
-- `make resume-lines`: the bullets the results files support. A bullet whose metric was not measured is left out.
+- `make resume-lines`: the bullets the results files support. A metric that was not measured or cannot be claimed is
+  left out, and the script lists it with its reason under "Left out".
 
 ## 7. Design choices
 
@@ -487,12 +493,21 @@ comes from the signed session, not from the request. The page asks the same func
 the server checks again on submit. Across 65 SYNTHETIC applications, 0 decisions were recorded without a person
 (`results/agent_metrics.json`, `deterministic_path`).
 
-**5. 0.8482 against 0.0251 sounds too good. What is the catch?**
-Most of the gap comes from the definition. A model estimate or a calculation counts as sourced for Studio, because the
-ledger records the run or the formula and its inputs, and the baseline prints no such record. On the stricter rule,
-which counts only document pages, public-data rows and program or target sections, it is 0.057 [0.0545, 0.0597] against 0.0251
-[0.0182, 0.032] (`results/studio_business_metrics.json`, `headline`). The baseline was defined in writing before the
-first run ([s12_baseline.md](studio/s12_baseline.md)).
+**5. 0.8482 against 0.0255 sounds too good. What is the catch?**
+Most of the gap comes from the definitions, and that is true under both rules. The baseline B0 is a construction from
+the same SYNTHETIC inputs and documents, not a sample of real founders' plans. Under rule S a model estimate or a
+calculation counts as sourced for Studio, because the ledger records the run or the formula and its inputs, and B0
+prints no such record. The stricter rule E counts only document pages, public-data rows and program or target
+sections: there it is 0.057 [0.0545, 0.0597] against 0.0255 [0.0185, 0.0325], a difference of 0.0315 [0.0254,
+0.0377]. That gap also comes mostly from the definitions: 724 of Studio's 821 rule E figures are sections of the
+SYNTHETIC startup program and the Studio's own targets, which B0 never prints
+(`evidence_coverage.studio_figures_by_status_kind_and_verdict`). The one comparison on the same population, the
+founder's typed figures backed by a document, is 0.1315 for both, equal by construction
+(`results/studio_business_metrics.json`, `headline`). The baseline was defined in writing before the first run
+([s12_baseline.md](studio/s12_baseline.md)). A code review found that the first run's B0 still printed the size of a
+rate rise for a variable-rate plan. That input only acts when a rate shock happens, so a one-forecast plan does not use
+it, and section 2 of that definition leaves such inputs out. The code was fixed (commit `99b7a93`) and S12 was
+re-measured at commit `6fcfad9` (`provenance.git_sha`, `git_dirty` false), which is where the numbers above come from.
 
 **6. What happens with a real city?**
 The five largest US metros are configured. All five run in limited mode, because their lowest business type,
