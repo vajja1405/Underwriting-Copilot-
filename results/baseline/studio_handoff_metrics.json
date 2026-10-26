@@ -1,0 +1,3149 @@
+{
+  "generated_by": "scripts/eval_studio_handoff.py",
+  "data_label": "SYNTHETIC",
+  "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+  "simulation_label": "simulated, based on stated assumptions",
+  "status": "measured (deterministic template memo; no language model was called)",
+  "configuration": {
+    "screening": "full OFAC SDN + OpenSanctions lists (uwcopilot.kyc.screening default matcher)",
+    "golden_seed": 4404,
+    "n_paths": 1000,
+    "golden_scenarios": 36,
+    "startup_applications": 35,
+    "memo_writer": "deterministic template memo (FAKE LLM - test mode)",
+    "bootstrap": {
+      "resamples": 1000,
+      "seed": 42,
+      "confidence": 0.95,
+      "unit": "case"
+    },
+    "runtime_s": 349.1
+  },
+  "versions": {
+    "package_schema": "founder-package-v1",
+    "package_builder": "studio-package-1.0",
+    "handoff": "studio-handoff-1.0",
+    "founder_ledger": "founder-ledger-1.0",
+    "startup_evidence_requests": "startup-evidence-requests-v1",
+    "graph": "underwriting-graph-v1",
+    "policy": "reference-policy-v1 (northwind_startup_program 2026.1 SYNTHETIC, with northwind_business_credit 2026.1)",
+    "memo_prompt": "memo-prompt-v1-afc670274d43"
+  },
+  "startup_applications": {
+    "cases": 35,
+    "labelled_cases": 35,
+    "recommendation_agreement_with_labels": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 35,
+      "k": 35,
+      "wilson_ci95": [
+        0.9011,
+        1.0
+      ]
+    },
+    "exact_rule_set_agreement_with_labels": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 35,
+      "k": 35,
+      "wilson_ci95": [
+        0.9011,
+        1.0
+      ]
+    },
+    "reached_human_checkpoint": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 35,
+      "k": 35,
+      "wilson_ci95": [
+        0.9011,
+        1.0
+      ]
+    },
+    "decisions_recorded_without_a_human": 0,
+    "decisions_recorded_without_a_human_rate": {
+      "value": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "n": 35,
+      "k": 0,
+      "wilson_ci95": [
+        0.0,
+        0.0989
+      ]
+    },
+    "memo_check_passed": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 35,
+      "k": 35,
+      "wilson_ci95": [
+        0.9011,
+        1.0
+      ]
+    },
+    "unsupported_numbers_in_memos": 0,
+    "mismatches": [],
+    "reference_recommendation_counts": {
+      "approve": 2,
+      "request_more_information": 10,
+      "refer": 16,
+      "decline_for_review": 7
+    },
+    "startup_open_item_types": {
+      "missing_equity_verification": 1,
+      "unsupported_material_assumption": 1,
+      "missing_experience_evidence": 1,
+      "missing_document": 2
+    },
+    "top_request_counts": {
+      "equity_bank_statements": 1,
+      "driver_comparable_data": 1,
+      "owner_resume_and_references": 1,
+      "missing_document": 1
+    },
+    "latency_ms_median": 120.85
+  },
+  "golden_founder_scenarios": {
+    "cases": 36,
+    "metro_modes": {
+      "synthetic": 6,
+      "limited": 30
+    },
+    "agreement_with_labels": "not applicable: the golden founder scenarios carry no designed label",
+    "pdf_starts_with_pdf": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 36,
+      "k": 36,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ]
+    },
+    "pdf_pages": {
+      "min": 27,
+      "median": 30.0,
+      "max": 34,
+      "n": 36
+    },
+    "every_page_labelled": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 36,
+      "k": 36,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ]
+    },
+    "package_text_audit_empty": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 36,
+      "k": 36,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ]
+    },
+    "pdf_text_audit_empty": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 36,
+      "k": 36,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ]
+    },
+    "package_numbers_read_back": 30681,
+    "untraced_numbers_package_text": 0,
+    "untraced_numbers_pdf_text": 0,
+    "reached_human_checkpoint": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 36,
+      "k": 36,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ]
+    },
+    "decisions_recorded_without_a_human": 0,
+    "decisions_recorded_without_a_human_rate": {
+      "value": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "n": 36,
+      "k": 0,
+      "wilson_ci95": [
+        0.0,
+        0.0964
+      ]
+    },
+    "memo_check_passed": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 36,
+      "k": 36,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ]
+    },
+    "unsupported_numbers_in_memos": 0,
+    "evidence_engine_agrees_with_agent": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 36,
+      "k": 36,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ]
+    },
+    "reference_recommendation_counts": {
+      "decline_for_review": 17,
+      "request_more_information": 19
+    },
+    "evidence_requests_per_package": {
+      "min": 4,
+      "median": 5.0,
+      "max": 7,
+      "n": 36
+    },
+    "top_request_counts": {
+      "equity_bank_statements": 24,
+      "missing_document": 5,
+      "build_out_quotes": 4,
+      "driver_comparable_data": 3
+    },
+    "claims_per_package": {
+      "min": 405,
+      "median": 438.5,
+      "max": 469,
+      "n": 36
+    },
+    "seconds_per_scenario": {
+      "min": 5.896,
+      "median": 6.8100000000000005,
+      "max": 8.432,
+      "n": 36
+    }
+  },
+  "all_cases": {
+    "cases": 71,
+    "reached_human_checkpoint": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 71,
+      "k": 71,
+      "wilson_ci95": [
+        0.9487,
+        1.0
+      ]
+    },
+    "decisions_recorded_without_a_human": 0,
+    "decisions_recorded_without_a_human_rate": {
+      "value": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "n": 71,
+      "k": 0,
+      "wilson_ci95": [
+        0.0,
+        0.0513
+      ]
+    },
+    "unsupported_numbers_in_memos": 0
+  },
+  "per_case": {
+    "startup_applications": [
+      {
+        "application_id": "APP-S-001",
+        "scenario": "clean_car_wash",
+        "expected_recommendation": "approve",
+        "expected_rules": [],
+        "reference_recommendation": "approve",
+        "rules": [],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 77679.56
+      },
+      {
+        "application_id": "APP-S-002",
+        "scenario": "equity_not_verified_laundromat",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "equity_not_verified"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "equity_not_verified"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [
+          "OI-missing_equity_verification"
+        ],
+        "top_request": "equity_bank_statements",
+        "latency_ms": 148.17
+      },
+      {
+        "application_id": "APP-S-003",
+        "scenario": "collateral_short_motel",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "collateral_coverage_below_minimum"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "collateral_coverage_below_minimum"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 127.89
+      },
+      {
+        "application_id": "APP-S-004",
+        "scenario": "restricted_short_term_rental",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "restricted_industry"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "restricted_industry"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 119.92
+      },
+      {
+        "application_id": "APP-S-005",
+        "scenario": "restaurant_unsupported_driver",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "material_assumption_unsupported",
+          "restricted_industry"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "material_assumption_unsupported",
+          "restricted_industry"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [
+          "OI-unsupported_material_assumption-r2"
+        ],
+        "top_request": "driver_comparable_data",
+        "latency_ms": 122.62
+      },
+      {
+        "application_id": "APP-S-006",
+        "scenario": "projected_dscr_below_floor_retail",
+        "expected_recommendation": "decline_for_review",
+        "expected_rules": [
+          "projected_dscr_below_decline_floor",
+          "stress_test_revenue"
+        ],
+        "reference_recommendation": "decline_for_review",
+        "rules": [
+          "projected_dscr_below_decline_floor",
+          "stress_test_revenue"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Credit Committee",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 133.05
+      },
+      {
+        "application_id": "APP-S-007",
+        "scenario": "clean_secured_motel",
+        "expected_recommendation": "approve",
+        "expected_rules": [],
+        "reference_recommendation": "approve",
+        "rules": [],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 144.38
+      },
+      {
+        "application_id": "APP-S-008",
+        "scenario": "term_outside_limits_laundromat",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "outside_product_limits"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "outside_product_limits"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Chief Credit Officer",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 153.96
+      },
+      {
+        "application_id": "APP-S-009",
+        "scenario": "not_a_startup_retail",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "not_a_startup"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "not_a_startup"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 115.9
+      },
+      {
+        "application_id": "APP-S-010",
+        "scenario": "sole_proprietorship_car_wash",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "ineligible_entity_type"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "ineligible_entity_type"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 107.51
+      },
+      {
+        "application_id": "APP-S-011",
+        "scenario": "prohibited_industry_retail",
+        "expected_recommendation": "decline_for_review",
+        "expected_rules": [
+          "prohibited_industry"
+        ],
+        "reference_recommendation": "decline_for_review",
+        "rules": [
+          "prohibited_industry"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 128.94
+      },
+      {
+        "application_id": "APP-S-012",
+        "scenario": "experience_near_miss_laundromat",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "experience_near_miss"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "experience_near_miss"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 123.82
+      },
+      {
+        "application_id": "APP-S-013",
+        "scenario": "experience_below_minimum_car_wash",
+        "expected_recommendation": "decline_for_review",
+        "expected_rules": [
+          "experience_below_minimum"
+        ],
+        "reference_recommendation": "decline_for_review",
+        "rules": [
+          "experience_below_minimum"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 123.26
+      },
+      {
+        "application_id": "APP-S-014",
+        "scenario": "experience_evidence_missing_motel",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "experience_evidence_missing"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "experience_evidence_missing"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [
+          "OI-missing_experience_evidence-O1"
+        ],
+        "top_request": "owner_resume_and_references",
+        "latency_ms": 111.75
+      },
+      {
+        "application_id": "APP-S-015",
+        "scenario": "no_principal_retail",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "no_principal",
+          "ownership_discrepancy"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "no_principal",
+          "ownership_discrepancy"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "KYC Operations",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 89.56
+      },
+      {
+        "application_id": "APP-S-016",
+        "scenario": "credit_score_near_miss_car_wash",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "credit_score_near_miss"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "credit_score_near_miss"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 118.2
+      },
+      {
+        "application_id": "APP-S-017",
+        "scenario": "credit_score_below_minimum_laundromat",
+        "expected_recommendation": "decline_for_review",
+        "expected_rules": [
+          "credit_score_below_minimum"
+        ],
+        "reference_recommendation": "decline_for_review",
+        "rules": [
+          "credit_score_below_minimum"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 110.1
+      },
+      {
+        "application_id": "APP-S-018",
+        "scenario": "credit_score_missing_retail",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "principal_credit_score_missing"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "principal_credit_score_missing"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 119.3
+      },
+      {
+        "application_id": "APP-S-019",
+        "scenario": "bankruptcy_motel",
+        "expected_recommendation": "decline_for_review",
+        "expected_rules": [
+          "bankruptcy_within_7_years"
+        ],
+        "reference_recommendation": "decline_for_review",
+        "rules": [
+          "bankruptcy_within_7_years"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 113.41
+      },
+      {
+        "application_id": "APP-S-020",
+        "scenario": "tax_lien_car_wash",
+        "expected_recommendation": "decline_for_review",
+        "expected_rules": [
+          "unresolved_tax_lien"
+        ],
+        "reference_recommendation": "decline_for_review",
+        "rules": [
+          "unresolved_tax_lien"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 113.77
+      },
+      {
+        "application_id": "APP-S-021",
+        "scenario": "missing_documents_laundromat",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "missing_documents"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "missing_documents"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents"
+        ],
+        "top_request": "missing_document",
+        "latency_ms": 110.29
+      },
+      {
+        "application_id": "APP-S-022",
+        "scenario": "sources_and_uses_gap_retail",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "sources_and_uses_inconsistent"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "sources_and_uses_inconsistent"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 116.5
+      },
+      {
+        "application_id": "APP-S-023",
+        "scenario": "equity_near_miss_car_wash",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "equity_injection_near_miss"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "equity_injection_near_miss"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 129.35
+      },
+      {
+        "application_id": "APP-S-024",
+        "scenario": "equity_below_minimum_motel",
+        "expected_recommendation": "decline_for_review",
+        "expected_rules": [
+          "equity_injection_below_minimum"
+        ],
+        "reference_recommendation": "decline_for_review",
+        "rules": [
+          "equity_injection_below_minimum"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 118.79
+      },
+      {
+        "application_id": "APP-S-025",
+        "scenario": "projected_dscr_in_exception_band_laundromat",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "projected_dscr_below_minimum",
+          "stress_test_revenue"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "projected_dscr_below_minimum",
+          "stress_test_revenue"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 120.85
+      },
+      {
+        "application_id": "APP-S-026",
+        "scenario": "revenue_stress_car_wash",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "stress_test_revenue"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "stress_test_revenue"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 115.31
+      },
+      {
+        "application_id": "APP-S-027",
+        "scenario": "rate_stress_retail",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "projected_dscr_below_minimum",
+          "stress_test_rate",
+          "stress_test_revenue"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "projected_dscr_below_minimum",
+          "stress_test_rate",
+          "stress_test_revenue"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 131.48
+      },
+      {
+        "application_id": "APP-S-028",
+        "scenario": "unsourced_assumption_laundromat",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "projection_assumptions_incomplete"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "projection_assumptions_incomplete"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 122.33
+      },
+      {
+        "application_id": "APP-S-029",
+        "scenario": "reserve_short_motel",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "working_capital_reserve_short"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "working_capital_reserve_short"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 123.73
+      },
+      {
+        "application_id": "APP-S-030",
+        "scenario": "unranked_drivers_retail",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "top_drivers_not_identified"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "top_drivers_not_identified"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 122.86
+      },
+      {
+        "application_id": "APP-S-031",
+        "scenario": "collateral_far_short_motel",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "collateral_coverage_below_minimum"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "collateral_coverage_below_minimum"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Credit Committee",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 129.67
+      },
+      {
+        "application_id": "APP-S-032",
+        "scenario": "guarantee_missing_car_wash",
+        "expected_recommendation": "request_more_information",
+        "expected_rules": [
+          "guarantee_missing"
+        ],
+        "reference_recommendation": "request_more_information",
+        "rules": [
+          "guarantee_missing"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Senior Underwriter",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 113.5
+      },
+      {
+        "application_id": "APP-S-033",
+        "scenario": "ownership_discrepancy_laundromat",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "ownership_discrepancy"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "ownership_discrepancy"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "KYC Operations",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 115.8
+      },
+      {
+        "application_id": "APP-S-034",
+        "scenario": "notes_injection_retail",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "embedded_instruction"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "embedded_instruction"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Fraud Operations",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 115.0
+      },
+      {
+        "application_id": "APP-S-035",
+        "scenario": "assumption_name_injection_car_wash",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "embedded_instruction"
+        ],
+        "reference_recommendation": "refer",
+        "rules": [
+          "embedded_instruction"
+        ],
+        "recommendation_match": true,
+        "rules_match": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "review_queue": "Fraud Operations",
+        "required_reviewer_role": "senior_underwriter",
+        "open_items": [],
+        "top_request": null,
+        "latency_ms": 126.22
+      }
+    ],
+    "golden_founder_scenarios": [
+      {
+        "scenario_id": "GOLDEN-synthetic_metro-car_wash",
+        "metro_id": "synthetic_metro",
+        "profile_id": "car_wash",
+        "metro_mode": "synthetic",
+        "document_variant": 0,
+        "package_id": "FP-5f21fda2e25d",
+        "claims": 458,
+        "status_counts": {
+          "VERIFIED": 29,
+          "MODEL_ESTIMATE": 330,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 24,
+          "ASSUMPTION": 75
+        },
+        "package_numbers": 965,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 33,
+        "pdf_bytes": 578661,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-93869917",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "build_out_quotes",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.581,
+          "render_pdf": 3.578,
+          "audit_and_handoff": 2.88,
+          "total": 7.038
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-synthetic_metro-laundromat",
+        "metro_id": "synthetic_metro",
+        "profile_id": "laundromat",
+        "metro_mode": "synthetic",
+        "document_variant": 1,
+        "package_id": "FP-b3d1980d2788",
+        "claims": 469,
+        "status_counts": {
+          "VERIFIED": 33,
+          "MODEL_ESTIMATE": 344,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 23,
+          "ASSUMPTION": 69
+        },
+        "package_numbers": 970,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 34,
+        "pdf_bytes": 559358,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-80535688",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "build_out_quotes"
+        ],
+        "seconds": {
+          "build": 0.555,
+          "render_pdf": 3.482,
+          "audit_and_handoff": 3.449,
+          "total": 7.486
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-synthetic_metro-motel",
+        "metro_id": "synthetic_metro",
+        "profile_id": "motel",
+        "metro_mode": "synthetic",
+        "document_variant": 2,
+        "package_id": "FP-989e92d60b46",
+        "claims": 458,
+        "status_counts": {
+          "VERIFIED": 31,
+          "MODEL_ESTIMATE": 329,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 18,
+          "ASSUMPTION": 75
+        },
+        "package_numbers": 975,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 33,
+        "pdf_bytes": 582570,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-35755846",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.634,
+          "render_pdf": 3.893,
+          "audit_and_handoff": 3.16,
+          "total": 7.686
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-synthetic_metro-restaurant_cafe",
+        "metro_id": "synthetic_metro",
+        "profile_id": "restaurant_cafe",
+        "metro_mode": "synthetic",
+        "document_variant": 0,
+        "package_id": "FP-44657dd3b9ac",
+        "claims": 426,
+        "status_counts": {
+          "VERIFIED": 30,
+          "MODEL_ESTIMATE": 312,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 27,
+          "ASSUMPTION": 57
+        },
+        "package_numbers": 896,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 32,
+        "pdf_bytes": 555275,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-93413292",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-missing_experience_evidence-O1",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "owner_resume_and_references",
+          "build_out_quotes",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.479,
+          "render_pdf": 3.585,
+          "audit_and_handoff": 3.314,
+          "total": 7.378
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-synthetic_metro-retail_storefront",
+        "metro_id": "synthetic_metro",
+        "profile_id": "retail_storefront",
+        "metro_mode": "synthetic",
+        "document_variant": 1,
+        "package_id": "FP-12b30a7f6ea1",
+        "claims": 462,
+        "status_counts": {
+          "VERIFIED": 35,
+          "MODEL_ESTIMATE": 334,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 26,
+          "ASSUMPTION": 67
+        },
+        "package_numbers": 964,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 34,
+        "pdf_bytes": 584197,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-84569505",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes"
+        ],
+        "evidence_requests": [
+          "build_out_quotes",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.634,
+          "render_pdf": 3.956,
+          "audit_and_handoff": 3.112,
+          "total": 7.702
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-synthetic_metro-short_term_rental",
+        "metro_id": "synthetic_metro",
+        "profile_id": "short_term_rental",
+        "metro_mode": "synthetic",
+        "document_variant": 2,
+        "package_id": "FP-206d4e6ab9d2",
+        "claims": 465,
+        "status_counts": {
+          "VERIFIED": 35,
+          "MODEL_ESTIMATE": 331,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 19,
+          "ASSUMPTION": 75
+        },
+        "package_numbers": 995,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 34,
+        "pdf_bytes": 571456,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-39141330",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 1.025,
+          "render_pdf": 3.397,
+          "audit_and_handoff": 3.397,
+          "total": 7.819
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-chicago_il_in-car_wash",
+        "metro_id": "chicago_il_in",
+        "profile_id": "car_wash",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-f61c43402c84",
+        "claims": 440,
+        "status_counts": {
+          "VERIFIED": 19,
+          "MODEL_ESTIMATE": 330,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 55,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 832,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 29,
+        "pdf_bytes": 480781,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-47796356",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-missing_experience_evidence-O1",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "owner_resume_and_references",
+          "build_out_quotes",
+          "driver_lease_or_loi",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.481,
+          "render_pdf": 2.876,
+          "audit_and_handoff": 3.001,
+          "total": 6.358
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-chicago_il_in-laundromat",
+        "metro_id": "chicago_il_in",
+        "profile_id": "laundromat",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-1be915003da5",
+        "claims": 450,
+        "status_counts": {
+          "VERIFIED": 23,
+          "MODEL_ESTIMATE": 339,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 51,
+          "ASSUMPTION": 37
+        },
+        "package_numbers": 848,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 490115,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-93667237",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "build_out_quotes"
+        ],
+        "seconds": {
+          "build": 0.492,
+          "render_pdf": 2.785,
+          "audit_and_handoff": 3.258,
+          "total": 6.534
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-chicago_il_in-motel",
+        "metro_id": "chicago_il_in",
+        "profile_id": "motel",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-f239da40f8f6",
+        "claims": 427,
+        "status_counts": {
+          "VERIFIED": 21,
+          "MODEL_ESTIMATE": 312,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 56,
+          "ASSUMPTION": 33
+        },
+        "package_numbers": 831,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 490141,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-88748790",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.508,
+          "render_pdf": 3.145,
+          "audit_and_handoff": 3.555,
+          "total": 7.208
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-chicago_il_in-restaurant_cafe",
+        "metro_id": "chicago_il_in",
+        "profile_id": "restaurant_cafe",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-2efd28c1e57f",
+        "claims": 453,
+        "status_counts": {
+          "VERIFIED": 22,
+          "MODEL_ESTIMATE": 333,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 62,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 862,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 31,
+        "pdf_bytes": 502413,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-45399423",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-missing_experience_evidence-O1",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "owner_resume_and_references",
+          "build_out_quotes",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.779,
+          "render_pdf": 3.641,
+          "audit_and_handoff": 3.388,
+          "total": 7.809
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-chicago_il_in-retail_storefront",
+        "metro_id": "chicago_il_in",
+        "profile_id": "retail_storefront",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-621ae0580f20",
+        "claims": 468,
+        "status_counts": {
+          "VERIFIED": 23,
+          "MODEL_ESTIMATE": 351,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 55,
+          "ASSUMPTION": 39
+        },
+        "package_numbers": 870,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 31,
+        "pdf_bytes": 496994,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-72539168",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes"
+        ],
+        "evidence_requests": [
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "build_out_quotes"
+        ],
+        "seconds": {
+          "build": 0.58,
+          "render_pdf": 3.097,
+          "audit_and_handoff": 3.135,
+          "total": 6.812
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-chicago_il_in-short_term_rental",
+        "metro_id": "chicago_il_in",
+        "profile_id": "short_term_rental",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-72ae43c7df9d",
+        "claims": 432,
+        "status_counts": {
+          "VERIFIED": 24,
+          "MODEL_ESTIMATE": 327,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 41,
+          "ASSUMPTION": 35
+        },
+        "package_numbers": 833,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 491392,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-87048349",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.557,
+          "render_pdf": 3.008,
+          "audit_and_handoff": 3.057,
+          "total": 6.623
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-dallas_fort_worth_tx-car_wash",
+        "metro_id": "dallas_fort_worth_tx",
+        "profile_id": "car_wash",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-d6189a1508c0",
+        "claims": 444,
+        "status_counts": {
+          "VERIFIED": 22,
+          "MODEL_ESTIMATE": 333,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 53,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 846,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 494022,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-52628928",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-missing_experience_evidence-O1",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "owner_resume_and_references",
+          "build_out_quotes",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.499,
+          "render_pdf": 2.932,
+          "audit_and_handoff": 2.894,
+          "total": 6.325
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-dallas_fort_worth_tx-laundromat",
+        "metro_id": "dallas_fort_worth_tx",
+        "profile_id": "laundromat",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-f42305329aae",
+        "claims": 405,
+        "status_counts": {
+          "VERIFIED": 20,
+          "MODEL_ESTIMATE": 306,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 47,
+          "ASSUMPTION": 32
+        },
+        "package_numbers": 790,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 28,
+        "pdf_bytes": 474615,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-48235182",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "build_out_quotes"
+        ],
+        "seconds": {
+          "build": 0.446,
+          "render_pdf": 2.767,
+          "audit_and_handoff": 2.818,
+          "total": 6.031
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-dallas_fort_worth_tx-motel",
+        "metro_id": "dallas_fort_worth_tx",
+        "profile_id": "motel",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-f6cd087ac70d",
+        "claims": 447,
+        "status_counts": {
+          "VERIFIED": 23,
+          "MODEL_ESTIMATE": 345,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 36,
+          "ASSUMPTION": 38
+        },
+        "package_numbers": 835,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 490158,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-70992653",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "driver_lease_or_loi",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 1.221,
+          "render_pdf": 3.542,
+          "audit_and_handoff": 3.322,
+          "total": 8.085
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-dallas_fort_worth_tx-restaurant_cafe",
+        "metro_id": "dallas_fort_worth_tx",
+        "profile_id": "restaurant_cafe",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-73724a74521d",
+        "claims": 407,
+        "status_counts": {
+          "VERIFIED": 19,
+          "MODEL_ESTIMATE": 312,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 43,
+          "ASSUMPTION": 33
+        },
+        "package_numbers": 786,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 28,
+        "pdf_bytes": 483010,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-12603165",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "build_out_quotes",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.749,
+          "render_pdf": 3.473,
+          "audit_and_handoff": 3.259,
+          "total": 7.481
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-dallas_fort_worth_tx-retail_storefront",
+        "metro_id": "dallas_fort_worth_tx",
+        "profile_id": "retail_storefront",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-b5443dba8f33",
+        "claims": 439,
+        "status_counts": {
+          "VERIFIED": 23,
+          "MODEL_ESTIMATE": 331,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 49,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 836,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 489795,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-98040115",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes"
+        ],
+        "evidence_requests": [
+          "build_out_quotes",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.842,
+          "render_pdf": 3.641,
+          "audit_and_handoff": 2.974,
+          "total": 7.457
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-dallas_fort_worth_tx-short_term_rental",
+        "metro_id": "dallas_fort_worth_tx",
+        "profile_id": "short_term_rental",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-3c8e773abff1",
+        "claims": 437,
+        "status_counts": {
+          "VERIFIED": 24,
+          "MODEL_ESTIMATE": 321,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 53,
+          "ASSUMPTION": 34
+        },
+        "package_numbers": 849,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 498594,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-83361521",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.579,
+          "render_pdf": 3.442,
+          "audit_and_handoff": 2.787,
+          "total": 6.808
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-houston_tx-car_wash",
+        "metro_id": "houston_tx",
+        "profile_id": "car_wash",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-9666f7165e96",
+        "claims": 405,
+        "status_counts": {
+          "VERIFIED": 19,
+          "MODEL_ESTIMATE": 310,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 42,
+          "ASSUMPTION": 34
+        },
+        "package_numbers": 771,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 27,
+        "pdf_bytes": 461760,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-76268950",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-missing_experience_evidence-O1",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "owner_resume_and_references",
+          "build_out_quotes",
+          "driver_lease_or_loi",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.486,
+          "render_pdf": 3.08,
+          "audit_and_handoff": 2.572,
+          "total": 6.138
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-houston_tx-laundromat",
+        "metro_id": "houston_tx",
+        "profile_id": "laundromat",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-c60443351465",
+        "claims": 419,
+        "status_counts": {
+          "VERIFIED": 20,
+          "MODEL_ESTIMATE": 324,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 40,
+          "ASSUMPTION": 35
+        },
+        "package_numbers": 792,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 28,
+        "pdf_bytes": 471735,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-09720933",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "build_out_quotes"
+        ],
+        "seconds": {
+          "build": 0.529,
+          "render_pdf": 3.323,
+          "audit_and_handoff": 2.75,
+          "total": 6.602
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-houston_tx-motel",
+        "metro_id": "houston_tx",
+        "profile_id": "motel",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-72109ecaba70",
+        "claims": 433,
+        "status_counts": {
+          "VERIFIED": 21,
+          "MODEL_ESTIMATE": 318,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 55,
+          "ASSUMPTION": 34
+        },
+        "package_numbers": 839,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 493796,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-09129328",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.611,
+          "render_pdf": 3.571,
+          "audit_and_handoff": 4.249,
+          "total": 8.432
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-houston_tx-restaurant_cafe",
+        "metro_id": "houston_tx",
+        "profile_id": "restaurant_cafe",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-a6d23ab2183d",
+        "claims": 440,
+        "status_counts": {
+          "VERIFIED": 22,
+          "MODEL_ESTIMATE": 333,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 49,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 836,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 495433,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-58093117",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "build_out_quotes",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.54,
+          "render_pdf": 3.19,
+          "audit_and_handoff": 3.328,
+          "total": 7.058
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-houston_tx-retail_storefront",
+        "metro_id": "houston_tx",
+        "profile_id": "retail_storefront",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-f40ef85ce198",
+        "claims": 414,
+        "status_counts": {
+          "VERIFIED": 20,
+          "MODEL_ESTIMATE": 312,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 49,
+          "ASSUMPTION": 33
+        },
+        "package_numbers": 800,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 29,
+        "pdf_bytes": 487121,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-33556120",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes"
+        ],
+        "evidence_requests": [
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "build_out_quotes"
+        ],
+        "seconds": {
+          "build": 0.445,
+          "render_pdf": 2.769,
+          "audit_and_handoff": 2.682,
+          "total": 5.896
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-houston_tx-short_term_rental",
+        "metro_id": "houston_tx",
+        "profile_id": "short_term_rental",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-6a8afa3b657d",
+        "claims": 434,
+        "status_counts": {
+          "VERIFIED": 24,
+          "MODEL_ESTIMATE": 327,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 43,
+          "ASSUMPTION": 35
+        },
+        "package_numbers": 835,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 490441,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-36227709",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 1.001,
+          "render_pdf": 2.972,
+          "audit_and_handoff": 2.714,
+          "total": 6.687
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-los_angeles_ca-car_wash",
+        "metro_id": "los_angeles_ca",
+        "profile_id": "car_wash",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-2da398a56d7e",
+        "claims": 424,
+        "status_counts": {
+          "VERIFIED": 19,
+          "MODEL_ESTIMATE": 310,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 61,
+          "ASSUMPTION": 34
+        },
+        "package_numbers": 811,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 28,
+        "pdf_bytes": 467408,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-63897470",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-missing_experience_evidence-O1",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "owner_resume_and_references",
+          "build_out_quotes",
+          "driver_lease_or_loi",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.856,
+          "render_pdf": 3.112,
+          "audit_and_handoff": 2.693,
+          "total": 6.661
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-los_angeles_ca-laundromat",
+        "metro_id": "los_angeles_ca",
+        "profile_id": "laundromat",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-dd0f20cac25f",
+        "claims": 444,
+        "status_counts": {
+          "VERIFIED": 20,
+          "MODEL_ESTIMATE": 330,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 58,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 842,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 29,
+        "pdf_bytes": 478845,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-44406879",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "missing_document",
+          "driver_lease_or_loi",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "build_out_quotes"
+        ],
+        "seconds": {
+          "build": 0.485,
+          "render_pdf": 3.286,
+          "audit_and_handoff": 3.168,
+          "total": 6.938
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-los_angeles_ca-motel",
+        "metro_id": "los_angeles_ca",
+        "profile_id": "motel",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-5b877b0dd18d",
+        "claims": 426,
+        "status_counts": {
+          "VERIFIED": 20,
+          "MODEL_ESTIMATE": 330,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 35,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 801,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 28,
+        "pdf_bytes": 477073,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-43215757",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "driver_lease_or_loi",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.436,
+          "render_pdf": 2.688,
+          "audit_and_handoff": 2.812,
+          "total": 5.937
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-los_angeles_ca-restaurant_cafe",
+        "metro_id": "los_angeles_ca",
+        "profile_id": "restaurant_cafe",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-368c0f6b0235",
+        "claims": 437,
+        "status_counts": {
+          "VERIFIED": 22,
+          "MODEL_ESTIMATE": 321,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 60,
+          "ASSUMPTION": 34
+        },
+        "package_numbers": 844,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 501810,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-81992501",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-missing_experience_evidence-O1",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "owner_resume_and_references",
+          "build_out_quotes",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.514,
+          "render_pdf": 3.429,
+          "audit_and_handoff": 2.805,
+          "total": 6.749
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-los_angeles_ca-retail_storefront",
+        "metro_id": "los_angeles_ca",
+        "profile_id": "retail_storefront",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-f3c44e4efa88",
+        "claims": 425,
+        "status_counts": {
+          "VERIFIED": 20,
+          "MODEL_ESTIMATE": 310,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 62,
+          "ASSUMPTION": 33
+        },
+        "package_numbers": 824,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 29,
+        "pdf_bytes": 490750,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-52938376",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes"
+        ],
+        "evidence_requests": [
+          "build_out_quotes",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.846,
+          "render_pdf": 2.861,
+          "audit_and_handoff": 2.607,
+          "total": 6.314
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-los_angeles_ca-short_term_rental",
+        "metro_id": "los_angeles_ca",
+        "profile_id": "short_term_rental",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-daa50c59918e",
+        "claims": 439,
+        "status_counts": {
+          "VERIFIED": 24,
+          "MODEL_ESTIMATE": 319,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 57,
+          "ASSUMPTION": 34
+        },
+        "package_numbers": 855,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 496473,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-11655566",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.858,
+          "render_pdf": 3.054,
+          "audit_and_handoff": 3.347,
+          "total": 7.26
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-new_york_ny_nj_pa-car_wash",
+        "metro_id": "new_york_ny_nj_pa",
+        "profile_id": "car_wash",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-4ec8b594c89b",
+        "claims": 438,
+        "status_counts": {
+          "VERIFIED": 22,
+          "MODEL_ESTIMATE": 337,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 44,
+          "ASSUMPTION": 35
+        },
+        "package_numbers": 842,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 497810,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-46852507",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "build_out_quotes",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.697,
+          "render_pdf": 3.26,
+          "audit_and_handoff": 3.192,
+          "total": 7.149
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-new_york_ny_nj_pa-laundromat",
+        "metro_id": "new_york_ny_nj_pa",
+        "profile_id": "laundromat",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-822a44065e28",
+        "claims": 434,
+        "status_counts": {
+          "VERIFIED": 23,
+          "MODEL_ESTIMATE": 327,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 49,
+          "ASSUMPTION": 35
+        },
+        "package_numbers": 830,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 490065,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-41505320",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "build_out_quotes",
+          "driver_lease_or_loi",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.505,
+          "render_pdf": 3.061,
+          "audit_and_handoff": 2.948,
+          "total": 6.514
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-new_york_ny_nj_pa-motel",
+        "metro_id": "new_york_ny_nj_pa",
+        "profile_id": "motel",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-6ec03210109e",
+        "claims": 454,
+        "status_counts": {
+          "VERIFIED": 23,
+          "MODEL_ESTIMATE": 333,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 57,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 867,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 31,
+        "pdf_bytes": 493577,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-52689822",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_document-collateral_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "driver_lease_or_loi",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.537,
+          "render_pdf": 2.802,
+          "audit_and_handoff": 2.667,
+          "total": 6.006
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-new_york_ny_nj_pa-restaurant_cafe",
+        "metro_id": "new_york_ny_nj_pa",
+        "profile_id": "restaurant_cafe",
+        "metro_mode": "limited",
+        "document_variant": 0,
+        "package_id": "FP-92c99a1c5cc4",
+        "claims": 444,
+        "status_counts": {
+          "VERIFIED": 22,
+          "MODEL_ESTIMATE": 333,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 53,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 846,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 498493,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-71631812",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-missing_experience_evidence-O1",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes",
+          "OI-missing_document-signed_application",
+          "OI-missing_document-personal_financial_statements",
+          "OI-missing_document-principal_photo_ids",
+          "OI-missing_document-formation_documents"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "owner_resume_and_references",
+          "build_out_quotes",
+          "missing_document",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.844,
+          "render_pdf": 2.749,
+          "audit_and_handoff": 2.741,
+          "total": 6.334
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-new_york_ny_nj_pa-retail_storefront",
+        "metro_id": "new_york_ny_nj_pa",
+        "profile_id": "retail_storefront",
+        "metro_mode": "limited",
+        "document_variant": 1,
+        "package_id": "FP-656f20ed731e",
+        "claims": 445,
+        "status_counts": {
+          "VERIFIED": 23,
+          "MODEL_ESTIMATE": 333,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 53,
+          "ASSUMPTION": 36
+        },
+        "package_numbers": 846,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 30,
+        "pdf_bytes": 492366,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-68207646",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3",
+          "OI-missing_quotes"
+        ],
+        "evidence_requests": [
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "build_out_quotes"
+        ],
+        "seconds": {
+          "build": 0.869,
+          "render_pdf": 3.182,
+          "audit_and_handoff": 3.433,
+          "total": 7.484
+        }
+      },
+      {
+        "scenario_id": "GOLDEN-new_york_ny_nj_pa-short_term_rental",
+        "metro_id": "new_york_ny_nj_pa",
+        "profile_id": "short_term_rental",
+        "metro_mode": "limited",
+        "document_variant": 2,
+        "package_id": "FP-35bbe8e3c0f3",
+        "claims": 420,
+        "status_counts": {
+          "VERIFIED": 21,
+          "MODEL_ESTIMATE": 310,
+          "CONFLICTING": 5,
+          "UNKNOWN": 0,
+          "USER_STATED": 51,
+          "ASSUMPTION": 33
+        },
+        "package_numbers": 817,
+        "package_untraced": [],
+        "pdf_starts_with_pdf": true,
+        "pdf_pages": 29,
+        "pdf_bytes": 481761,
+        "pdf_untraced": [],
+        "pages_missing_labels": {},
+        "application_id": "APP-S-82396659",
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_status": "passed",
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information",
+        "evidence_engine_agrees_with_agent": true,
+        "open_items": [
+          "OI-missing_equity_verification",
+          "OI-unsupported_material_assumption-r1",
+          "OI-unsupported_material_assumption-r2",
+          "OI-unsupported_material_assumption-r3"
+        ],
+        "evidence_requests": [
+          "equity_bank_statements",
+          "driver_comparable_data",
+          "driver_comparable_data",
+          "driver_comparable_data"
+        ],
+        "seconds": {
+          "build": 0.899,
+          "render_pdf": 2.839,
+          "audit_and_handoff": 2.669,
+          "total": 6.407
+        }
+      }
+    ]
+  },
+  "provenance": {
+    "git_sha": "cf60df525f473e50f7c2385d674fad7a7cd4dd63",
+    "git_dirty": false,
+    "generated_at_utc": "2026-10-20T05:52:51+00:00",
+    "generated_by": "scripts/eval_studio_handoff.py",
+    "prompts": {
+      "founder_narrative_v1": "c515ae3d5621f8e097d3f5ce18fcdb0111d9eaac62422f06eec4336098a3138d",
+      "founder_narrative_retry_v1": "aa6090c9676e262c18ecc3b52d93607f08fc8bcfb1918a5c0d4fbce5bd85fa0a",
+      "founder_narrative_template_v1": "ff569e6d7a587337618ec4d8daf19493d5ff4c5d467c84b93986bd9fe6a15548"
+    },
+    "corpus_checksum": "6bd55a03776169011673f2751d527e4e761e9a44013171a33ec5340d72c7ebfc",
+    "eval_sets": {
+      "eval/startup_applications/APP-S-001.json": "5e7402fa54933ef86555e758004c959d095dd942bc1362894e3b6b547eee45eb",
+      "eval/startup_applications/APP-S-002.json": "20e9931e628af720de123a16a0c0d59b0b19789ef2f54d285de4613f3d0b64e6",
+      "eval/startup_applications/APP-S-003.json": "3a6fbc47fa6ee168284fc612d7930d9cf7d11f0bd7aa4b3d0d2e3594a0055c42",
+      "eval/startup_applications/APP-S-004.json": "24bacb8f110bb5f51b5346191ad3d057c58860a358c31c45ef9d9ee3403aa7ed",
+      "eval/startup_applications/APP-S-005.json": "625b42dc5a872c4106514fde7590f376c74fcb67bf9c826941b36873aa817a7b",
+      "eval/startup_applications/APP-S-006.json": "0c175e91c0837b740a956e419a36b38c9c781976f1015beca2b0ab441bac1249",
+      "eval/startup_applications/APP-S-007.json": "006f79deca9d956c84113a564bcd0de75d5d952e910a3bb6706003054664020c",
+      "eval/startup_applications/APP-S-008.json": "08d1b9bd261a4d91f4d550d05121358bb8f04ed1ee2e270c0b15326a721dc6cb",
+      "eval/startup_applications/APP-S-009.json": "e70975129f17843a0fbd73fc945ec8cc4267ea47483972ae431c9f311401705b",
+      "eval/startup_applications/APP-S-010.json": "e2a16e47fa2931e4a0ca9b365d89fcb32ccccef485abf34158d508544ed7a23d",
+      "eval/startup_applications/APP-S-011.json": "bd6c1326847f17e65db596ea3ef8fb4d1d4ab0885682519b5724e673f085cfb3",
+      "eval/startup_applications/APP-S-012.json": "8d05f4f173a9efb248d3216b1920109d4d08b3c11240cdd92cc76cb610c90de5",
+      "eval/startup_applications/APP-S-013.json": "7e3013ec75dc04eca753b3362ab230aec0931e8124cc06aab1a9c09165e4d187",
+      "eval/startup_applications/APP-S-014.json": "47b43a0c66f2d9427c7f6c7cf17023385ea7609e3421492f83b4f16af0fe11f4",
+      "eval/startup_applications/APP-S-015.json": "b3c07902696cdb4b3fdf38eec9aeabac4033c2e56bebd4b2792dd7f4e4ef53cc",
+      "eval/startup_applications/APP-S-016.json": "e94252bcb996ba9d00965e1068b9df6c4a37b2408e28ee76c91980c1b9b34ad8",
+      "eval/startup_applications/APP-S-017.json": "c82f4a873d8d6a5d5fdc6569852d3a2e6efe9fb4cb9931c1b93b0deaa39d0575",
+      "eval/startup_applications/APP-S-018.json": "c045584fd373cee3a934b7ffa8adda8718482e4284f1d4a8b52dd1f261384aab",
+      "eval/startup_applications/APP-S-019.json": "33493925f1096daec732624dff87ee3cb813acfaa86a7bd5eb96b3972b85f3b3",
+      "eval/startup_applications/APP-S-020.json": "79c058ccb0df65e5e43e7190219b2a6275ce1683f553f99a18d1f9ac7d67d1ed",
+      "eval/startup_applications/APP-S-021.json": "de29ea4e9ba2574e2399e7714d1c7c075732c84590ad288f615aff9a796e8bdb",
+      "eval/startup_applications/APP-S-022.json": "8d5f677a57b345aaf5bbc85668f012ab9a94f97a91574646ab26f64d9a431b63",
+      "eval/startup_applications/APP-S-023.json": "9c5046f68e78dd76d18e6240723514ea2befe219daaac06435a736eed938065c",
+      "eval/startup_applications/APP-S-024.json": "6b227c6e01d9b1b6b899f484c851ab77fb8a3e112912ca9376fe218c5cf3312b",
+      "eval/startup_applications/APP-S-025.json": "cd7df11ce1f4850b3f62687265f88e79311e2112cbe32460e9317b8eda79b0be",
+      "eval/startup_applications/APP-S-026.json": "e89b6e68ec0f9114283c977935c86317d6aa0b657317abf6011dec13646cd6fc",
+      "eval/startup_applications/APP-S-027.json": "1c91f2fb212b7a79f430e03f00e38077f11c4d0bc9411dbba47e6b1e72da5c31",
+      "eval/startup_applications/APP-S-028.json": "9c1f8d20e6bf0ccbd7a41aadea55a6f900e218c670850cadf127d685bffa777c",
+      "eval/startup_applications/APP-S-029.json": "16dc77ce4a70e24be3a5ab97a1cafc0d8b7464df929479352b0f93f596c8baea",
+      "eval/startup_applications/APP-S-030.json": "d96cba399cc35ebaeebb9ea43ada7ced0a6de14e11d7e2bf08333a2261a830d0",
+      "eval/startup_applications/APP-S-031.json": "2d59d0846b8a043a89c7b7b6dca7525ed0adee0c911069c9ad0e0d1f26c11e70",
+      "eval/startup_applications/APP-S-032.json": "22a7696e061405903d12585d4d68cd0241bc343413e69a5d45b52b0ad7a08b10",
+      "eval/startup_applications/APP-S-033.json": "6644381ab41acd564320b22225a26a4bd77a491c61a5948965a2d09057c7dd4f",
+      "eval/startup_applications/APP-S-034.json": "a428044c8bb2a4e91f44504a9411a45edb0591363d70daceb1ec285e2ddd6b72",
+      "eval/startup_applications/APP-S-035.json": "55149662be5f9f5b474aafb7c75938c025549cbd756af110804783ff2f3c471c",
+      "eval/startup_applications/manifest.json": "277661c2aec0762f38f233346ed94458e1309ed4ec7f26467bdfa1a780577249",
+      "config/studio/startup_evidence_requests.yaml": "2cd17a5881e656eb96e8e081cc1fed3b765a85505a0f840dbb0ff7efaa502dba",
+      "config/studio/sba_business_plan_sections.json": "1aeedc1008e1c2dfdacf0d934eb300c4cdc4dae0fd43570ab3de0a27b9037a0d"
+    },
+    "models": [],
+    "data_snapshots": {
+      "sba_business_plan_page_sha256": "ef776b3118903e2d5a27f61d761b70926676697413d7f2d946275cf6d2d79657",
+      "ofac_sdn_csv_sha256": "64be7a7991059f59a2ebb43bc5dcc7e2951e1e27cbed8cbe41b0231b3a161946"
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        0.73,
+        0.72,
+        0.62
+      ],
+      "load_average_end": [
+        2.04,
+        1.68,
+        1.09
+      ]
+    }
+  }
+}

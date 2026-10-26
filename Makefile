@@ -612,3 +612,19 @@ promote-model:  ## Promote a challenger (model_validator only): MODEL=<id> ROLE=
 
 champion-challenger-test:  ## Champion/challenger, outcomes and promotion tests only (offline, SYNTHETIC data)
 	uv run pytest -q tests/governance/test_champion_challenger*.py tests/governance/test_outcomes*.py
+
+# Phase 6 part D: release gate. Compares the latest results/*.json with the reviewed baseline in results/baseline/ (rows,
+# directions and tolerances: the `gate:` section of config/release_gate.yaml) and exits 1 when a row is FAIL or MISSING.
+# Offline: it reads committed JSON only. ARGS="--write-results" also writes section "release_gate" of
+# results/governance_metrics.json. release-gate-baseline copies the gated results files into results/baseline/ with a
+# SHA-256 manifest: make it from committed results, review the diff, then commit results/baseline/. CI job: release-gate.
+.PHONY: release-gate release-gate-baseline release-gate-test
+
+release-gate:  ## Compare results/*.json with the reviewed baseline results/baseline/; exit 1 on FAIL or MISSING [ARGS=--write-results]
+	uv run python scripts/release_gate.py $(ARGS)
+
+release-gate-baseline:  ## Copy the gated results files into results/baseline/ (+ manifest); review, then commit them
+	uv run python scripts/release_gate.py --update-baseline
+
+release-gate-test:  ## Release gate tests only (fault injection on temporary copies of the results; offline)
+	uv run pytest -q tests/governance/test_release_gate.py

@@ -1,0 +1,2675 @@
+{
+  "description": "Studio S4: founder evidence ledger and provenance-locked narrative on the golden scenarios",
+  "data_label": "SYNTHETIC",
+  "label": "simulated, based on stated assumptions",
+  "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+  "scope": "Seeded SYNTHETIC founder plans (studio/narrative/golden.py), 6 business types x the SYNTHETIC metro and the real metros in their current local mode. The template narrative passes the grammar and traces by construction (its numbers are typed by the renderer from the ledger); these numbers check that the construction holds on every scenario, they are not evidence about how often a model would write a wrong number.",
+  "ledger_version": "founder-ledger-1.0",
+  "provider": "template",
+  "model": null,
+  "golden": {
+    "seed": 4404,
+    "scenarios_available": 36,
+    "scenarios_run": 36,
+    "limit": null,
+    "by_metro_mode": {
+      "limited": 30,
+      "synthetic": 6
+    },
+    "site_scored": 36,
+    "with_synthetic_quoted_rate": 0,
+    "path_status": {
+      "already_meets_target": 2,
+      "no_path_within_bounds": 33,
+      "paths_found": 1
+    }
+  },
+  "ledgers": {
+    "scenarios": 36,
+    "claims_per_ledger": {
+      "min": 380,
+      "median": 402.5,
+      "max": 432
+    },
+    "claims_by_status": {
+      "VERIFIED": 963,
+      "MODEL_ESTIMATE": 11619,
+      "CONFLICTING": 0,
+      "UNKNOWN": 22,
+      "USER_STATED": 625,
+      "ASSUMPTION": 1258
+    },
+    "findings_by_check": {
+      "A-NSP-2.1": 10,
+      "A-NSP-2.2": 9,
+      "A-NSP-2.3": 12,
+      "A-NSP-3.1-statements": 36,
+      "A-NSP-4.1": 8,
+      "A-NSP-4.2-rate": 5,
+      "A-NSP-4.2-revenue": 31,
+      "A-NSP-5.1": 15,
+      "A-NSP-6.1-r1": 36,
+      "A-NSP-6.1-r2": 36,
+      "A-NSP-6.1-r3": 36,
+      "A-NSP-7.1": 18,
+      "A-NSP-8.1-amount": 19,
+      "A-TARGET-cash": 32,
+      "A-TARGET-dscr": 15,
+      "A-TARGET-stress": 34
+    },
+    "not_evaluated_by_check": {}
+  },
+  "headline": {
+    "narrative_numbers_traced_round_trip": {
+      "k": 1673,
+      "n": 1673,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.9977,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      },
+      "untraced_total": 0
+    },
+    "narrative_numbers_traced_bound": {
+      "k": 1673,
+      "n": 1673,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.9977,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      },
+      "untraced_total": 0
+    },
+    "appendix_numbers_traced_round_trip": {
+      "k": 13289,
+      "n": 13289,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.9997,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      },
+      "untraced_total": 0
+    },
+    "appendix_numbers_traced_bound": {
+      "k": 13289,
+      "n": 13289,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.9997,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      },
+      "untraced_total": 0
+    },
+    "template_draft_valid": {
+      "k": 36,
+      "n": 36,
+      "rate": 1.0,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ],
+      "bootstrap_ci95": {
+        "low": 1.0,
+        "high": 1.0,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "resampled": "scenarios"
+      }
+    },
+    "llm_fallback_rate": "not measured: the template provider makes no LLM call; an LLM run (--provider ollama ...) writes results/studio_evidence_metrics_<provider>.json",
+    "hf_inference": "not measured: the hf_inference provider is disabled by default (UWC_HF_INFERENCE_ENABLED, HF_TOKEN and a verified price are all required) and was never run in this build; the owners decided on no extra spending"
+  },
+  "checker": {
+    "note": "Both checks read the same mutated sentences. The round-trip audit accepts any number that equals SOME claim of the ledger, so a value moved to another sentence (cross_section) or a flipped comparator is invisible to it by design. The bound check accepts a number only if it equals a claim its own sentence cites through a footnote marker, with the threshold's comparator; cross_section mutations draw values absent from the cited claims, so the bound check's recall there follows from its design. The mutation sentences come from the template narratives the same author wrote, so this is a test of the implementation, not a held-out benchmark.",
+    "sentences": 686,
+    "round_trip": {
+      "recall_by_type": {
+        "value_perturb": {
+          "k": 654,
+          "n": 686,
+          "rate": 0.9534,
+          "wilson_ci95": [
+            0.9349,
+            0.9668
+          ],
+          "bootstrap_ci95": {
+            "low": 0.9392,
+            "high": 0.9662,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "magnitude_x10": {
+          "k": 612,
+          "n": 686,
+          "rate": 0.8921,
+          "wilson_ci95": [
+            0.8667,
+            0.9132
+          ],
+          "bootstrap_ci95": {
+            "low": 0.8733,
+            "high": 0.9096,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "unit_swap": {
+          "k": 320,
+          "n": 321,
+          "rate": 0.9969,
+          "wilson_ci95": [
+            0.9826,
+            0.9994
+          ],
+          "bootstrap_ci95": {
+            "low": 0.9906,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "comparator_flip": {
+          "k": 0,
+          "n": 164,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0229
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "cross_section": {
+          "k": 0,
+          "n": 686,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0056
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "wrong_row": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "wilson_ci95": null,
+          "bootstrap_ci95": null,
+          "note": "not applicable: founder narratives have no tables, so no wrong-row mutation exists"
+        }
+      },
+      "false_flag_rate": {
+        "unmutated": {
+          "k": 0,
+          "n": 686,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0056
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "equivalent_rewrite": {
+          "k": 0,
+          "n": 383,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0099
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        }
+      }
+    },
+    "bound": {
+      "recall_by_type": {
+        "value_perturb": {
+          "k": 686,
+          "n": 686,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9944,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "magnitude_x10": {
+          "k": 686,
+          "n": 686,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9944,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "unit_swap": {
+          "k": 321,
+          "n": 321,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9882,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "comparator_flip": {
+          "k": 164,
+          "n": 164,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9771,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "cross_section": {
+          "k": 686,
+          "n": 686,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.9944,
+            1.0
+          ],
+          "bootstrap_ci95": {
+            "low": 1.0,
+            "high": 1.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "wrong_row": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "wilson_ci95": null,
+          "bootstrap_ci95": null,
+          "note": "not applicable: founder narratives have no tables, so no wrong-row mutation exists"
+        }
+      },
+      "false_flag_rate": {
+        "unmutated": {
+          "k": 0,
+          "n": 686,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0056
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        },
+        "equivalent_rewrite": {
+          "k": 0,
+          "n": 383,
+          "rate": 0.0,
+          "wilson_ci95": [
+            0.0,
+            0.0099
+          ],
+          "bootstrap_ci95": {
+            "low": 0.0,
+            "high": 0.0,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "resampled": "scenarios"
+          }
+        }
+      }
+    }
+  },
+  "llm": {
+    "measured": false,
+    "reason": "not measured: the template provider makes no LLM call; an LLM run (--provider ollama ...) writes results/studio_evidence_metrics_<provider>.json"
+  },
+  "statistics": {
+    "intervals": "Wilson 95% and bootstrap 95% over scenarios",
+    "bootstrap_resamples": 1000,
+    "bootstrap_seed": 42
+  },
+  "runtime": {
+    "seconds_build_total": 114.1,
+    "seconds_evaluate_total": 42.4,
+    "seconds_evaluate_max": 1.401,
+    "note": "wall time on a shared machine; build = the scenario's simulation, SiteIQ and path search; evaluate = ledger, template narrative, appendix, mutation test and any LLM calls"
+  },
+  "per_scenario": [
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-car_wash",
+      "metro_id": "synthetic_metro",
+      "profile_id": "car_wash",
+      "metro_mode": "synthetic",
+      "seed": 1306153930,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 401,
+        "status_counts": {
+          "VERIFIED": 26,
+          "MODEL_ESTIMATE": 322,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 18,
+          "ASSUMPTION": 35
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 6,
+          "false": 11,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 46,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 401,
+        "numbers": 367,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.093,
+      "seconds_build": 1.716
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-laundromat",
+      "metro_id": "synthetic_metro",
+      "profile_id": "laundromat",
+      "metro_mode": "synthetic",
+      "seed": 4015862859,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 419,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 336,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 18,
+          "ASSUMPTION": 38
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 10,
+          "false": 8,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 49,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 419,
+        "numbers": 385,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.243,
+      "seconds_build": 0.503
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-motel",
+      "metro_id": "synthetic_metro",
+      "profile_id": "motel",
+      "metro_mode": "synthetic",
+      "seed": 3140416408,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 399,
+        "status_counts": {
+          "VERIFIED": 25,
+          "MODEL_ESTIMATE": 321,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 18,
+          "ASSUMPTION": 35
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 6,
+          "false": 11,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 399,
+        "numbers": 366,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.195,
+      "seconds_build": 0.858
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-restaurant_cafe",
+      "metro_id": "synthetic_metro",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "synthetic",
+      "seed": 2466444597,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 383,
+        "status_counts": {
+          "VERIFIED": 26,
+          "MODEL_ESTIMATE": 304,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 21,
+          "ASSUMPTION": 32
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 7,
+          "false": 10,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-2.2",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 383,
+        "numbers": 354,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.002,
+      "seconds_build": 0.578
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-retail_storefront",
+      "metro_id": "synthetic_metro",
+      "profile_id": "retail_storefront",
+      "metro_mode": "synthetic",
+      "seed": 180800183,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 412,
+        "status_counts": {
+          "VERIFIED": 29,
+          "MODEL_ESTIMATE": 326,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 21,
+          "ASSUMPTION": 36
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 9,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 48,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 412,
+        "numbers": 379,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.195,
+      "seconds_build": 0.733
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-short_term_rental",
+      "metro_id": "synthetic_metro",
+      "profile_id": "short_term_rental",
+      "metro_mode": "synthetic",
+      "seed": 2503619377,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 405,
+        "status_counts": {
+          "VERIFIED": 28,
+          "MODEL_ESTIMATE": 323,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 19,
+          "ASSUMPTION": 35
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 8,
+          "false": 10,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 48,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 405,
+        "numbers": 374,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.16,
+      "seconds_build": 0.878
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-car_wash",
+      "metro_id": "chicago_il_in",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "seed": 950910946,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 403,
+        "status_counts": {
+          "VERIFIED": 26,
+          "MODEL_ESTIMATE": 328,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 13,
+          "ASSUMPTION": 35
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 7,
+          "false": 10,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 45,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 403,
+        "numbers": 368,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 18,
+      "llm": null,
+      "seconds": 1.162,
+      "seconds_build": 3.41
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-laundromat",
+      "metro_id": "chicago_il_in",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "seed": 3607005985,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 419,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 336,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 18,
+          "ASSUMPTION": 37
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 9,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 48,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 419,
+        "numbers": 382,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.257,
+      "seconds_build": 2.063
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-motel",
+      "metro_id": "chicago_il_in",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "seed": 472213778,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 387,
+        "status_counts": {
+          "VERIFIED": 25,
+          "MODEL_ESTIMATE": 309,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 20,
+          "ASSUMPTION": 32
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 5,
+          "false": 12,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.1",
+          "A-NSP-4.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 387,
+        "numbers": 355,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.056,
+      "seconds_build": 2.842
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-restaurant_cafe",
+      "metro_id": "chicago_il_in",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "seed": 2181770936,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 414,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 330,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 19,
+          "ASSUMPTION": 37
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 8,
+          "false": 10,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-2.2",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 48,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 414,
+        "numbers": 379,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.321,
+      "seconds_build": 2.788
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-retail_storefront",
+      "metro_id": "chicago_il_in",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "seed": 819182952,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 432,
+        "status_counts": {
+          "VERIFIED": 29,
+          "MODEL_ESTIMATE": 350,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 13,
+          "ASSUMPTION": 39
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 10,
+          "false": 8,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 46,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 432,
+        "numbers": 393,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.246,
+      "seconds_build": 2.469
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-short_term_rental",
+      "metro_id": "chicago_il_in",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "seed": 916126785,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 406,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 324,
+          "CONFLICTING": 0,
+          "UNKNOWN": 2,
+          "USER_STATED": 19,
+          "ASSUMPTION": 34
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 9,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 49,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 406,
+        "numbers": 371,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.197,
+      "seconds_build": 2.288
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-car_wash",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "seed": 3001917714,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 415,
+        "status_counts": {
+          "VERIFIED": 28,
+          "MODEL_ESTIMATE": 331,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 19,
+          "ASSUMPTION": 37
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 6,
+          "false": 12,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-4.2-rate",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 49,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 415,
+        "numbers": 381,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.276,
+      "seconds_build": 2.907
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-laundromat",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "seed": 2858457478,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 381,
+        "status_counts": {
+          "VERIFIED": 25,
+          "MODEL_ESTIMATE": 303,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 21,
+          "ASSUMPTION": 31
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 10,
+          "false": 7,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 381,
+        "numbers": 351,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.107,
+      "seconds_build": 1.436
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-motel",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "seed": 3375728900,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 421,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 342,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 13,
+          "ASSUMPTION": 38
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 6,
+          "false": 12,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-4.2-rate",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 45,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 421,
+        "numbers": 382,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.115,
+      "seconds_build": 2.135
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-restaurant_cafe",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "seed": 3782198105,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 385,
+        "status_counts": {
+          "VERIFIED": 26,
+          "MODEL_ESTIMATE": 310,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 16,
+          "ASSUMPTION": 33
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 7,
+          "false": 10,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-2.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 45,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 385,
+        "numbers": 355,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 18,
+      "llm": null,
+      "seconds": 0.979,
+      "seconds_build": 2.635
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-retail_storefront",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "seed": 317010124,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 412,
+        "status_counts": {
+          "VERIFIED": 29,
+          "MODEL_ESTIMATE": 330,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 16,
+          "ASSUMPTION": 37
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 9,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.2",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 46,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 412,
+        "numbers": 380,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.27,
+      "seconds_build": 1.646
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-short_term_rental",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "seed": 842306197,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 396,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 318,
+          "CONFLICTING": 0,
+          "UNKNOWN": 2,
+          "USER_STATED": 16,
+          "ASSUMPTION": 33
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 7,
+          "false": 11,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-2.2",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 396,
+        "numbers": 363,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.243,
+      "seconds_build": 1.949
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-car_wash",
+      "metro_id": "houston_tx",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "seed": 2117478829,
+      "site_scored": true,
+      "path_status": "already_meets_target",
+      "notes": [],
+      "ledger": {
+        "claims": 383,
+        "status_counts": {
+          "VERIFIED": 26,
+          "MODEL_ESTIMATE": 308,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 15,
+          "ASSUMPTION": 33
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 10,
+          "false": 7,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.2",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 40,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 383,
+        "numbers": 353,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 17,
+      "llm": null,
+      "seconds": 1.345,
+      "seconds_build": 3.134
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-laundromat",
+      "metro_id": "houston_tx",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "seed": 309590718,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 395,
+        "status_counts": {
+          "VERIFIED": 25,
+          "MODEL_ESTIMATE": 321,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 14,
+          "ASSUMPTION": 34
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 6,
+          "false": 11,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 44,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 395,
+        "numbers": 360,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 18,
+      "llm": null,
+      "seconds": 1.039,
+      "seconds_build": 1.721
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-motel",
+      "metro_id": "houston_tx",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "seed": 2657329222,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 393,
+        "status_counts": {
+          "VERIFIED": 25,
+          "MODEL_ESTIMATE": 315,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 19,
+          "ASSUMPTION": 33
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 9,
+          "false": 8,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 393,
+        "numbers": 361,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.152,
+      "seconds_build": 2.458
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-restaurant_cafe",
+      "metro_id": "houston_tx",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "seed": 1237246281,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 410,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 330,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 15,
+          "ASSUMPTION": 37
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 7,
+          "false": 11,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-2.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 410,
+        "numbers": 375,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.199,
+      "seconds_build": 2.913
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-retail_storefront",
+      "metro_id": "houston_tx",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "seed": 533955949,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 388,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 311,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 17,
+          "ASSUMPTION": 33
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 9,
+          "false": 8,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 45,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 388,
+        "numbers": 358,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 18,
+      "llm": null,
+      "seconds": 1.153,
+      "seconds_build": 2.087
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-short_term_rental",
+      "metro_id": "houston_tx",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "seed": 269071999,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 402,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 324,
+          "CONFLICTING": 0,
+          "UNKNOWN": 2,
+          "USER_STATED": 15,
+          "ASSUMPTION": 34
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 5,
+          "false": 13,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-4.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-4.2-rate",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 402,
+        "numbers": 367,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.337,
+      "seconds_build": 2.045
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-car_wash",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "seed": 2971457693,
+      "site_scored": true,
+      "path_status": "already_meets_target",
+      "notes": [],
+      "ledger": {
+        "claims": 387,
+        "status_counts": {
+          "VERIFIED": 26,
+          "MODEL_ESTIMATE": 308,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 19,
+          "ASSUMPTION": 34
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 10,
+          "false": 7,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.2",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 42,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 387,
+        "numbers": 358,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 18,
+      "llm": null,
+      "seconds": 1.226,
+      "seconds_build": 5.559
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-laundromat",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "seed": 3701989748,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 405,
+        "status_counts": {
+          "VERIFIED": 25,
+          "MODEL_ESTIMATE": 327,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 17,
+          "ASSUMPTION": 36
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 8,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 405,
+        "numbers": 371,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.14,
+      "seconds_build": 2.879
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-motel",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "seed": 2497220861,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 401,
+        "status_counts": {
+          "VERIFIED": 25,
+          "MODEL_ESTIMATE": 327,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 13,
+          "ASSUMPTION": 36
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 6,
+          "false": 11,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-4.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 43,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 401,
+        "numbers": 364,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 18,
+      "llm": null,
+      "seconds": 0.942,
+      "seconds_build": 4.728
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-restaurant_cafe",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "seed": 2056183391,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 399,
+        "status_counts": {
+          "VERIFIED": 28,
+          "MODEL_ESTIMATE": 319,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 17,
+          "ASSUMPTION": 35
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 9,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 399,
+        "numbers": 368,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.173,
+      "seconds_build": 5.389
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-retail_storefront",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "seed": 3658865723,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 392,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 311,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 21,
+          "ASSUMPTION": 33
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 8,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 392,
+        "numbers": 361,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.194,
+      "seconds_build": 3.258
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-short_term_rental",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "seed": 822566854,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 398,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 316,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 20,
+          "ASSUMPTION": 34
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 9,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 48,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 398,
+        "numbers": 367,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.328,
+      "seconds_build": 4.034
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-car_wash",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "seed": 3792941463,
+      "site_scored": true,
+      "path_status": "paths_found",
+      "notes": [],
+      "ledger": {
+        "claims": 415,
+        "status_counts": {
+          "VERIFIED": 28,
+          "MODEL_ESTIMATE": 335,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 16,
+          "ASSUMPTION": 36
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 9,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.1",
+          "A-NSP-2.2",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 46,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 415,
+        "numbers": 381,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.401,
+      "seconds_build": 9.735
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-laundromat",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "seed": 3395721246,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 403,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 324,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 16,
+          "ASSUMPTION": 35
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 8,
+          "false": 10,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.2",
+          "A-NSP-4.2-revenue",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 47,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 403,
+        "numbers": 369,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 19,
+      "llm": null,
+      "seconds": 1.136,
+      "seconds_build": 4.549
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-motel",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "seed": 2220145083,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 413,
+        "status_counts": {
+          "VERIFIED": 27,
+          "MODEL_ESTIMATE": 330,
+          "CONFLICTING": 0,
+          "UNKNOWN": 1,
+          "USER_STATED": 19,
+          "ASSUMPTION": 36
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 4,
+          "false": 14,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-7.1",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.1",
+          "A-NSP-2.2",
+          "A-NSP-4.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-4.2-rate",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 48,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 413,
+        "numbers": 377,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.177,
+      "seconds_build": 6.602
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-restaurant_cafe",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "seed": 3715880513,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 415,
+        "status_counts": {
+          "VERIFIED": 28,
+          "MODEL_ESTIMATE": 331,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 19,
+          "ASSUMPTION": 37
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 6,
+          "false": 12,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-4.1",
+          "A-NSP-4.2-revenue",
+          "A-NSP-4.2-rate",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-dscr",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 49,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 415,
+        "numbers": 381,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.142,
+      "seconds_build": 8.278
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-retail_storefront",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "seed": 1418898186,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 418,
+        "status_counts": {
+          "VERIFIED": 29,
+          "MODEL_ESTIMATE": 332,
+          "CONFLICTING": 0,
+          "UNKNOWN": 0,
+          "USER_STATED": 20,
+          "ASSUMPTION": 37
+        },
+        "assertions": 18,
+        "assertion_results": {
+          "true": 10,
+          "false": 8,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-3.1-statements",
+          "A-NSP-4.2-revenue",
+          "A-NSP-5.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 48,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 418,
+        "numbers": 384,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 20,
+      "llm": null,
+      "seconds": 1.197,
+      "seconds_build": 5.052
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-short_term_rental",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "seed": 1736943037,
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "notes": [],
+      "ledger": {
+        "claims": 380,
+        "status_counts": {
+          "VERIFIED": 25,
+          "MODEL_ESTIMATE": 307,
+          "CONFLICTING": 0,
+          "UNKNOWN": 2,
+          "USER_STATED": 15,
+          "ASSUMPTION": 31
+        },
+        "assertions": 17,
+        "assertion_results": {
+          "true": 8,
+          "false": 9,
+          "not_evaluated": 0
+        },
+        "findings": [
+          "A-NSP-8.1-amount",
+          "A-NSP-3.1-statements",
+          "A-NSP-2.3",
+          "A-NSP-2.1",
+          "A-NSP-6.1-r1",
+          "A-NSP-6.1-r2",
+          "A-NSP-6.1-r3",
+          "A-TARGET-stress",
+          "A-TARGET-cash"
+        ],
+        "not_evaluated": []
+      },
+      "template": {
+        "valid": true,
+        "violations": [],
+        "numbers": 44,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0,
+        "audit_empty": true
+      },
+      "appendix": {
+        "claims_rendered": 380,
+        "numbers": 349,
+        "untraced_round_trip": 0,
+        "untraced_bound": 0
+      },
+      "sentences": 18,
+      "llm": null,
+      "seconds": 0.977,
+      "seconds_build": 5.838
+    }
+  ],
+  "metros": {
+    "chicago_il_in": {
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "data_label": "PUBLIC",
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "aed28fa2385c7610544d37a1c4d5d02656aabbd7ba5ca881db040b0005c18671",
+        "tracts_sha256": "c1f6c621f12a28be5098f5b22c69fbccaca7ddb7f21c49b1095b2bab31553afa"
+      }
+    },
+    "dallas_fort_worth_tx": {
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "data_label": "PUBLIC",
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "def918a03577d27fae08623e95a278d57d7e073a1c549dacb971267d6918b18c",
+        "tracts_sha256": "7e74ef50595f9cc2cd51af36002a05a83f3ce7b8f8d227991bd1d8448ab52fea"
+      }
+    },
+    "houston_tx": {
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "data_label": "PUBLIC",
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "7bc94228c72d552c6da0dbf976f7e69586c5a77098dddca7ac8649f83b9f029c",
+        "tracts_sha256": "df03cd9053d65a161d1abfcea8347e366cc35f3ca8f48b4ddeac50a19b19faf2"
+      }
+    },
+    "los_angeles_ca": {
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "data_label": "PUBLIC",
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "3897dcb255b02375b56edcea30e88fc9b5d9fed80a11052019aa9b7baca28359",
+        "tracts_sha256": "4adc044aa9d5f4f896ea569aae55671140d4e5142756e3bad2bea15655f07cd8"
+      }
+    },
+    "new_york_ny_nj_pa": {
+      "mode": "limited",
+      "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+      "data_label": "PUBLIC",
+      "snapshot_date": "2026-10-13",
+      "snapshot_fingerprint": {
+        "snapshot_date": "2026-10-13",
+        "manifest_sha256": "c3a7d68b0cf51dfd7bf6a1da82491629f6cfda588022810ad4ea09eacc667574",
+        "tracts_sha256": "49dac39e2e53d9ed19b0c00a0810e8e160a0157c811ec9ba020e87f6d886f532"
+      }
+    },
+    "synthetic_metro": {
+      "mode": "synthetic",
+      "mode_reason": "SYNTHETIC metro: generated data for demonstration and validation only",
+      "data_label": "SYNTHETIC",
+      "snapshot_date": null,
+      "snapshot_fingerprint": null
+    }
+  },
+  "provenance": {
+    "git_sha": "330ce3d439e2b7a3b81a5acb39709a777068623f",
+    "git_dirty": true,
+    "generated_at_utc": "2026-10-14T10:31:43+00:00",
+    "generated_by": "scripts/eval_studio_evidence.py",
+    "prompts": {
+      "founder_narrative_v1": "c515ae3d5621f8e097d3f5ce18fcdb0111d9eaac62422f06eec4336098a3138d",
+      "founder_narrative_retry_v1": "aa6090c9676e262c18ecc3b52d93607f08fc8bcfb1918a5c0d4fbce5bd85fa0a",
+      "founder_narrative_template_v1": "16cba59fd44c97460ba02b05052fe22ea0f5d9f0d2b92b7a63cbd89a502579c5"
+    },
+    "corpus_checksum": "not applicable (no retrieval corpus is used)",
+    "eval_sets": {
+      "config/studio/feasibility/assumptions.yaml": "dfdb363c054c94a42fe2c4d9671dbea0c8221704b6db3987ecf2c0f668de4a48",
+      "config/studio/levers.yaml": "a99ba386620def05baa6995da923085501d4c3fba81925452d3bc67720d43fff",
+      "corpus/programs/northwind_startup_program.md": "f915468475c08128e4af850766ad6232fa9d0e39b09b831945b2bf57ef44593f",
+      "config/studio/business_types/car_wash.yaml": "2fbceefd150e2ad1da1ecb3af1c6bc6daacc9955e263bb429cf03bcf74104654",
+      "config/studio/business_types/laundromat.yaml": "be4a842c05ca1a2b7448a1c370728c2daea4c52e591bf33fc61d0bd5274b1561",
+      "config/studio/business_types/motel.yaml": "cba4ffdaa4e81ffbe2072ad2feb7fe3bde4c09b0edce26e15b2f29d710a092b9",
+      "config/studio/business_types/restaurant_cafe.yaml": "0333ab79c35dd8e9bb300fc018b1c71c92c2a7bd51fe7b8fb402378fd52fcc67",
+      "config/studio/business_types/retail_storefront.yaml": "6dcbd70017c53fd23b3d436671c6f4ccb4ee471fee2c4437d5cd5cc1f5c34cd9",
+      "config/studio/business_types/short_term_rental.yaml": "2b9d83b4f92c6953608fde111b88c84fb76031221bba6dd0770aaa0ff0062112",
+      "config/studio/metros/chicago_il_in.yaml": "b62b1a2608c34642889d562fac69acb1866a52bc1e3ef70d0afc2ad459ba3b33",
+      "config/studio/metros/dallas_fort_worth_tx.yaml": "eb4d45275dfe5dffa11bddd25163247f1e995a236b22b4e938aab86aa8b6e7a5",
+      "config/studio/metros/houston_tx.yaml": "03cb55781fb12ec0b1dbf32874e295a159f03687864e38326d738eba4219811e",
+      "config/studio/metros/los_angeles_ca.yaml": "3216dc1be66bad0ba7ff1daa9cb75e8b3473a565f687f4d7faae19c0d0d6c3fc",
+      "config/studio/metros/new_york_ny_nj_pa.yaml": "03751e78cee6ffa9e327931546a3700c4ea2fbc3ce1c0ec1052dbb540c2391ba",
+      "config/studio/metros/synthetic_metro.yaml": "48a8e7953dc02e13e6ed89fe6f8eeaba24ec97514333dc37ef8855135c7ab726"
+    },
+    "models": [],
+    "data_snapshots": {
+      "studio_snapshots": {
+        "chicago_il_in": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "aed28fa2385c7610544d37a1c4d5d02656aabbd7ba5ca881db040b0005c18671",
+          "tracts_sha256": "c1f6c621f12a28be5098f5b22c69fbccaca7ddb7f21c49b1095b2bab31553afa"
+        },
+        "dallas_fort_worth_tx": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "def918a03577d27fae08623e95a278d57d7e073a1c549dacb971267d6918b18c",
+          "tracts_sha256": "7e74ef50595f9cc2cd51af36002a05a83f3ce7b8f8d227991bd1d8448ab52fea"
+        },
+        "houston_tx": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "7bc94228c72d552c6da0dbf976f7e69586c5a77098dddca7ac8649f83b9f029c",
+          "tracts_sha256": "df03cd9053d65a161d1abfcea8347e366cc35f3ca8f48b4ddeac50a19b19faf2"
+        },
+        "los_angeles_ca": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "3897dcb255b02375b56edcea30e88fc9b5d9fed80a11052019aa9b7baca28359",
+          "tracts_sha256": "4adc044aa9d5f4f896ea569aae55671140d4e5142756e3bad2bea15655f07cd8"
+        },
+        "new_york_ny_nj_pa": {
+          "snapshot_date": "2026-10-13",
+          "manifest_sha256": "c3a7d68b0cf51dfd7bf6a1da82491629f6cfda588022810ad4ea09eacc667574",
+          "tracts_sha256": "49dac39e2e53d9ed19b0c00a0810e8e160a0157c811ec9ba020e87f6d886f532"
+        },
+        "synthetic_metro": null
+      },
+      "golden_seed": 4404
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.0",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        5.64,
+        4.07,
+        2.21
+      ],
+      "load_average_end": [
+        5.58,
+        4.71,
+        2.76
+      ]
+    }
+  }
+}

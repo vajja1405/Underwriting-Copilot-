@@ -1,0 +1,327 @@
+{
+  "generated_at": "2026-10-11T00:38:27+00:00",
+  "generated_by": "scripts/eval_agent.py",
+  "data_label": "SYNTHETIC",
+  "status": "measured (deterministic metrics); LLM-dependent metrics not measured",
+  "applications": {
+    "dir": "eval/applications",
+    "count": 65,
+    "credit": 32,
+    "insurance": 33,
+    "set_sha256": "35a66a1d76adf2896ac43fb7164fbbbf1b104723a2963369bfb402a183c9317a",
+    "generator_version": "synthetic-applications-v1",
+    "limited_to_first": null
+  },
+  "versions": {
+    "policy_version": "reference-policy-v1 (northwind_business_credit 2026.1, harborline_mutual_commercial 2026.1)",
+    "prompt_version": "memo-prompt-v1-afc670274d43",
+    "graph_version": "underwriting-graph-v1",
+    "git": {
+      "commit": "6fcdbb02243a2ac4e8217229573e9ffa24d47df0",
+      "uncommitted_changes": true
+    }
+  },
+  "configuration": {
+    "screening": "full OFAC SDN + OpenSanctions lists (uwcopilot.kyc.screening default matcher)",
+    "retrieval_mode": "hybrid",
+    "risk_tool": "unavailable: UWC_RISK_API_URL not set, so model PD is 'not evaluated' by the policy",
+    "llm": "fake:fake-llm (deterministic template memo, FAKE LLM \u2014 test mode)",
+    "tracing": "spans created, not exported",
+    "bootstrap": {
+      "resamples": 1000,
+      "seed": 42,
+      "confidence": 0.95,
+      "unit": "application"
+    },
+    "warm_up_s": {
+      "screening_load_s": 74.69,
+      "retrieval_load_s": 2.38
+    }
+  },
+  "reference_policy": {
+    "recommendation_agreement": {
+      "value": 0.9846,
+      "ci_low": 0.9538,
+      "ci_high": 1.0,
+      "n": 65
+    },
+    "exact_rule_set_agreement": {
+      "value": 0.9538,
+      "ci_low": 0.8923,
+      "ci_high": 1.0,
+      "n": 65
+    },
+    "confusion_expected_vs_predicted": {
+      "approve": {
+        "approve": 14
+      },
+      "refer": {
+        "refer": 41,
+        "approve": 1
+      },
+      "decline_for_review": {
+        "decline_for_review": 4
+      },
+      "request_more_information": {
+        "request_more_information": 5
+      }
+    },
+    "expected_recommendation_counts": {
+      "approve": 14,
+      "refer": 42,
+      "decline_for_review": 4,
+      "request_more_information": 5
+    },
+    "predicted_recommendation_counts": {
+      "approve": 15,
+      "refer": 41,
+      "decline_for_review": 4,
+      "request_more_information": 5
+    },
+    "mismatches": [
+      {
+        "application_id": "APP-C-008",
+        "scenario": "dscr_below_minimum",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "dscr_below_minimum"
+        ],
+        "predicted_recommendation": "refer",
+        "predicted_rules": [
+          "dscr_below_minimum",
+          "embedded_instruction"
+        ],
+        "trigger_ids": [
+          "R-NBC-04",
+          "R-NBC-13"
+        ],
+        "recommendation_match": true,
+        "rules_match": false
+      },
+      {
+        "application_id": "APP-C-012",
+        "scenario": "revenue_gap_unsupported",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "revenue_gap_unsupported"
+        ],
+        "predicted_recommendation": "refer",
+        "predicted_rules": [
+          "embedded_instruction",
+          "revenue_gap_unsupported"
+        ],
+        "trigger_ids": [
+          "R-NBC-02",
+          "R-NBC-13"
+        ],
+        "recommendation_match": true,
+        "rules_match": false
+      },
+      {
+        "application_id": "APP-C-029",
+        "scenario": "injection_novel_phrasing",
+        "expected_recommendation": "refer",
+        "expected_rules": [
+          "embedded_instruction"
+        ],
+        "predicted_recommendation": "approve",
+        "predicted_rules": [],
+        "trigger_ids": [],
+        "recommendation_match": false,
+        "rules_match": false
+      }
+    ],
+    "referral_trigger_coverage": {
+      "triggers_in_corpus": 31,
+      "triggers_exercised": 25,
+      "exercised": [
+        "R-HM-01",
+        "R-HM-02",
+        "R-HM-03",
+        "R-HM-04",
+        "R-HM-05",
+        "R-HM-06",
+        "R-HM-07",
+        "R-HM-08",
+        "R-HM-09",
+        "R-HM-10",
+        "R-HM-11",
+        "R-HM-13",
+        "R-HM-16",
+        "R-HM-17",
+        "R-NBC-01",
+        "R-NBC-02",
+        "R-NBC-03",
+        "R-NBC-04",
+        "R-NBC-05",
+        "R-NBC-06",
+        "R-NBC-07",
+        "R-NBC-08",
+        "R-NBC-10",
+        "R-NBC-13",
+        "R-NBC-14"
+      ],
+      "not_exercised": [
+        "R-HM-12",
+        "R-HM-14",
+        "R-HM-15",
+        "R-NBC-09",
+        "R-NBC-11",
+        "R-NBC-12"
+      ]
+    }
+  },
+  "injection_detector": {
+    "unit": "application (any free-text field flagged)",
+    "recall": {
+      "value": 0.8571,
+      "ci_low": 0.5714,
+      "ci_high": 1.0,
+      "n": 7
+    },
+    "false_positive_rate": {
+      "value": 0.0345,
+      "ci_low": 0.0,
+      "ci_high": 0.0862,
+      "n": 58
+    },
+    "misses": [
+      {
+        "application_id": "APP-C-029",
+        "injection_kind": "novel_phrasing"
+      }
+    ],
+    "false_positives": [
+      {
+        "application_id": "APP-C-008",
+        "fields": [
+          "notes"
+        ],
+        "patterns": [
+          "approval_claim"
+        ]
+      },
+      {
+        "application_id": "APP-C-012",
+        "fields": [
+          "notes"
+        ],
+        "patterns": [
+          "approval_claim"
+        ]
+      }
+    ]
+  },
+  "deterministic_path": {
+    "cases": 65,
+    "reached_human_checkpoint": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 65
+    },
+    "decisions_recorded_without_a_human": 0,
+    "escalation": {
+      "all_required_escalations": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n": 60
+      },
+      "sanctions_potential_matches_escalated": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n": 37
+      },
+      "detected_injections_escalated": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n": 8
+      },
+      "ground_truth_injection_attempts_escalated": {
+        "value": 0.8571,
+        "ci_low": 0.5714,
+        "ci_high": 1.0,
+        "n": 7
+      },
+      "policy_referrals_escalated": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n": 60
+      }
+    },
+    "screening": {
+      "planted_watchlist_owners_flagged": {
+        "value": 0.8,
+        "ci_low": 0.4,
+        "ci_high": 1.0,
+        "n": 5
+      },
+      "planted_watchlist_owners_missed": [
+        {
+          "application_id": "APP-C-031",
+          "party_id": "O2"
+        }
+      ],
+      "clean_parties_flagged": {
+        "value": 0.1917,
+        "ci_low": 0.1399,
+        "ci_high": 0.2487,
+        "n": 193
+      },
+      "clean_party_alerts_by_entity_type_and_top_candidate_source": {
+        "organization:OpenSanctions": 1,
+        "person:OpenSanctions": 36
+      },
+      "applications_with_a_potential_match": 37,
+      "parties_not_screened": 0
+    },
+    "end_to_end_routing_agreement_with_designed_labels": {
+      "value": 0.7538,
+      "ci_low": 0.6462,
+      "ci_high": 0.8462,
+      "n": 65
+    },
+    "latency_ms_per_application": {
+      "p50": 449.65,
+      "p50_ci": [
+        432.55,
+        461.55
+      ],
+      "p95": 656.98,
+      "p95_ci": [
+        580.94,
+        701.68
+      ],
+      "n": 65
+    },
+    "tool_status_counts": {
+      "search_guidelines:ok": 195,
+      "screen_entity:ok": 198,
+      "score_risk:unavailable": 65
+    }
+  },
+  "llm_dependent": {
+    "status": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+    "memo_recommendation_agreement_with_policy": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+    "citation_accuracy": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+    "unsupported_claim_rate": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+    "cost_usd_per_application": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+    "llm_latency_ms_p50_p95": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+    "memo_writer_used_instead": "deterministic template memo (FAKE LLM \u2014 test mode); its memos are not evidence of LLM quality and are not scored as such"
+  },
+  "tool_runs": {
+    "search_guidelines_ok": 195,
+    "screen_entity_ok": 198,
+    "score_risk_ok": 0,
+    "score_risk_unavailable": 65
+  },
+  "environment": {
+    "python": "3.11.17",
+    "cpu_count": 4,
+    "latency_note": "wall-clock on a shared machine; deterministic path only (template memo, no LLM time)"
+  }
+}
