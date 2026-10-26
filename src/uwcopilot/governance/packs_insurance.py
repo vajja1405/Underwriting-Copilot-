@@ -94,7 +94,8 @@ def naic_rows(sources: Mapping[str, Any]) -> list[tuple[str, str, str]]:
             "3. Risk management and internal controls",
             "Validation measured on public data (developer testing). Monitoring of a separate demonstration GLM on a "
             "SIMULATED stream (the frequency and severity models are not monitored; no discrimination metric), plus "
-            f"single-value indicators of the extraction and the agent: {monitoring}. Release gate: {gate}.",
+            f"single-value indicators of the extraction, the agent and the (SIMULATED) reviewer override rate: "
+            f"{monitoring}. Release gate: {gate}.",
         ),
         (
             "Third-party AI systems",

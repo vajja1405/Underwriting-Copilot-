@@ -90,7 +90,9 @@ migration:
 #   why_critical   why a regression here must block a release
 #   preconditions  (optional) facts the row's results file must show before the number is compared (see below)
 #
-# Preconditions: a measured number is compared only when its results file shows the run the baseline describes.
+# Preconditions: a measured number is compared only when its results file shows the listed facts of the run the
+# baseline describes (scope, evaluation set and served model). They do not cover every run setting: for example an
+# agent run with designed screening or retrieval off meets them, so a reviewer still reads the run configuration.
 # `gate.preconditions` lists them per results file (they apply to every row reading that file); a row's own
 # `preconditions` are checked after them. Each has a dotted `path`, a `why`, and exactly one expectation:
 #   equals: <value>        the current value equals this JSON value (`equals: null` expects null)

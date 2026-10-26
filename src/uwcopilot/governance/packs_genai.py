@@ -104,8 +104,8 @@ def third_party_model_rows(sources: Mapping[str, Any]) -> list[list[str]]:
     pages = value_in(sources, DOCINTEL, "rules.page_classification.all.denominator")
     if is_number(ocr_pages) and is_number(pages):
         ocr_use = (
-            f"{integer(ocr_pages)} of {integer(pages)} pages read by OCR in the extraction evaluation; the rules "
-            "extractor's F1 and citation support include those pages"
+            f"{integer(ocr_pages)} of {integer(pages)} pages read by OCR in the main rules run of the extraction "
+            "evaluation; the rules extractor's F1 and citation support include those pages"
         )
     else:
         ocr_use = f"{NOT_MEASURED} (no OCR page count in `results/{DOCINTEL}`)"

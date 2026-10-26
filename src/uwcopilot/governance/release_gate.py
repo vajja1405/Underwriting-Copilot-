@@ -499,7 +499,8 @@ def evaluate_row(
 
     The preconditions are checked only when the current number is measured (otherwise there is nothing to compare).
     When one does not hold, the number is not compared: the row is FAIL, or MISSING when every unmet precondition is
-    only a baseline value that has not been reviewed yet.
+    only a baseline value that has not been reviewed yet. A number that already FAILs on its own stays FAIL (the
+    precondition problem is added to the reason), so a missed absolute target is never reported as merely MISSING.
     """
     current = {
         "value": read_value(current_file, row.value_path),
@@ -513,7 +514,10 @@ def evaluate_row(
     unmet: list[tuple[Status, str]] = []
     if current[row.gate_on].state == "measured":
         unmet = unmet_preconditions(preconditions, current_file, baseline_file)
-    if unmet:
+    if unmet and status == "FAIL":
+        # The number itself already fails (for example an absolute target missed): keep that FAIL and add the gap.
+        reason = reason + "; also, a precondition does not hold: " + "; ".join(problem for _, problem in unmet)
+    elif unmet:
         status = "FAIL" if any(problem_status == "FAIL" for problem_status, _ in unmet) else "MISSING"
         reason = "not compared, a precondition does not hold: " + "; ".join(problem for _, problem in unmet)
         limit = None

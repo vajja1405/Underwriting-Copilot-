@@ -50,8 +50,20 @@ def test_the_block_names_models_datasets_prompts_eval_sets_and_results(tmp_path:
 
 def test_the_default_decision_logic_is_the_agents_rule_files() -> None:
     names = [path.name for path in DECISION_LOGIC_FILES]
-    assert names == ["policy.py", "policy_credit.py", "policy_insurance.py", "policy_startup.py", "hitl.py", "graph.py"]
-    assert all(path.is_file() and path.parent.name == "agent" for path in DECISION_LOGIC_FILES)
+    assert names == [
+        "policy.py",
+        "policy_credit.py",
+        "policy_insurance.py",
+        "policy_startup.py",
+        "credit_calculations.py",
+        "insurance_calculations.py",
+        "vocab.py",
+        "hitl.py",
+        "graph.py",
+        "rbac.py",
+        "override_reasons.yaml",
+    ]
+    assert all(path.is_file() for path in DECISION_LOGIC_FILES)
 
 
 def test_a_startup_decision_calls_no_model(tmp_path: Path) -> None:

@@ -102,9 +102,11 @@ def test_closing_a_review_restores_the_earlier_status_and_never_makes_a_second_c
     closed = store.close_review("freq-v5", VALIDATOR, reason="explained (SYNTHETIC)", at=AT)
     assert (closed.status, closed.history[-1].from_status) == ("challenger", "under_review")
     assert in_use(store) == ["freq-v4"]
-    # A model registered directly as under_review has no earlier status, so it would return to champion: refused
-    # while the family has another model in use, and nothing is written.
-    store.register(ModelEntry(model_id="freq-v3", family=FAMILY, version="3", status="under_review"), at=AT)
+    # A model that is under review with no earlier status (written by an older registry; register now refuses it)
+    # would return to champion: refused while the family has another model in use, and nothing is written.
+    legacy = store.load()
+    legacy.models.append(ModelEntry(model_id="freq-v3", family=FAMILY, version="3", status="under_review"))
+    store.save(legacy)
     before = store.path.read_bytes()
     with pytest.raises(ValueError, match="already has a model in use"):
         store.close_review("freq-v3", VALIDATOR, reason="(SYNTHETIC)")
@@ -163,3 +165,9 @@ def test_two_processes_registering_at_once_lose_no_entry(tmp_path: Path) -> None
     assert [process.exitcode for process in workers] == [0, 0]
     assert len(store.load().models) == 2 + 2 * 4
     assert not list(tmp_path.glob("*.tmp"))
+
+
+def test_a_model_registered_as_under_review_cannot_join_a_family_that_has_one_in_use(tmp_path: Path) -> None:
+    store = store_with_champion_and_challenger(tmp_path)
+    with pytest.raises(ValueError, match="already has a model in use"):
+        store.register(ModelEntry(model_id="freq-v7", family=FAMILY, version="7", status="under_review"))

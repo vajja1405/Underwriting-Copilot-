@@ -331,6 +331,7 @@ def override_indicators(governance: dict[str, Any] | None, rules: dict[str, Leve
     rate = dig(section, "summary", "override_rate")
     if rate is None:
         rate = find_key(section, "override_rate")
+        source = f"results/{GOVERNANCE_FILE}: section {FEEDBACK_SECTION!r}, first 'override_rate' key found"
     if is_not_measured(rate):
         note = str(rate.get("reason", ""))
         return [_without_value("override_rate", REVIEW, source, "not measured", note, detail)]

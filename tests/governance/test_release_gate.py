@@ -34,6 +34,7 @@ from uwcopilot.governance.release_gate import (
     classify,
     decide,
     evaluate_gate,
+    evaluate_row,
     file_matches_head,
     load_gate_settings,
     lookup,
@@ -635,3 +636,12 @@ def test_update_baseline_through_the_script(tmp_path: Path, settings, capsys: py
     out = capsys.readouterr().out
     assert "copied agent_metrics.json" in out and "absent risk_metrics.json" in out
     assert (baseline_dir / MANIFEST_NAME).is_file()
+
+
+def test_a_missed_absolute_target_stays_fail_when_a_precondition_cannot_be_checked() -> None:
+    row = make_row(kind="absolute", target=1.0, tolerance=0.0)
+    current = LoadedFile("metrics.json", document={"metric": {"value": 0.9}, "set": "abc"})
+    no_baseline = LoadedFile("metrics.json", problem="metrics.json has no reviewed baseline copy")
+    unreviewed = Precondition(path="set", equals_baseline=True, why="the same evaluation set")
+    result = evaluate_row(row, current, no_baseline, [unreviewed])
+    assert result.status == "FAIL" and "precondition" in result.reason

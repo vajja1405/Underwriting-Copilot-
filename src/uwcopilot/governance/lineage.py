@@ -24,8 +24,11 @@ Where each value comes from:
   changed. The record's versions block (graph, policy, prompt and LLM labels) is not compared either, apart from
   prompt_version: the policy and graph labels are fixed strings that stay the same when a rule changes.
 - decision_logic: so a change of the rules does show, the SHA-256 of each source file that decides what the agent
-  recommends and what a reviewer may do (DECISION_LOGIC_FILES: the reference policy of every line, the human approval
-  checkpoint in hitl.py and the graph). Like the prompt hash, any edit of one of these files changes it.
+  recommends and what a reviewer may do (DECISION_LOGIC_FILES: the reference policy of every line, the credit and
+  insurance calculations its thresholds use, the shared vocabulary, the human approval checkpoint in hitl.py, the
+  graph, the role rules in security/rbac.py and the fixed list of override reasons). Like the prompt hash, any edit of
+  one of these files changes it. Other files (for example the evidence engine) are not hashed; scripts/lineage.py
+  says so.
 - models: the score_risk calls of THIS decision name a product ("credit" or "insurance_frequency"); that is also the
   section of results/risk_metrics.json that measured the model. The section's mlflow block (registered model and
   version, run id), its model_version label and the git commit that measured it are copied. tool_status says whether
@@ -70,13 +73,19 @@ CHECKSUM_LOG_NAME = "checksums.jsonl"
 VALIDATING_RESULTS: tuple[Path, ...] = (RISK_RESULTS_FILE, AGENT_RESULTS_FILE)
 # The agent's rule files, found next to this package (this module does not import the agent, which imports it).
 AGENT_SOURCE_DIR = Path(__file__).resolve().parent.parent / "agent"
+SECURITY_SOURCE_DIR = Path(__file__).resolve().parent.parent / "security"
 DECISION_LOGIC_FILES: tuple[Path, ...] = (
     AGENT_SOURCE_DIR / "policy.py",
     AGENT_SOURCE_DIR / "policy_credit.py",
     AGENT_SOURCE_DIR / "policy_insurance.py",
     AGENT_SOURCE_DIR / "policy_startup.py",
+    AGENT_SOURCE_DIR / "credit_calculations.py",
+    AGENT_SOURCE_DIR / "insurance_calculations.py",
+    AGENT_SOURCE_DIR / "vocab.py",
     AGENT_SOURCE_DIR / "hitl.py",
     AGENT_SOURCE_DIR / "graph.py",
+    SECURITY_SOURCE_DIR / "rbac.py",
+    REPO_ROOT / "config" / "override_reasons.yaml",
 )
 
 CheckStatus = Literal["ok", "STALE", "not_checkable"]

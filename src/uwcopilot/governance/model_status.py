@@ -141,12 +141,13 @@ class ModelStatusStore:
         return self.entry(model_id).status
 
     def register(self, entry: ModelEntry, reason: str = "registered", at: datetime | None = None) -> ModelEntry:
-        """Add a model. Refuses a second entry with the same id, and a second champion in one family."""
+        """Add a model. Refuses a second entry with the same id, and a second model in use (champion or under review)
+        in one family."""
         with self.locked():
             registry = self.load()
             if any(item.model_id == entry.model_id for item in registry.models):
                 raise ValueError(f"model {entry.model_id!r} is already registered")
-            if entry.status == "champion" and any(
+            if entry.status in IN_USE and any(
                 item.family == entry.family and item.status in IN_USE for item in registry.models
             ):
                 raise ValueError(f"family {entry.family!r} already has a model in use; promote a challenger instead")
