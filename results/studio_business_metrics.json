@@ -1,0 +1,4116 @@
+{
+  "title": "Founder Studio S12: business metrics of the golden SYNTHETIC founder scenarios",
+  "generated_by": "scripts/eval_studio.py",
+  "data_label": "SYNTHETIC",
+  "simulation_label": "simulated, based on stated assumptions",
+  "disclaimer": "Educational planning tool. Not financial, legal or lending advice. Lenders make their own decisions.",
+  "definitions": "docs/studio/s12_baseline.md (committed before the first run)",
+  "scope": "The golden SYNTHETIC founder scenarios of S4/S6: 6 business types x (5 real metros + the SYNTHETIC metro). The S12 prompt's 30 scenarios are the real-metro subset, reported separately where a metric is measured here.",
+  "baseline": "B0: a plan made without SiteIQ, the simulation and the ledger, built from the same SYNTHETIC inputs and documents: the founder's typed figures, the untyped inputs at their most likely value, and years 1-3 revenue, NOI, debt service and DSCR of the one-forecast run. A figure carries a source only when it is a founder figure every document about it agrees with. A construction, not a sample of real plans (docs/studio/s12_baseline.md).",
+  "configuration": {
+    "golden_seed": 4404,
+    "scenarios": 36,
+    "real_metro_scenarios": 30,
+    "n_paths": 1000,
+    "months": 36,
+    "handoff_consistency_check": "full OFAC SDN + OpenSanctions lists",
+    "narrative_and_memo": "template narrative and deterministic template memo (FAKE LLM - test mode)",
+    "bootstrap": {
+      "resamples": 1000,
+      "seed": 42,
+      "confidence": 0.95,
+      "unit": "scenario"
+    },
+    "runtime_s": 357.9,
+    "versions": {
+      "package_schema": "founder-package-v1",
+      "package_builder": "studio-package-1.0",
+      "handoff": "studio-handoff-1.0"
+    }
+  },
+  "headline": {
+    "time_to_complete_package_median_s": {
+      "value": 7.199,
+      "ci95": [
+        6.767,
+        7.494
+      ],
+      "n": 36
+    },
+    "time_to_complete_package_p95_s": {
+      "value": 8.964,
+      "ci95": [
+        7.81,
+        9.248
+      ],
+      "n": 36
+    },
+    "time_label": "machine-dependent wall-clock measurement on the machine that ran the script (shared; CPU count and load average in the provenance block); not a user time: it excludes the founder's time to gather inputs and documents, and nobody's time was observed",
+    "evidence_coverage_rule_s": {
+      "studio": {
+        "value": 0.8482,
+        "ci_low": 0.8388,
+        "ci_high": 0.8587,
+        "k": 12222,
+        "n": 14410,
+        "scenarios": 36
+      },
+      "baseline_b0": {
+        "value": 0.0251,
+        "ci_low": 0.0182,
+        "ci_high": 0.032,
+        "k": 33,
+        "n": 1316,
+        "scenarios": 36
+      },
+      "difference": {
+        "value": 0.8231,
+        "ci_low": 0.8118,
+        "ci_high": 0.8352,
+        "scenarios": 36
+      }
+    },
+    "evidence_coverage_rule_e": {
+      "studio": {
+        "value": 0.057,
+        "ci_low": 0.0545,
+        "ci_high": 0.0597,
+        "k": 821,
+        "n": 14410,
+        "scenarios": 36
+      },
+      "baseline_b0": {
+        "value": 0.0251,
+        "ci_low": 0.0182,
+        "ci_high": 0.032,
+        "k": 33,
+        "n": 1316,
+        "scenarios": 36
+      },
+      "difference": {
+        "value": 0.0319,
+        "ci_low": 0.0259,
+        "ci_high": 0.038,
+        "scenarios": 36
+      }
+    },
+    "founder_figures_backed_by_a_document": {
+      "studio": {
+        "value": 0.1315,
+        "ci_low": 0.0958,
+        "ci_high": 0.1693,
+        "k": 33,
+        "n": 251,
+        "scenarios": 36
+      },
+      "baseline_b0": {
+        "value": 0.1315,
+        "ci_low": 0.0958,
+        "ci_high": 0.1693,
+        "k": 33,
+        "n": 251,
+        "scenarios": 36
+      },
+      "expected": "expected equal by construction: the same documents and the same tolerance decide both plans"
+    },
+    "data_coverage_min_share_by_metro_cited": {
+      "chicago_il_in": {
+        "min_coverage_share": 0.6812,
+        "mode": "limited"
+      },
+      "dallas_fort_worth_tx": {
+        "min_coverage_share": 0.6826,
+        "mode": "limited"
+      },
+      "houston_tx": {
+        "min_coverage_share": 0.6813,
+        "mode": "limited"
+      },
+      "los_angeles_ca": {
+        "min_coverage_share": 0.6812,
+        "mode": "limited"
+      },
+      "new_york_ny_nj_pa": {
+        "min_coverage_share": 0.6779,
+        "mode": "limited"
+      },
+      "synthetic_metro": {
+        "min_coverage_share": 0.896,
+        "mode": "synthetic"
+      }
+    },
+    "path_found_rate_cited": {
+      "estimate": 0.1026,
+      "ci_low": 0.0784,
+      "ci_high": 0.1306,
+      "n_resamples": 1000,
+      "n_valid_resamples": 1000,
+      "seed": 42,
+      "alpha": 0.05,
+      "method": "percentile",
+      "n": 536
+    },
+    "agent_handoff_reached_checkpoint_cited": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 36,
+      "k": 36,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ]
+    },
+    "agent_handoff_decisions_without_a_human_cited": 0,
+    "llm_cost_usd_per_package": 0.0,
+    "compute_cost": "not measured: no cloud resource was used and the machine's cost is not metered",
+    "usability_test": "not measured: no usability test with real people was done, so there is no n, protocol or raw time"
+  },
+  "time_to_complete_package": {
+    "label": "machine-dependent wall-clock measurement on the machine that ran the script (shared; CPU count and load average in the provenance block); not a user time: it excludes the founder's time to gather inputs and documents, and nobody's time was observed",
+    "definition": "seconds from a scenario's inputs to an audited PDF: golden scenario (SiteIQ when tracts exist, the simulation, the quick path search) + build_package + render_pdf + PDF round-trip audit and page-label check; the handoff is timed apart and is not part of it",
+    "package_total_s": {
+      "median": 7.199,
+      "median_ci95": [
+        6.767,
+        7.494
+      ],
+      "p95": 8.964,
+      "p95_ci95": [
+        7.81,
+        9.248
+      ],
+      "min": 6.141,
+      "max": 9.248,
+      "n": 36
+    },
+    "package_total_s_real_metro_scenarios": {
+      "median": 6.862,
+      "median_ci95": [
+        6.643,
+        7.255
+      ],
+      "p95": 7.789,
+      "p95_ci95": [
+        7.636,
+        7.961
+      ],
+      "min": 6.141,
+      "max": 7.961,
+      "n": 30
+    },
+    "first_scenario_package_total_s": 8.882,
+    "first_scenario_note": "the first scenario of a process also loads configs and fills caches once",
+    "stage_s": {
+      "scenario": {
+        "min": 0.22,
+        "median": 0.465,
+        "max": 1.842,
+        "n": 36
+      },
+      "build_package": {
+        "min": 0.467,
+        "median": 0.587,
+        "max": 1.255,
+        "n": 36
+      },
+      "render_pdf": {
+        "min": 3.018,
+        "median": 3.603,
+        "max": 4.886,
+        "n": 36
+      },
+      "audit": {
+        "min": 1.951,
+        "median": 2.403,
+        "max": 3.022,
+        "n": 36
+      },
+      "package_total": {
+        "min": 6.141,
+        "median": 7.199,
+        "max": 9.248,
+        "n": 36
+      }
+    },
+    "handoff_s": {
+      "median": 0.506,
+      "median_ci95": [
+        0.49,
+        0.553
+      ],
+      "p95": 0.798,
+      "p95_ci95": [
+        0.635,
+        77.765
+      ],
+      "min": 0.388,
+      "max": 77.765,
+      "n": 36
+    },
+    "handoff_s_without_first_scenario": {
+      "median": 0.504,
+      "median_ci95": [
+        0.488,
+        0.552
+      ],
+      "p95": 0.712,
+      "p95_ci95": [
+        0.631,
+        0.995
+      ],
+      "min": 0.388,
+      "max": 0.995,
+      "n": 35
+    },
+    "first_scenario_handoff_s": 77.765,
+    "handoff_note": "the first handoff of a process also loads the screening lists (agent.tools.screening_handler loads them on first call), so its time includes that one-time load; handoff_s_without_first_scenario leaves it out",
+    "complete_packages": {
+      "value": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 36,
+      "k": 36,
+      "wilson_ci95": [
+        0.9036,
+        1.0
+      ]
+    },
+    "baseline_b0": "not measured: no one was timed writing a plan"
+  },
+  "evidence_coverage": {
+    "rule_s_checkable_source": {
+      "definition": "share of printed figures with a checkable source: VERIFIED, MODEL_ESTIMATE or CONFLICTING claims of kind document, public_data, policy, calculation or model, and ASSUMPTION claims whose source is not 'unsourced'",
+      "baseline_rule": "a B0 figure carries a source only when it is a founder figure and every document about that field prints the same value (ledger tolerance); B0 has no ledger to record any other source (definition, not observation)",
+      "all_scenarios": {
+        "studio": {
+          "value": 0.8482,
+          "ci_low": 0.8388,
+          "ci_high": 0.8587,
+          "k": 12222,
+          "n": 14410,
+          "scenarios": 36
+        },
+        "baseline_b0": {
+          "value": 0.0251,
+          "ci_low": 0.0182,
+          "ci_high": 0.032,
+          "k": 33,
+          "n": 1316,
+          "scenarios": 36
+        },
+        "difference_studio_minus_b0": {
+          "value": 0.8231,
+          "ci_low": 0.8118,
+          "ci_high": 0.8352,
+          "scenarios": 36
+        },
+        "per_scenario_share": {
+          "studio": {
+            "min": 0.8103,
+            "median": 0.8397,
+            "max": 0.9161,
+            "n": 36
+          },
+          "baseline_b0": {
+            "min": 0.0,
+            "median": 0.027,
+            "max": 0.0571,
+            "n": 36
+          }
+        }
+      },
+      "real_metro_scenarios": {
+        "studio": {
+          "value": 0.8362,
+          "ci_low": 0.8304,
+          "ci_high": 0.842,
+          "k": 9947,
+          "n": 11896,
+          "scenarios": 30
+        },
+        "baseline_b0": {
+          "value": 0.0246,
+          "ci_low": 0.0173,
+          "ci_high": 0.0319,
+          "k": 27,
+          "n": 1097,
+          "scenarios": 30
+        },
+        "difference_studio_minus_b0": {
+          "value": 0.8116,
+          "ci_low": 0.8029,
+          "ci_high": 0.8204,
+          "scenarios": 30
+        },
+        "per_scenario_share": {
+          "studio": {
+            "min": 0.8103,
+            "median": 0.8336,
+            "max": 0.8675,
+            "n": 30
+          },
+          "baseline_b0": {
+            "min": 0.0,
+            "median": 0.027,
+            "max": 0.0571,
+            "n": 30
+          }
+        }
+      },
+      "by_metro": {
+        "synthetic_metro": {
+          "studio": {
+            "value": 0.9049,
+            "ci_low": 0.8987,
+            "ci_high": 0.9106,
+            "k": 2275,
+            "n": 2514,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0274,
+            "ci_low": 0.0092,
+            "ci_high": 0.0457,
+            "k": 6,
+            "n": 219,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.8775,
+            "ci_low": 0.8649,
+            "ci_high": 0.8909,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.8954,
+              "median": 0.9022,
+              "max": 0.9161,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0267,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "chicago_il_in": {
+          "studio": {
+            "value": 0.8307,
+            "ci_low": 0.8208,
+            "ci_high": 0.8422,
+            "k": 2022,
+            "n": 2434,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0273,
+            "ci_low": 0.0091,
+            "ci_high": 0.0457,
+            "k": 6,
+            "n": 220,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.8035,
+            "ci_low": 0.7889,
+            "ci_high": 0.8155,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.814,
+              "median": 0.8268,
+              "max": 0.8579,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0267,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "dallas_fort_worth_tx": {
+          "studio": {
+            "value": 0.8446,
+            "ci_low": 0.8356,
+            "ci_high": 0.8547,
+            "k": 1989,
+            "n": 2355,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0227,
+            "ci_low": 0.009,
+            "ci_high": 0.0367,
+            "k": 5,
+            "n": 220,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.8219,
+            "ci_low": 0.8021,
+            "ci_high": 0.8391,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.8321,
+              "median": 0.8422,
+              "max": 0.8663,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0267,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "houston_tx": {
+          "studio": {
+            "value": 0.8447,
+            "ci_low": 0.8355,
+            "ci_high": 0.853,
+            "k": 1963,
+            "n": 2324,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0275,
+            "ci_low": 0.0091,
+            "ci_high": 0.0461,
+            "k": 6,
+            "n": 218,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.8171,
+            "ci_low": 0.7961,
+            "ci_high": 0.8373,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.8262,
+              "median": 0.8461,
+              "max": 0.8579,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0274,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "los_angeles_ca": {
+          "studio": {
+            "value": 0.8249,
+            "ci_low": 0.8134,
+            "ci_high": 0.8417,
+            "k": 1960,
+            "n": 2376,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0229,
+            "ci_low": 0.0091,
+            "ci_high": 0.0369,
+            "k": 5,
+            "n": 218,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.802,
+            "ci_low": 0.7836,
+            "ci_high": 0.8199,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.8103,
+              "median": 0.8189,
+              "max": 0.8675,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0274,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "new_york_ny_nj_pa": {
+          "studio": {
+            "value": 0.8363,
+            "ci_low": 0.8294,
+            "ci_high": 0.8444,
+            "k": 2013,
+            "n": 2407,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0226,
+            "ci_low": 0.009,
+            "ci_high": 0.037,
+            "k": 5,
+            "n": 221,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.8137,
+            "ci_low": 0.7949,
+            "ci_high": 0.8345,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.8237,
+              "median": 0.8334,
+              "max": 0.855,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0267,
+              "max": 0.0571,
+              "n": 6
+            }
+          }
+        }
+      }
+    },
+    "rule_e_external_evidence": {
+      "definition": "share of printed figures backed by a document page, a public-data row or a program or target section",
+      "baseline_rule": "a B0 figure carries a source only when it is a founder figure and every document about that field prints the same value (ledger tolerance); B0 has no ledger to record any other source (definition, not observation)",
+      "all_scenarios": {
+        "studio": {
+          "value": 0.057,
+          "ci_low": 0.0545,
+          "ci_high": 0.0597,
+          "k": 821,
+          "n": 14410,
+          "scenarios": 36
+        },
+        "baseline_b0": {
+          "value": 0.0251,
+          "ci_low": 0.0182,
+          "ci_high": 0.032,
+          "k": 33,
+          "n": 1316,
+          "scenarios": 36
+        },
+        "difference_studio_minus_b0": {
+          "value": 0.0319,
+          "ci_low": 0.0259,
+          "ci_high": 0.038,
+          "scenarios": 36
+        },
+        "per_scenario_share": {
+          "studio": {
+            "min": 0.0474,
+            "median": 0.0544,
+            "max": 0.0769,
+            "n": 36
+          },
+          "baseline_b0": {
+            "min": 0.0,
+            "median": 0.027,
+            "max": 0.0571,
+            "n": 36
+          }
+        }
+      },
+      "real_metro_scenarios": {
+        "studio": {
+          "value": 0.0539,
+          "ci_low": 0.0527,
+          "ci_high": 0.0551,
+          "k": 641,
+          "n": 11896,
+          "scenarios": 30
+        },
+        "baseline_b0": {
+          "value": 0.0246,
+          "ci_low": 0.0173,
+          "ci_high": 0.0319,
+          "k": 27,
+          "n": 1097,
+          "scenarios": 30
+        },
+        "difference_studio_minus_b0": {
+          "value": 0.0293,
+          "ci_low": 0.0231,
+          "ci_high": 0.0357,
+          "scenarios": 30
+        },
+        "per_scenario_share": {
+          "studio": {
+            "min": 0.0474,
+            "median": 0.0533,
+            "max": 0.0609,
+            "n": 30
+          },
+          "baseline_b0": {
+            "min": 0.0,
+            "median": 0.027,
+            "max": 0.0571,
+            "n": 30
+          }
+        }
+      },
+      "by_metro": {
+        "synthetic_metro": {
+          "studio": {
+            "value": 0.0716,
+            "ci_low": 0.0685,
+            "ci_high": 0.0746,
+            "k": 180,
+            "n": 2514,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0274,
+            "ci_low": 0.0092,
+            "ci_high": 0.0457,
+            "k": 6,
+            "n": 219,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.0442,
+            "ci_low": 0.0283,
+            "ci_high": 0.0602,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.0644,
+              "median": 0.0714,
+              "max": 0.0769,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0267,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "chicago_il_in": {
+          "studio": {
+            "value": 0.0534,
+            "ci_low": 0.0503,
+            "ci_high": 0.0569,
+            "k": 130,
+            "n": 2434,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0273,
+            "ci_low": 0.0091,
+            "ci_high": 0.0457,
+            "k": 6,
+            "n": 220,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.0261,
+            "ci_low": 0.0115,
+            "ci_high": 0.0415,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.0474,
+              "median": 0.0528,
+              "max": 0.0609,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0267,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "dallas_fort_worth_tx": {
+          "studio": {
+            "value": 0.0548,
+            "ci_low": 0.0524,
+            "ci_high": 0.0571,
+            "k": 129,
+            "n": 2355,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0227,
+            "ci_low": 0.009,
+            "ci_high": 0.0367,
+            "k": 5,
+            "n": 220,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.032,
+            "ci_low": 0.0199,
+            "ci_high": 0.0439,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.0511,
+              "median": 0.0543,
+              "max": 0.0599,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0267,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "houston_tx": {
+          "studio": {
+            "value": 0.0542,
+            "ci_low": 0.0521,
+            "ci_high": 0.057,
+            "k": 126,
+            "n": 2324,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0275,
+            "ci_low": 0.0091,
+            "ci_high": 0.0461,
+            "k": 6,
+            "n": 218,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.0267,
+            "ci_low": 0.0111,
+            "ci_high": 0.0432,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.0512,
+              "median": 0.0527,
+              "max": 0.0606,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0274,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "los_angeles_ca": {
+          "studio": {
+            "value": 0.0526,
+            "ci_low": 0.0502,
+            "ci_high": 0.0557,
+            "k": 125,
+            "n": 2376,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0229,
+            "ci_low": 0.0091,
+            "ci_high": 0.0369,
+            "k": 5,
+            "n": 218,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.0297,
+            "ci_low": 0.017,
+            "ci_high": 0.0426,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.0487,
+              "median": 0.0518,
+              "max": 0.0594,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0274,
+              "max": 0.0556,
+              "n": 6
+            }
+          }
+        },
+        "new_york_ny_nj_pa": {
+          "studio": {
+            "value": 0.0544,
+            "ci_low": 0.053,
+            "ci_high": 0.0558,
+            "k": 131,
+            "n": 2407,
+            "scenarios": 6
+          },
+          "baseline_b0": {
+            "value": 0.0226,
+            "ci_low": 0.009,
+            "ci_high": 0.037,
+            "k": 5,
+            "n": 221,
+            "scenarios": 6
+          },
+          "difference_studio_minus_b0": {
+            "value": 0.0318,
+            "ci_low": 0.0186,
+            "ci_high": 0.0444,
+            "scenarios": 6
+          },
+          "per_scenario_share": {
+            "studio": {
+              "min": 0.0519,
+              "median": 0.0549,
+              "max": 0.057,
+              "n": 6
+            },
+            "baseline_b0": {
+              "min": 0.0,
+              "median": 0.0267,
+              "max": 0.0571,
+              "n": 6
+            }
+          }
+        }
+      }
+    },
+    "founder_figures_backed_by_a_document": {
+      "population": "the founder's typed plan and loan figures (founder_claims.FIELD_SPECS fields with a value)",
+      "studio": {
+        "value": 0.1315,
+        "ci_low": 0.0958,
+        "ci_high": 0.1693,
+        "k": 33,
+        "n": 251,
+        "scenarios": 36
+      },
+      "baseline_b0": {
+        "value": 0.1315,
+        "ci_low": 0.0958,
+        "ci_high": 0.1693,
+        "k": 33,
+        "n": 251,
+        "scenarios": 36
+      },
+      "equal_in_every_scenario": true,
+      "expected": "expected equal by construction: the same documents and the same tolerance decide both plans",
+      "conflicts_surfaced": {
+        "studio": 12,
+        "baseline_b0": "none by definition: B0 has no step that compares a typed figure with a document (not a measurement)"
+      }
+    },
+    "figures_per_plan": {
+      "studio": {
+        "min": 371.0,
+        "median": 401.0,
+        "max": 430.0,
+        "n": 36
+      },
+      "baseline_b0": {
+        "min": 35.0,
+        "median": 36.0,
+        "max": 38.0,
+        "n": 36
+      },
+      "baseline_b0_figures_by_group": {
+        "founder": 251,
+        "input": 633,
+        "result": 432
+      }
+    },
+    "studio_figures_by_status_kind_and_verdict": {
+      "ASSUMPTION/assumption/not sourced": 844,
+      "ASSUMPTION/assumption/sourced": 588,
+      "CONFLICTING/calculation/sourced": 36,
+      "CONFLICTING/document/sourced": 12,
+      "CONFLICTING/user_input/not sourced": 12,
+      "MODEL_ESTIMATE/model/sourced": 10745,
+      "USER_STATED/user_input/not sourced": 1332,
+      "VERIFIED/calculation/sourced": 32,
+      "VERIFIED/document/sourced": 33,
+      "VERIFIED/policy/sourced": 724,
+      "VERIFIED/public_data/sourced": 52
+    },
+    "reading": "Most of the Studio - B0 gap follows from the definitions: model estimates and calculations count for Studio because the ledger records their run or formula and inputs, and B0 prints no such record. Rule E removes that credit; the founder-figure comparison uses one population for both and is equal by construction. B0 is a construction from the same SYNTHETIC inputs, not a sample of real founders' plans.",
+    "printed_numbers_trace_to_a_ledger_claim": {
+      "cited": {
+        "source_file": "results/studio_handoff_metrics.json",
+        "source_section": "golden_founder_scenarios",
+        "source_provenance": {
+          "generated_by": "scripts/eval_studio_handoff.py",
+          "generated_at_utc": "2026-10-20T05:52:51+00:00",
+          "git_sha": "cf60df525f473e50f7c2385d674fad7a7cd4dd63",
+          "git_dirty": false
+        },
+        "package_numbers_read_back": 30681,
+        "untraced_numbers_package_text": 0,
+        "untraced_numbers_pdf_text": 0,
+        "package_text_audit_empty": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 36,
+          "k": 36,
+          "wilson_ci95": [
+            0.9036,
+            1.0
+          ]
+        },
+        "pdf_text_audit_empty": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 36,
+          "k": 36,
+          "wilson_ci95": [
+            0.9036,
+            1.0
+          ]
+        }
+      },
+      "baseline_b0": "not applicable: B0 has no ledger to trace a number to"
+    }
+  },
+  "data_coverage_by_metro": {
+    "cited": {
+      "source_file": "results/studio_metro_coverage.json",
+      "source_section": "metros",
+      "source_provenance": {
+        "generated_by": "scripts/studio_metro_coverage.py",
+        "generated_at_utc": "2026-10-13T15:50:50+00:00",
+        "git_sha": "a634325fc5a6bf961b1812bde3fed9f951a4f6d9",
+        "git_dirty": true
+      },
+      "definition": "Data coverage per metro x business type x factor (Studio S1). status: DATA = public dataset value; SYNTHETIC = generated city; ASSUMPTION = the project author's labeled range; DATA_X_ASSUMPTION = a public value converted with a labeled assumption (QCEW weekly wage / assumed hours); UNKNOWN = no data. coverage_share = weighted share of a business type's required factors backed by data (DATA or SYNTHETIC) times the share of tracts covered; everything else counts as 0. live_per_site = the layer has no per-tract values but can be looked up live for one site (UNKNOWN for ranking tracts).",
+      "metros": {
+        "chicago_il_in": {
+          "name": "Chicago-Naperville-Elgin, IL-IN",
+          "data_label": "PUBLIC",
+          "mode": "limited",
+          "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+          "coverage_threshold": 0.8,
+          "min_coverage_share": 0.6812,
+          "snapshot_date": "2026-10-13",
+          "tracts": 2292,
+          "by_business_type": {
+            "car_wash": {
+              "coverage_share": 0.9159,
+              "mode": "full"
+            },
+            "laundromat": {
+              "coverage_share": 0.8978,
+              "mode": "full"
+            },
+            "motel": {
+              "coverage_share": 0.771,
+              "mode": "limited"
+            },
+            "restaurant_cafe": {
+              "coverage_share": 0.8729,
+              "mode": "full"
+            },
+            "retail_storefront": {
+              "coverage_share": 0.9382,
+              "mode": "full"
+            },
+            "short_term_rental": {
+              "coverage_share": 0.6812,
+              "mode": "limited"
+            }
+          }
+        },
+        "dallas_fort_worth_tx": {
+          "name": "Dallas-Fort Worth-Arlington, TX",
+          "data_label": "PUBLIC",
+          "mode": "limited",
+          "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+          "coverage_threshold": 0.8,
+          "min_coverage_share": 0.6826,
+          "snapshot_date": "2026-10-13",
+          "tracts": 1704,
+          "by_business_type": {
+            "car_wash": {
+              "coverage_share": 0.8965,
+              "mode": "full"
+            },
+            "laundromat": {
+              "coverage_share": 0.8993,
+              "mode": "full"
+            },
+            "motel": {
+              "coverage_share": 0.7564,
+              "mode": "limited"
+            },
+            "restaurant_cafe": {
+              "coverage_share": 0.8781,
+              "mode": "full"
+            },
+            "retail_storefront": {
+              "coverage_share": 0.9306,
+              "mode": "full"
+            },
+            "short_term_rental": {
+              "coverage_share": 0.6826,
+              "mode": "limited"
+            }
+          }
+        },
+        "houston_tx": {
+          "name": "Houston-Pasadena-The Woodlands, TX",
+          "data_label": "PUBLIC",
+          "mode": "limited",
+          "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+          "coverage_threshold": 0.8,
+          "min_coverage_share": 0.6813,
+          "snapshot_date": "2026-10-13",
+          "tracts": 1615,
+          "by_business_type": {
+            "car_wash": {
+              "coverage_share": 0.8797,
+              "mode": "full"
+            },
+            "laundromat": {
+              "coverage_share": 0.898,
+              "mode": "full"
+            },
+            "motel": {
+              "coverage_share": 0.745,
+              "mode": "limited"
+            },
+            "restaurant_cafe": {
+              "coverage_share": 0.876,
+              "mode": "full"
+            },
+            "retail_storefront": {
+              "coverage_share": 0.9197,
+              "mode": "full"
+            },
+            "short_term_rental": {
+              "coverage_share": 0.6813,
+              "mode": "limited"
+            }
+          }
+        },
+        "los_angeles_ca": {
+          "name": "Los Angeles-Long Beach-Anaheim, CA",
+          "data_label": "PUBLIC",
+          "mode": "limited",
+          "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+          "coverage_threshold": 0.8,
+          "min_coverage_share": 0.6812,
+          "snapshot_date": "2026-10-13",
+          "tracts": 3112,
+          "by_business_type": {
+            "car_wash": {
+              "coverage_share": 0.9165,
+              "mode": "full"
+            },
+            "laundromat": {
+              "coverage_share": 0.8978,
+              "mode": "full"
+            },
+            "motel": {
+              "coverage_share": 0.7714,
+              "mode": "limited"
+            },
+            "restaurant_cafe": {
+              "coverage_share": 0.8769,
+              "mode": "full"
+            },
+            "retail_storefront": {
+              "coverage_share": 0.9415,
+              "mode": "full"
+            },
+            "short_term_rental": {
+              "coverage_share": 0.6812,
+              "mode": "limited"
+            }
+          }
+        },
+        "new_york_ny_nj_pa": {
+          "name": "New York-Newark-Jersey City, NY-NJ",
+          "data_label": "PUBLIC",
+          "mode": "limited",
+          "mode_reason": "data coverage 0.68 is below the threshold 0.80",
+          "coverage_threshold": 0.8,
+          "min_coverage_share": 0.6779,
+          "snapshot_date": "2026-10-13",
+          "tracts": 4928,
+          "by_business_type": {
+            "car_wash": {
+              "coverage_share": 0.9142,
+              "mode": "full"
+            },
+            "laundromat": {
+              "coverage_share": 0.8935,
+              "mode": "full"
+            },
+            "motel": {
+              "coverage_share": 0.7722,
+              "mode": "limited"
+            },
+            "restaurant_cafe": {
+              "coverage_share": 0.8675,
+              "mode": "full"
+            },
+            "retail_storefront": {
+              "coverage_share": 0.9346,
+              "mode": "full"
+            },
+            "short_term_rental": {
+              "coverage_share": 0.6779,
+              "mode": "limited"
+            }
+          }
+        },
+        "synthetic_metro": {
+          "name": "Synthetic Metro (SYNTHETIC)",
+          "data_label": "SYNTHETIC",
+          "mode": "synthetic",
+          "mode_reason": "SYNTHETIC metro: generated data for demonstration and validation only",
+          "coverage_threshold": 0.8,
+          "min_coverage_share": 0.896,
+          "snapshot_date": null,
+          "tracts": 300,
+          "by_business_type": {
+            "car_wash": {
+              "coverage_share": 0.9473,
+              "mode": "synthetic"
+            },
+            "laundromat": {
+              "coverage_share": 0.896,
+              "mode": "synthetic"
+            },
+            "motel": {
+              "coverage_share": 0.9,
+              "mode": "synthetic"
+            },
+            "restaurant_cafe": {
+              "coverage_share": 0.8973,
+              "mode": "synthetic"
+            },
+            "retail_storefront": {
+              "coverage_share": 0.9473,
+              "mode": "synthetic"
+            },
+            "short_term_rental": {
+              "coverage_share": 0.996,
+              "mode": "synthetic"
+            }
+          }
+        }
+      }
+    },
+    "this_run": {
+      "synthetic_metro": {
+        "scenarios": 6,
+        "metro_modes": {
+          "synthetic": 6
+        },
+        "site_scored": 6
+      },
+      "chicago_il_in": {
+        "scenarios": 6,
+        "metro_modes": {
+          "limited": 6
+        },
+        "site_scored": 0
+      },
+      "dallas_fort_worth_tx": {
+        "scenarios": 6,
+        "metro_modes": {
+          "limited": 6
+        },
+        "site_scored": 0
+      },
+      "houston_tx": {
+        "scenarios": 6,
+        "metro_modes": {
+          "limited": 6
+        },
+        "site_scored": 0
+      },
+      "los_angeles_ca": {
+        "scenarios": 6,
+        "metro_modes": {
+          "limited": 6
+        },
+        "site_scored": 0
+      },
+      "new_york_ny_nj_pa": {
+        "scenarios": 6,
+        "metro_modes": {
+          "limited": 6
+        },
+        "site_scored": 0
+      }
+    },
+    "this_run_note": "depends on which metro snapshots exist on the machine that ran the script",
+    "baseline_b0": "not applicable: B0 uses no location data, so it has no data-coverage score"
+  },
+  "path_found_rate": {
+    "cited": {
+      "source_file": "results/studio_path_metrics.json",
+      "source_section": "headline",
+      "source_provenance": {
+        "generated_by": "scripts/eval_studio_paths.py",
+        "generated_at_utc": "2026-10-13T19:47:50+00:00",
+        "git_sha": "6e16420b50ab74ff7b79bb7ab72f2fc9d2e4b572",
+        "git_dirty": true
+      },
+      "definition": "share of plans that do not meet the three targets as they are for which the search returns at least one change-set of one or two levers inside the default bounds that meets all three",
+      "scope": "Seeded SYNTHETIC plans (src/uwcopilot/studio/path_to_approval/synthetic_plans.py) searched on the SYNTHETIC metro and on each real metro in its current mode. The path-found rate depends on how the plans are generated and on the editable targets and lever bounds; it describes the search on these plans, not any real founder's chances.",
+      "n_plans": 540,
+      "status_counts_full": {
+        "already_meets_target": 4,
+        "paths_found": 55,
+        "no_path_within_bounds": 481
+      },
+      "path_found_rate_full": {
+        "estimate": 0.1026,
+        "ci_low": 0.0784,
+        "ci_high": 0.1306,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile",
+        "n": 536
+      },
+      "path_found_and_program_compliant_rate_full": {
+        "estimate": 0.0392,
+        "ci_low": 0.0243,
+        "ci_high": 0.0578,
+        "n_resamples": 1000,
+        "n_valid_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile",
+        "n": 536
+      },
+      "by_metro": {
+        "chicago_il_in": {
+          "n_plans": 90,
+          "status_counts": {
+            "already_meets_target": 1,
+            "paths_found": 12,
+            "no_path_within_bounds": 77
+          },
+          "path_found_rate_among_plans_needing_a_change": {
+            "estimate": 0.1348,
+            "ci_low": 0.0674,
+            "ci_high": 0.2135,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "n": 89
+          }
+        },
+        "dallas_fort_worth_tx": {
+          "n_plans": 90,
+          "status_counts": {
+            "already_meets_target": 0,
+            "paths_found": 7,
+            "no_path_within_bounds": 83
+          },
+          "path_found_rate_among_plans_needing_a_change": {
+            "estimate": 0.0778,
+            "ci_low": 0.0333,
+            "ci_high": 0.1333,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "n": 90
+          }
+        },
+        "houston_tx": {
+          "n_plans": 90,
+          "status_counts": {
+            "already_meets_target": 1,
+            "paths_found": 10,
+            "no_path_within_bounds": 79
+          },
+          "path_found_rate_among_plans_needing_a_change": {
+            "estimate": 0.1124,
+            "ci_low": 0.0449,
+            "ci_high": 0.1801,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "n": 89
+          }
+        },
+        "los_angeles_ca": {
+          "n_plans": 90,
+          "status_counts": {
+            "already_meets_target": 0,
+            "paths_found": 11,
+            "no_path_within_bounds": 79
+          },
+          "path_found_rate_among_plans_needing_a_change": {
+            "estimate": 0.1222,
+            "ci_low": 0.0667,
+            "ci_high": 0.1889,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "n": 90
+          }
+        },
+        "new_york_ny_nj_pa": {
+          "n_plans": 90,
+          "status_counts": {
+            "already_meets_target": 2,
+            "paths_found": 8,
+            "no_path_within_bounds": 80
+          },
+          "path_found_rate_among_plans_needing_a_change": {
+            "estimate": 0.0909,
+            "ci_low": 0.0341,
+            "ci_high": 0.1591,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "n": 88
+          }
+        },
+        "synthetic_metro": {
+          "n_plans": 90,
+          "status_counts": {
+            "already_meets_target": 0,
+            "paths_found": 7,
+            "no_path_within_bounds": 83
+          },
+          "path_found_rate_among_plans_needing_a_change": {
+            "estimate": 0.0778,
+            "ci_low": 0.0222,
+            "ci_high": 0.1333,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "n": 90
+          }
+        }
+      },
+      "real_world_accuracy": "not measured: no real founder outcomes exist; every plan is SYNTHETIC"
+    },
+    "this_run_golden_path_status": {
+      "no_path_within_bounds": 33,
+      "already_meets_target": 2,
+      "paths_found": 1
+    },
+    "this_run_note": "path-search status of the golden scenarios in this run: a description of these seeded plans, not an estimate of the path-found rate (the cited S5 rate is the estimate)",
+    "baseline_b0": "not applicable: B0 has no path search"
+  },
+  "agent_handoff": {
+    "cited": {
+      "source_file": "results/studio_handoff_metrics.json",
+      "source_section": "golden_founder_scenarios",
+      "source_provenance": {
+        "generated_by": "scripts/eval_studio_handoff.py",
+        "generated_at_utc": "2026-10-20T05:52:51+00:00",
+        "git_sha": "cf60df525f473e50f7c2385d674fad7a7cd4dd63",
+        "git_dirty": false
+      },
+      "settings": {
+        "screening": "full OFAC SDN + OpenSanctions lists (uwcopilot.kyc.screening default matcher)",
+        "n_paths": 1000,
+        "golden_scenarios": 36,
+        "memo_writer": "deterministic template memo (FAKE LLM - test mode)"
+      },
+      "golden_founder_scenarios": {
+        "cases": 36,
+        "reached_human_checkpoint": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 36,
+          "k": 36,
+          "wilson_ci95": [
+            0.9036,
+            1.0
+          ]
+        },
+        "decisions_recorded_without_a_human": 0,
+        "decisions_recorded_without_a_human_rate": {
+          "value": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 36,
+          "k": 0,
+          "wilson_ci95": [
+            0.0,
+            0.0964
+          ]
+        },
+        "memo_check_passed": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 36,
+          "k": 36,
+          "wilson_ci95": [
+            0.9036,
+            1.0
+          ]
+        },
+        "unsupported_numbers_in_memos": 0
+      },
+      "all_cases": {
+        "cases": 71,
+        "reached_human_checkpoint": {
+          "value": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 71,
+          "k": 71,
+          "wilson_ci95": [
+            0.9487,
+            1.0
+          ]
+        },
+        "decisions_recorded_without_a_human": 0,
+        "unsupported_numbers_in_memos": 0
+      }
+    },
+    "this_run_consistency_check": {
+      "cases": 36,
+      "reached_human_checkpoint": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n": 36,
+        "k": 36,
+        "wilson_ci95": [
+          0.9036,
+          1.0
+        ]
+      },
+      "decisions_recorded_without_a_human": 0,
+      "memo_check_passed": {
+        "value": 1.0,
+        "ci_low": 1.0,
+        "ci_high": 1.0,
+        "n": 36,
+        "k": 36,
+        "wilson_ci95": [
+          0.9036,
+          1.0
+        ]
+      },
+      "unsupported_numbers_in_memos": 0
+    },
+    "baseline_b0": "not applicable: to_application needs the package's founder ledger, which B0 does not have"
+  },
+  "cost_per_package": {
+    "llm_cost_usd_per_package": 0.0,
+    "llm_cost_basis": "0 by construction: the narrative is the template provider and the lender memo is the deterministic template (FAKE LLM - test mode); no language model is called. Checked per package (narrative provider 'template', no model, no fallback, no LLM attempt).",
+    "narrative_checks": {
+      "packages": 36,
+      "no_llm_called": 36,
+      "providers": {
+        "template": 36
+      }
+    },
+    "compute_cost": "not measured: no cloud resource was used and the machine's cost is not metered",
+    "baseline_b0": "not measured"
+  },
+  "usability_test": {
+    "status": "not measured: no usability test with real people was done, so there is no n, protocol or raw time",
+    "n": null,
+    "protocol": null,
+    "raw_times_s": null
+  },
+  "per_scenario": [
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-car_wash",
+      "metro_id": "synthetic_metro",
+      "profile_id": "car_wash",
+      "metro_mode": "synthetic",
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-358ded80e3be",
+      "pdf_pages": 33,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 1.842,
+        "build_package": 0.565,
+        "render_pdf": 3.84,
+        "audit": 2.634,
+        "package_total": 8.882,
+        "handoff": 77.765
+      },
+      "studio": {
+        "figures": 419,
+        "sourced": 378,
+        "external": 27
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 5,
+        "input": 19,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 5,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 26,
+        "ASSUMPTION/assumption/sourced": 48,
+        "MODEL_ESTIMATE/model/sourced": 301,
+        "USER_STATED/user_input/not sourced": 15,
+        "VERIFIED/calculation/sourced": 2,
+        "VERIFIED/policy/sourced": 19,
+        "VERIFIED/public_data/sourced": 8
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-laundromat",
+      "metro_id": "synthetic_metro",
+      "profile_id": "laundromat",
+      "metro_mode": "synthetic",
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-50a9a8bfca61",
+      "pdf_pages": 34,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.562,
+        "build_package": 0.582,
+        "render_pdf": 4.051,
+        "audit": 2.309,
+        "package_total": 7.503,
+        "handoff": 0.615
+      },
+      "studio": {
+        "figures": 430,
+        "sourced": 388,
+        "external": 30
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 5,
+        "input": 20,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 5,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 28,
+        "ASSUMPTION/assumption/sourced": 40,
+        "MODEL_ESTIMATE/model/sourced": 315,
+        "USER_STATED/user_input/not sourced": 14,
+        "VERIFIED/calculation/sourced": 3,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 21,
+        "VERIFIED/public_data/sourced": 8
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-motel",
+      "metro_id": "synthetic_metro",
+      "profile_id": "motel",
+      "metro_mode": "synthetic",
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-f0e7136593ea",
+      "pdf_pages": 33,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.949,
+        "build_package": 0.719,
+        "render_pdf": 4.886,
+        "audit": 2.657,
+        "package_total": 9.212,
+        "handoff": 0.63
+      },
+      "studio": {
+        "figures": 420,
+        "sourced": 384,
+        "external": 30
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 2,
+        "external": 2
+      },
+      "baseline_groups": {
+        "founder": 5,
+        "input": 19,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 5,
+        "studio_backed": 2,
+        "baseline_backed": 2,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 26,
+        "ASSUMPTION/assumption/sourced": 48,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 301,
+        "USER_STATED/user_input/not sourced": 9,
+        "VERIFIED/calculation/sourced": 2,
+        "VERIFIED/document/sourced": 2,
+        "VERIFIED/policy/sourced": 19,
+        "VERIFIED/public_data/sourced": 8
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-restaurant_cafe",
+      "metro_id": "synthetic_metro",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "synthetic",
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-d6354deca17d",
+      "pdf_pages": 32,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.553,
+        "build_package": 0.55,
+        "render_pdf": 3.777,
+        "audit": 2.554,
+        "package_total": 7.434,
+        "handoff": 0.552
+      },
+      "studio": {
+        "figures": 392,
+        "sourced": 351,
+        "external": 28
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 16,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 23,
+        "ASSUMPTION/assumption/sourced": 33,
+        "MODEL_ESTIMATE/model/sourced": 288,
+        "USER_STATED/user_input/not sourced": 18,
+        "VERIFIED/calculation/sourced": 2,
+        "VERIFIED/policy/sourced": 19,
+        "VERIFIED/public_data/sourced": 9
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-retail_storefront",
+      "metro_id": "synthetic_metro",
+      "profile_id": "retail_storefront",
+      "metro_mode": "synthetic",
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-6f98d582d7ce",
+      "pdf_pages": 34,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.762,
+        "build_package": 0.588,
+        "render_pdf": 4.153,
+        "audit": 2.539,
+        "package_total": 8.043,
+        "handoff": 0.627
+      },
+      "studio": {
+        "figures": 424,
+        "sourced": 381,
+        "external": 32
+      },
+      "baseline": {
+        "figures": 38,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 26,
+        "ASSUMPTION/assumption/sourced": 40,
+        "MODEL_ESTIMATE/model/sourced": 306,
+        "USER_STATED/user_input/not sourced": 17,
+        "VERIFIED/calculation/sourced": 3,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 21,
+        "VERIFIED/public_data/sourced": 10
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-synthetic_metro-short_term_rental",
+      "metro_id": "synthetic_metro",
+      "profile_id": "short_term_rental",
+      "metro_mode": "synthetic",
+      "site_scored": true,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-0155155d2c45",
+      "pdf_pages": 34,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.952,
+        "build_package": 1.255,
+        "render_pdf": 4.084,
+        "audit": 2.957,
+        "package_total": 9.248,
+        "handoff": 0.574
+      },
+      "studio": {
+        "figures": 429,
+        "sourced": 393,
+        "external": 33
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 2,
+        "external": 2
+      },
+      "baseline_groups": {
+        "founder": 6,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 6,
+        "studio_backed": 2,
+        "baseline_backed": 2,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 25,
+        "ASSUMPTION/assumption/sourced": 49,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 305,
+        "USER_STATED/user_input/not sourced": 10,
+        "VERIFIED/calculation/sourced": 3,
+        "VERIFIED/document/sourced": 2,
+        "VERIFIED/policy/sourced": 21,
+        "VERIFIED/public_data/sourced": 9
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-car_wash",
+      "metro_id": "chicago_il_in",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-f03bada46c68",
+      "pdf_pages": 29,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.35,
+        "build_package": 0.527,
+        "render_pdf": 3.018,
+        "audit": 2.498,
+        "package_total": 6.392,
+        "handoff": 0.495
+      },
+      "studio": {
+        "figures": 401,
+        "sourced": 331,
+        "external": 19
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 5,
+        "input": 19,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 5,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 301,
+        "USER_STATED/user_input/not sourced": 46,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-laundromat",
+      "metro_id": "chicago_il_in",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-df1853a97773",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.558,
+        "build_package": 0.625,
+        "render_pdf": 3.124,
+        "audit": 2.319,
+        "package_total": 6.626,
+        "handoff": 0.643
+      },
+      "studio": {
+        "figures": 409,
+        "sourced": 342,
+        "external": 22
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 6,
+        "input": 19,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 6,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 25,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 308,
+        "USER_STATED/user_input/not sourced": 42,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-motel",
+      "metro_id": "chicago_il_in",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-3a05c89c87e4",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.295,
+        "build_package": 0.882,
+        "render_pdf": 3.405,
+        "audit": 2.142,
+        "package_total": 6.723,
+        "handoff": 0.492
+      },
+      "studio": {
+        "figures": 391,
+        "sourced": 322,
+        "external": 22
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 2,
+        "external": 2
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 16,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 2,
+        "baseline_backed": 2,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 21,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 286,
+        "USER_STATED/user_input/not sourced": 47,
+        "VERIFIED/document/sourced": 2,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-restaurant_cafe",
+      "metro_id": "chicago_il_in",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-72d46abfc0cb",
+      "pdf_pages": 31,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.655,
+        "build_package": 0.586,
+        "render_pdf": 3.979,
+        "audit": 2.513,
+        "package_total": 7.733,
+        "handoff": 0.649
+      },
+      "studio": {
+        "figures": 414,
+        "sourced": 337,
+        "external": 21
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 304,
+        "USER_STATED/user_input/not sourced": 53,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-retail_storefront",
+      "metro_id": "chicago_il_in",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-d828a3783c87",
+      "pdf_pages": 31,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.58,
+        "build_package": 0.562,
+        "render_pdf": 3.845,
+        "audit": 2.207,
+        "package_total": 7.194,
+        "handoff": 0.581
+      },
+      "studio": {
+        "figures": 425,
+        "sourced": 352,
+        "external": 22
+      },
+      "baseline": {
+        "figures": 38,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 5,
+        "input": 21,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 5,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 27,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 318,
+        "USER_STATED/user_input/not sourced": 46,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-chicago_il_in-short_term_rental",
+      "metro_id": "chicago_il_in",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-f33c9c755400",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.412,
+        "build_package": 0.983,
+        "render_pdf": 3.493,
+        "audit": 2.415,
+        "package_total": 7.305,
+        "handoff": 0.478
+      },
+      "studio": {
+        "figures": 394,
+        "sourced": 338,
+        "external": 24
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 2,
+        "external": 2
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 17,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 2,
+        "baseline_backed": 2,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 23,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 299,
+        "USER_STATED/user_input/not sourced": 32,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 2,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-car_wash",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-d871592193c4",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.647,
+        "build_package": 1.085,
+        "render_pdf": 3.404,
+        "audit": 2.505,
+        "package_total": 7.641,
+        "handoff": 0.509
+      },
+      "studio": {
+        "figures": 405,
+        "sourced": 337,
+        "external": 21
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 304,
+        "USER_STATED/user_input/not sourced": 44,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-laundromat",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-882608380099",
+      "pdf_pages": 28,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.348,
+        "build_package": 0.91,
+        "render_pdf": 3.063,
+        "audit": 2.053,
+        "package_total": 6.375,
+        "handoff": 0.488
+      },
+      "studio": {
+        "figures": 371,
+        "sourced": 313,
+        "external": 20
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 9,
+        "input": 15,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 9,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 20,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 282,
+        "USER_STATED/user_input/not sourced": 38,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-motel",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-e7531d93389b",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.355,
+        "build_package": 0.488,
+        "render_pdf": 3.677,
+        "audit": 3.022,
+        "package_total": 7.542,
+        "handoff": 0.504
+      },
+      "studio": {
+        "figures": 404,
+        "sourced": 350,
+        "external": 23
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 5,
+        "input": 20,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 5,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 26,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 312,
+        "USER_STATED/user_input/not sourced": 27,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-restaurant_cafe",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-218d575dbc83",
+      "pdf_pages": 28,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.27,
+        "build_package": 0.47,
+        "render_pdf": 3.143,
+        "audit": 2.258,
+        "package_total": 6.141,
+        "handoff": 0.469
+      },
+      "studio": {
+        "figures": 372,
+        "sourced": 317,
+        "external": 19
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 16,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 21,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 287,
+        "USER_STATED/user_input/not sourced": 34,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-retail_storefront",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-05018fe0c910",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.432,
+        "build_package": 1.202,
+        "render_pdf": 3.411,
+        "audit": 2.916,
+        "package_total": 7.961,
+        "handoff": 0.532
+      },
+      "studio": {
+        "figures": 402,
+        "sourced": 338,
+        "external": 22
+      },
+      "baseline": {
+        "figures": 38,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 304,
+        "USER_STATED/user_input/not sourced": 40,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-dallas_fort_worth_tx-short_term_rental",
+      "metro_id": "dallas_fort_worth_tx",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-87cf4643dfa5",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.54,
+        "build_package": 0.623,
+        "render_pdf": 3.241,
+        "audit": 2.45,
+        "package_total": 6.853,
+        "handoff": 0.451
+      },
+      "studio": {
+        "figures": 401,
+        "sourced": 334,
+        "external": 24
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 2,
+        "external": 2
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 16,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 2,
+        "baseline_backed": 2,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 22,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 295,
+        "USER_STATED/user_input/not sourced": 44,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 2,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-car_wash",
+      "metro_id": "houston_tx",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "already_meets_target",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-f987450cb12a",
+      "pdf_pages": 27,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.237,
+        "build_package": 0.699,
+        "render_pdf": 3.06,
+        "audit": 2.391,
+        "package_total": 6.387,
+        "handoff": 0.995
+      },
+      "studio": {
+        "figures": 371,
+        "sourced": 316,
+        "external": 19
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 17,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 22,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 286,
+        "USER_STATED/user_input/not sourced": 33,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-laundromat",
+      "metro_id": "houston_tx",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-81334bc4b785",
+      "pdf_pages": 28,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.495,
+        "build_package": 0.508,
+        "render_pdf": 3.139,
+        "audit": 2.669,
+        "package_total": 6.811,
+        "handoff": 0.538
+      },
+      "studio": {
+        "figures": 380,
+        "sourced": 326,
+        "external": 20
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 6,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 6,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 23,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 295,
+        "USER_STATED/user_input/not sourced": 31,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-motel",
+      "metro_id": "houston_tx",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-26afb7916275",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.371,
+        "build_package": 0.596,
+        "render_pdf": 3.514,
+        "audit": 2.311,
+        "package_total": 6.792,
+        "handoff": 0.467
+      },
+      "studio": {
+        "figures": 397,
+        "sourced": 328,
+        "external": 22
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 2,
+        "external": 2
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 17,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 2,
+        "baseline_backed": 2,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 22,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 292,
+        "USER_STATED/user_input/not sourced": 46,
+        "VERIFIED/document/sourced": 2,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-restaurant_cafe",
+      "metro_id": "houston_tx",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-ed768eb15b04",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.563,
+        "build_package": 0.971,
+        "render_pdf": 3.092,
+        "audit": 2.578,
+        "package_total": 7.204,
+        "handoff": 0.47
+      },
+      "studio": {
+        "figures": 401,
+        "sourced": 337,
+        "external": 21
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 304,
+        "USER_STATED/user_input/not sourced": 40,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-retail_storefront",
+      "metro_id": "houston_tx",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-10160ed77c70",
+      "pdf_pages": 29,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.374,
+        "build_package": 0.516,
+        "render_pdf": 3.196,
+        "audit": 2.373,
+        "package_total": 6.459,
+        "handoff": 0.446
+      },
+      "studio": {
+        "figures": 379,
+        "sourced": 318,
+        "external": 20
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 9,
+        "input": 16,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 9,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 21,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 287,
+        "USER_STATED/user_input/not sourced": 40,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-houston_tx-short_term_rental",
+      "metro_id": "houston_tx",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-57e56adbef74",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.466,
+        "build_package": 0.552,
+        "render_pdf": 3.192,
+        "audit": 2.181,
+        "package_total": 6.392,
+        "handoff": 0.45
+      },
+      "studio": {
+        "figures": 396,
+        "sourced": 338,
+        "external": 24
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 2,
+        "external": 2
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 17,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 2,
+        "baseline_backed": 2,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 23,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 299,
+        "USER_STATED/user_input/not sourced": 34,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 2,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-car_wash",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "already_meets_target",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-0b34698400b6",
+      "pdf_pages": 28,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.22,
+        "build_package": 0.953,
+        "render_pdf": 3.336,
+        "audit": 2.134,
+        "package_total": 6.643,
+        "handoff": 0.631
+      },
+      "studio": {
+        "figures": 390,
+        "sourced": 316,
+        "external": 19
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 17,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 22,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 286,
+        "USER_STATED/user_input/not sourced": 52,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-laundromat",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-b17afc134a90",
+      "pdf_pages": 29,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.294,
+        "build_package": 0.467,
+        "render_pdf": 3.41,
+        "audit": 2.455,
+        "package_total": 6.625,
+        "handoff": 0.49
+      },
+      "studio": {
+        "figures": 405,
+        "sourced": 332,
+        "external": 20
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 5,
+        "input": 19,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 5,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 301,
+        "USER_STATED/user_input/not sourced": 49,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-motel",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-c35976caf9cc",
+      "pdf_pages": 28,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.281,
+        "build_package": 0.55,
+        "render_pdf": 3.725,
+        "audit": 1.951,
+        "package_total": 6.506,
+        "handoff": 0.388
+      },
+      "studio": {
+        "figures": 385,
+        "sourced": 334,
+        "external": 21
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 5,
+        "input": 19,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 5,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 299,
+        "USER_STATED/user_input/not sourced": 26,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-restaurant_cafe",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-940d0db2fe55",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.464,
+        "build_package": 0.562,
+        "render_pdf": 3.733,
+        "audit": 2.113,
+        "package_total": 6.871,
+        "handoff": 0.521
+      },
+      "studio": {
+        "figures": 401,
+        "sourced": 328,
+        "external": 21
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 9,
+        "input": 16,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 9,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 22,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 295,
+        "USER_STATED/user_input/not sourced": 51,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-retail_storefront",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-c429d6115c22",
+      "pdf_pages": 29,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.32,
+        "build_package": 0.737,
+        "render_pdf": 4.191,
+        "audit": 2.246,
+        "package_total": 7.494,
+        "handoff": 0.461
+      },
+      "studio": {
+        "figures": 391,
+        "sourced": 317,
+        "external": 20
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 9,
+        "input": 16,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 9,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 21,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 286,
+        "USER_STATED/user_input/not sourced": 53,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-los_angeles_ca-short_term_rental",
+      "metro_id": "los_angeles_ca",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-1617af679a64",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.454,
+        "build_package": 0.56,
+        "render_pdf": 3.601,
+        "audit": 2.805,
+        "package_total": 7.42,
+        "handoff": 0.703
+      },
+      "studio": {
+        "figures": 404,
+        "sourced": 333,
+        "external": 24
+      },
+      "baseline": {
+        "figures": 36,
+        "sourced": 2,
+        "external": 2
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 16,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 2,
+        "baseline_backed": 2,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 22,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 294,
+        "USER_STATED/user_input/not sourced": 48,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 2,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-car_wash",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "car_wash",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "paths_found",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-10389380a58c",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.489,
+        "build_package": 0.642,
+        "render_pdf": 4.064,
+        "audit": 2.518,
+        "package_total": 7.713,
+        "handoff": 0.733
+      },
+      "studio": {
+        "figures": 400,
+        "sourced": 342,
+        "external": 21
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 17,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 23,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 309,
+        "USER_STATED/user_input/not sourced": 35,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-laundromat",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "laundromat",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-93fad3f3640e",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.613,
+        "build_package": 0.672,
+        "render_pdf": 3.749,
+        "audit": 2.17,
+        "package_total": 7.204,
+        "handoff": 0.428
+      },
+      "studio": {
+        "figures": 396,
+        "sourced": 333,
+        "external": 22
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 17,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 23,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 299,
+        "USER_STATED/user_input/not sourced": 40,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-motel",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "motel",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-11e985c045d4",
+      "pdf_pages": 31,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.387,
+        "build_package": 0.536,
+        "render_pdf": 3.844,
+        "audit": 2.302,
+        "package_total": 7.069,
+        "handoff": 0.507
+      },
+      "studio": {
+        "figures": 414,
+        "sourced": 341,
+        "external": 23
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 303,
+        "USER_STATED/user_input/not sourced": 48,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-restaurant_cafe",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "restaurant_cafe",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 0,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-13d4c62b1d13",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.472,
+        "build_package": 0.564,
+        "render_pdf": 3.928,
+        "audit": 2.768,
+        "package_total": 7.732,
+        "handoff": 0.502
+      },
+      "studio": {
+        "figures": 405,
+        "sourced": 337,
+        "external": 21
+      },
+      "baseline": {
+        "figures": 37,
+        "sourced": 0,
+        "external": 0
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 0,
+        "baseline_backed": 0,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 304,
+        "USER_STATED/user_input/not sourced": 44,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "decline_for_review"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-retail_storefront",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "retail_storefront",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 1,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-abfba287ce42",
+      "pdf_pages": 30,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.524,
+        "build_package": 0.63,
+        "render_pdf": 4.347,
+        "audit": 2.334,
+        "package_total": 7.835,
+        "handoff": 0.449
+      },
+      "studio": {
+        "figures": 406,
+        "sourced": 338,
+        "external": 22
+      },
+      "baseline": {
+        "figures": 38,
+        "sourced": 1,
+        "external": 1
+      },
+      "baseline_groups": {
+        "founder": 8,
+        "input": 18,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 8,
+        "studio_backed": 1,
+        "baseline_backed": 1,
+        "studio_conflicting": 0
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 24,
+        "ASSUMPTION/assumption/sourced": 11,
+        "MODEL_ESTIMATE/model/sourced": 304,
+        "USER_STATED/user_input/not sourced": 44,
+        "VERIFIED/calculation/sourced": 1,
+        "VERIFIED/document/sourced": 1,
+        "VERIFIED/policy/sourced": 21
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    },
+    {
+      "scenario_id": "GOLDEN-new_york_ny_nj_pa-short_term_rental",
+      "metro_id": "new_york_ny_nj_pa",
+      "profile_id": "short_term_rental",
+      "metro_mode": "limited",
+      "site_scored": false,
+      "path_status": "no_path_within_bounds",
+      "document_variant": 2,
+      "data_label": "SYNTHETIC",
+      "package_id": "FP-c7f4038bf908",
+      "pdf_pages": 29,
+      "pdf_untraced_numbers": 0,
+      "package_untraced_numbers": 0,
+      "pages_missing_labels": {},
+      "complete_package": true,
+      "seconds": {
+        "scenario": 0.263,
+        "build_package": 0.494,
+        "render_pdf": 3.605,
+        "audit": 2.298,
+        "package_total": 6.66,
+        "handoff": 0.503
+      },
+      "studio": {
+        "figures": 386,
+        "sourced": 322,
+        "external": 22
+      },
+      "baseline": {
+        "figures": 35,
+        "sourced": 2,
+        "external": 2
+      },
+      "baseline_groups": {
+        "founder": 7,
+        "input": 16,
+        "result": 12
+      },
+      "founder_figures": {
+        "figures": 7,
+        "studio_backed": 2,
+        "baseline_backed": 2,
+        "studio_conflicting": 1
+      },
+      "studio_figure_breakdown": {
+        "ASSUMPTION/assumption/not sourced": 21,
+        "ASSUMPTION/assumption/sourced": 11,
+        "CONFLICTING/calculation/sourced": 3,
+        "CONFLICTING/document/sourced": 1,
+        "CONFLICTING/user_input/not sourced": 1,
+        "MODEL_ESTIMATE/model/sourced": 286,
+        "USER_STATED/user_input/not sourced": 42,
+        "VERIFIED/document/sourced": 2,
+        "VERIFIED/policy/sourced": 19
+      },
+      "narrative": {
+        "provider": "template",
+        "model": null,
+        "fallback_used": false,
+        "llm_attempts": 0,
+        "no_llm_called": true
+      },
+      "handoff": {
+        "run": true,
+        "reached_checkpoint": true,
+        "decision_recorded_without_human": false,
+        "memo_check_passed": true,
+        "unsupported_numbers": 0,
+        "reference_recommendation": "request_more_information"
+      }
+    }
+  ],
+  "provenance": {
+    "git_sha": "e68b88d6148f29c52d7c274d2ffaae30a5404cb8",
+    "git_dirty": false,
+    "generated_at_utc": "2026-10-26T19:46:55+00:00",
+    "generated_by": "scripts/eval_studio.py",
+    "prompts": {
+      "founder_narrative_v1": "c515ae3d5621f8e097d3f5ce18fcdb0111d9eaac62422f06eec4336098a3138d",
+      "founder_narrative_retry_v1": "aa6090c9676e262c18ecc3b52d93607f08fc8bcfb1918a5c0d4fbce5bd85fa0a",
+      "founder_narrative_template_v1": "ff569e6d7a587337618ec4d8daf19493d5ff4c5d467c84b93986bd9fe6a15548"
+    },
+    "corpus_checksum": "6bd55a03776169011673f2751d527e4e761e9a44013171a33ec5340d72c7ebfc",
+    "eval_sets": {
+      "docs/studio/s12_baseline.md": "312ca73176d1ec4f9c7da0bd0004ddf2b6ce7ca48424671628d779658fc8f9b1"
+    },
+    "models": [],
+    "data_snapshots": {
+      "cited_results_sha256": {
+        "results/studio_handoff_metrics.json": "b4cb134f2bf6766939c67800306ba71452323d755e7cd8d240e9d4b4dce7ecff",
+        "results/studio_metro_coverage.json": "a9480782022fd43a99babf90aa3eb57c53df9c4feccc0858e81f81825980e8f6",
+        "results/studio_path_metrics.json": "2bf118029b94e7c2de41f640e782dbc2986a16e5cd4bcbcad1a0323333607b99"
+      },
+      "ofac_sdn_csv_sha256": "64be7a7991059f59a2ebb43bc5dcc7e2951e1e27cbed8cbe41b0231b3a161946"
+    },
+    "packages": {
+      "python": "3.11.17",
+      "anthropic": "1.13.0",
+      "openai": "3.28.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.0",
+      "pyyaml": "6.0.3",
+      "numpy": "2.4.6",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "fastembed": "0.9.1",
+      "qdrant-client": "1.19.1",
+      "langgraph": "1.2.14",
+      "mcp": "2.3.0"
+    },
+    "environment": {
+      "cpu_count": 4,
+      "load_average_start": [
+        0.96,
+        0.91,
+        0.66
+      ],
+      "load_average_end": [
+        1.0,
+        0.98,
+        0.78
+      ]
+    }
+  }
+}
