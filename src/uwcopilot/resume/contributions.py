@@ -30,6 +30,8 @@ COMPONENTS: dict[str, str] = {
     "studio_siteiq": "Founder Studio: SiteIQ site scoring",
     "studio_business": "Founder Studio: S12 end-to-end evaluation against the baseline B0",
 }
+# The only top-level key of config/contributions.yaml.
+OWNERS_KEY = "owners"
 FILL_IN_NOTE = (
     "Per-person lines need the owners to fill in config/contributions.yaml: list the component ids each of you owns "
     "(git history cannot say who built what, so this script never guesses). Until then, use the shared bullets above."
@@ -53,10 +55,20 @@ class Contributions:
 
 
 def parse_contributions(data: Any) -> dict[str, tuple[str, ...]]:
-    """{owner name: component ids} from the parsed YAML; ContributionsError on a bad shape or an unknown id."""
+    """{owner name: component ids} from the parsed YAML; ContributionsError on a bad shape or an unknown id.
+
+    An empty file (or one with only comments) parses to None and means no owners. Otherwise the top level must be a
+    mapping whose only key is "owners", so a misspelled key such as "owner:" is an error, not an empty file.
+    """
     if data is None:
         return {}
-    owners = data.get("owners") if isinstance(data, dict) else None
+    if not isinstance(data, dict):
+        found = type(data).__name__
+        raise ContributionsError(f"the top level must be a mapping with the key {OWNERS_KEY!r} (found a {found})")
+    unknown_keys = [key for key in data if key != OWNERS_KEY]
+    if unknown_keys:
+        raise ContributionsError(f"unknown top-level keys {unknown_keys}; the only key is {OWNERS_KEY!r}")
+    owners = data.get(OWNERS_KEY)
     if owners is None:
         return {}
     if not isinstance(owners, dict):
@@ -74,10 +86,13 @@ def parse_contributions(data: Any) -> dict[str, tuple[str, ...]]:
 
 
 def load_contributions(path: Path) -> Contributions:
-    """Read config/contributions.yaml; a missing file counts as empty."""
+    """Read config/contributions.yaml; a missing file counts as empty, and invalid YAML is a ContributionsError."""
     if not path.exists():
         return Contributions(owners={}, found=False)
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as error:
+        raise ContributionsError(f"not valid YAML: {error}") from error
     return Contributions(owners=parse_contributions(data), found=True)
 
 

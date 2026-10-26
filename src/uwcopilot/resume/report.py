@@ -29,8 +29,10 @@ LENDER_HEADING = (
 STUDIO_HEADING = "Fundproof Founder Studio: SYNTHETIC founder plans and cities; probabilities are SIMULATED"
 INTERVAL_NOTE = (
     "Brackets hold the 95% interval written in the results file (percentile bootstrap with 1,000 resamples and seed "
-    "42, unless marked Wilson). Every number comes from results/*.json. Re-run the producing scripts on your own "
-    "machine before putting a number on a resume (docs/build_prompts.md, Notes for Rahul)."
+    "42, unless marked exact or Wilson). The exact (Clopper-Pearson) or Wilson interval is shown when the bootstrap "
+    "interval has zero width or the file flags it as too narrow; a value with no other interval says so instead of "
+    "showing brackets. Every number comes from results/*.json. Re-run the producing scripts on your own machine "
+    "before putting a number on a resume (docs/build_prompts.md, Notes for Rahul)."
 )
 MIN_LENDER_BULLETS = 4
 

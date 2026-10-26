@@ -154,7 +154,12 @@ def lender_files() -> dict[str, Any]:
             },
         },
         "governance_metrics.json": {
-            "release_gate": {"results": {"counts": {"rows": 9, "PASS": 7, "FAIL": 0, "MISSING": 0, "NOT_MEASURED": 2}}},
+            "release_gate": {
+                "results": {
+                    "verdict": "PASS",
+                    "counts": {"rows": 9, "PASS": 7, "FAIL": 0, "MISSING": 0, "NOT_MEASURED": 2},
+                }
+            },
             "monitoring": {
                 "results": {
                     "scenarios": {
