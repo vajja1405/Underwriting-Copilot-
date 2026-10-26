@@ -15,12 +15,23 @@ the direction, the kind of limit and the tolerance:
 A value exactly on the limit passes (differences below EDGE_EPSILON count as equal, so float rounding such as
 0.7123 - 0.005 cannot flip an edge case).
 
+Preconditions: before a measured number is compared, facts about its results file must hold, so that the gate never
+compares the wrong measurement with the full reviewed baseline: a partial or subset run (an injection run that aborted
+after HTTP errors, `eval_agent.py --limit N`, a dev-split or subset document run), another evaluation set, or a model
+that is no longer the one the risk service serves. They are listed per results file (`gate.preconditions`, for every
+row reading that file) and per row (`preconditions`). Each names a JSON path and one expectation: a fixed value
+(`equals`), another path of the same file (`equals_path`) or the same path in the baseline copy (`equals_baseline`).
+When one does not hold, the number is not compared and the row is FAIL (MISSING when the only gap is a baseline value
+that has not been reviewed yet).
+
 Statuses (the words of docs/innovations.md S3, where they fit):
-    PASS          the current value is within the limit.
+    PASS          the current value is within the limit, and the preconditions hold.
     FAIL          the current value is beyond the limit; or it is invalid (NaN, null, not a number); or the baseline
-                  measured it and the current file no longer does (file or key absent, or "not measured").
+                  measured it and the current file no longer does (file or key absent, or "not measured"); or a
+                  precondition does not hold (the current file shows another run scope, set or model).
     MISSING       required evidence is absent in both (row `required: true`), or a measured current value has no
-                  reviewed baseline value to be compared with (a new measurement must be reviewed into the baseline).
+                  reviewed baseline value to be compared with (a new measurement must be reviewed into the baseline;
+                  this includes an `equals_baseline` precondition whose baseline value is absent).
     NOT_MEASURED  neither the current file nor the baseline measured it, and the row is not required. It is listed,
                   never counted as passing, and does not block.
 FAIL and MISSING block: the gate's verdict is FAIL and the script exits 1. STALE (S3: evidence measured on another
@@ -38,7 +49,7 @@ import json
 import math
 import shutil
 import subprocess
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -70,13 +81,47 @@ BLOCKING_STATUSES: tuple[Status, ...] = ("FAIL", "MISSING")
 
 
 class GateConfigError(ValueError):
-    """config/release_gate.yaml has no usable `gate:` section."""
+    """config/release_gate.yaml is not valid YAML or has no usable `gate:` section."""
 
 
 class StrictModel(BaseModel):
     """A settings object: frozen, and unknown keys are an error (a typo cannot silently disable a check)."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
+
+
+class Precondition(StrictModel):
+    """A fact about a results file that must hold before a measured number from it is compared.
+
+    Give exactly one expectation for the value at `path` in the current file:
+        equals            a fixed JSON value (`equals: null` expects null)
+        equals_path       the value at another path of the same current file (e.g. n_scored equals n_expected)
+        equals_baseline   true: the value at the same path in the reviewed baseline copy
+    """
+
+    path: str = Field(min_length=1)
+    equals: bool | int | float | str | None = None
+    equals_path: str | None = None
+    equals_baseline: bool = False
+    why: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _one_expectation(self) -> "Precondition":
+        """Exactly one of equals, equals_path and equals_baseline: true."""
+        # model_fields_set holds the keys the YAML actually wrote, so `equals: null` (expect null) differs from a
+        # precondition with no `equals` key at all.
+        given = ["equals" in self.model_fields_set, self.equals_path is not None, self.equals_baseline]
+        if given.count(True) != 1:
+            raise ValueError(f"precondition on {self.path}: give exactly one of equals, equals_path, equals_baseline")
+        return self
+
+    def describe(self) -> str:
+        """The precondition in words, e.g. 'status == "measured"'."""
+        if self.equals_path is not None:
+            return f"{self.path} == {self.equals_path}"
+        if self.equals_baseline:
+            return f"{self.path} == the baseline's value"
+        return f"{self.path} == {json.dumps(self.equals)}"
 
 
 class GateRow(StrictModel):
@@ -95,6 +140,7 @@ class GateRow(StrictModel):
     required: bool
     why_critical: str = Field(min_length=1)
     note: str = ""
+    preconditions: list[Precondition] = Field(default_factory=list, description="checked after the file's own")
 
     @model_validator(mode="after")
     def _consistent(self) -> "GateRow":
@@ -120,6 +166,9 @@ class GateRow(StrictModel):
 class GateSettings(StrictModel):
     """The `gate:` section of config/release_gate.yaml."""
 
+    preconditions: dict[str, list[Precondition]] = Field(
+        default_factory=dict, description="results file name -> preconditions for every row reading that file"
+    )
     rows: list[GateRow] = Field(min_length=1)
 
     @model_validator(mode="after")
@@ -131,14 +180,33 @@ class GateSettings(StrictModel):
             raise ValueError(f"duplicate gate row ids: {duplicates}")
         return self
 
+    @model_validator(mode="after")
+    def _preconditions_name_gated_files(self) -> "GateSettings":
+        """File preconditions must name a file a row reads: a misspelt file name would silently check nothing."""
+        unknown = sorted(set(self.preconditions) - set(self.files()))
+        if unknown:
+            raise ValueError(f"preconditions name files that no row reads: {unknown}")
+        return self
+
     def files(self) -> list[str]:
         """The results files the gate reads, sorted."""
         return sorted({row.file for row in self.rows})
 
+    def preconditions_for(self, row: GateRow) -> list[Precondition]:
+        """The preconditions of the row's results file, then the row's own."""
+        return [*self.preconditions.get(row.file, []), *row.preconditions]
+
 
 def load_gate_document(path: Path = DEFAULT_CONFIG_PATH) -> Mapping[str, Any]:
-    """The raw `gate:` section of the YAML file (GateConfigError when it is absent)."""
-    document = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+    """The raw `gate:` section of the YAML file (GateConfigError when the file is not YAML or the section is absent).
+
+    yaml.YAMLError is not a ValueError, so it is re-raised as GateConfigError: the script then exits 2 (invalid
+    configuration), not 1 (a regression).
+    """
+    try:
+        document = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError as error:
+        raise GateConfigError(f"{Path(path).name} is not valid YAML ({error})") from error
     section = document.get("gate") if isinstance(document, Mapping) else None
     if not isinstance(section, Mapping):
         raise GateConfigError(f"{Path(path).name} has no `gate:` section")
@@ -220,6 +288,25 @@ def classify(value: Any) -> Reading:
     return Reading("measured", value=float(value))
 
 
+def child(current: Any, segment: str) -> tuple[bool, Any]:
+    """(True, the child) for a dict key or a list index (a number segment); (False, None) when there is none."""
+    if isinstance(current, dict) and segment in current:
+        return True, current[segment]
+    if isinstance(current, list) and segment.isdigit() and int(segment) < len(current):
+        return True, current[int(segment)]
+    return False, None
+
+
+def find(document: Any, path: str) -> tuple[bool, Any]:
+    """(True, the raw JSON value at a dotted path) or (False, None) when a step is missing. Nothing is classified."""
+    current = document
+    for segment in path.split("."):
+        found, current = child(current, segment)
+        if not found:
+            return False, None
+    return True, current
+
+
 def lookup(document: Any, path: str) -> Reading:
     """Follow a dotted path (a number segment indexes a list) and classify what is there.
 
@@ -231,11 +318,8 @@ def lookup(document: Any, path: str) -> Reading:
     for segment in path.split("."):
         if is_not_measured_marker(current):
             return Reading("not_measured", detail=f"{'.'.join(walked)}: {marker_text(current)}")
-        if isinstance(current, dict) and segment in current:
-            current = current[segment]
-        elif isinstance(current, list) and segment.isdigit() and int(segment) < len(current):
-            current = current[int(segment)]
-        else:
+        found, current = child(current, segment)
+        if not found:
             where = ".".join(walked) or "the top level"
             return Reading("not_measured", detail=f"no {segment!r} under {where} (path {path})")
         walked.append(segment)
@@ -251,6 +335,53 @@ def read_value(loaded: LoadedFile, path: str | None) -> Reading:
     if loaded.document is None:
         return Reading("not_measured", detail=loaded.problem or "no document")
     return lookup(loaded.document, path)
+
+
+# --- Preconditions --------------------------------------------------------------------------------------------------
+
+
+def same_json(first: Any, second: Any) -> bool:
+    """True when both values are the same JSON text, so the types must match too: true never equals 1, 60 never 60.0."""
+    return json.dumps(first, sort_keys=True) == json.dumps(second, sort_keys=True)
+
+
+def check_precondition(check: Precondition, current: LoadedFile, baseline: LoadedFile) -> tuple[Status, str] | None:
+    """None when the precondition holds; otherwise (FAIL or MISSING, why not).
+
+    FAIL: the current file shows another value, or lacks the path (so it cannot show the expected one). MISSING: an
+    equals_baseline precondition whose baseline copy has no value at the path, so the run cannot be shown to match the
+    reviewed baseline until it is reviewed into it.
+    """
+    found, value = find(current.document, check.path)
+    if not found:
+        return "FAIL", f"{check.path} is absent from the current file"
+    if check.equals_path is not None:
+        found, expected = find(current.document, check.equals_path)
+        if not found:
+            return "FAIL", f"{check.equals_path} is absent from the current file"
+        source = check.equals_path
+    elif check.equals_baseline:
+        found, expected = find(baseline.document, check.path)
+        if not found:
+            return "MISSING", f"{check.path} has no reviewed baseline value to compare with"
+        source = "the baseline"
+    else:
+        expected, source = check.equals, "the configuration"
+    if same_json(value, expected):
+        return None
+    return "FAIL", f"{check.path} is {json.dumps(value)}, expected {json.dumps(expected)} ({source})"
+
+
+def unmet_preconditions(
+    checks: Sequence[Precondition], current: LoadedFile, baseline: LoadedFile
+) -> list[tuple[Status, str]]:
+    """(status, why) for every precondition that does not hold, in configuration order."""
+    unmet: list[tuple[Status, str]] = []
+    for check in checks:
+        problem = check_precondition(check, current, baseline)
+        if problem is not None:
+            unmet.append(problem)
+    return unmet
 
 
 # --- Judging one row ------------------------------------------------------------------------------------------------
@@ -310,7 +441,7 @@ def decide(row: GateRow, current: Reading, baseline: Reading) -> tuple[Status, s
 
 @dataclass(frozen=True)
 class RowResult:
-    """The outcome of one row, with what was read from both files."""
+    """The outcome of one row, with what was read from both files and the preconditions that applied to it."""
 
     row: GateRow
     status: Status
@@ -318,6 +449,8 @@ class RowResult:
     limit: float | None
     current: dict[str, Reading]
     baseline: dict[str, Reading]
+    preconditions: tuple[Precondition, ...] = ()
+    preconditions_unmet: tuple[str, ...] = ()
 
     @property
     def headroom(self) -> float | None:
@@ -345,6 +478,8 @@ class RowResult:
             "tolerance": self.row.tolerance,
             "target": self.row.target,
             "required": self.row.required,
+            "preconditions": [check.describe() for check in self.preconditions],
+            "preconditions_unmet": list(self.preconditions_unmet),
             "limit": self.limit,
             "headroom": self.headroom,
             "current": {name: reading.to_dict() for name, reading in self.current.items()},
@@ -354,8 +489,18 @@ class RowResult:
         }
 
 
-def evaluate_row(row: GateRow, current_file: LoadedFile, baseline_file: LoadedFile) -> RowResult:
-    """Read the row's value and CI bound from both files and judge the gated one."""
+def evaluate_row(
+    row: GateRow,
+    current_file: LoadedFile,
+    baseline_file: LoadedFile,
+    preconditions: Sequence[Precondition] = (),
+) -> RowResult:
+    """Read the row's value and CI bound from both files, check the preconditions and judge the gated number.
+
+    The preconditions are checked only when the current number is measured (otherwise there is nothing to compare).
+    When one does not hold, the number is not compared: the row is FAIL, or MISSING when every unmet precondition is
+    only a baseline value that has not been reviewed yet.
+    """
     current = {
         "value": read_value(current_file, row.value_path),
         "ci_bound": read_value(current_file, row.ci_bound_path),
@@ -365,7 +510,15 @@ def evaluate_row(row: GateRow, current_file: LoadedFile, baseline_file: LoadedFi
         "ci_bound": read_value(baseline_file, row.ci_bound_path),
     }
     status, reason, limit = decide(row, current[row.gate_on], baseline[row.gate_on])
-    return RowResult(row, status, reason, limit, current, baseline)
+    unmet: list[tuple[Status, str]] = []
+    if current[row.gate_on].state == "measured":
+        unmet = unmet_preconditions(preconditions, current_file, baseline_file)
+    if unmet:
+        status = "FAIL" if any(problem_status == "FAIL" for problem_status, _ in unmet) else "MISSING"
+        reason = "not compared, a precondition does not hold: " + "; ".join(problem for _, problem in unmet)
+        limit = None
+    problems = tuple(problem for _, problem in unmet)
+    return RowResult(row, status, reason, limit, current, baseline, tuple(preconditions), problems)
 
 
 # --- Provenance warnings --------------------------------------------------------------------------------------------
@@ -558,6 +711,10 @@ NOTES: tuple[str, ...] = (
     "tests/security/test_containment.py in the CI test job, which the release-gate job waits for; that is a test "
     "result, not an attack success rate. The per-layer attack success rates are gated only when "
     "results/injection_metrics.json exists; they hold for the frozen payload set only.",
+    "Preconditions (config/release_gate.yaml) are checked before a measured number is compared: a partial injection "
+    "run, an agent run on the first N applications, a dev-split or subset document run, another evaluation set than "
+    "the baseline's, or a chosen model other than the one a row's paths name makes the row FAIL instead of being "
+    "compared with the full reviewed baseline.",
     "git_dirty warnings do not fail the gate today: most committed results files were written from a working tree "
     "with uncommitted changes. They are listed so the files can be regenerated at a clean commit.",
     "STALE (evidence measured on another prompt, corpus or model than HEAD, docs/innovations.md S3) is not checked: "
@@ -622,7 +779,10 @@ def evaluate_gate(
     """Judge every row against the baseline and collect provenance warnings and baseline problems."""
     current_files = {name: load_results_file(results_dir, name) for name in settings.files()}
     baseline_files = {name: load_results_file(baseline_dir, name) for name in settings.files()}
-    results = [evaluate_row(row, current_files[row.file], baseline_files[row.file]) for row in settings.rows]
+    results = [
+        evaluate_row(row, current_files[row.file], baseline_files[row.file], settings.preconditions_for(row))
+        for row in settings.rows
+    ]
     manifest, manifest_problem = read_manifest(baseline_dir)
     return GateReport(
         results=results,

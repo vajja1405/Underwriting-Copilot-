@@ -10,7 +10,9 @@ What it does (src/uwcopilot/governance/release_gate.py has the rules):
 1. Reads the `gate:` section of config/release_gate.yaml: one row per critical number (file, JSON path of the value,
    JSON path of its CI bound, which of the two is compared, direction, kind, tolerance, whether it is required).
 2. Reads each number from the latest results/*.json and from the reviewed baseline results/baseline/*.json, and gives
-   each row PASS, FAIL, MISSING or NOT_MEASURED. It recomputes nothing and calls no model or network service.
+   each row PASS, FAIL, MISSING or NOT_MEASURED. It recomputes nothing and calls no model or network service. Before a
+   measured number is compared, the row's preconditions must hold (`gate.preconditions` per results file, and the
+   row's own): a partial or subset run, another evaluation set or another served model makes the row FAIL instead.
 3. Checks the baseline copies against results/baseline/baseline_manifest.json (a copy edited by hand blocks).
 4. Lists results files whose provenance says they were written from a dirty working tree, as warnings only.
 5. Exits 0 when the verdict is PASS, 1 when any row is FAIL or MISSING or the baseline is not trustworthy, and 2 when
