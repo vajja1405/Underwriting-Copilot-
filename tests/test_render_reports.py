@@ -18,6 +18,7 @@ import pytest
 
 import render_reports
 import train_insurance
+from uwcopilot.governance.packs import load_pack_sources
 from uwcopilot.risk import credit
 from uwcopilot.risk.data.lending_club import prepare_loans, synthetic_accepted_loans
 from uwcopilot.risk.results import to_jsonable
@@ -416,9 +417,7 @@ def _same_text(on_disk: str, rendered: str, label: str) -> None:
     if on_disk != rendered:
         diff = difflib.unified_diff(on_disk.splitlines(), rendered.splitlines(), "on disk", "fresh render", lineterm="")
         shown = "\n".join(list(diff)[:30])
-        pytest.fail(
-            f"{label} does not match a fresh render of results/risk_metrics.json (run `make reports`):\n{shown}"
-        )
+        pytest.fail(f"{label} does not match a fresh render of the results files (run `make reports`):\n{shown}")
 
 
 @pytest.mark.skipif(not COMMITTED_RESULTS.exists(), reason="no committed results file")
@@ -436,6 +435,46 @@ def test_committed_documents_equal_a_fresh_render(template: str) -> None:
     if "insurance_frequency" in data and "insurance_severity" in data:
         notes = (REPO / "docs" / "insurance_data_notes.md").read_text(encoding="utf-8")
         _same_text(notes, train_insurance.data_notes_text(data), "docs/insurance_data_notes.md")
+    # Phase 6 E: the governance packs read every results file they cite (governance_metrics.json too, when it exists).
+    packs = render_reports.governance_packs(load_pack_sources(REPO / "results"))
+    for name, rendered in packs.items():
+        on_disk = (REPO / "docs" / "governance" / name).read_text(encoding="utf-8")
+        _same_text(on_disk, rendered, f"docs/governance/{name}")
+
+
+def test_write_governance_packs_writes_both_files(tmp_path: Path) -> None:
+    results = tmp_path / "results"
+    results.mkdir()
+    (results / "risk_metrics.json").write_text(json.dumps(minimal_results()), encoding="utf-8")
+    written = render_reports.write_governance_packs(results, tmp_path / "governance")
+    assert {path.name for path in written} == {"bank_model_risk.md", "insurance_ai_program.md"}
+    bank = (tmp_path / "governance" / "bank_model_risk.md").read_text(encoding="utf-8")
+    assert "0.3999 [0.3899, 0.4100]" in bank  # LightGBM frequency deviance from the risk results
+    assert "has no section `monitoring`" in bank  # no governance_metrics.json in this results folder
+
+
+def test_governance_packs_only_leaves_the_other_documents_alone(tmp_path: Path) -> None:
+    readme = tmp_path / "README.md"
+    readme.write_text("untouched\n", encoding="utf-8")
+    exit_code = render_reports.main(
+        [
+            "--governance-packs-only",
+            "--packs-results-dir",
+            str(tmp_path / "no_results"),
+            "--governance-dir",
+            str(tmp_path / "governance"),
+            "--readme",
+            str(readme),
+            "--model-cards-dir",
+            str(tmp_path / "model_cards"),
+        ]
+    )
+    assert exit_code == 0
+    assert sorted(path.name for path in (tmp_path / "governance").iterdir()) == [
+        "bank_model_risk.md",
+        "insurance_ai_program.md",
+    ]
+    assert readme.read_text(encoding="utf-8") == "untouched\n" and not (tmp_path / "model_cards").exists()
 
 
 def test_stale_document_check_catches_an_edited_number() -> None:
