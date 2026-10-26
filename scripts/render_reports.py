@@ -10,6 +10,15 @@ Writes (and overwrites):
     docs/model_cards/validation_report.md      tests, backtests, sensitivity analyses and the findings found
     docs/walkthrough_phase1.md                 from the hand-written template docs/templates/walkthrough_phase1.md
     README.md                                  only the block between <!-- RESULTS:START --> and <!-- RESULTS:END -->
+    docs/governance/bank_model_risk.md         Phase 6 E: model risk pack aligned to the structure of SR 26-2
+    docs/governance/insurance_ai_program.md    Phase 6 E: AIS Program outline mapped to the NAIC AI Model Bulletin
+
+    uv run python scripts/render_reports.py --governance-packs-only   # or: make governance-packs (only the two packs)
+
+The two governance packs read several results files (risk_metrics.json, governance_metrics.json, agent_metrics.json,
+docintel_metrics.json and the injection results) from --packs-results-dir; src/uwcopilot/governance/packs*.py renders
+them, and a governance_metrics.json section that has not been generated yet prints "not measured yet". Everything
+else in this script is unchanged by them.
 
 The README block's Evidence-to-Action Engine rows (Phase 4) and evidence-request simulator rows (innovation S5) read
 results/evidence_metrics.json, and its document extraction and contradiction rows (Phase 2) read
@@ -37,6 +46,9 @@ from pathlib import Path
 from typing import Any
 
 from uwcopilot.common.paths import DOCS_DIR, REPO_ROOT, RESULTS_DIR
+from uwcopilot.governance.packs import load_pack_sources
+from uwcopilot.governance.packs_bank import render_bank_model_risk
+from uwcopilot.governance.packs_insurance import render_insurance_ai_program
 from uwcopilot.risk.bands import BAND_LABELS, BAND_QUANTILES
 from uwcopilot.risk.credit import LIMITATIONS as CREDIT_CODE_LIMITATIONS
 from uwcopilot.risk.credit import MIN_AUC_GAIN_FOR_LIGHTGBM, REASON_CODE_REFERENCES
@@ -58,6 +70,9 @@ WALKTHROUGH_TEMPLATE = DOCS_DIR / "templates" / "walkthrough_phase1.md"
 WALKTHROUGH_PATH = DOCS_DIR / "walkthrough_phase1.md"
 README_START = "<!-- RESULTS:START -->"
 README_END = "<!-- RESULTS:END -->"
+GOVERNANCE_DOCS_DIR = DOCS_DIR / "governance"
+BANK_PACK = "bank_model_risk.md"
+INSURANCE_PACK = "insurance_ai_program.md"
 SECTIONS = ("credit", "insurance_frequency", "insurance_severity", "fairness_demo")
 SHARED_RATING_VECTOR = "share_of_test_policies_whose_rating_features_appear_in_train"
 
@@ -2280,6 +2295,26 @@ def write_reports(
     return written
 
 
+def governance_packs(sources: Mapping[str, Any]) -> dict[str, str]:
+    """The two Phase 6 governance packs as text, keyed by file name (sources: governance/packs.py load_pack_sources)."""
+    return {
+        BANK_PACK: render_bank_model_risk(sources),
+        INSURANCE_PACK: render_insurance_ai_program(sources),
+    }
+
+
+def write_governance_packs(results_dir: Path = RESULTS_DIR, governance_dir: Path = GOVERNANCE_DOCS_DIR) -> list[Path]:
+    """Render both governance packs from the results files in results_dir and write them; returns the paths."""
+    documents = governance_packs(load_pack_sources(results_dir))
+    governance_dir.mkdir(parents=True, exist_ok=True)
+    written = []
+    for name, body in documents.items():
+        path = governance_dir / name
+        path.write_text(body, encoding="utf-8")
+        written.append(path)
+    return written
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Command-line options (defaults are the real files)."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -2288,19 +2323,29 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--readme", type=Path, default=README_PATH)
     parser.add_argument("--evidence-path", type=Path, default=EVIDENCE_RESULTS_PATH)
     parser.add_argument("--docintel-path", type=Path, default=DOCINTEL_RESULTS_PATH)
+    parser.add_argument(
+        "--packs-results-dir", type=Path, default=RESULTS_DIR, help="where the governance packs read results files"
+    )
+    parser.add_argument("--governance-dir", type=Path, default=GOVERNANCE_DOCS_DIR, help="where the packs are written")
+    parser.add_argument(
+        "--governance-packs-only", action="store_true", help="render only the two governance packs (Phase 6 E)"
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Entry point for `make reports`."""
+    """Entry point for `make reports` and `make governance-packs`."""
     args = parse_args(argv)
-    written = write_reports(
-        args.results_path,
-        args.model_cards_dir,
-        args.readme,
-        evidence_path=args.evidence_path,
-        docintel_path=args.docintel_path,
-    )
+    written = []
+    if not args.governance_packs_only:
+        written = write_reports(
+            args.results_path,
+            args.model_cards_dir,
+            args.readme,
+            evidence_path=args.evidence_path,
+            docintel_path=args.docintel_path,
+        )
+    written += write_governance_packs(args.packs_results_dir, args.governance_dir)
     for path in written:
         try:
             shown = path.resolve().relative_to(REPO_ROOT)
