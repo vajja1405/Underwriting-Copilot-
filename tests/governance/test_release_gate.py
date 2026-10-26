@@ -6,7 +6,6 @@ file, NaN, ...) and check the row's status and the verdict. Nothing here downloa
 committed results are read-only inputs.
 """
 
-import copy
 import json
 import shutil
 import subprocess
@@ -27,14 +26,18 @@ from uwcopilot.governance.release_gate import (
     GateReport,
     GateRow,
     GateSettings,
+    LoadedFile,
+    Precondition,
     Reading,
     RowResult,
+    check_precondition,
     classify,
     decide,
     evaluate_gate,
     file_matches_head,
     load_gate_settings,
     lookup,
+    same_json,
     update_baseline,
 )
 from uwcopilot.risk.results import not_measured
@@ -46,6 +49,7 @@ AUC_LOW = "credit.results.models.lightgbm.test.auc.ci_low"
 FREQUENCY_HIGH = "insurance_frequency.results.test_metrics.lgbm.mean_poisson_deviance.ci_high"
 ESCALATIONS = "deterministic_path.escalation.all_required_escalations.value"
 CITATION_LOW = "rules.citations.supported_all_values.ci_low"
+INJECTION_PAYLOADS = 60  # frozen payloads per layer in a full scripts/eval_injection.py run
 
 
 @pytest.fixture(scope="module")
@@ -98,6 +102,27 @@ def delete_path(path: Path, dotted: str) -> None:
     parent, key = parent_and_key(document, dotted)
     del parent[key]
     path.write_text(json.dumps(document), encoding="utf-8")
+
+
+def write_json(path: Path, document: Any) -> None:
+    """Write a whole JSON file."""
+    path.write_text(json.dumps(document), encoding="utf-8")
+
+
+def injection_layer(successes: int, scored: int = INJECTION_PAYLOADS) -> dict[str, Any]:
+    """layers.<L> of results/injection_metrics.json, with the keys the gate reads (scripts/eval_injection.py shape)."""
+    asr = {"successes": successes, "n": scored, "rate": successes / scored, "wilson_ci95": [0.003, 0.089]}
+    return {"n_expected": INJECTION_PAYLOADS, "n_scored": scored, "asr": {"all": asr}}
+
+
+def injection_document(l1: dict[str, Any], l2: dict[str, Any], status: str = "measured") -> dict[str, Any]:
+    """A results/injection_metrics.json; status is "measured" for a full run and "partial" for an aborted one."""
+    return {
+        "status": status,
+        "payloads": {"file_sha256": "f" * 64},
+        "layers": {"L0": "not measured (no model run for this layer)", "L1": l1, "L2": l2},
+        "run": {"aborted_after_http_errors": status == "partial"},
+    }
 
 
 def row_result(report: GateReport, row_id: str) -> RowResult:
@@ -275,9 +300,7 @@ def test_required_evidence_absent_in_both_is_missing(dirs: tuple[Path, Path], se
 
 def test_a_new_measurement_needs_a_reviewed_baseline_then_is_gated_per_layer(dirs: tuple[Path, Path], settings) -> None:
     results_dir, baseline_dir = dirs
-    layer = {"asr": {"all": {"successes": 1, "n": 60, "rate": 1 / 60, "wilson_ci95": [0.003, 0.089]}}}
-    document = {"layers": {"L0": {"asr": "not measured (baseline layer)"}, "L1": layer, "L2": copy.deepcopy(layer)}}
-    (results_dir / "injection_metrics.json").write_text(json.dumps(document), encoding="utf-8")
+    write_json(results_dir / "injection_metrics.json", injection_document(injection_layer(1), injection_layer(1)))
     report = evaluate_gate(settings, results_dir, baseline_dir)
     assert row_result(report, "injection_asr_l1").status == "MISSING"  # measured now, no reviewed baseline yet
     update_baseline(settings, results_dir, baseline_dir, repo_root=results_dir)
@@ -317,6 +340,126 @@ def test_both_not_measured_is_listed_and_does_not_block(dirs: tuple[Path, Path],
     assert "no LLM" in citation.reason  # the producer's own reason, never a filled-in value
     assert row_result(report, "injection_asr_l1").status == "NOT_MEASURED"
     assert report.counts()["NOT_MEASURED"] == 4 and report.verdict == "PASS"
+
+
+# --- Fault injection: run scope and the gated model (preconditions) -------------------------------------------------
+
+
+def test_a_partial_injection_run_is_not_compared_with_the_full_baseline(dirs: tuple[Path, Path], settings) -> None:
+    results_dir, baseline_dir = dirs
+    injection = results_dir / "injection_metrics.json"
+    write_json(injection, injection_document(injection_layer(3), injection_layer(5)))  # full run, L2 = 5/60
+    update_baseline(settings, results_dir, baseline_dir, repo_root=results_dir)
+    assert evaluate_gate(settings, results_dir, baseline_dir).verdict == "PASS"
+    # The run aborted after HTTP errors: 10 of 60 payloads scored, none succeeded. 0/10 is under the 5/60 baseline
+    # plus the tolerance, and used to PASS.
+    partial = injection_document(injection_layer(0, scored=10), injection_layer(0, scored=10), status="partial")
+    write_json(injection, partial)
+    report = evaluate_gate(settings, results_dir, baseline_dir)
+    l2 = row_result(report, "injection_asr_l2")
+    assert l2.status == "FAIL" and l2.limit is None and l2.headroom is None
+    assert 'status is "partial", expected "measured" (the configuration)' in l2.reason
+    assert "layers.L2.n_scored is 10, expected 60 (layers.L2.n_expected)" in l2.reason
+    assert l2.current["value"].value == 0.0  # still reported, never compared
+    assert row_result(report, "injection_asr_l1").status == "FAIL"
+    assert report.verdict == "FAIL"
+    # A status of "measured" does not hide unscored payloads: each row checks its own layer.
+    write_json(injection, injection_document(injection_layer(0, scored=10), injection_layer(5)))
+    report = evaluate_gate(settings, results_dir, baseline_dir)
+    assert row_result(report, "injection_asr_l1").status == "FAIL"
+    assert row_result(report, "injection_asr_l2").status == "PASS"
+    # Another payload file than the baseline's.
+    other_payloads = injection_document(injection_layer(3), injection_layer(5))
+    other_payloads["payloads"]["file_sha256"] = "0" * 64
+    write_json(injection, other_payloads)
+    l1 = row_result(evaluate_gate(settings, results_dir, baseline_dir), "injection_asr_l1")
+    assert l1.status == "FAIL" and "payloads.file_sha256" in l1.reason and "(the baseline)" in l1.reason
+
+
+def test_an_agent_run_on_the_first_n_applications_is_not_compared(dirs: tuple[Path, Path], settings) -> None:
+    results_dir, baseline_dir = dirs
+    agent_file = results_dir / "agent_metrics.json"
+    set_path(agent_file, "applications.limited_to_first", 12)  # what scripts/eval_agent.py --limit 12 writes
+    report = evaluate_gate(settings, results_dir, baseline_dir)
+    for row_id in ("agent_required_escalations", "agent_reached_human_checkpoint", "agent_decisions_without_human"):
+        result = row_result(report, row_id)
+        assert result.status == "FAIL", (row_id, result.reason)
+        assert "applications.limited_to_first is 12, expected null" in result.reason
+        assert result.preconditions_unmet == ("applications.limited_to_first is 12, expected null (the configuration)",)
+    # Preconditions guard measured numbers only: the LLM rows have none, so they stay NOT_MEASURED.
+    assert row_result(report, "llm_citation_accuracy").status == "NOT_MEASURED"
+    assert report.verdict == "FAIL"
+    set_path(agent_file, "applications.limited_to_first", None)
+    set_path(agent_file, "applications.set_sha256", "0" * 64)  # another application set
+    result = row_result(evaluate_gate(settings, results_dir, baseline_dir), "agent_required_escalations")
+    assert result.status == "FAIL" and "applications.set_sha256" in result.reason and "(the baseline)" in result.reason
+
+
+@pytest.mark.parametrize(
+    ("path", "value", "words"),
+    [
+        ("evaluation_set.split", "dev", 'evaluation_set.split is "dev", expected "test"'),
+        ("evaluation_set.full_split", False, "evaluation_set.full_split is false, expected true"),
+        ("evaluation_set.test_truth_sha256", "0" * 64, "(the baseline)"),
+    ],
+)
+def test_a_dev_split_or_subset_document_run_is_not_compared(
+    dirs: tuple[Path, Path], settings, path: str, value: Any, words: str
+) -> None:
+    results_dir, baseline_dir = dirs
+    set_path(results_dir / "docintel_metrics.json", path, value)
+    result = row_result(evaluate_gate(settings, results_dir, baseline_dir), "docintel_citation_support_ci_low")
+    assert result.status == "FAIL" and words in result.reason
+
+
+def test_a_set_check_without_a_reviewed_baseline_value_is_missing(dirs: tuple[Path, Path], settings) -> None:
+    results_dir, baseline_dir = dirs
+    agent_file = results_dir / "agent_metrics.json"
+    kept = agent_file.read_bytes()
+    agent_file.unlink()
+    update_baseline(settings, results_dir, baseline_dir, repo_root=results_dir)  # a baseline without the agent file
+    agent_file.write_bytes(kept)
+    report = evaluate_gate(settings, results_dir, baseline_dir)
+    escalation = row_result(report, "agent_required_escalations")  # absolute: it compares with the target alone
+    assert escalation.status == "MISSING"
+    assert "applications.set_sha256 has no reviewed baseline value" in escalation.reason
+    assert report.baseline_problems == [] and report.verdict == "FAIL"
+
+
+@pytest.mark.parametrize(
+    "fields",
+    [
+        {"path": "status", "why": "no expectation"},
+        {"path": "status", "equals": "measured", "equals_baseline": True, "why": "two expectations"},
+        {"path": "a", "equals_path": "b", "equals": None, "why": "two expectations, one of them null"},
+        {"path": "status", "equals": "measured"},  # no why
+        {"path": "status", "equals": "measured", "why": "typo", "equal_baseline": True},  # unknown key
+    ],
+)
+def test_invalid_preconditions_are_refused(fields: dict[str, Any]) -> None:
+    with pytest.raises(ValidationError):
+        Precondition(**fields)
+
+
+def test_preconditions_compare_json_values_and_null_is_an_expectation() -> None:
+    current = LoadedFile("x.json", document={"a": None, "flag": True, "count": 60, "expected": 60})
+    no_baseline = LoadedFile("x.json", problem="x.json is absent")
+    expect_null = Precondition(path="a", equals=None, why="w")
+    assert expect_null.describe() == "a == null"
+    assert check_precondition(expect_null, current, no_baseline) is None
+    absent = Precondition(path="missing", equals=None, why="w")
+    assert check_precondition(absent, current, no_baseline) == ("FAIL", "missing is absent from the current file")
+    assert check_precondition(Precondition(path="flag", equals=1, why="w"), current, no_baseline)[0] == "FAIL"
+    assert check_precondition(Precondition(path="count", equals=60.0, why="w"), current, no_baseline)[0] == "FAIL"
+    assert check_precondition(Precondition(path="count", equals_path="expected", why="w"), current, no_baseline) is None
+    assert same_json(True, True) and not same_json(True, 1) and not same_json("60", 60)
+
+
+def test_file_preconditions_must_name_a_file_a_row_reads() -> None:
+    check = Precondition(path="status", equals="measured", why="w")
+    assert GateSettings(rows=[make_row()], preconditions={"metrics.json": [check]}).preconditions_for(make_row())
+    with pytest.raises(ValidationError, match="no row reads"):
+        GateSettings(rows=[make_row()], preconditions={"metric.json": [check]})
 
 
 # --- The baseline ---------------------------------------------------------------------------------------------------
@@ -448,6 +591,12 @@ def test_write_results_writes_the_release_gate_section(dirs: tuple[Path, Path], 
     assert payload["verdict"] == "PASS" and payload["exit_code"] == 0
     assert payload["counts"]["rows"] == len(payload["rows"]) == 15
     assert payload["counts"]["NOT_MEASURED"] == 4 and payload["counts"]["FAIL"] == 0
+    escalation = next(row for row in payload["rows"] if row["id"] == "agent_required_escalations")
+    assert escalation["preconditions"] == [
+        "applications.limited_to_first == null",
+        "applications.set_sha256 == the baseline's value",
+    ]
+    assert escalation["preconditions_unmet"] == []
     assert "git_commit" in section["metadata"]
     text = output.read_text(encoding="utf-8").lower()
     assert "resistance" not in text  # the gate never turns a finite payload set into a resistance claim

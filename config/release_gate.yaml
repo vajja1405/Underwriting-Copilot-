@@ -88,9 +88,20 @@ migration:
 #   required       true: the number must be measured. If neither the current file nor the baseline has it, the row
 #                  is MISSING (blocks); false: such a row is NOT_MEASURED (listed, not failing)
 #   why_critical   why a regression here must block a release
-# Statuses: PASS; FAIL (beyond the limit; current value NaN, null or not a number; or measured in the baseline but
-# absent or "not measured" now); MISSING (required evidence absent, or a measured current value with no reviewed
-# baseline value); NOT_MEASURED. FAIL and MISSING make the gate exit 1.
+#   preconditions  (optional) facts the row's results file must show before the number is compared (see below)
+#
+# Preconditions: a measured number is compared only when its results file shows the run the baseline describes.
+# `gate.preconditions` lists them per results file (they apply to every row reading that file); a row's own
+# `preconditions` are checked after them. Each has a dotted `path`, a `why`, and exactly one expectation:
+#   equals: <value>        the current value equals this JSON value (`equals: null` expects null)
+#   equals_path: <path>    the current value equals the value at another path of the same current file
+#   equals_baseline: true  the current value equals the value at the same path in the reviewed baseline copy
+# Values are compared as JSON, so the type must match too (true is not 1). A precondition that does not hold makes the
+# row FAIL without comparing the number (MISSING when the only gap is an absent baseline value: review the run into
+# the baseline first). They are checked only when the current number is measured.
+# Statuses: PASS; FAIL (beyond the limit; current value NaN, null or not a number; measured in the baseline but
+# absent or "not measured" now; or a precondition does not hold); MISSING (required evidence absent, or a measured
+# current value with no reviewed baseline value); NOT_MEASURED. FAIL and MISSING make the gate exit 1.
 #
 # The tolerances are design choices, written before the gate's first run and not fitted to any result. Apart from the
 # injection rows (a local model at temperature 0, not guaranteed to be bit-for-bit reproducible), the evaluations behind
@@ -98,6 +109,41 @@ migration:
 # baseline: a tolerance only leaves room for a small, deliberate trade-off. Anything larger needs a reviewed baseline
 # update (`make release-gate-baseline`, then commit results/baseline/).
 gate:
+  # Run scope: the evaluation scripts write a partial or subset run to the same default results file as a full run,
+  # so without these checks such a run would be compared with the full reviewed baseline as if it were the same
+  # measurement.
+  preconditions:
+    agent_metrics.json:
+      - path: applications.limited_to_first
+        equals: null
+        why: >-
+          scripts/eval_agent.py --limit N evaluates only the first N SYNTHETIC applications and writes them to the
+          same default file; 100% escalation on a slice says nothing about the applications left out.
+      - path: applications.set_sha256
+        equals_baseline: true
+        why: The same SYNTHETIC application set (eval/applications manifest hash) as the reviewed baseline.
+    docintel_metrics.json:
+      - path: evaluation_set.split
+        equals: test
+        why: >-
+          scripts/eval_docintel.py --split dev writes the dev split to the same default file; the baseline is the
+          held-out test split.
+      - path: evaluation_set.full_split
+        equals: true
+        why: --limit N or a packet list evaluates a subset of the split.
+      - path: evaluation_set.test_truth_sha256
+        equals_baseline: true
+        why: The same SYNTHETIC test packets (ground-truth hash) as the reviewed baseline.
+    injection_metrics.json:
+      - path: status
+        equals: measured
+        why: >-
+          scripts/eval_injection.py writes status "partial" when the run aborted after HTTP errors or a call failed.
+          Its rates leave out the calls that were not scored, so they can be biased low.
+      - path: payloads.file_sha256
+        equals_baseline: true
+        why: The same frozen payload file as the reviewed baseline; the rates hold for that payload set only.
+
   rows:
     - id: credit_auc_ci_low
       title: Credit PD model (LightGBM, Lending Club) test AUC, lower bound of the 95% bootstrap CI
@@ -274,6 +320,10 @@ gate:
         model. Until then the row is NOT_MEASURED. Action-level containment is a test (tests/security/
         test_containment.py), not this rate. L0 (naive concatenation) is a measurement baseline, not a shipped layer,
         so it is not gated.
+      preconditions:
+        - path: layers.L1.n_scored
+          equals_path: layers.L1.n_expected
+          why: Every frozen payload was scored for this layer; the rate counts scored answers only.
 
     - id: injection_asr_l2
       title: Injection attack success rate, layer L2 (containment prompt), all frozen payloads
@@ -287,6 +337,10 @@ gate:
       required: false
       why_critical: Same as injection_asr_l1, for the containment prompt layer.
       note: NOT_MEASURED until results/injection_metrics.json exists (see injection_asr_l1).
+      preconditions:
+        - path: layers.L2.n_scored
+          equals_path: layers.L2.n_expected
+          why: Every frozen payload was scored for this layer; the rate counts scored answers only.
 
     - id: studio_package_untraced_numbers
       title: Founder package text, numbers that do not trace to the ledger (count, golden scenarios)
