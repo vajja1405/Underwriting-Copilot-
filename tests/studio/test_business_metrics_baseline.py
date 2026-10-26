@@ -4,6 +4,8 @@ B0 prints the founder's typed figures, the untyped one-forecast inputs and years
 that every document about it agrees with carries a source.
 """
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 from package_helpers import scenario
@@ -19,8 +21,11 @@ from uwcopilot.studio.business_metrics.baseline import (
     typed_fields,
     used_by_one_forecast,
 )
+from uwcopilot.studio.feasibility.distributions import with_mode
 from uwcopilot.studio.feasibility.model import single_point_run
+from uwcopilot.studio.feasibility.setup import SimulationSetup
 from uwcopilot.studio.narrative.models import FounderDocumentValue
+from uwcopilot.studio.path_to_approval.models import PlanCase
 
 METRO, TYPE = "synthetic_metro", "car_wash"
 
@@ -65,14 +70,54 @@ def test_a_document_about_another_field_does_not_back_a_figure() -> None:
     [
         ("price", True),
         ("cost_ratio_cogs", True),
+        ("capex_overrun_share", True),
         ("monthly_noise_sd", False),
-        ("rate_shock_annual_probability", False),
+        ("competitor_entry_annual_probability", False),
         ("competitor_entry_demand_loss", False),
+        ("rate_shock_annual_probability", False),
+        ("rate_shock_size_pct_points", False),
+        ("one_off_shock_annual_probability", False),
+        ("one_off_shock_revenue_loss_share", False),
         ("one_off_shock_repair_cost_share_of_capex", False),
     ],
 )
 def test_a_one_forecast_plan_uses_no_shock_or_noise_input(name: str, used: bool) -> None:
     assert used_by_one_forecast(name) is used
+
+
+def variable_rate_case() -> PlanCase:
+    """The golden plan with a variable-rate loan, so the setup has the rate-shock inputs."""
+    case = scenario(METRO, TYPE).case
+    return case.model_copy(update={"loan": case.loan.model_copy(update={"rate_type": "variable"})})
+
+
+def test_a_variable_rate_plan_prints_no_rate_shock_input() -> None:
+    case = variable_rate_case()
+    setup = baseline_setup(case, 36)
+    assert {"rate_shock_annual_probability", "rate_shock_size_pct_points"} <= set(setup.distributions)
+    names = {figure.name for figure in input_figures(case, setup)}
+    assert not any(name.startswith("rate_shock_") for name in names)
+
+
+def one_forecast_with_mode(setup: SimulationSetup, name: str, mode: float) -> np.ndarray:
+    """Revenue, NOI, debt service and cash of the one-forecast run after moving one input's most likely value."""
+    moved = with_mode(setup.distributions[name], mode, "test: mode moved")
+    paths = single_point_run(replace(setup, distributions={**setup.distributions, name: moved}))
+    return np.concatenate([paths.revenue, paths.noi, paths.debt_service, paths.cash])
+
+
+def test_an_input_left_out_of_b0_does_not_act_in_the_one_forecast_run() -> None:
+    setup = baseline_setup(variable_rate_case(), 36)
+    ramp = setup.distributions["ramp_starting_share"]
+    base = one_forecast_with_mode(setup, "ramp_starting_share", ramp.mode)
+    # The check can see a change: moving an input the one forecast uses moves the run.
+    assert not np.allclose(one_forecast_with_mode(setup, "ramp_starting_share", ramp.high), base)
+    left_out = [name for name in setup.distributions if not used_by_one_forecast(name)]
+    assert "rate_shock_size_pct_points" in left_out and setup.distributions["rate_shock_size_pct_points"].varies
+    for name in left_out:
+        item = setup.distributions[name]
+        for mode in (item.low, item.high):
+            assert np.allclose(one_forecast_with_mode(setup, name, mode), base), name
 
 
 def test_inputs_are_the_untyped_one_forecast_inputs_at_their_mode() -> None:
