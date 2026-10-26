@@ -153,7 +153,9 @@ def score_risk_calls(tool_results: Sequence[Mapping[str, Any]]) -> dict[str, Map
     return calls
 
 
-def model_entry(product: str, result: Mapping[str, Any], risk_results: dict[str, Any] | None, risk_file: str) -> dict:
+def model_entry(
+    product: str, result: Mapping[str, Any], risk_results: dict[str, Any] | None, risk_file: str
+) -> dict[str, Any]:
     """The lineage of the model behind one score_risk call (module docstring)."""
     output = result.get("output") if result.get("status") == "ok" else None
     entry: dict[str, Any] = {
