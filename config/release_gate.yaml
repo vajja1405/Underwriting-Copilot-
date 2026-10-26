@@ -159,6 +159,16 @@ gate:
         Discrimination of the probability-of-default model that ranks credit applicants. The lower CI bound is gated,
         not the point estimate, so a release must keep the conservative end of the interval. The tolerance equals the
         minimum AUC gain the model-selection rule treats as material (credit.results.model_selection.min_auc_gain).
+      note: >-
+        The paths name LightGBM, the model the selection rule chose. The precondition pins that choice to a fixed value
+        rather than to the baseline's, so a flip still fails after a reviewed baseline update: the row must then be
+        pointed at the newly chosen model's paths and this value changed with it.
+      preconditions:
+        - path: credit.results.model_selection.chosen
+          equals: lightgbm
+          why: >-
+            The risk service serves the chosen model (models.chosen). If the selection rule picks the logistic
+            scorecard, these LightGBM numbers no longer describe the model that ships.
 
     - id: insurance_frequency_deviance_ci_high
       title: Claim-frequency model (preferred LightGBM, freMTPL2) test mean Poisson deviance, upper bound of the 95% CI
@@ -176,8 +186,15 @@ gate:
         split (insurance_frequency.results.test_metrics.lgbm_minus_glm), so a regression that erases most of the
         reason for preferring LightGBM blocks a release.
       note: >-
-        The path names the model preferred when the baseline was made (preferred_model.name = lgbm). freMTPL2 has no
-        date field, so this is a random-split test, not an out-of-time test.
+        The paths name the preferred model, LightGBM (preferred_model.name = lgbm); the precondition fails the row when
+        another model is preferred (see credit_auc_ci_low for why the value is fixed). freMTPL2 has no date field, so
+        this is a random-split test, not an out-of-time test.
+      preconditions:
+        - path: insurance_frequency.results.preferred_model.name
+          equals: lgbm
+          why: >-
+            The risk service serves the preferred model (models/insurance/metadata.json preferred_model). If the GLM
+            becomes preferred, these LightGBM numbers no longer describe the model that ships.
 
     - id: insurance_severity_deviance_ci_high
       title: Claim-severity model (preferred Gamma GLM, freMTPL2) test mean Gamma deviance, upper bound of the 95% CI
@@ -193,8 +210,14 @@ gate:
         Fit of the claim-severity model, the other factor of the expected-loss price. The tolerance is wider than the
         frequency row's because mean Gamma deviance is on a different, larger scale than mean Poisson deviance.
       note: >-
-        The path names the model preferred when the baseline was made (preferred_model.name = glm). Random-split test
-        (freMTPL2 has no date field).
+        The paths name the preferred model, the Gamma GLM (preferred_model.name = glm); the precondition fails the row
+        when another model is preferred. Random-split test (freMTPL2 has no date field).
+      preconditions:
+        - path: insurance_severity.results.preferred_model.name
+          equals: glm
+          why: >-
+            The risk service serves the preferred model (models/insurance/metadata.json preferred_model). If LightGBM
+            becomes preferred, these GLM numbers no longer describe the model that ships.
 
     - id: agent_required_escalations
       title: Agent escalation correctness (share of required escalations that were escalated)

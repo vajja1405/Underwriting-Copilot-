@@ -427,6 +427,30 @@ def test_a_set_check_without_a_reviewed_baseline_value_is_missing(dirs: tuple[Pa
 
 
 @pytest.mark.parametrize(
+    ("row_id", "path", "other_model"),
+    [
+        ("credit_auc_ci_low", "credit.results.model_selection.chosen", "logistic_scorecard"),
+        ("insurance_frequency_deviance_ci_high", "insurance_frequency.results.preferred_model.name", "glm"),
+        ("insurance_severity_deviance_ci_high", "insurance_severity.results.preferred_model.name", "lgbm"),
+    ],
+)
+def test_a_flip_of_the_served_model_fails_the_row_that_names_the_old_one(
+    dirs: tuple[Path, Path], settings, row_id: str, path: str, other_model: str
+) -> None:
+    results_dir, baseline_dir = dirs
+    risk_file = results_dir / "risk_metrics.json"
+    set_path(risk_file, path, other_model)  # the gated numbers are unchanged and would pass
+    report = evaluate_gate(settings, results_dir, baseline_dir)
+    result = row_result(report, row_id)
+    assert result.status == "FAIL" and f'{path} is "{other_model}"' in result.reason
+    others = [item for item in report.results if item.row.file == "risk_metrics.json" and item.row.id != row_id]
+    assert all(item.status == "PASS" for item in others)
+    # A reviewed baseline made after the flip does not help: the row's paths still name the old model.
+    update_baseline(settings, results_dir, baseline_dir, repo_root=results_dir)
+    assert row_result(evaluate_gate(settings, results_dir, baseline_dir), row_id).status == "FAIL"
+
+
+@pytest.mark.parametrize(
     "fields",
     [
         {"path": "status", "why": "no expectation"},
