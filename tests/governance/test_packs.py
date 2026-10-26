@@ -542,6 +542,21 @@ def test_llm_dependent_measures_say_not_measured() -> None:
     assert "[1.0000, 1.0000]" not in bank
 
 
+def test_bank_pack_states_the_llm_use_recorded_not_that_no_llm_was_available() -> None:
+    """P6-PACKS-9: local Ollama runs exist in the repo, so 'No LLM was available' was wrong; the pack says which LLM
+    the results files record, and an absent extraction file is not read as 'no LLM'."""
+    bank = render_bank_model_risk(full_sources())
+    assert "No LLM was available" not in bank
+    assert (
+        "LLM use recorded for the results below: agent memo writer: fake:fake-llm (SYNTHETIC render test); "
+        "extraction LLM provider: none (extractors run: rules)."
+    ) in bank
+    assert "agent memo writer: not measured; extraction LLM provider: not measured" in render_bank_model_risk({})
+    sources = full_sources()
+    sources[DOCINTEL]["run"] = {"extractors": ["rules", "hybrid"], "provider": "ollama"}
+    assert "extraction LLM provider: ollama" in render_bank_model_risk(sources)
+
+
 def test_measured_injection_layers_and_certificates_are_shown() -> None:
     sources = full_sources()
     sources[INJECTION] = {

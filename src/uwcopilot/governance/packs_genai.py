@@ -71,6 +71,20 @@ def _migration_certificates(sources: Mapping[str, Any]) -> str:
     return ", ".join(f"`results/{name}`" for name in names)
 
 
+def llm_use(sources: Mapping[str, Any]) -> str:
+    """Which LLM the results shown used, as the results files record it: the agent's memo writer and the extraction
+    provider. 'not measured' when a file is absent, so an absent extraction run never reads as 'no LLM'."""
+    memo_writer = text(value_in(sources, AGENT, "configuration.llm"))
+    run = value_in(sources, DOCINTEL, "run")
+    if not isinstance(run, Mapping):
+        provider = NOT_MEASURED
+    elif run.get("provider"):
+        provider = text(run.get("provider"))
+    else:
+        provider = f"none (extractors run: {text(_joined(run.get('extractors')))})"
+    return f"agent memo writer: {memo_writer}; extraction LLM provider: {provider}"
+
+
 def agent_control_rows(sources: Mapping[str, Any]) -> list[list[str]]:
     """Every control on the agent: human oversight first, then tools, injection, policy and model changes."""
     return oversight_rows(sources) + genai_control_rows(sources)

@@ -37,7 +37,7 @@ from uwcopilot.governance.packs import (
     table,
     text,
 )
-from uwcopilot.governance.packs_genai import agent_control_rows, llm_quality_rows
+from uwcopilot.governance.packs_genai import agent_control_rows, llm_quality_rows, llm_use
 from uwcopilot.governance.packs_governance import (
     champion_challenger_block,
     feedback_block,
@@ -387,8 +387,8 @@ def genai_section(sources: Mapping[str, Any]) -> list[str]:
         "third sentence, the project governs them with its own controls: a human decides every file, the agent may "
         "only call allow-listed tools, document text is data and never instructions, and a change of LLM or prompt "
         "is to be certified by `scripts/llm_migration_gate.py` and signed by a model_validator before release (no "
-        "such change has been evaluated here). No LLM was available for the "
-        "results below: every LLM-dependent measure says not measured.",
+        "such change has been evaluated here). LLM use recorded for the results below: "
+        f"{llm_use(sources)}. Every LLM-dependent measure that was not run says not measured.",
         "",
         "### Controls on the agent",
         "",
