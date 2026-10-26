@@ -217,10 +217,11 @@ def numbers_in(text: str) -> set[str]:
 
 
 def json_leaves(value: Any) -> tuple[list[float], list[str]]:
-    """All numeric and string leaves of a JSON value."""
+    """All numeric and string leaves of a JSON value, plus the numbers held by keys ({"5": 13} -> 5 and 13)."""
     numbers: list[float] = []
     strings: list[str] = []
     if isinstance(value, dict):
+        numbers += [float(key) for key in value if isinstance(key, str) and key.isdigit()]
         for item in value.values():
             more_numbers, more_strings = json_leaves(item)
             numbers += more_numbers

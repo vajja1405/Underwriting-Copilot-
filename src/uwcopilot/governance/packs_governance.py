@@ -40,6 +40,57 @@ def _bounds(point: Any, pair: Any, digits: int = 4) -> str:
     return not_measured_text(point)
 
 
+def _delay_not_available(summary: Mapping[str, Any]) -> bool:
+    """True when the run recorded no delay because no stream was detected (monitoring_stream.delay_summary)."""
+    delays = summary.get("detection_delay_windows")
+    return isinstance(delays, Mapping) and delays.get("status") == "not available"
+
+
+def _mean_delay(summary: Mapping[str, Any]) -> str:
+    """Mean detection delay over the detected streams only, with how many streams were detected.
+
+    The mean leaves out every stream that was never detected, so the count goes with it: '2.47 [1.94, 3.00] (49 of
+    300 streams detected)'. A zero-width bootstrap interval (every detected stream had the same delay) is not shown
+    as an interval. A delay recorded as "not available" is not applicable: the run was done and no stream was
+    detected, so it is not "not measured".
+    """
+    delays = summary.get("detection_delay_windows")
+    if _delay_not_available(summary):
+        return f"not applicable ({text(delays.get('reason'))})"
+    mean = lookup(delays, "mean")
+    if not isinstance(mean, Mapping) or not all(is_number(mean.get(key)) for key in ("estimate", "ci_low", "ci_high")):
+        return not_measured_text(mean if mean is not None else delays)
+    n_detected = integer(lookup(delays, "n_detected_streams"))
+    detected = f"{n_detected} of {integer(summary.get('n_streams'))} streams detected"
+    if mean["ci_low"] == mean["ci_high"]:
+        return f"{mean['estimate']:.2f} ({detected}; zero-width bootstrap interval)"
+    return f"{interval(mean, 2)} ({detected})"
+
+
+def _delay_counts(summary: Mapping[str, Any]) -> str:
+    """Detected streams per delay, 'delay: streams' ('0: 11, ..., 5: 13'), so the streams caught only in the last
+    drifted windows are visible next to the mean."""
+    if _delay_not_available(summary):
+        return "not applicable"
+    counts = lookup(summary, "detection_delay_windows.streams_by_delay")
+    if not isinstance(counts, Mapping) or not counts:
+        return NOT_MEASURED
+    return ", ".join(f"{text(delay)}: {integer(streams)}" for delay, streams in counts.items())
+
+
+def _validation_intro(design: Mapping[str, Any]) -> str:
+    """How the validation streams are built and what the delay columns cover (numbers from stream_design)."""
+    return (
+        f"Validation of the monitor on SIMULATED streams ({integer(design.get('n_streams_per_scenario'))} streams per "
+        f"scenario, {integer(design.get('n_windows'))} windows each, numbered from 0; drift, if any, from window "
+        f"{integer(design.get('drift_start_window'))} to the last window). Rate: [95% bootstrap CI over streams] "
+        "(streams). Delay: windows from the start of the drift to the first alert, over the detected streams only. A "
+        "delay cannot exceed the number of drifted windows minus one, and a stream with no alert by the last window "
+        "is left out of the mean, so the mean delay is not a time to detection for every stream: read it with the "
+        "detection rate and the delay counts."
+    )
+
+
 def _status_before(status: Mapping[str, Any]) -> str:
     """The registry status before the run; a recorded None means the run registered the model."""
     if "status_before_run" in status and status["status_before_run"] is None:
@@ -65,7 +116,7 @@ def monitoring_block(sources: Mapping[str, Any]) -> list[str]:
         f"({text(calibration.get('interval_method'))}).",
         f"- No out-of-time stream: {text(lookup(result, 'stream_design.no_time_field'))}",
         "",
-        "Validation of the monitor on SIMULATED streams (rate [95% bootstrap CI over streams] (streams)):",
+        _validation_intro(result.get("stream_design") or {}),
         "",
     ]
     rows = []
@@ -73,20 +124,25 @@ def monitoring_block(sources: Mapping[str, Any]) -> list[str]:
     for name, summary in validation.items() if isinstance(validation, Mapping) else []:
         drifted = summary.get("drifted") is True
         rate = summary.get("detection_rate") if drifted else summary.get("false_alert_rate")
-        delay = lookup(summary, "detection_delay_windows.mean")
         rows.append(
             [
                 f"`{name}`",
                 "yes" if drifted else "no",
                 "detection rate" if drifted else "false alert rate",
                 share(rate),
-                interval(delay, 2) if drifted else "not applicable",
+                _mean_delay(summary) if drifted else "not applicable",
+                _delay_counts(summary) if drifted else "not applicable",
             ]
         )
-    lines += table(
-        ["Scenario", "Drift injected", "Measure", "Rate [95% CI] (streams)", "Mean delay, windows [95% CI]"],
-        rows or [[NOT_MEASURED] * 5],
-    )
+    header = [
+        "Scenario",
+        "Drift injected",
+        "Measure",
+        "Rate [95% CI] (streams)",
+        "Mean delay among detected streams, windows [95% CI] (detected of all streams)",
+        "Detected streams by delay (windows: streams)",
+    ]
+    lines += table(header, rows or [[NOT_MEASURED] * len(header)])
     status = result.get("model_status") or {}
     lines += [
         "",

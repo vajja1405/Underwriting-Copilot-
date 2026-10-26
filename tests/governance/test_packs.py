@@ -78,13 +78,42 @@ def governance_results() -> dict[str, Any]:
                 "interval_method": "exact Poisson interval of the render test",
             },
         },
-        "stream_design": {"no_time_field": "SYNTHETIC: the render-test data has no date field."},
+        "stream_design": {
+            "no_time_field": "SYNTHETIC: the render-test data has no date field.",
+            "n_windows": 12,
+            "drift_start_window": 6,
+            "n_streams_per_scenario": 20,
+        },
         "validation": {
-            "no_drift": {"drifted": False, "false_alert_rate": rate(0.05, 0.0, 0.15, 1, 20)},
+            "no_drift": {"drifted": False, "n_streams": 20, "false_alert_rate": rate(0.05, 0.0, 0.15, 1, 20)},
             "claim_rate_up": {
                 "drifted": True,
+                "n_streams": 20,
                 "detection_rate": rate(0.95, 0.85, 1.0, 19, 20),
-                "detection_delay_windows": {"mean": ci(1.31579, 0.89474, 1.73684)},
+                "detection_delay_windows": {
+                    "mean": ci(1.31579, 0.89474, 1.73684),
+                    "n_detected_streams": 19,
+                    "streams_by_delay": {"0": 9, "1": 4, "2": 3, "5": 3},
+                },
+            },
+            "covariate_shift": {
+                "drifted": True,
+                "n_streams": 20,
+                "detection_rate": rate(1.0, 1.0, 1.0, 20, 20),
+                "detection_delay_windows": {
+                    "mean": ci(0.0, 0.0, 0.0),
+                    "n_detected_streams": 20,
+                    "streams_by_delay": {"0": 20},
+                },
+            },
+            "mild_shift": {
+                "drifted": True,
+                "n_streams": 20,
+                "detection_rate": rate(0.0, 0.0, 0.0, 0, 20),
+                "detection_delay_windows": {
+                    "status": "not available",
+                    "reason": "no stream was detected, so there is no delay to report",
+                },
             },
         },
         "demonstration_stream": {"scenario": "claim_rate_up"},
@@ -359,8 +388,14 @@ def test_governance_sections_render_when_present() -> None:
     bank = render_bank_model_risk(full_sources())
     assert "`results/governance_metrics.json` has no section" not in bank
     # monitoring
-    assert "| `no_drift` | no | false alert rate | 0.0500 [0.0000, 0.1500] (1/20) | not applicable |" in bank
-    assert "| `claim_rate_up` | yes | detection rate | 0.9500 [0.8500, 1.0000] (19/20) | 1.32 [0.89, 1.74] |" in bank
+    assert (
+        "| `no_drift` | no | false alert rate | 0.0500 [0.0000, 0.1500] (1/20) | not applicable | not applicable |"
+        in bank
+    )
+    assert (
+        "| `claim_rate_up` | yes | detection rate | 0.9500 [0.8500, 1.0000] (19/20) | 1.32 [0.89, 1.74] (19 of 20 "
+        "streams detected) | 0: 9, 1: 4, 2: 3, 5: 3 |" in bank
+    )
     assert "7 alert records this run" in bank and "model status champion -> under_review" in bank
     assert "1.0322 [0.9811, 1.0842]" in bank
     assert "not measured (SYNTHETIC reason: no credit data in the render test)" in bank
@@ -399,6 +434,23 @@ def test_monitoring_block_edge_cases() -> None:
     assert "model status not registered before the run -> under_review" in block
     assert "| escalated | agent | 1.0000 (zero-width interval) | ok |" in block
     assert "| unsupported_claims | agent | not measured | not measured |" in block
+
+
+def test_mean_delay_says_it_covers_detected_streams_only() -> None:
+    """P6-STAT-3 / P6-PACKS-11: the mean delay names its population and the window cap, a zero-width interval is not
+    printed as an interval, and a scenario where no stream was detected says not applicable, not not measured."""
+    block = "\n".join(monitoring_block(full_sources()))
+    assert "Mean delay among detected streams, windows [95% CI] (detected of all streams)" in block
+    assert "Detected streams by delay (windows: streams)" in block
+    assert "20 streams per scenario, 12 windows each, numbered from 0; drift, if any, from window 6" in block
+    assert "over the detected streams only" in block and "cannot exceed the number of drifted windows" in block
+    assert "| 0.00 (20 of 20 streams detected; zero-width bootstrap interval) | 0: 20 |" in block
+    assert "[0.00, 0.00]" not in block
+    assert (
+        "| `mild_shift` | yes | detection rate | 0.0000 (0/20; zero-width bootstrap interval, exact interval not "
+        "recorded) | not applicable (no stream was detected, so there is no delay to report) | not applicable |"
+    ) in block
+    assert "Mean delay, windows [95% CI]" not in block
 
 
 def test_absent_governance_sections_say_not_measured_yet_with_their_make_target() -> None:
