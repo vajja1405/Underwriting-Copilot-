@@ -46,6 +46,11 @@ def omitted_parts(report: ResumeReport, bullet_id: str) -> list[str]:
     return [item.part for item in report.omissions if item.bullet_id == bullet_id]
 
 
+def omission_reasons(report: ResumeReport, bullet_id: str, part: str) -> list[str]:
+    """The reasons recorded for one left-out part of one bullet."""
+    return [item.reason for item in report.omissions if item.bullet_id == bullet_id and item.part == part]
+
+
 def test_full_fixture_gives_six_lender_and_six_studio_bullets(results_dir: Path, repo_root: Path) -> None:
     report = build_report(results_dir, repo_root)
     assert sum(1 for bullet in report.bullets if bullet.section == LENDER) == 6
@@ -213,10 +218,56 @@ def test_studio_business_bullet_quotes_the_baseline_and_says_the_time_is_machine
     results_dir: Path, repo_root: Path
 ) -> None:
     text = bullet_text(build_report(results_dir, repo_root), "studio_business")
-    assert "0.8765 [0.8654, 0.8876] of printed figures carry a checkable source vs 0.0432 [0.0321, 0.0543]" in text
-    assert "on 24 SYNTHETIC scenarios" in text
+    assert (
+        "on 24 SYNTHETIC scenarios, 0.8765 [0.8654, 0.8876] of printed figures carry a checkable source (rule S) "
+        "vs 0.0432 [0.0321, 0.0543] for B0, a plan built from the same founder inputs and documents" in text
+    )
+    assert (
+        "0.0612 [0.0587, 0.0639] vs 0.0432 [0.0321, 0.0543] under the stricter rule E (figures backed by a "
+        "document page, a public-data row or a section of the SYNTHETIC startup program" in text
+    )
     assert "median 5.432 [5.123, 5.876] seconds from inputs to an audited PDF package (machine wall clock" in text
     assert "no language model is called" in text
+
+
+def test_studio_business_comparison_always_carries_the_b0_caveat(results_dir: Path, repo_root: Path) -> None:
+    """docs/studio/s12_baseline.md section 2: the caveat goes wherever the Studio vs B0 comparison is shown."""
+    text = bullet_text(build_report(results_dir, repo_root), "studio_business")
+    assert "rule S" in text  # the comparison is shown
+    assert "B0 is a construction from the same SYNTHETIC inputs, not a sample of real plans" in text
+    assert "most of the rule S gap follows from the definitions" in text
+
+
+def test_studio_business_bullet_counts_the_scenarios_with_a_site_scored(results_dir: Path, repo_root: Path) -> None:
+    text = bullet_text(build_report(results_dir, repo_root), "studio_business")
+    assert "without the simulation, the ledger or SiteIQ (which scored a site in 7 of 24 Studio scenarios)" in text
+    assert "without the site scoring" not in text
+
+
+def test_studio_business_bullet_names_siteiq_only_with_its_count(results_dir: Path, repo_root: Path) -> None:
+    edit(results_dir, "studio_business_metrics.json", "data_coverage_by_metro", value={})
+    report = build_report(results_dir, repo_root)
+    text = bullet_text(report, "studio_business")
+    assert "without the simulation or the ledger" in text
+    assert "SiteIQ" not in text and "site scor" not in text
+    reasons = omission_reasons(report, "studio_business", "scenarios with a site scored")
+    assert reasons == [
+        "not measured: results/studio_business_metrics.json has no usable data_coverage_by_metro.this_run"
+    ]
+
+
+def test_rule_s_is_not_quoted_without_the_stricter_rule_e(results_dir: Path, repo_root: Path) -> None:
+    edit(
+        results_dir,
+        "studio_business_metrics.json",
+        "headline",
+        "evidence_coverage_rule_e",
+        value="not measured (test reason)",
+    )
+    report = build_report(results_dir, repo_root)
+    assert bullet_text(report, "studio_business") == ""
+    reasons = omission_reasons(report, "studio_business", "evidence coverage vs baseline (rule E)")
+    assert reasons == ["results/studio_business_metrics.json says: not measured (test reason)"]
 
 
 def test_template_narrative_trace_rate_says_it_holds_by_construction(results_dir: Path, repo_root: Path) -> None:
@@ -236,11 +287,6 @@ def test_program_rule_path_rate_names_only_the_rules_the_search_checks(results_d
     text = bullet_text(build_report(results_dir, repo_root), "studio_path")
     assert "0.0456 [0.0321, 0.0598] when the SYNTHETIC startup program's equity and loan rules must also hold" in text
     assert "every startup-program rule" not in text
-
-
-def omission_reasons(report: ResumeReport, bullet_id: str, part: str) -> list[str]:
-    """The reasons recorded for one left-out part of one bullet."""
-    return [item.reason for item in report.omissions if item.bullet_id == bullet_id and item.part == part]
 
 
 def test_handoff_checkpoint_below_one_is_quoted_with_its_interval(results_dir: Path, repo_root: Path) -> None:

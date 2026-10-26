@@ -253,6 +253,17 @@ def studio_files() -> dict[str, Any]:
                     "studio": {"value": 0.8765, "ci_low": 0.8654, "ci_high": 0.8876, "scenarios": 24},
                     "baseline_b0": {"value": 0.0432, "ci_low": 0.0321, "ci_high": 0.0543, "scenarios": 24},
                 },
+                "evidence_coverage_rule_e": {
+                    "studio": {"value": 0.0612, "ci_low": 0.0587, "ci_high": 0.0639, "scenarios": 24},
+                    "baseline_b0": {"value": 0.0432, "ci_low": 0.0321, "ci_high": 0.0543, "scenarios": 24},
+                },
+            },
+            "data_coverage_by_metro": {
+                "this_run": {
+                    "synthetic_metro": {"scenarios": 4, "metro_modes": {"synthetic": 4}, "site_scored": 4},
+                    "metro_a": {"scenarios": 10, "metro_modes": {"full": 3, "limited": 7}, "site_scored": 3},
+                    "metro_b": {"scenarios": 10, "metro_modes": {"limited": 10}, "site_scored": 0},
+                }
             },
             "cost_per_package": {"llm_cost_usd_per_package": 0.0},
         },

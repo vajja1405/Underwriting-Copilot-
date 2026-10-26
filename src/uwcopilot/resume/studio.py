@@ -22,6 +22,14 @@ SITEIQ = "studio_siteiq_metrics.json"
 BUSINESS = "studio_business_metrics.json"
 MISSPECIFIED = "misspecified"
 
+# docs/studio/s12_baseline.md (section 2 and M2 "Reading") requires this caveat wherever the Studio vs B0 comparison
+# is shown. Fixed wording, no number: it follows from the definitions, not from a measurement.
+B0_CAVEAT = (
+    "B0 is a construction from the same SYNTHETIC inputs, not a sample of real plans, and most of the rule S gap "
+    "follows from the definitions (rule S credits the model runs and formulas the ledger records, and B0 has no "
+    "ledger)"
+)
+
 Built = tuple[Bullet | None, list[Omission]]
 
 
@@ -243,25 +251,73 @@ def siteiq_bullet(results: ResultsFolder) -> Built:
     return draft.finish()
 
 
+def sites_scored(this_run: Any) -> tuple[int, int] | None:
+    """(scenarios where SiteIQ scored a site, all scenarios), summed over the metros of this run, or None."""
+    if not isinstance(this_run, dict) or not this_run:
+        return None
+    scored, total = 0, 0
+    for row in this_run.values():
+        site_scored, scenarios = number_at(row, "site_scored"), number_at(row, "scenarios")
+        if site_scored is None or scenarios is None:
+            return None
+        scored += int(site_scored)
+        total += int(scenarios)
+    return scored, total
+
+
+def b0_built_without(draft: BulletDraft, metrics: dict[str, Any] | None) -> str:
+    """The Studio parts B0 is built without; SiteIQ is named only with the number of scenarios it scored a site in.
+
+    Real-metro scenarios on a machine without the metro snapshots run without SiteIQ, so "Studio scored a site" is
+    true only for the scenarios the results file counts (data_coverage_by_metro.this_run.<metro>.site_scored).
+    """
+    sites = sites_scored(dig(metrics, "data_coverage_by_metro", "this_run"))
+    if sites is None:
+        reason = missing_reason(metrics, BUSINESS, "data_coverage_by_metro", "this_run")
+        draft.omit("scenarios with a site scored", reason)
+        return "the simulation or the ledger"
+    scored, total = sites
+    return (
+        f"the simulation, the ledger or SiteIQ (which scored a site in {count(scored)} of {count(total)} Studio "
+        "scenarios)"
+    )
+
+
 def business_bullet(results: ResultsFolder) -> Built:
-    """S12 end to end: printed figures with a checkable source vs the baseline B0, and the time to an audited PDF."""
+    """S12 end to end: figures with a source vs the baseline B0 (rules S and E), and the time to an audited PDF."""
     draft = BulletDraft(
         "studio_business",
         STUDIO,
         "Founder Studio end-to-end evaluation against a baseline defined before the first run",
     )
     metrics = results.load(BUSINESS)
-    studio = estimate_at(metrics, "headline", "evidence_coverage_rule_s", "studio")
-    baseline = estimate_at(metrics, "headline", "evidence_coverage_rule_s", "baseline_b0")
-    scenarios = number_at(metrics, "headline", "evidence_coverage_rule_s", "studio", "scenarios")
-    if studio is None or baseline is None or scenarios is None:
-        draft.omit("evidence coverage vs baseline", missing_reason(metrics, BUSINESS, "headline"), core=True)
+    rule_s = dig(metrics, "headline", "evidence_coverage_rule_s")
+    rule_e = dig(metrics, "headline", "evidence_coverage_rule_e")
+    studio_s, baseline_s = estimate_at(rule_s, "studio"), estimate_at(rule_s, "baseline_b0")
+    studio_e, baseline_e = estimate_at(rule_e, "studio"), estimate_at(rule_e, "baseline_b0")
+    scenarios = number_at(rule_s, "studio", "scenarios")
+    if studio_s is None or baseline_s is None or scenarios is None:
+        reason = missing_reason(metrics, BUSINESS, "headline", "evidence_coverage_rule_s")
+        draft.omit("evidence coverage vs baseline", reason, core=True)
         return draft.finish()
+    if studio_e is None or baseline_e is None:
+        # Rule S alone shows mostly the gap its definition creates, so it is quoted only next to rule E.
+        reason = missing_reason(metrics, BUSINESS, "headline", "evidence_coverage_rule_e")
+        draft.omit("evidence coverage vs baseline (rule E)", reason, core=True)
+        return draft.finish()
+    without = b0_built_without(draft, metrics)
     draft.add(
-        f"{interval(studio)} of printed figures carry a checkable source vs {interval(baseline)} for a plan made "
-        f"without the site scoring, the simulation and the ledger, on {count(scenarios)} SYNTHETIC scenarios",
+        f"on {count(scenarios)} SYNTHETIC scenarios, {interval(studio_s)} of printed figures carry a checkable source "
+        f"(rule S) vs {interval(baseline_s)} for B0, a plan built from the same founder inputs and documents "
+        f"without {without}",
         BUSINESS,
     )
+    draft.add(
+        f"{interval(studio_e)} vs {interval(baseline_e)} under the stricter rule E (figures backed by a document "
+        "page, a public-data row or a section of the SYNTHETIC startup program or the Studio's own targets)",
+        BUSINESS,
+    )
+    draft.add_context(B0_CAVEAT)
     median = estimate_at(metrics, "headline", "time_to_complete_package_median_s")
     if median is None:
         draft.omit("time to a complete package", missing_reason(metrics, BUSINESS, "headline"))
