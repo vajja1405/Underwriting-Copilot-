@@ -511,7 +511,10 @@ def test_map_rows_follow_the_sections() -> None:
     assert present[monitoring].startswith("SIMULATED stream on a separate demonstration freMTPL2 GLM only")
     assert absent.keys() == present.keys()
     risk_row = [row for row in naic_rows({}) if row[0] == "Risk management and internal controls"][0]
-    assert "of the extraction and the agent: not measured yet (`make monitor`)" in risk_row[2]
+    expected = (
+        "of the extraction, the agent and the (SIMULATED) reviewer override rate: not measured yet (`make monitor`)"
+    )
+    assert expected in risk_row[2]
     risk_row = [row for row in naic_rows(full_sources()) if row[0] == "Risk management and internal controls"][0]
     assert "measured (section 3)" in risk_row[2]
 
@@ -569,7 +572,7 @@ def test_third_party_pretrained_models_are_listed_with_their_recorded_use() -> N
     retrieval runs pretrained fastembed models; both packs list them instead of saying no third-party AI was used."""
     rows = {row[0]: row[2] for row in third_party_model_rows(full_sources())}
     assert rows["Tesseract OCR (tesseract SYNTHETIC-version)"].startswith(
-        "37 of 412 pages read by OCR in the extraction evaluation"
+        "37 of 412 pages read by OCR in the main rules run of the extraction evaluation"
     )
     assert rows["Dense text embedding model (fastembed; `rag/settings.py` DENSE_MODEL_ID)"] == (
         "yes (the agent evaluation recorded retrieval mode `hybrid`)"
