@@ -6,16 +6,24 @@ Every clause that could not be written is recorded as an Omission with its reaso
 
 Numbers are printed with the precision the project's README table uses (4 decimals for rates and scores), so no
 value is rounded to a friendlier figure. Intervals in brackets are the 95% intervals written in the results file:
-percentile bootstrap unless the text says Wilson.
+percentile bootstrap unless the brackets say exact (Clopper-Pearson) or Wilson. A bootstrap interval with zero width
+(or one the file flags as too narrow) and no other interval recorded is not printed in brackets: the value is
+followed by a note that says so (see interval()).
 """
 
 import re
 from dataclasses import dataclass, field
 
-from uwcopilot.resume.results import Estimate
+from uwcopilot.resume.results import EXACT, NARROW_BOOTSTRAP, WILSON, Estimate
 
 LENDER = "lender"
 STUDIO = "studio"
+
+# The label printed inside the brackets for each interval method (a bootstrap interval has none).
+INTERVAL_LABELS: dict[str, str] = {EXACT: "exact ", WILSON: "Wilson "}
+# What is printed after the value, instead of brackets, for a NARROW_BOOTSTRAP estimate.
+ZERO_WIDTH_NOTE = "zero-width bootstrap interval, no other interval recorded"
+FLAGGED_NARROW_NOTE = "bootstrap interval flagged as too narrow, no other interval recorded"
 
 # Fixed names, dates and units in the bullet text that contain digits but are not metrics. The tests remove them
 # before checking that every other number in a bullet comes from the results folder.
@@ -82,11 +90,19 @@ def compact(value: float) -> str:
 
 
 def interval(estimate: Estimate, decimals: int = 4, with_sign: bool = False) -> str:
-    """'value [low, high]', with 'Wilson' inside the brackets for a Wilson interval."""
+    """'value [low, high]', with 'exact' or 'Wilson' inside the brackets for those intervals.
+
+    A NARROW_BOOTSTRAP estimate (a zero-width or flagged bootstrap interval, and no exact or Wilson interval in the
+    file) prints no brackets: 'value (zero-width bootstrap interval, no other interval recorded)', or the
+    FLAGGED_NARROW_NOTE when its width is not zero, so a collapsed interval never reads as certainty.
+    """
     value = signed(estimate.value, decimals) if with_sign else num(estimate.value, decimals)
+    if estimate.method == NARROW_BOOTSTRAP:
+        note = ZERO_WIDTH_NOTE if estimate.low == estimate.high else FLAGGED_NARROW_NOTE
+        return f"{value} ({note})"
     low = signed(estimate.low, decimals) if with_sign else num(estimate.low, decimals)
     high = signed(estimate.high, decimals) if with_sign else num(estimate.high, decimals)
-    label = "Wilson " if estimate.method == "wilson" else ""
+    label = INTERVAL_LABELS.get(estimate.method, "")
     return f"{value} [{label}{low}, {high}]"
 
 
