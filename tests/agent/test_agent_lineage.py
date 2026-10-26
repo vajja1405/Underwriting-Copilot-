@@ -5,6 +5,7 @@ from pathlib import Path
 
 from agent_helpers import SENIOR_REFER, committed_by_scenario, make_deps, memory_agent
 
+from uwcopilot.agent import policy as policy_module
 from uwcopilot.agent.decision_record import DecisionLog
 from uwcopilot.agent.graph import MEMO_PROMPT_SOURCE
 from uwcopilot.agent.memo import PROMPT_VERSION
@@ -40,8 +41,12 @@ def test_the_record_names_the_model_prompt_file_and_eval_sets(tmp_path: Path) ->
     assert prompt["sha256"] == sha256_of_file(MEMO_PROMPT_SOURCE.path)
     assert lineage["eval_sets"]["agent_applications"]["set_hash_field"] == "applications_sha256"
     assert lineage["eval_sets"]["docintel_packets_test"]["set_hash_field"] == "test_truth_sha256"
+    policy_file = Path(policy_module.__file__)
+    assert lineage["decision_logic"]["src/uwcopilot/agent/policy.py"] == sha256_of_file(policy_file)
+    assert "src/uwcopilot/agent/hitl.py" in lineage["decision_logic"]
     checks = verify_lineage(lineage, hash_data_files=False, prompt_labels={"agent_memo_prompt": PROMPT_VERSION})
     assert not [check for check in checks if check.status == "STALE"]
+    assert any(check.kind == "decision_logic_file" and check.status == "ok" for check in checks)
 
 
 def test_the_lineage_builder_can_be_replaced(tmp_path: Path) -> None:

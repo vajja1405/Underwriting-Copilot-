@@ -7,6 +7,7 @@ from pathlib import Path
 from lineage_helpers import DATA_SHA, EVAL_SETS, fake_repo, lineage_for, prompt_source, risk_results, write_json
 
 from uwcopilot.governance.lineage import (
+    DECISION_LOGIC_FILES,
     LINEAGE_VERSION,
     build_decision_lineage,
     overall_status,
@@ -41,10 +42,16 @@ def test_the_block_names_models_datasets_prompts_eval_sets_and_results(tmp_path:
     }
     assert lineage["eval_sets"]["docintel_packets_test"]["set_sha256"] == "e" * 64
     assert set(lineage["results_files"]) == {"results/risk_metrics.json", "results/agent_metrics.json"}
-    assert lineage["not_recorded"] == [
-        "eval set startup_applications: eval/startup_applications/manifest.json is not present or not readable"
-    ]
+    rule_bytes = (root / "agent" / "policy.py").read_bytes()
+    assert lineage["decision_logic"] == {"agent/policy.py": hashlib.sha256(rule_bytes).hexdigest()}
+    assert lineage["not_recorded"] == []
     json.dumps(lineage)  # plain JSON, ready for the decision record
+
+
+def test_the_default_decision_logic_is_the_agents_rule_files() -> None:
+    names = [path.name for path in DECISION_LOGIC_FILES]
+    assert names == ["policy.py", "policy_credit.py", "policy_insurance.py", "policy_startup.py", "hitl.py", "graph.py"]
+    assert all(path.is_file() and path.parent.name == "agent" for path in DECISION_LOGIC_FILES)
 
 
 def test_a_startup_decision_calls_no_model(tmp_path: Path) -> None:
@@ -63,6 +70,52 @@ def test_missing_files_are_reported_never_guessed(tmp_path: Path) -> None:
     assert any("prompt memo" in reason for reason in lineage["not_recorded"])
     found = statuses(lineage, root)
     assert found[("model_version", "credit")] == "not_checkable"
+    # Each missing part is one not_checkable check: a model's own reason is not counted a second time.
+    model_reason = lineage["models"][0]["not_recorded"]
+    assert ("not_recorded", model_reason) not in found
+    assert found[("not_recorded", "prompt memo: prompts/memo_prompt.py is not present")] == "not_checkable"
+
+
+def test_a_partly_recorded_lineage_is_never_called_current(tmp_path: Path) -> None:
+    root = fake_repo(tmp_path)
+    (root / "results" / "agent_metrics.json").unlink()
+    (root / "eval" / "startup_applications" / "manifest.json").unlink()
+    lineage = lineage_for(root)
+    found = statuses(lineage, root)
+    assert found[("not_recorded", "results file results/agent_metrics.json is not present")] == "not_checkable"
+    assert "STALE" not in found.values()
+    checks = verify_lineage(lineage, repo_root=root, raw_dir=root / "data" / "raw")
+    assert overall_status(checks) == "current_where_checkable"
+    summary = summarize_lineage_checks([{"lineage": lineage}], repo_root=root, raw_dir=root / "data" / "raw")
+    assert summary["records_by_status"] == {"current_where_checkable": 1}
+
+
+def test_a_lineage_with_no_check_at_all_is_not_current(tmp_path: Path) -> None:
+    lineage = build_decision_lineage([], eval_sets={}, validating_results=(), repo_root=tmp_path, decision_logic=())
+    checks = verify_lineage(lineage, repo_root=tmp_path, raw_dir=tmp_path / "data" / "raw")
+    assert checks == [] and overall_status(checks) == "current_where_checkable"
+
+
+def test_an_older_block_without_decision_logic_cannot_be_checked_for_rule_changes(tmp_path: Path) -> None:
+    root = fake_repo(tmp_path)
+    lineage = lineage_for(root)
+    del lineage["decision_logic"]
+    found = statuses(lineage, root)
+    assert found[("decision_logic_file", "decision logic")] == "not_checkable"
+    checks = verify_lineage(lineage, repo_root=root, raw_dir=root / "data" / "raw")
+    assert overall_status(checks) == "current_where_checkable"
+
+
+def test_a_changed_rule_is_stale_but_a_new_commit_alone_is_not(tmp_path: Path) -> None:
+    root = fake_repo(tmp_path)
+    lineage = lineage_for(root)
+    lineage["code"] = {"git_sha": "f" * 40, "git_dirty": True}  # the code commit is shown, never compared
+    checks = verify_lineage(lineage, repo_root=root, raw_dir=root / "data" / "raw")
+    assert overall_status(checks) == "current"
+    (root / "agent" / "policy.py").write_text("DSCR_MINIMUM = 1.10  # SYNTHETIC rule\n", encoding="utf-8")
+    assert statuses(lineage, root)[("decision_logic_file", "agent/policy.py")] == "STALE"
+    (root / "agent" / "policy.py").unlink()
+    assert statuses(lineage, root)[("decision_logic_file", "agent/policy.py")] == "not_checkable"
 
 
 def test_an_unchanged_repository_is_current(tmp_path: Path) -> None:
@@ -84,8 +137,10 @@ def test_every_kind_of_change_is_flagged_stale(tmp_path: Path) -> None:
     write_json(root / "eval" / "packets" / "manifest.json", {"test_truth_sha256": "f" * 64})
     write_json(root / "results" / "risk_metrics.json", risk_results(credit_version="2"))
     (root / "data" / "raw" / "lending_club" / "loans.zip").write_bytes(b"other rows\n")
+    (root / "agent" / "policy.py").write_text("DSCR_MINIMUM = 1.10  # SYNTHETIC rule\n", encoding="utf-8")
     found = statuses(lineage, root, prompt_labels={"memo": "memo-v2"})
     for key in [
+        ("decision_logic_file", "agent/policy.py"),
         ("prompt_file", "prompts/memo_prompt.py"),
         ("prompt_version", "memo"),
         ("eval_set_file", "eval/packets/manifest.json"),
