@@ -219,6 +219,19 @@ def test_studio_business_bullet_quotes_the_baseline_and_says_the_time_is_machine
     assert "no language model is called" in text
 
 
+def test_template_narrative_trace_rate_says_it_holds_by_construction(results_dir: Path, repo_root: Path) -> None:
+    text = bullet_text(build_report(results_dir, repo_root), "studio_provenance")
+    assert "812 of 812 narrative numbers traced to the ledger claim their sentence cites (1.0000 [Wilson" in text
+    assert "with the template writer and no LLM (by construction for the template)" in text
+
+
+def test_a_model_narrative_trace_rate_is_not_called_by_construction(results_dir: Path, repo_root: Path) -> None:
+    edit(results_dir, "studio_evidence_metrics.json", "provider", value="ollama")
+    text = bullet_text(build_report(results_dir, repo_root), "studio_provenance")
+    assert "with narrative provider ollama" in text
+    assert "by construction" not in text
+
+
 def test_missing_studio_business_file_drops_its_bullet_with_the_reason(results_dir: Path, repo_root: Path) -> None:
     (results_dir / "studio_business_metrics.json").unlink()
     report = build_report(results_dir, repo_root)

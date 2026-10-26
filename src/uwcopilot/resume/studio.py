@@ -135,10 +135,15 @@ def provenance_bullet(results: ResultsFolder) -> Built:
     if rate is None or hits is None or total is None or scenarios is None:
         draft.omit("narrative numbers traced", missing_reason(evidence, EVIDENCE, "headline"), core=True)
         return draft.finish()
-    writer = "template writer, no LLM" if evidence.get("provider") == "template" else f"{evidence.get('provider')}"
+    # The template writer types every number from the ledger, so its numbers trace by construction (the results
+    # file's scope says so); the rate shows the construction holds, not how often a model writes a wrong number.
+    if evidence.get("provider") == "template":
+        writer = "the template writer and no LLM (by construction for the template)"
+    else:
+        writer = f"narrative provider {evidence.get('provider')}"
     draft.add(
         f"{count(hits)} of {count(total)} narrative numbers traced to the ledger claim their sentence cites "
-        f"({interval(rate)}) across {count(scenarios)} SYNTHETIC scenarios ({writer})",
+        f"({interval(rate)}) across {count(scenarios)} SYNTHETIC scenarios with {writer}",
         EVIDENCE,
     )
     add_handoff(draft, results.load(HANDOFF))
