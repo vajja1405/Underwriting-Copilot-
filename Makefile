@@ -594,3 +594,21 @@ lineage:  ## Print one decision record's lineage and flag STALE hashes: LOG=<log
 
 feedback-report:  ## SIMULATED reviewer on the 65 SYNTHETIC applications -> results/governance_metrics.json (lineage, feedback)
 	uv run python scripts/feedback_report.py
+
+# Phase 6 (champion/challenger + outcomes): the credit PD model's champion (LightGBM fitted on issue years <= 2014,
+# validation 2015) and challenger (<= 2015, validation 2016; one more vintage) are compared on the same 2017-2018 loans
+# neither saw, with bootstrap and paired-bootstrap 95% CIs (1,000 resamples, seed 42) and a stated promotion rule.
+# Runs on SYNTHETIC Lending Club-shaped loans (the Lending Club data needs a Kaggle key). The champion's PDs and a SIMULATED
+# decision rule then make decisions whose SYNTHETIC outcomes are joined back (governance/outcomes.py). Writes sections
+# "champion_challenger" and "outcomes" of results/governance_metrics.json; the models and the model status registry go
+# under data/governance/ (gitignored). Nothing is promoted: only `make promote-model` with ROLE=model_validator does.
+.PHONY: champion-challenger promote-model champion-challenger-test
+
+champion-challenger:  ## SYNTHETIC champion vs challenger on one out-of-time window + SYNTHETIC outcomes join -> results/governance_metrics.json
+	uv run python scripts/champion_challenger.py
+
+promote-model:  ## Promote a challenger (model_validator only): MODEL=<id> ROLE=<role> PRINCIPAL=<id> REASON="<why>"
+	uv run python scripts/promote_model.py $(MODEL) --role $(ROLE) --principal $(PRINCIPAL) --reason "$(REASON)"
+
+champion-challenger-test:  ## Champion/challenger, outcomes and promotion tests only (offline, SYNTHETIC data)
+	uv run pytest -q tests/governance/test_champion_challenger*.py tests/governance/test_outcomes*.py
