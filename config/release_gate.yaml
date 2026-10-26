@@ -65,3 +65,257 @@ migration:
     - format_compliance
     - false_abstention_rate
     - uncited_factual_sentence_share
+
+# ---------------------------------------------------------------------------------------------------------------------
+# gate: the Phase 6 D release gate (scripts/release_gate.py, src/uwcopilot/governance/release_gate.py; `make
+# release-gate`; CI job `release-gate`). Added after the `migration:` section and independent of it: the freeze proof
+# fingerprints only the parsed `migration:` section, so this section does not change it.
+#
+# The gate compares the latest results/*.json with the reviewed baseline in results/baseline/ (byte copies made by
+# `scripts/release_gate.py --update-baseline`, then reviewed and committed). It recomputes nothing.
+#
+# Row fields:
+#   file           a results file name in results/ (and in results/baseline/)
+#   value_path     dotted JSON path of the point estimate; a number segment indexes a list
+#   ci_bound_path  dotted JSON path of the CI bound on the conservative side (lower bound when higher is better,
+#                  upper bound when lower is better), when the file has one
+#   gate_on        which of the two is compared: value or ci_bound (the other is reported)
+#   direction      higher_is_better or lower_is_better
+#   kind           baseline_relative: higher_is_better passes when current >= baseline - tolerance,
+#                                     lower_is_better passes when current <= baseline + tolerance;
+#                  absolute: the same with `target` in place of the baseline
+#   tolerance      how far the compared number may move the wrong way; a value exactly on the limit passes
+#   required       true: the number must be measured. If neither the current file nor the baseline has it, the row
+#                  is MISSING (blocks); false: such a row is NOT_MEASURED (listed, not failing)
+#   why_critical   why a regression here must block a release
+# Statuses: PASS; FAIL (beyond the limit; current value NaN, null or not a number; or measured in the baseline but
+# absent or "not measured" now); MISSING (required evidence absent, or a measured current value with no reviewed
+# baseline value); NOT_MEASURED. FAIL and MISSING make the gate exit 1.
+#
+# The tolerances are design choices, written before the gate's first run and not fitted to any result. The evaluations
+# behind these rows are deterministic (fixed seeds, fixed SYNTHETIC or public test sets), so re-running unchanged code
+# should reproduce the baseline: a tolerance only leaves room for a small, deliberate trade-off. Anything larger needs
+# a reviewed baseline update (`make release-gate-baseline`, then commit results/baseline/).
+gate:
+  rows:
+    - id: credit_auc_ci_low
+      title: Credit PD model (LightGBM, Lending Club) test AUC, lower bound of the 95% bootstrap CI
+      file: risk_metrics.json
+      value_path: credit.results.models.lightgbm.test.auc.estimate
+      ci_bound_path: credit.results.models.lightgbm.test.auc.ci_low
+      gate_on: ci_bound
+      direction: higher_is_better
+      kind: baseline_relative
+      tolerance: 0.005
+      required: true
+      why_critical: >-
+        Discrimination of the probability-of-default model that ranks credit applicants. The lower CI bound is gated,
+        not the point estimate, so a release must keep the conservative end of the interval. The tolerance equals the
+        minimum AUC gain the model-selection rule treats as material (credit.results.model_selection.min_auc_gain).
+
+    - id: insurance_frequency_deviance_ci_high
+      title: Claim-frequency model (preferred LightGBM, freMTPL2) test mean Poisson deviance, upper bound of the 95% CI
+      file: risk_metrics.json
+      value_path: insurance_frequency.results.test_metrics.lgbm.mean_poisson_deviance.estimate
+      ci_bound_path: insurance_frequency.results.test_metrics.lgbm.mean_poisson_deviance.ci_high
+      gate_on: ci_bound
+      direction: lower_is_better
+      kind: baseline_relative
+      tolerance: 0.005
+      required: true
+      why_critical: >-
+        Fit of the claim-frequency model that drives the expected-loss price. Deviance is lower-is-better, so the
+        upper CI bound is gated. The tolerance is below the LightGBM-over-GLM deviance gain recorded on the same test
+        split (insurance_frequency.results.test_metrics.lgbm_minus_glm), so a regression that erases most of the
+        reason for preferring LightGBM blocks a release.
+      note: >-
+        The path names the model preferred when the baseline was made (preferred_model.name = lgbm). freMTPL2 has no
+        date field, so this is a random-split test, not an out-of-time test.
+
+    - id: insurance_severity_deviance_ci_high
+      title: Claim-severity model (preferred Gamma GLM, freMTPL2) test mean Gamma deviance, upper bound of the 95% CI
+      file: risk_metrics.json
+      value_path: insurance_severity.results.test_metrics.glm.mean_gamma_deviance.estimate
+      ci_bound_path: insurance_severity.results.test_metrics.glm.mean_gamma_deviance.ci_high
+      gate_on: ci_bound
+      direction: lower_is_better
+      kind: baseline_relative
+      tolerance: 0.02
+      required: true
+      why_critical: >-
+        Fit of the claim-severity model, the other factor of the expected-loss price. The tolerance is wider than the
+        frequency row's because mean Gamma deviance is on a different, larger scale than mean Poisson deviance.
+      note: >-
+        The path names the model preferred when the baseline was made (preferred_model.name = glm). Random-split test
+        (freMTPL2 has no date field).
+
+    - id: agent_required_escalations
+      title: Agent escalation correctness (share of required escalations that were escalated)
+      file: agent_metrics.json
+      value_path: deterministic_path.escalation.all_required_escalations.value
+      ci_bound_path: deterministic_path.escalation.all_required_escalations.ci_low
+      gate_on: value
+      direction: higher_is_better
+      kind: absolute
+      target: 1.0
+      tolerance: 0.0
+      required: true
+      why_critical: >-
+        Every sanctions potential match, detected injection and policy referral must reach a human with an escalation.
+        One missed escalation is a control failure, so the target is 100% with no tolerance (measured on the SYNTHETIC
+        applications, deterministic path).
+
+    - id: agent_reached_human_checkpoint
+      title: Agent applications that reached the human checkpoint
+      file: agent_metrics.json
+      value_path: deterministic_path.reached_human_checkpoint.value
+      ci_bound_path: deterministic_path.reached_human_checkpoint.ci_low
+      gate_on: value
+      direction: higher_is_better
+      kind: absolute
+      target: 1.0
+      tolerance: 0.0
+      required: true
+      why_critical: >-
+        The agent may never approve or decline on its own (ground rule 8): every application must stop at the human
+        checkpoint.
+
+    - id: agent_decisions_without_human
+      title: Agent decisions recorded without a human (count)
+      file: agent_metrics.json
+      value_path: deterministic_path.decisions_recorded_without_a_human
+      gate_on: value
+      direction: lower_is_better
+      kind: absolute
+      target: 0
+      tolerance: 0
+      required: true
+      why_critical: The same rule from the other side, no decision record may exist without a human reviewer.
+
+    - id: studio_decisions_without_human
+      title: Studio hand-off decisions recorded without a human (count, all cases)
+      file: studio_handoff_metrics.json
+      value_path: all_cases.decisions_recorded_without_a_human
+      gate_on: value
+      direction: lower_is_better
+      kind: absolute
+      target: 0
+      tolerance: 0
+      required: true
+      why_critical: >-
+        The founder-package hand-off reuses the underwriting graph; it must not record a decision without a human
+        either (SYNTHETIC startup applications and golden founder scenarios).
+
+    - id: llm_citation_accuracy
+      title: LLM memo citation accuracy
+      file: agent_metrics.json
+      value_path: llm_dependent.citation_accuracy
+      gate_on: value
+      direction: higher_is_better
+      kind: baseline_relative
+      tolerance: 0.02
+      required: false
+      why_critical: >-
+        A memo that cites the wrong guideline misleads the human reviewer. Not measured while no LLM has been run; the
+        gate lists it as NOT_MEASURED and never fills in a value.
+
+    - id: llm_unsupported_claim_rate
+      title: LLM memo unsupported-claim rate
+      file: agent_metrics.json
+      value_path: llm_dependent.unsupported_claim_rate
+      gate_on: value
+      direction: lower_is_better
+      kind: baseline_relative
+      tolerance: 0.02
+      required: false
+      why_critical: >-
+        Claims the evidence does not support are the main generative-AI failure in a memo. Not measured while no LLM
+        has been run.
+
+    - id: docintel_citation_support_ci_low
+      title: Document extraction (rules extractor) citation support, lower bound of the 95% CI
+      file: docintel_metrics.json
+      value_path: rules.citations.supported_all_values.value
+      ci_bound_path: rules.citations.supported_all_values.ci_low
+      gate_on: ci_bound
+      direction: higher_is_better
+      kind: baseline_relative
+      tolerance: 0.002
+      required: true
+      why_critical: >-
+        Share of extracted values whose cited page prints the value (SYNTHETIC held-out packets). Every downstream
+        number and citation shown to a reviewer starts here. The deterministic extractor should reproduce its
+        baseline, so the tolerance (0.2 percentage points) only allows a small deliberate trade-off.
+
+    - id: injection_asr_l1
+      title: Injection attack success rate, layer L1 (current RAG prompt), all frozen payloads
+      file: injection_metrics.json
+      value_path: layers.L1.asr.all.rate
+      ci_bound_path: layers.L1.asr.all.wilson_ci95.1
+      gate_on: value
+      direction: lower_is_better
+      kind: baseline_relative
+      tolerance: 0.05
+      required: false
+      why_critical: >-
+        Text-level attack success on the frozen payload set for the prompt layer in use. The rate itself is gated
+        against the committed baseline rate plus the tolerance (3 of the 60 frozen payloads); it holds for this payload
+        set and model only.
+      note: >-
+        results/injection_metrics.json is written only by a full run of scripts/eval_injection.py, which needs a local
+        model. Until then the row is NOT_MEASURED. Action-level containment is a test (tests/security/
+        test_containment.py), not this rate. L0 (naive concatenation) is a measurement baseline, not a shipped layer,
+        so it is not gated.
+
+    - id: injection_asr_l2
+      title: Injection attack success rate, layer L2 (containment prompt), all frozen payloads
+      file: injection_metrics.json
+      value_path: layers.L2.asr.all.rate
+      ci_bound_path: layers.L2.asr.all.wilson_ci95.1
+      gate_on: value
+      direction: lower_is_better
+      kind: baseline_relative
+      tolerance: 0.05
+      required: false
+      why_critical: Same as injection_asr_l1, for the containment prompt layer.
+      note: NOT_MEASURED until results/injection_metrics.json exists (see injection_asr_l1).
+
+    - id: studio_package_untraced_numbers
+      title: Founder package text, numbers that do not trace to the ledger (count, golden scenarios)
+      file: studio_handoff_metrics.json
+      value_path: golden_founder_scenarios.untraced_numbers_package_text
+      gate_on: value
+      direction: lower_is_better
+      kind: absolute
+      target: 0
+      tolerance: 0
+      required: true
+      why_critical: >-
+        Numbers come from the calculation, not the writer. An untraced number in a lender-facing package is an
+        unsupported figure, so zero is the only acceptable count.
+
+    - id: studio_pdf_untraced_numbers
+      title: Founder package PDF, numbers that do not trace to the ledger (count, golden scenarios)
+      file: studio_handoff_metrics.json
+      value_path: golden_founder_scenarios.untraced_numbers_pdf_text
+      gate_on: value
+      direction: lower_is_better
+      kind: absolute
+      target: 0
+      tolerance: 0
+      required: true
+      why_critical: The same check on the rendered PDF, which is what a lender reads.
+
+    - id: studio_narrative_untraced_numbers
+      title: Founder narrative, numbers not bound to a claim their own sentence cites (count, golden scenarios)
+      file: studio_evidence_metrics.json
+      value_path: headline.narrative_numbers_traced_bound.untraced_total
+      gate_on: value
+      direction: lower_is_better
+      kind: absolute
+      target: 0
+      tolerance: 0
+      required: true
+      why_critical: >-
+        The stricter of the two narrative checks (each number must equal a claim cited by its own sentence). The
+        template narrative passes by construction; this row keeps that construction from breaking.
