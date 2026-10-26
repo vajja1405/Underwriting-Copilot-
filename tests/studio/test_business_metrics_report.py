@@ -117,6 +117,18 @@ def test_the_handoff_check_reports_this_run_or_says_it_was_skipped() -> None:
     assert skipped["agent_handoff"]["baseline_b0"].startswith("not applicable")
 
 
+def test_the_first_handoff_is_reported_apart_because_it_loads_the_lists() -> None:
+    rows = [row("houston_tx", (10, 5, 1), (5, 0), handoff=True) for _ in range(3)]
+    rows[0]["seconds"]["handoff"] = 90.0
+    time = metric_blocks(rows, cited())["time_to_complete_package"]
+    assert time["first_scenario_handoff_s"] == 90.0 and time["handoff_s"]["max"] == 90.0
+    assert time["handoff_s_without_first_scenario"]["max"] == 1.5
+    assert time["handoff_s_without_first_scenario"]["n"] == 2
+    assert "screening lists" in time["handoff_note"]
+    single = metric_blocks(rows[:1], cited())["time_to_complete_package"]
+    assert single["handoff_s_without_first_scenario"] == "fewer than two handoffs run"
+
+
 def test_the_founder_figures_and_conflicts_are_reported_for_both_plans() -> None:
     rows = [row("houston_tx", (10, 5, 1), (5, 1), handoff=False)]
     founder = metric_blocks(rows, cited())["evidence_coverage"]["founder_figures_backed_by_a_document"]

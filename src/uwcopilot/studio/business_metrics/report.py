@@ -27,6 +27,11 @@ TIME_DEFINITION = (
     "is timed apart and is not part of it"
 )
 BASELINE_TIME = "not measured: no one was timed writing a plan"
+FIRST_SCENARIO_NOTE = "the first scenario of a process also loads configs and fills caches once"
+HANDOFF_TIME_NOTE = (
+    "the first handoff of a process also loads the screening lists (agent.tools.screening_handler loads them on "
+    "first call), so its time includes that one-time load; handoff_s_without_first_scenario leaves it out"
+)
 RULE_S = (
     "share of printed figures with a checkable source: VERIFIED, MODEL_ESTIMATE or CONFLICTING claims of kind "
     "document, public_data, policy, calculation or model, and ASSUMPTION claims whose source is not 'unsourced'"
@@ -168,8 +173,14 @@ def time_block(rows: list[Row]) -> dict[str, Any]:
         "package_total_s": seconds_summary([row["seconds"]["package_total"] for row in rows]),
         "package_total_s_real_metro_scenarios": seconds_summary(real) if real else "no real-metro scenario in this run",
         "first_scenario_package_total_s": rows[0]["seconds"]["package_total"] if rows else None,
+        "first_scenario_note": FIRST_SCENARIO_NOTE,
         "stage_s": {stage: spread([row["seconds"][stage] for row in rows]) for stage in STAGES},
         "handoff_s": seconds_summary(handoff_seconds) if handoff_seconds else "not run in this execution",
+        "handoff_s_without_first_scenario": (
+            seconds_summary(handoff_seconds[1:]) if len(handoff_seconds) > 1 else "fewer than two handoffs run"
+        ),
+        "first_scenario_handoff_s": handoff_seconds[0] if handoff_seconds else None,
+        "handoff_note": HANDOFF_TIME_NOTE,
         "complete_packages": proportion([row["complete_package"] for row in rows]),
         "baseline_b0": BASELINE_TIME,
     }
