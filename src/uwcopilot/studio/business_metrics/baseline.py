@@ -5,9 +5,10 @@ SYNTHETIC inputs as the Studio package, not a sample of real plans. It prints th
 
 1. founder: every plan and loan figure the founder typed (founder_claims.FIELD_SPECS; the owner draw only when it is
    not zero);
-2. input: every input of the one-forecast projection the founder did not type, at its most likely value (shock
-   probabilities, monthly noise and the competitor-entry / one-off-shock sizes are left out: a one-forecast plan never
-   has a shock); the note rate when the founder did not type it;
+2. input: every input of the one-forecast projection the founder did not type, at its most likely value (the
+   probability and the size of each of the three shocks - competitor entry, a rate rise on a variable-rate loan and a
+   one-off event - and the monthly noise are left out: a one-forecast plan never has a shock, and a shock's size only
+   acts when the shock happens); the note rate when the founder did not type it;
 3. result: years 1-3 revenue, net operating income, debt service (loan plus other debt) and DSCR of the one-forecast
    run (feasibility.model.single_point_run: one deterministic path, every input at its most likely value).
 
@@ -31,8 +32,9 @@ from uwcopilot.studio.path_to_approval.search import default_assumptions, fabric
 FigureGroup = Literal["founder", "input", "result"]
 OWNER_DRAW_FIELD = "plan.owner_draw_per_month"
 NOTE_RATE_FIELD = "loan.annual_rate_pct"
-# Inputs a one-forecast plan does not use: it has no shocks and no month-to-month noise.
-UNUSED_PREFIXES: tuple[str, ...] = ("competitor_entry_", "one_off_shock_")
+# Inputs a one-forecast plan does not use: it has no shocks and no month-to-month noise. Every input of the three
+# shocks (feasibility.setup.risk_inputs) starts with one of these prefixes; a shock's size only acts inside the shock.
+UNUSED_PREFIXES: tuple[str, ...] = ("competitor_entry_", "rate_shock_", "one_off_shock_")
 UNUSED_SUFFIXES: tuple[str, ...] = ("_annual_probability",)
 UNUSED_NAMES: tuple[str, ...] = ("monthly_noise_sd",)
 MONTHS_PER_YEAR = 12
