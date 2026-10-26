@@ -170,6 +170,47 @@ def test_summary_of_a_drifted_scenario_reports_detection_delay_and_pre_drift_ale
 def test_no_detection_means_no_delay_and_rates_need_streams() -> None:
     summary = summarize_scenario([outcome(0, ()), outcome(1, (1,))], YOUNG, settings(2), BOOTSTRAP)
     assert summary["detection_rate"]["estimate"] == 0.0
-    assert summary["detection_delay_windows"]["status"] == "not available"
+    delay = summary["detection_delay_windows"]
+    assert delay["status"] == "not available" and "mean" not in delay
+    assert (delay["n_streams"], delay["n_detected_streams"], delay["max_possible_delay"]) == (2, 0, 2)
+    assert {k: rate["numerator"] for k, rate in delay["detected_within_windows"].items()} == {"0": 0, "1": 0, "2": 0}
     with pytest.raises(ValueError):
         rate_with_ci([], BOOTSTRAP)
+
+
+def test_the_delay_says_it_covers_detected_streams_only_and_is_capped() -> None:
+    """P6-STAT-3: 6 windows, drift from window 3, so a delay is at most 2; undetected streams stay in a denominator."""
+    outcomes = [
+        outcome(0, (3,)),  # delay 0
+        outcome(1, (5,)),  # delay 2, the last window: the cap
+        outcome(2, ()),  # not detected
+        outcome(3, (1, 4)),  # delay 1 (the alert in window 1 is before the drift)
+    ]
+    delay = summarize_scenario(outcomes, YOUNG, settings(), BOOTSTRAP)["detection_delay_windows"]
+    assert delay["mean"]["estimate"] == pytest.approx(1.0) and delay["mean"]["unit"] == "detected stream"
+    assert delay["mean_over"].startswith("detected streams only")
+    assert (delay["n_streams"], delay["n_detected_streams"]) == (4, 3)
+    assert (delay["max_possible_delay"], delay["streams_at_max_possible_delay"]) == (2, 1)
+    within = delay["detected_within_windows"]
+    assert [within[k]["numerator"] for k in ("0", "1", "2")] == [1, 2, 3]
+    assert all(rate["denominator"] == 4 and rate["unit"] == "stream" for rate in within.values())
+
+
+def test_rates_carry_the_exact_interval_and_flag_a_misleading_bootstrap() -> None:
+    """P6-STAT-4: 0 or 1 of 300 gives a zero-width or too narrow bootstrap interval; the exact one is recorded."""
+    none = rate_with_ci([False] * 300, BOOTSTRAP)
+    assert (none["ci_low"], none["ci_high"]) == (0.0, 0.0)
+    assert none["exact_ci_low"] == 0.0 and none["exact_ci_high"] == pytest.approx(0.0122, abs=1e-4)
+    assert "zero-width" in none["bootstrap_interval_note"]
+    one = rate_with_ci([True] + [False] * 299, BOOTSTRAP)
+    assert one["ci_high"] < 0.012
+    assert one["exact_ci_low"] == pytest.approx(0.0001, abs=1e-4)
+    assert one["exact_ci_high"] == pytest.approx(0.0184, abs=1e-4)
+    assert "too narrow" in one["bootstrap_interval_note"]
+    every = rate_with_ci([True] * 300, BOOTSTRAP)
+    assert every["exact_ci_low"] == pytest.approx(0.9878, abs=1e-4) and every["exact_ci_high"] == 1.0
+    assert "zero-width" in every["bootstrap_interval_note"]
+    assert "too narrow" in rate_with_ci([True] * 299 + [False], BOOTSTRAP)["bootstrap_interval_note"]
+    half = rate_with_ci([True, False] * 150, BOOTSTRAP)
+    assert half["bootstrap_interval_note"] is None and half["exact_ci_low"] < 0.5 < half["exact_ci_high"]
+    assert half["method"] == "percentile bootstrap" and half["exact_method"].startswith("Clopper-Pearson")
