@@ -54,6 +54,7 @@ from uwcopilot.agent.runner import compile_agent, resume_run, start_run
 from uwcopilot.agent.settings import load_agent_settings
 from uwcopilot.agent.tools import guideline_search_handler, screening_handler
 from uwcopilot.agent.vocab import REVIEWER_ACTIONS, SYNTHETIC_LABEL
+from uwcopilot.governance.feedback import feedback_from_record, load_override_reasons
 from uwcopilot.kyc.screening import ScreeningListsError, configured_screening_lists
 from uwcopilot.llm.fake_client import FakeLLM
 from uwcopilot.rag.prompt import detect_instruction_like_text
@@ -71,6 +72,7 @@ from uwcopilot.web.schemas_lender import (
     LineCount,
     MemoCheckOut,
     MemoOut,
+    OverrideReasonOut,
     QueueItem,
     QueueResponse,
     ScreeningCandidateOut,
@@ -358,8 +360,9 @@ def evidence_parts(run: FileRun) -> tuple[dict[str, EvidenceOut], list[str]]:
 
 
 def decision_summary(record: dict[str, Any]) -> DecisionSummary:
-    """The essentials of a stored decision record."""
+    """The essentials of a stored decision record (records stored before Phase 6 are mapped, see DecisionSummary)."""
     reviewer = record.get("reviewer") or {}
+    feedback = feedback_from_record(record)
     return DecisionSummary(
         record_id=record["record_id"],
         record_sha256=record["record_sha256"],
@@ -367,8 +370,18 @@ def decision_summary(record: dict[str, Any]) -> DecisionSummary:
         final_status=record.get("final_status", ""),
         reviewer_role=reviewer.get("role", ""),
         is_override=bool(reviewer.get("is_override")),
+        review_action=feedback.review_action if feedback else None,
+        reason_codes=list(feedback.reason_codes) if feedback else [],
         decided_at=reviewer.get("decided_at"),
     )
+
+
+def override_reason_options() -> list[OverrideReasonOut]:
+    """The fixed override reason list (config/override_reasons.yaml) with labels and descriptions."""
+    return [
+        OverrideReasonOut(code=reason.code, label=reason.label, description=reason.description)
+        for reason in load_override_reasons().reasons
+    ]
 
 
 def plain(text: Any) -> str:
@@ -387,10 +400,36 @@ def fenced_lines(text: Any) -> list[str]:
     return lines or [""]
 
 
+def lineage_markdown(lineage: Any) -> list[str]:
+    """A short Lineage section: the full block is in the JSON record (scripts/lineage.py prints and checks it)."""
+    if not isinstance(lineage, dict):
+        return ["- not recorded (this record was written before decision lineage was added)"]
+    lines = [f"- Lineage version: {lineage.get('lineage_version')}"]
+    for model in lineage.get("models") or []:
+        commit = str(model.get("measured_at_git_commit") or "not recorded")[:12]
+        lines.append(
+            f"- Model for {model.get('product')}: {model.get('model_version_label') or 'not recorded'} (measured at "
+            f"commit {commit}); score_risk in this decision: {model.get('tool_status')}"
+        )
+    if not lineage.get("models"):
+        lines.append("- Model: none called (no score_risk call in this decision)")
+    for prompt_id, prompt in (lineage.get("prompts") or {}).items():
+        lines.append(f"- Prompt {prompt_id}: {prompt.get('file')} SHA-256 `{str(prompt.get('sha256'))[:12]}...`")
+    for set_id, eval_set in (lineage.get("eval_sets") or {}).items():
+        lines.append(
+            f"- Eval set {set_id}: {eval_set.get('set_hash_field')} `{str(eval_set.get('set_sha256'))[:12]}...`"
+        )
+    for reason in lineage.get("not_recorded") or []:
+        lines.append(f"- Not recorded: {plain(reason)}")
+    return lines
+
+
 def record_markdown(record: dict[str, Any]) -> str:
     """The decision record as Markdown (the JSON record is the system of record)."""
     reviewer = record.get("reviewer") or {}
     policy = record.get("policy_result") or {}
+    feedback = feedback_from_record(record)
+    codes = ", ".join(feedback.reason_codes) if feedback and feedback.reason_codes else "none"
     lines = [
         f"# DEMO decision record: {record.get('application_id')} (SYNTHETIC)",
         "",
@@ -404,6 +443,7 @@ def record_markdown(record: dict[str, Any]) -> str:
         f"- Reference recommendation (policy): {record.get('reference_recommendation')}",
         f"- Override of the recommendation: {'yes' if reviewer.get('is_override') else 'no'}"
         + (f" ({reviewer.get('override_reason')})" if reviewer.get("override_reason") else ""),
+        f"- Review action: {feedback.review_action if feedback else 'not recorded'}; reason codes: {codes}",
         f"- Memo: template memo ({record.get('stamp') or 'no stamp'}), claim check passed: "
         f"{(record.get('memo_check') or {}).get('passed')}",
         "",
@@ -413,9 +453,11 @@ def record_markdown(record: dict[str, Any]) -> str:
         *fenced_lines(reviewer.get("rationale", "")),
         "```",
         "",
-        "## Policy findings",
-        "",
     ]
+    if reviewer.get("reason_text"):
+        lines += ["## Note on the reasons (as typed by the reviewer)", "", "```text"]
+        lines += [*fenced_lines(reviewer["reason_text"]), "```", ""]
+    lines += ["## Policy findings", ""]
     findings = policy.get("findings") or []
     for finding in findings:
         citations = ", ".join(finding.get("section_ids", []) + finding.get("evidence_ids", []))
@@ -432,6 +474,10 @@ def record_markdown(record: dict[str, Any]) -> str:
         "## Versions",
         "",
         *(f"- {name}: {value}" for name, value in versions.items()),
+        "",
+        "## Lineage",
+        "",
+        *lineage_markdown(record.get("lineage")),
         "",
     ]
     return "\n".join(lines)
@@ -572,6 +618,7 @@ class LenderDemoService:
             allowed_actions=review["allowed_actions"],
             action_checks=action_checks(policy, application, role),
             override_reasons=list(APPROVED_OVERRIDE_REASONS),
+            override_reason_options=override_reason_options(),
             findings=policy.findings,
             checks_passed=policy.checks_passed,
             calculations=policy.calculations,
@@ -600,6 +647,8 @@ class LenderDemoService:
         Returns the decision record the graph wrote. DecisionRefused (422) when the checkpoint refuses it.
         """
         refuse_identifiers(body.rationale, "the rationale")
+        if body.reason_text:
+            refuse_identifiers(body.reason_text, "the note on the reasons")
         application = self.application(file_id)
         decision = {
             "action": body.action,
@@ -607,6 +656,8 @@ class LenderDemoService:
             "role": reviewer_role_for(principal),
             "rationale": body.rationale,
             "override_reason": body.override_reason or None,
+            "reason_codes": list(body.reason_codes),
+            "reason_text": body.reason_text or None,
         }
         thread_id = demo_thread_id(principal, file_id)
         with tempfile.TemporaryDirectory(prefix="uwc-demo-") as folder:

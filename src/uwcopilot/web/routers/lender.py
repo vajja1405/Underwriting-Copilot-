@@ -27,6 +27,8 @@ GET /api/lender/files/{id} -> 200 (the first call runs the agent, then it is cac
                         "reasons": ["only a senior_underwriter may decline (NBC-7.2 / HM-9.2)", ...],
                         "needs_override_reason": true}],   (for YOUR role; disable buttons with these reasons)
      "override_reasons": ["documented_compensating_factor", ...],
+     "override_reason_options": [{"code": "documented_compensating_factor", "label", "description"}, ...]
+                                (the fixed list in config/override_reasons.yaml, for labels on the form),
      "findings": [{"rule", "outcome", "trigger_ids", "section_ids", "refer_to", "blocking", "detail",
                    "evidence_ids"}],
      "checks_passed": [{"rule", "section_ids", "detail", "evidence_ids"}],
@@ -53,11 +55,15 @@ GET /api/lender/sections/{section_id} -> 200 {"section_id": "NBC-4.2", "title", 
     "data_label": "SYNTHETIC", "flags": [...]} | 404
 
 POST /api/lender/files/{id}/decision  body {"action": "approve"|"decline"|"refer"|"request_more_information",
-    "rationale": "10-2000 characters", "override_reason": null|"documented_compensating_factor"|...}
+    "rationale": "10-2000 characters", "override_reason": null|"documented_compensating_factor"|...,
+    "reason_codes": [] (optional: one or more codes of override_reason_options; an override needs at least one,
+    given here or as override_reason), "reason_text": null|"optional note about the reasons, up to 1000 characters"}
     -> 200 {"file_id", "status": "recorded", "label": "DEMO",
             "decision": {"record_id", "record_sha256", "action", "final_status": "referred_by_human"|...,
-                         "reviewer_role", "is_override", "decided_at", "label": "DEMO"},
+                         "reviewer_role", "is_override", "review_action": "accept"|"override",
+                         "reason_codes": [...], "decided_at", "label": "DEMO"},
             "markdown": "# DEMO decision record ..."}
+    (the stored record also carries the "lineage" block: model versions, prompt file hash, eval-set versions)
     -> 422 {"detail": "The checkpoint refused this decision.", "reasons": ["only a senior_underwriter may ..."]}
     -> 409 when you already recorded a DEMO decision for this file (delete it to try again)
 

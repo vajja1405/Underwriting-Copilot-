@@ -263,6 +263,68 @@ def test_a_senior_may_decline_with_an_override_reason(lender: TestClient) -> Non
     decision = response.json()["decision"]
     assert decision["final_status"] == "declined_by_human" and decision["is_override"] is True
     assert decision["reviewer_role"] == "senior_underwriter"
+    assert decision["review_action"] == "override" and decision["reason_codes"] == [
+        "information_not_available_to_model"
+    ]
+
+
+# --- review feedback and lineage (Phase 6) ---
+
+
+def test_reason_codes_a_note_and_the_lineage_are_recorded(lender: TestClient) -> None:
+    dev_login(lender, "senior_a", "lender_senior")
+    codes = ["data_error_in_model_input", "documented_compensating_factor"]
+    response = decide(lender, CLEAN_CREDIT, "decline", reason_codes=codes, reason_text="Corrected revenue figure.")
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["decision"]["review_action"] == "override" and body["decision"]["reason_codes"] == codes
+    assert f"Review action: override; reason codes: {', '.join(codes)}" in body["markdown"]
+    assert "## Note on the reasons (as typed by the reviewer)" in body["markdown"]
+    assert "## Lineage" in body["markdown"] and "Prompt agent_memo_prompt" in body["markdown"]
+    stored = lender.get(f"/api/lender/files/{CLEAN_CREDIT}/record").json()["record"]
+    assert stored["reviewer"]["override_reason"] == codes[0] and stored["reviewer"]["reason_text"]
+    assert stored["lineage"]["lineage_version"] == "lineage-v1"
+    assert stored["lineage"]["models"][0]["tool_status"] == "unavailable"  # the offline risk tool did not score it
+
+
+def test_an_override_needs_a_known_reason(lender: TestClient) -> None:
+    dev_login(lender, "senior_a", "lender_senior")
+    missing = decide(lender, CLEAN_CREDIT, "decline")
+    assert missing.status_code == 422
+    assert any("override_reason or reason_codes" in reason for reason in missing.json()["reasons"])
+    assert decide(lender, CLEAN_CREDIT, "decline", reason_codes=["because"]).status_code == 422
+    leaked = decide(lender, CLEAN_CREDIT, "refer", reason_text="Account 123456789012 was checked.")
+    assert leaked.status_code == 422 and "privacy" in leaked.json()["detail"]
+
+
+def test_the_file_view_lists_the_reason_options(lender: TestClient) -> None:
+    body = lender.get(f"/api/lender/files/{CLEAN_CREDIT}").json()
+    options = body["override_reason_options"]
+    assert [option["code"] for option in options] == body["override_reasons"]
+    assert all(option["label"] and option["description"] for option in options)
+
+
+def test_a_record_stored_before_phase_6_still_reads() -> None:
+    from uwcopilot.web.services.lender_demo import decision_summary, record_markdown
+
+    old = {
+        "record_id": "DR-old",
+        "record_sha256": "f" * 64,
+        "application_id": CLEAN_CREDIT,
+        "final_status": "declined_by_human",
+        "reviewer": {
+            "action": "decline",
+            "role": "senior_underwriter",
+            "is_override": True,
+            "override_reason": "policy_exception_approved",
+            "rationale": "Reviewed the SYNTHETIC demo file.",
+        },
+    }
+    summary = decision_summary(old)
+    assert summary.review_action == "override" and summary.reason_codes == ["policy_exception_approved"]
+    markdown = record_markdown(old)
+    assert "Review action: override; reason codes: policy_exception_approved" in markdown
+    assert "- not recorded (this record was written before decision lineage was added)" in markdown
 
 
 # --- the tool wrappers ---

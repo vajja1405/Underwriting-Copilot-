@@ -12,6 +12,10 @@
   this or another process, with --thread-id and --decision.
 - A decision the guidelines do not allow (for example a decline by an underwriter) is refused and the run keeps
   waiting. A valid one appends a decision record to UWC_DECISION_LOG.
+- An override (an approve or decline against the recommendation) needs at least one reason code from
+  config/override_reasons.yaml: --reason-code (repeat it for several) or the older --override-reason; --reason-text
+  adds optional free text about the reasons. The record stores review_action (accept or override), the reason codes
+  and the lineage block (governance/lineage.py; print it with scripts/lineage.py).
 """
 
 import argparse
@@ -24,6 +28,7 @@ from uwcopilot.agent.applications import inputs_sha256, load_application
 from uwcopilot.agent.decision_record import DecisionLog
 from uwcopilot.agent.fake_memo import template_memo_responder
 from uwcopilot.agent.graph import AgentDeps
+from uwcopilot.agent.hitl import APPROVED_OVERRIDE_REASONS
 from uwcopilot.agent.runner import (
     RunOutcome,
     close_checkpointer,
@@ -68,7 +73,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--reviewer-id", default=None)
     parser.add_argument("--role", choices=REVIEWER_ROLES, default=None)
     parser.add_argument("--rationale", default=None)
-    parser.add_argument("--override-reason", default=None)
+    parser.add_argument("--override-reason", default=None, help="one reason code (older form of --reason-code)")
+    parser.add_argument(
+        "--reason-code",
+        action="append",
+        default=[],
+        dest="reason_codes",
+        help=f"an approved reason code; repeat for several ({', '.join(APPROVED_OVERRIDE_REASONS)})",
+    )
+    parser.add_argument("--reason-text", default=None, help="optional free text about the reason codes")
     return parser.parse_args(argv)
 
 
@@ -145,6 +158,10 @@ def decision_from_args(args: argparse.Namespace) -> dict[str, Any] | None:
     }
     if args.override_reason:
         decision["override_reason"] = args.override_reason
+    if args.reason_codes:
+        decision["reason_codes"] = list(args.reason_codes)
+    if args.reason_text:
+        decision["reason_text"] = args.reason_text
     return decision
 
 
