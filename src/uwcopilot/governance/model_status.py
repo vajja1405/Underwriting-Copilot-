@@ -10,16 +10,29 @@ Rules:
 - Statuses: champion (in use), challenger (a candidate, never used for decisions), under_review (a monitoring alert
   fired; it stays in use only until a person looks at it) and retired.
 - Nothing changes a status silently. Every change is appended to the entry's history with who made it, when and why.
-- Monitoring may only mark a model under review. Promoting a challenger and closing a review are decisions, so they
-  need a principal whose role may take the action "promote_model" in security/rbac.py (model_validator only);
-  anyone else gets PermissionError and nothing is written.
+- A family has at most one model in use (champion or under_review). register refuses a second one, and only promote
+  replaces it.
+- Monitoring may only mark the champion under review. An alert on a challenger changes nothing here, because a
+  challenger is not used for decisions (the alert stays in the monitoring alert log). Promoting a challenger and
+  closing a review are decisions, so they need a principal whose role may take the action "promote_model" in
+  security/rbac.py (model_validator only); anyone else gets PermissionError and nothing is written.
 - Promoting a challenger makes it the champion of its family and retires the previous champion of that family.
-- The file is written to a temporary file and then renamed, so a crash never leaves half a file.
+- Closing a review gives the model back the status it had before it was marked (champion). It refuses to make a model
+  champion while another model of the family is in use.
+- Every change (register, mark_under_review, promote, close_review) loads, changes and saves the file while holding an
+  exclusive lock on <registry>.lock (fcntl, POSIX), so two scripts that change the registry at the same moment never
+  erase each other's change. risk/results.py locks the results files the same way.
+- The file is written to a temporary file with a name of its own and then renamed, so a crash never leaves half a
+  file and two writers never share a temporary file.
 
 The file holds model ids, versions, statuses and reasons, never data rows or personal data.
 """
 
+import fcntl
 import os
+import uuid
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
@@ -29,6 +42,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from uwcopilot.security.rbac import Principal, authorize
 
 ModelStatus = Literal["champion", "challenger", "under_review", "retired"]
+IN_USE: tuple[ModelStatus, ...] = ("champion", "under_review")
 MONITOR_ACTOR = "monitor"
 PROMOTE_ACTION = "promote_model"
 
@@ -70,6 +84,14 @@ def utc_now() -> datetime:
     return datetime.now(UTC).replace(microsecond=0)
 
 
+def status_before_review(entry: ModelEntry) -> ModelStatus:
+    """The status a model had before its latest under_review mark; champion when the history does not say."""
+    for change in reversed(entry.history):
+        if change.to_status == "under_review" and change.from_status not in (None, "under_review"):
+            return change.from_status
+    return "champion"
+
+
 class ModelStatusStore:
     """Reads and changes the registry file (module docstring)."""
 
@@ -83,11 +105,29 @@ class ModelStatusStore:
         return ModelStatusFile.model_validate_json(self.path.read_text(encoding="utf-8"))
 
     def save(self, registry: ModelStatusFile) -> None:
-        """Write the registry atomically."""
+        """Write the registry atomically, through a temporary file whose name no other writer uses."""
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        temporary = self.path.with_suffix(self.path.suffix + ".tmp")
-        temporary.write_text(registry.model_dump_json(indent=1) + "\n", encoding="utf-8")
-        os.replace(temporary, self.path)
+        temporary = self.path.with_name(f"{self.path.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp")
+        try:
+            temporary.write_text(registry.model_dump_json(indent=1) + "\n", encoding="utf-8")
+            os.replace(temporary, self.path)
+        finally:
+            temporary.unlink(missing_ok=True)  # only still there when the write or the rename failed
+
+    @contextmanager
+    def locked(self) -> Iterator[None]:
+        """Hold an exclusive lock on <registry>.lock while one load-change-save cycle runs (module docstring).
+
+        Do not nest it: a second lock taken inside the first one would wait forever.
+        """
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        lock_path = self.path.with_name(self.path.name + ".lock")
+        with lock_path.open("w") as lock_file:
+            fcntl.flock(lock_file, fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                fcntl.flock(lock_file, fcntl.LOCK_UN)
 
     def entry(self, model_id: str) -> ModelEntry:
         """One model's entry; KeyError when it is not registered."""
@@ -102,74 +142,99 @@ class ModelStatusStore:
 
     def register(self, entry: ModelEntry, reason: str = "registered", at: datetime | None = None) -> ModelEntry:
         """Add a model. Refuses a second entry with the same id, and a second champion in one family."""
-        registry = self.load()
-        if any(item.model_id == entry.model_id for item in registry.models):
-            raise ValueError(f"model {entry.model_id!r} is already registered")
-        if entry.status == "champion" and any(
-            item.family == entry.family and item.status in ("champion", "under_review") for item in registry.models
-        ):
-            raise ValueError(f"family {entry.family!r} already has a model in use; promote a challenger instead")
-        change = StatusChange(
-            at=at or utc_now(), from_status=None, to_status=entry.status, actor="register", reason=reason
-        )
-        added = entry.model_copy(update={"history": [*entry.history, change]})
-        registry.models.append(added)
-        self.save(registry)
+        with self.locked():
+            registry = self.load()
+            if any(item.model_id == entry.model_id for item in registry.models):
+                raise ValueError(f"model {entry.model_id!r} is already registered")
+            if entry.status == "champion" and any(
+                item.family == entry.family and item.status in IN_USE for item in registry.models
+            ):
+                raise ValueError(f"family {entry.family!r} already has a model in use; promote a challenger instead")
+            change = StatusChange(
+                at=at or utc_now(), from_status=None, to_status=entry.status, actor="register", reason=reason
+            )
+            added = entry.model_copy(update={"history": [*entry.history, change]})
+            registry.models.append(added)
+            self.save(registry)
         return added
 
     def mark_under_review(self, model_id: str, reason: str, alert_id: str, at: datetime | None = None) -> ModelEntry:
-        """Monitoring: a model in use is flagged for a person to look at. A retired model is left as it is."""
-        registry = self.load()
-        for index, item in enumerate(registry.models):
-            if item.model_id != model_id:
-                continue
-            if item.status in ("under_review", "retired"):
-                return item
-            change = StatusChange(
-                at=at or utc_now(),
-                from_status=item.status,
-                to_status="under_review",
-                actor=MONITOR_ACTOR,
-                reason=reason,
-                alert_id=alert_id,
-            )
-            registry.models[index] = item.model_copy(
-                update={"status": "under_review", "history": [*item.history, change]}
-            )
-            self.save(registry)
-            return registry.models[index]
+        """Monitoring: the champion (the model in use) is flagged for a person to look at.
+
+        Any other model is returned as it is. A challenger is not used for decisions, so an alert on it neither puts it
+        in use nor blocks its promotion (the alert stays in the alert log). A model already under review or retired
+        needs no new mark.
+        """
+        with self.locked():
+            registry = self.load()
+            for index, item in enumerate(registry.models):
+                if item.model_id != model_id:
+                    continue
+                if item.status != "champion":
+                    return item
+                change = StatusChange(
+                    at=at or utc_now(),
+                    from_status=item.status,
+                    to_status="under_review",
+                    actor=MONITOR_ACTOR,
+                    reason=reason,
+                    alert_id=alert_id,
+                )
+                registry.models[index] = item.model_copy(
+                    update={"status": "under_review", "history": [*item.history, change]}
+                )
+                self.save(registry)
+                return registry.models[index]
         raise KeyError(f"model {model_id!r} is not registered")
 
     def promote(self, model_id: str, principal: Principal, reason: str, at: datetime | None = None) -> ModelEntry:
         """A model validator makes a challenger the champion of its family; the previous one is retired."""
         self._require_validator(principal)
         when = at or utc_now()
-        registry = self.load()
-        candidate = next((item for item in registry.models if item.model_id == model_id), None)
-        if candidate is None:
-            raise KeyError(f"model {model_id!r} is not registered")
-        if candidate.status != "challenger":
-            raise ValueError(f"only a challenger can be promoted; {model_id!r} is {candidate.status}")
-        for index, item in enumerate(registry.models):
-            if item.family == candidate.family and item.status in ("champion", "under_review"):
-                registry.models[index] = self._changed(item, "retired", principal, f"replaced by {model_id}", when)
-            elif item.model_id == model_id:
-                registry.models[index] = self._changed(item, "champion", principal, reason, when)
-        self.save(registry)
+        with self.locked():
+            registry = self.load()
+            candidate = next((item for item in registry.models if item.model_id == model_id), None)
+            if candidate is None:
+                raise KeyError(f"model {model_id!r} is not registered")
+            if candidate.status != "challenger":
+                raise ValueError(f"only a challenger can be promoted; {model_id!r} is {candidate.status}")
+            for index, item in enumerate(registry.models):
+                if item.family == candidate.family and item.status in IN_USE:
+                    registry.models[index] = self._changed(item, "retired", principal, f"replaced by {model_id}", when)
+                elif item.model_id == model_id:
+                    registry.models[index] = self._changed(item, "champion", principal, reason, when)
+            self.save(registry)
         return next(item for item in registry.models if item.model_id == model_id)
 
     def close_review(self, model_id: str, principal: Principal, reason: str, at: datetime | None = None) -> ModelEntry:
-        """A model validator returns a model under review to champion (the alert was looked at and explained)."""
+        """A model validator closes a review (the alert was looked at and explained).
+
+        The model gets back the status it had before it was marked (status_before_review: the champion). It is never
+        made champion while another model of its family is in use, so a family keeps one model in use; closing the
+        review is then refused with ValueError and nothing is written.
+        """
         self._require_validator(principal)
-        registry = self.load()
-        for index, item in enumerate(registry.models):
-            if item.model_id != model_id:
-                continue
-            if item.status != "under_review":
-                raise ValueError(f"{model_id!r} is not under review; it is {item.status}")
-            registry.models[index] = self._changed(item, "champion", principal, reason, at or utc_now())
-            self.save(registry)
-            return registry.models[index]
+        with self.locked():
+            registry = self.load()
+            for index, item in enumerate(registry.models):
+                if item.model_id != model_id:
+                    continue
+                if item.status != "under_review":
+                    raise ValueError(f"{model_id!r} is not under review; it is {item.status}")
+                restored = status_before_review(item)
+                others_in_use = [
+                    other.model_id
+                    for other in registry.models
+                    if other.family == item.family and other.model_id != model_id and other.status in IN_USE
+                ]
+                if restored == "champion" and others_in_use:
+                    raise ValueError(
+                        f"family {item.family!r} already has a model in use ({', '.join(others_in_use)}); "
+                        f"{model_id!r} cannot return to champion"
+                    )
+                registry.models[index] = self._changed(item, restored, principal, reason, at or utc_now())
+                self.save(registry)
+                return registry.models[index]
         raise KeyError(f"model {model_id!r} is not registered")
 
     @staticmethod
