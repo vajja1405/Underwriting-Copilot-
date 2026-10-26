@@ -246,6 +246,16 @@ def studio_files() -> dict[str, Any]:
             "all_cases": {"reached_human_checkpoint": ci(1.0, 1.0, 1.0, n=40), "decisions_recorded_without_a_human": 0},
         },
         "studio_siteiq_metrics.json": {"by_business_type": siteiq_rows},
+        "studio_business_metrics.json": {
+            "headline": {
+                "time_to_complete_package_median_s": {"value": 5.432, "ci95": [5.123, 5.876], "n": 24},
+                "evidence_coverage_rule_s": {
+                    "studio": {"value": 0.8765, "ci_low": 0.8654, "ci_high": 0.8876, "scenarios": 24},
+                    "baseline_b0": {"value": 0.0432, "ci_low": 0.0321, "ci_high": 0.0543, "scenarios": 24},
+                },
+            },
+            "cost_per_package": {"llm_cost_usd_per_package": 0.0},
+        },
         "web_metrics.json": {
             "runs": {
                 "local-container": {

@@ -28,6 +28,7 @@ COMPONENTS: dict[str, str] = {
     "studio_provenance": "Founder Studio: provenance-locked narrative, package and handoff",
     "studio_path": "Founder Studio: path-to-approval search",
     "studio_siteiq": "Founder Studio: SiteIQ site scoring",
+    "studio_business": "Founder Studio: S12 end-to-end evaluation against the baseline B0",
 }
 FILL_IN_NOTE = (
     "Per-person lines need the owners to fill in config/contributions.yaml: list the component ids each of you owns "

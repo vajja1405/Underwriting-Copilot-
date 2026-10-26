@@ -46,10 +46,10 @@ def omitted_parts(report: ResumeReport, bullet_id: str) -> list[str]:
     return [item.part for item in report.omissions if item.bullet_id == bullet_id]
 
 
-def test_full_fixture_gives_six_lender_and_five_studio_bullets(results_dir: Path, repo_root: Path) -> None:
+def test_full_fixture_gives_six_lender_and_six_studio_bullets(results_dir: Path, repo_root: Path) -> None:
     report = build_report(results_dir, repo_root)
     assert sum(1 for bullet in report.bullets if bullet.section == LENDER) == 6
-    assert sum(1 for bullet in report.bullets if bullet.section == STUDIO) == 5
+    assert sum(1 for bullet in report.bullets if bullet.section == STUDIO) == 6
 
 
 def test_bullets_use_only_numbers_from_the_results_folder(results_dir: Path, repo_root: Path) -> None:
@@ -68,7 +68,7 @@ def test_fixture_values_appear_with_their_intervals(results_dir: Path, repo_root
     assert "0.7234 [0.7123, 0.7345] vs 0.7012 [0.6901, 0.7123]" in bullet_text(report, "credit_model")
     assert "+0.0222 [+0.0111, +0.0333]" in bullet_text(report, "credit_model")
     assert "48.7 [41.2, 55.3] alerts per 1,000" in bullet_text(report, "kyc_screening")
-    assert "9 of 33 frozen attack payloads (0.2727 [Wilson 0.1508, 0.4428])" in bullet_text(
+    assert "9 of 33 frozen attack payloads after text normalization (0.2727 [Wilson 0.1508, 0.4428])" in bullet_text(
         report, "document_extraction"
     )
     assert "better than the single-factor baseline for 1, worse for 1, no clear difference for 1" in bullet_text(
@@ -207,6 +207,23 @@ def test_stress_testing_and_tracing_clauses_are_reported_as_left_out(results_dir
     stderr = "\n".join(render_omissions(report, []))
     assert "credit_model / stress testing" in stderr
     assert "LLM/tool-call tracing with cost and p95 per packet" in stderr
+
+
+def test_studio_business_bullet_quotes_the_baseline_and_says_the_time_is_machine_time(
+    results_dir: Path, repo_root: Path
+) -> None:
+    text = bullet_text(build_report(results_dir, repo_root), "studio_business")
+    assert "0.8765 [0.8654, 0.8876] of printed figures carry a checkable source vs 0.0432 [0.0321, 0.0543]" in text
+    assert "on 24 SYNTHETIC scenarios" in text
+    assert "median 5.432 [5.123, 5.876] seconds from inputs to an audited PDF package (machine wall clock" in text
+    assert "no language model is called" in text
+
+
+def test_missing_studio_business_file_drops_its_bullet_with_the_reason(results_dir: Path, repo_root: Path) -> None:
+    (results_dir / "studio_business_metrics.json").unlink()
+    report = build_report(results_dir, repo_root)
+    assert bullet_text(report, "studio_business") == ""
+    stderr = "\n".join(render_omissions(report, []))
     assert "studio_business_metrics.json does not exist" in stderr
 
 

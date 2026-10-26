@@ -19,6 +19,7 @@
 #   studio_provenance     Founder Studio: provenance-locked narrative, package and handoff
 #   studio_path           Founder Studio: path-to-approval search
 #   studio_siteiq         Founder Studio: SiteIQ site scoring
+#   studio_business       Founder Studio: S12 end-to-end evaluation against the baseline B0
 #
 # Empty by default: the owners fill it in themselves, for example
 #   Rahul Vajja: [evidence_platform, credit_model]

@@ -1,9 +1,8 @@
 """Founder Studio bullets, built only from results/studio_*.json and results/web_metrics.json.
 
 Every Studio number describes SYNTHETIC plans, SYNTHETIC cities or SIMULATED probabilities, and the bullets say so.
-Two results files are deliberately not quoted (see studio_notes):
-- results/studio_evidence_metrics_ollama.json: a small local-model run whose narratives all fell back to the template;
-- results/studio_business_metrics.json: written by the Studio S12 evaluation; this script does not read it yet.
+One results file is deliberately not quoted (see studio_notes): results/studio_evidence_metrics_ollama.json, a small
+local-model run whose narratives all fell back to the template.
 """
 
 from typing import Any
@@ -218,6 +217,40 @@ def siteiq_bullet(results: ResultsFolder) -> Built:
     return draft.finish()
 
 
+def business_bullet(results: ResultsFolder) -> Built:
+    """S12 end to end: printed figures with a checkable source vs the baseline B0, and the time to an audited PDF."""
+    draft = BulletDraft(
+        "studio_business",
+        STUDIO,
+        "Founder Studio end-to-end evaluation against a baseline defined before the first run",
+    )
+    metrics = results.load(BUSINESS)
+    studio = estimate_at(metrics, "headline", "evidence_coverage_rule_s", "studio")
+    baseline = estimate_at(metrics, "headline", "evidence_coverage_rule_s", "baseline_b0")
+    scenarios = number_at(metrics, "headline", "evidence_coverage_rule_s", "studio", "scenarios")
+    if studio is None or baseline is None or scenarios is None:
+        draft.omit("evidence coverage vs baseline", missing_reason(metrics, BUSINESS, "headline"), core=True)
+        return draft.finish()
+    draft.add(
+        f"{interval(studio)} of printed figures carry a checkable source vs {interval(baseline)} for a plan made "
+        f"without the site scoring, the simulation and the ledger, on {count(scenarios)} SYNTHETIC scenarios",
+        BUSINESS,
+    )
+    median = estimate_at(metrics, "headline", "time_to_complete_package_median_s")
+    if median is None:
+        draft.omit("time to a complete package", missing_reason(metrics, BUSINESS, "headline"))
+    else:
+        draft.add(
+            f"median {interval(median, decimals=3)} seconds from inputs to an audited PDF package (machine "
+            "wall clock, not a user time)",
+            BUSINESS,
+        )
+    llm_cost = number_at(metrics, "cost_per_package", "llm_cost_usd_per_package")
+    if llm_cost == 0:
+        draft.add_context("no language model is called (template narrative and memo)")
+    return draft.finish()
+
+
 def studio_notes(results: ResultsFolder) -> list[str]:
     """Studio results files present in the folder that the bullets deliberately do not quote, and why."""
     notes = []
@@ -229,10 +262,4 @@ def studio_notes(results: ResultsFolder) -> list[str]:
         if hits is not None and total is not None:
             detail = f"{count(hits)} of {count(total)} narratives fell back to the template"
         notes.append(f"results/{EVIDENCE_OLLAMA} not quoted: a small local-model run ({detail})")
-    if results.load(BUSINESS) is None:
-        notes.append(
-            f"results/{BUSINESS} does not exist: time to a complete package and cost per package are not measured"
-        )
-    else:
-        notes.append(f"results/{BUSINESS} exists but this script does not read it yet: add its bullet by code")
     return notes

@@ -153,7 +153,8 @@ def add_injection(draft: BulletDraft, results: ResultsFolder) -> None:
         draft.omit("injection tripwire recall", missing_reason(source, source_name, "detector"))
     else:
         draft.add(
-            f"a pattern tripwire flags {count(caught)} of {count(total)} frozen attack payloads ({interval(recall)})",
+            f"a pattern tripwire flags {count(caught)} of {count(total)} frozen attack payloads after text "
+            f"normalization ({interval(recall)})",
             source_name,
         )
     status = dig(source, "action_level", "status")

@@ -13,6 +13,7 @@ from uwcopilot.resume.lender_models import credit_bullet, credit_footnotes, insu
 from uwcopilot.resume.lender_platform import documents_bullet, evidence_bullet
 from uwcopilot.resume.results import ResultsFolder
 from uwcopilot.resume.studio import (
+    business_bullet,
     feasibility_bullet,
     path_bullet,
     platform_bullet,
@@ -59,6 +60,7 @@ def build_report(results_dir: Path, repo_root: Path) -> ResumeReport:
         provenance_bullet(results),
         path_bullet(results),
         siteiq_bullet(results),
+        business_bullet(results),
     ]
     bullets = [bullet for bullet, _ in built if bullet is not None]
     omissions = [omission for _, items in built for omission in items]
