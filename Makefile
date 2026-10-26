@@ -655,3 +655,12 @@ governance-results:  ## Phase 6 producers in order: feedback-report, champion-ch
 	$(MAKE) champion-challenger
 	$(MAKE) monitor
 	$(MAKE) release-gate ARGS=--write-results; gate_status=$$?; $(MAKE) governance-packs && exit $$gate_status
+
+# Phase 8, README results table track: the headline table at the end of the README RESULTS block (one row per
+# headline metric of each results file the Status tables cite, with its interval and source file). `make reports`
+# renders it (scripts/render_reports.py, src/uwcopilot/governance/readme_headlines.py); no new script. The tests are
+# offline: every number in a row must appear in that row's own results file.
+.PHONY: readme-headlines-test
+
+readme-headlines-test:  ## README headline table tests only (offline; hand-made results and the committed results)
+	uv run pytest -q tests/governance/test_readme_headlines.py tests/test_render_reports.py
