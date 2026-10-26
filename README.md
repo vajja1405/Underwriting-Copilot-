@@ -77,6 +77,7 @@ Not wired yet: the web Lender Desk runs the Phase 5 agent on SYNTHETIC **structu
 | S4 founder ledger + provenance-locked narrative | Built + measured (template); LLM smoke only | Template: 1,673/1,673 narrative numbers traced to the ledger on 36 scenarios (by construction; measured before the S4 review fixes; after them the 6 SYNTHETIC-city scenarios gave 285/285 and the 30 real-city ones were not re-run). Wrong-slot blind spot: the three checks together flag 5/60 (Wilson 95% [0.0361, 0.1807]). `qwen2.5-1.5b-instruct-f16`: none of 12 drafts (6 first tries, 6 retries) passed the grammar, so all 6 fell back to the template (pre-review, approximate run; see S4 walkthrough, section 6.2) | [template](results/studio_evidence_metrics.json), [after review](results/studio_evidence_metrics_synthetic.json), [Ollama](results/studio_evidence_metrics_ollama.json) | [S4](docs/studio/walkthrough_s4.md) |
 | S5 path to approval: the smallest 1-2 plan changes that reach the simulated loan targets | Built + measured | Found a path for 0.1026 [0.0784, 0.1306] of the 536 SYNTHETIC plans that needed a change; a path that also meets the SYNTHETIC startup program's equity and loan rules (NSP-3.1, NSP-8.1) for 0.0392 [0.0243, 0.0578] | [studio_path_metrics.json](results/studio_path_metrics.json) | [S5](docs/studio/walkthrough_s5.md) |
 | S6 lender-ready package (PDF + JSON) and handoff to the Lender Desk | Built + measured (template memo); review fixes applied | 36 golden SYNTHETIC packages: 30,681 printed numbers read back, 0 untraced in the package text and 0 in the PDF text; 36/36 reached the agent's human checkpoint and 0 decisions were recorded without a human (Wilson 95% [0.0, 0.0964]). 35 SYNTHETIC startup applications: 35/35 agree with their hand-written labels (Wilson 95% [0.9011, 1.0]; labels written against the same SYNTHETIC program). The 30 real-metro packages ran in limited mode (no data snapshot). The web app does not call the handoff | [studio_handoff_metrics.json](results/studio_handoff_metrics.json) | [S6](docs/studio/walkthrough_s6.md), [sources](docs/studio/sources.md) |
+| S12 end-to-end evaluation: the 36 golden scenarios from inputs to an audited PDF package, against a baseline B0 defined before the first run | Built + measured (SYNTHETIC; template narrative and memo, no LLM) | 36/36 complete packages; median 7.199 s [6.767, 7.494] from inputs to an audited PDF (machine wall clock on a shared machine, not a user time: nobody's time was observed). Printed figures with a checkable source (rule S): 0.8482 [0.8388, 0.8587] vs 0.0251 [0.0182, 0.0320] for B0, a plan made without SiteIQ, the simulation and the ledger (B0 is a construction, not a sample of real plans). Language-model cost 0 USD per package by construction; compute cost and a usability test with real people not measured | [studio_business_metrics.json](results/studio_business_metrics.json) | [S12](docs/studio/walkthrough_s12.md), [baseline](docs/studio/s12_baseline.md) |
 | S8 privacy and security: plan access log, expiring share links, "Delete all my data", upload screen, CI dependency and secret scans, Privacy and Terms pages, STRIDE threat model | Built + checked; adversarial review fixes applied (no metric) | Checks, not measurements: the offline suite passes; `make scan-secrets` found no leaks in 145 commits and `make audit-deps` no known vulnerabilities (2026-10-20). There is no upload route, so the upload screen is not called yet. The new pages were not part of the Playwright or axe runs. Privacy and Terms are drafts pending the owners' approval | none (no metric) | [S8](docs/studio/walkthrough_s8.md), [threat model](docs/studio/threat_model.md), [privacy](docs/studio/privacy.md) |
 
 ### Web app and deployment
@@ -238,15 +239,21 @@ make studio-evidence            # founder ledger + template narrative, 36 golden
 make studio-evidence-synthetic  # the same on the 6 SYNTHETIC-city scenarios -> results/studio_evidence_metrics_synthetic.json
 make studio-evidence-ollama     # local 1.5B model, 6 scenarios -> results/studio_evidence_metrics_ollama.json
 make studio-paths               # path-to-approval search -> results/studio_path_metrics.json
+make studio-handoff             # S6 packages + handoff to the agent (needs `make data`) -> results/studio_handoff_metrics.json
+make studio-business-metrics    # S12 end to end on the 36 golden scenarios vs baseline B0
+                                #   -> results/studio_business_metrics.json (run studio-coverage, -paths, -handoff first)
 make docker-build-archive docker-smoke  # labelled image of HEAD, container smoke test -> results/deployment_metrics.json
 make web-metrics-tools docker-build-archive  # pinned Lighthouse + axe, and the labelled image web-metrics requires
 make web-metrics                # Playwright, axe, Lighthouse on a local container (Docker) -> results/web_metrics.json
+make resume-lines               # resume bullets built only from results/*.json; what it left out, and why, on stderr
 ```
 
 ## Results
 
-No number in these tables is typed by hand. Two scripts write them from `results/*.json`, and unit tests fail if the
-README and the results files disagree. Rows that have not been run say "not measured", with the reason.
+No number in these tables is typed by hand. Two scripts write them from `results/*.json` (`make reports` the first
+table, its notes and the headline table per results file at its end; `make readme-results` the GenAI table after it),
+and unit tests fail if the README and the results files disagree. Rows that have not been run say "not measured",
+with the reason.
 
 Phase 1 risk models, the document pipeline (Phase 2), the Evidence-to-Action Engine (Phase 4) and the evidence-request simulator (innovation S5), written by `make reports` from `results/risk_metrics.json`, `results/docintel_metrics.json` and `results/evidence_metrics.json`:
 
@@ -285,6 +292,95 @@ Written by `scripts/render_reports.py` from `results/risk_metrics.json`. Bootstr
 Document rows: written by the same script from `results/docintel_metrics.json` (`make eval-docintel`, the Phase 2 pipeline on SYNTHETIC packets; [walkthrough](docs/walkthrough_phase2.md)). Bank-statement transaction rows are most of the values, so the field F1 is mostly a transaction-table metric (per document type and page condition in the JSON). A share marked exact shows the exact Clopper-Pearson interval, because its bootstrap interval has zero width (every resample gave the same share). Simulated documents only: no real-world accuracy claim.
 
 Evidence-to-Action Engine and simulator rows: written by the same script from `results/evidence_metrics.json` (sections `packets` from `make eval-evidence` and `simulator` from `make simulate-requests`); every case is SYNTHETIC. Claim-status agreement compares the ledger with a status table written by the same author as the ledger, so it measures agreement with the documented rules, not an independent truth; it is also NOT a held-out measurement, because the table (v2) was written after the first test-split numbers had been seen (`packets.results.protocol.development_note`). The simulator compares request policies against the reference policy's full-information recommendation on cases with a hidden truth; a negative cost difference means the VOI policy asked for less, and a positive decision-error difference means it ended on the wrong recommendation more often than the checklist. Not claimable: real-world accuracy, time or cost savings, or that the VOI score is optimal. The circular next-best-evidence agreement is in the JSON, labelled circular, and not shown here.
+
+**Headline metric per results file.** One row per headline metric of each results file that the Status tables cite (apart from the three files above), written by the same script (`src/uwcopilot/governance/readme_headlines.py`) from the file in the Source column. The interval is the 95% interval stored in that file: a percentile bootstrap interval unless the cell says otherwise; "exact" marks the Clopper-Pearson interval, shown when the bootstrap interval has zero width or the file notes it is too narrow, and "Wilson" a Wilson score interval, for the files that report one. A value without an interval has none in the file. A "not measured" row gives the reason recorded in the file. "Smoke only" and "counts only" rows come from runs on a handful of cases: quote no rate from them. SYNTHETIC and SIMULATED mark generated data and simulated runs; no row is a real-world, production or compliance claim. The agent, sanctions screening and retrieval rows repeat headline rows of the GenAI table below, which has the full breakdown.
+
+**Lender Desk**
+
+| Component | Metric | Value [95% CI] | Source |
+|---|---|---|---|
+| RAG retrieval over SYNTHETIC guidelines and public regulations, hybrid + rerank, answerable questions | Recall@5 | 0.9078 [0.8544, 0.9563] | [rag_metrics.json](results/rag_metrics.json) |
+| RAG retrieval over SYNTHETIC guidelines and public regulations, hybrid + rerank, answerable questions | MRR@10 | 0.8285 [0.7683, 0.8846] | [rag_metrics.json](results/rag_metrics.json) |
+| RAG answers written by an LLM | Faithfulness | not measured (no LLM key) | [rag_metrics.json](results/rag_metrics.json) |
+| Sanctions screening (OFAC SDN + OpenSanctions), SYNTHETIC test customers, rules only | Recall of true matches at the selected operating point | 0.6889 [0.5476, 0.8182] | [kyc_metrics.json](results/kyc_metrics.json) |
+| Sanctions screening (OFAC SDN + OpenSanctions), SYNTHETIC test customers, rules only | Alerts per 1,000 customers screened | 103.8 [89.9, 118.9] | [kyc_metrics.json](results/kyc_metrics.json) |
+| Sanctions screening | Adverse-media memo (needs an LLM) | not measured (no LLM key) | [kyc_metrics.json](results/kyc_metrics.json) |
+| Agent + human checkpoint, SYNTHETIC applications (template memo, no LLM) | Required escalations that reached the right human queue | 1.0000 (n=60, zero-width bootstrap interval, no other interval recorded) | [agent_metrics.json](results/agent_metrics.json) |
+| Agent + human checkpoint, SYNTHETIC applications (template memo, no LLM) | End-to-end routing agreement with the designed labels | 0.7538 [0.6462, 0.8462] (n=65) | [agent_metrics.json](results/agent_metrics.json) |
+| Agent + human checkpoint, SYNTHETIC applications (template memo, no LLM) | Decisions recorded without a human | 0 | [agent_metrics.json](results/agent_metrics.json) |
+| Agent memo written by an LLM | Citation accuracy | not measured (no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none)) | [agent_metrics.json](results/agent_metrics.json) |
+| MCP server, stdio | Smoke-test checks | 17 checks, all passed | [mcp_smoke_stdio.json](results/mcp_smoke_stdio.json) |
+| MCP server, streamable HTTP | Smoke-test checks | 17 checks, all passed | [mcp_smoke_streamable_http.json](results/mcp_smoke_streamable_http.json) |
+| Numeric provenance checker (SIG), mutations of SYNTHETIC guideline sentences | Changed values caught | 1.0000 [0.9790, 1.0000] (179/179, Wilson) | [provenance_metrics.json](results/provenance_metrics.json) |
+| Numeric provenance checker (SIG), mutations of SYNTHETIC guideline sentences | Values scaled x10 caught | 1.0000 [0.9795, 1.0000] (184/184, Wilson) | [provenance_metrics.json](results/provenance_metrics.json) |
+| Numeric provenance checker (SIG), mutations of SYNTHETIC guideline sentences | Unit swaps caught | 1.0000 [0.9586, 1.0000] (89/89, Wilson) | [provenance_metrics.json](results/provenance_metrics.json) |
+| Numeric provenance checker (SIG), mutations of SYNTHETIC guideline sentences | Values from another section caught | 1.0000 [0.9785, 1.0000] (175/175, Wilson) | [provenance_metrics.json](results/provenance_metrics.json) |
+| Numeric provenance checker (SIG), mutations of SYNTHETIC guideline sentences | Comparator flips caught | 0.8148 [0.7312, 0.8768] (88/108, Wilson) | [provenance_metrics.json](results/provenance_metrics.json) |
+| Numeric provenance checker (SIG), mutations of SYNTHETIC guideline sentences | Values from another row of the same table caught (known blind spot) | 0.1091 [0.0510, 0.2183] (6/55, Wilson) | [provenance_metrics.json](results/provenance_metrics.json) |
+| Numeric provenance checker (SIG), mutations of SYNTHETIC guideline sentences | False flags on unmutated sentences | 0.0000 [0.0000, 0.0186] (0/203, Wilson) | [provenance_metrics.json](results/provenance_metrics.json) |
+| Numeric provenance checker (SIG), mutations of SYNTHETIC guideline sentences | False flags on equivalent rewrites | 0.0000 [0.0000, 0.0423] (0/87, Wilson) | [provenance_metrics.json](results/provenance_metrics.json) |
+| Numeric provenance checker on memos | Unsupported numbers in memos | not measured (needs the Phase 4 evidence ledger and LLM runs (pending)) | [provenance_metrics.json](results/provenance_metrics.json) |
+| Prompt-injection tripwire (pattern detector, no model), frozen attack payloads | Payloads flagged, raw text | 0.2000 [0.1183, 0.3178] (12/60, Wilson) | [injection/injection_metrics_detector_only.json](results/injection/injection_metrics_detector_only.json) |
+| Prompt-injection attack on a model (prompt layer L2) | Attack success rate | not measured (no model run for this layer) | [injection/injection_metrics_detector_only.json](results/injection/injection_metrics_detector_only.json) |
+| Prompt-injection attack on a local Ollama model | Attack success rate | smoke only: 3 of 240 planned calls made, no rate quoted | [injection/smoke/injection_metrics_smoke.json](results/injection/smoke/injection_metrics_smoke.json) |
+| RAG answers by local Ollama models, SYNTHETIC questions | Key-fact recall (a faithfulness proxy) | smoke only: 3 questions per model, no rate quoted | [generation/smoke/generation_metrics_smoke.json](results/generation/smoke/generation_metrics_smoke.json) |
+
+**Governance**
+
+| Component | Metric | Value [95% CI] | Source |
+|---|---|---|---|
+| Drift monitor of a demonstration claim-frequency GLM: SIMULATED stream with no injected drift (random held-out windows, recorded outcomes). | Streams with a false alert | 0.0033 exact [0.0001, 0.0184] (1/300) | [governance_metrics.json](results/governance_metrics.json) |
+| Drift monitor of a demonstration claim-frequency GLM: SYNTHETIC claim-rate drift - SIMULATED outcomes with 25% more claims than recorded. | Streams where the drift was detected | 0.9933 [0.9833, 1.0000] (298/300) | [governance_metrics.json](results/governance_metrics.json) |
+| Drift monitor of a demonstration claim-frequency GLM: SYNTHETIC mild claim-rate drift - SIMULATED outcomes with 10% more claims than recorded. | Streams where the drift was detected | 0.1633 [0.1233, 0.2100] (49/300) | [governance_metrics.json](results/governance_metrics.json) |
+| Drift monitor of the credit model | Drift and calibration checks | not measured (The Lending Club data and every trained credit model are absent from this checkout (downloading them needs a Kaggle key)) | [governance_metrics.json](results/governance_metrics.json) |
+| Monitoring of LLM memos | Unsupported-claim rate | not measured (needs an LLM run) | [governance_metrics.json](results/governance_metrics.json) |
+| Champion/challenger, SYNTHETIC Lending Club-shaped loans | AUC, challenger minus champion (paired) | -0.0003 [-0.0029, 0.0025] | [governance_metrics.json](results/governance_metrics.json) |
+| Champion/challenger, SYNTHETIC Lending Club-shaped loans | Recommendation (a model validator decides) | keep_champion | [governance_metrics.json](results/governance_metrics.json) |
+| Reviewer feedback, SIMULATED reviewer actions on SYNTHETIC applications | Override rate (describes the simulation) | 0.1385 [0.0615, 0.2308] (9/65) | [governance_metrics.json](results/governance_metrics.json) |
+| Outcomes, SYNTHETIC outcomes joined to SIMULATED decisions | Default rate of the approved loans with an outcome | 0.2180 [0.2060, 0.2310] (1,010/4,632) | [governance_metrics.json](results/governance_metrics.json) |
+| Release gate over the SYNTHETIC and public-data results | Verdict and gate rows by status | PASS (11 PASS, 0 FAIL, 0 MISSING, 4 NOT_MEASURED) | [governance_metrics.json](results/governance_metrics.json) |
+
+**Founder Studio**
+
+| Component | Metric | Value [95% CI] | Source |
+|---|---|---|---|
+| Data fabric (Studio S1), PUBLIC data, the real metros | Lowest business-type data coverage per metro, against the full-mode threshold | 0.6779 to 0.6826 (threshold 0.8); every real metro is in limited mode | [studio_metro_coverage.json](results/studio_metro_coverage.json) |
+| SiteIQ (Studio S2), SYNTHETIC cities, car wash | Spearman with the hidden true demand: SiteIQ minus the single-factor baseline | -0.0186 [-0.0434, 0.0043] | [studio_siteiq_metrics.json](results/studio_siteiq_metrics.json) |
+| SiteIQ (Studio S2), SYNTHETIC cities, laundromat | Spearman with the hidden true demand: SiteIQ minus the single-factor baseline | -0.0217 [-0.0496, 0.0036] | [studio_siteiq_metrics.json](results/studio_siteiq_metrics.json) |
+| SiteIQ (Studio S2), SYNTHETIC cities, motel | Spearman with the hidden true demand: SiteIQ minus the single-factor baseline | -0.0509 [-0.1268, 0.0273] | [studio_siteiq_metrics.json](results/studio_siteiq_metrics.json) |
+| SiteIQ (Studio S2), SYNTHETIC cities, restaurant cafe | Spearman with the hidden true demand: SiteIQ minus the single-factor baseline | 0.0007 [-0.0146, 0.0164] | [studio_siteiq_metrics.json](results/studio_siteiq_metrics.json) |
+| SiteIQ (Studio S2), SYNTHETIC cities, retail storefront | Spearman with the hidden true demand: SiteIQ minus the single-factor baseline | -0.1945 [-0.2362, -0.1494] | [studio_siteiq_metrics.json](results/studio_siteiq_metrics.json) |
+| SiteIQ (Studio S2), SYNTHETIC cities, short term rental | Spearman with the hidden true demand: SiteIQ minus the single-factor baseline | 0.0853 [0.0542, 0.1153] | [studio_siteiq_metrics.json](results/studio_siteiq_metrics.json) |
+| Feasibility simulator (Studio S3), SYNTHETIC worlds, well-specified | Brier score for P(year-2 DSCR meets the lender target), simulated: simulator vs a single-point forecast (lower is better) | 0.1405 [0.1321, 0.1493] vs 0.4796 [0.4596, 0.4992] (n=2,400 worlds) | [studio_feasibility_metrics.json](results/studio_feasibility_metrics.json) |
+| Feasibility simulator (Studio S3), SYNTHETIC worlds, misspecified | Brier score for P(year-2 DSCR meets the lender target), simulated: simulator vs a single-point forecast (lower is better) | 0.1433 [0.1351, 0.1523] vs 0.4938 [0.4729, 0.5154] (n=2,400 worlds) | [studio_feasibility_metrics.json](results/studio_feasibility_metrics.json) |
+| Founder narrative (Studio S4), template, SYNTHETIC golden scenarios | Narrative numbers traced to the ledger (by construction for the template) | 1.0000 [0.9977, 1.0000] (1,673/1,673, Wilson) | [studio_evidence_metrics.json](results/studio_evidence_metrics.json) |
+| Founder narrative written by an LLM | Fallback to the template | not measured (the template provider makes no LLM call) | [studio_evidence_metrics.json](results/studio_evidence_metrics.json) |
+| Founder narrative (Studio S4), template, SYNTHETIC-city scenarios (after the review fixes) | Narrative numbers traced to the ledger (by construction for the template) | 1.0000 [0.9867, 1.0000] (285/285, Wilson) | [studio_evidence_metrics_synthetic.json](results/studio_evidence_metrics_synthetic.json) |
+| Founder narrative (Studio S4), template, SYNTHETIC-city scenarios (after the review fixes) | Wrong-slot mutations flagged by any of the three checks (known blind spot) | 0.0833 [0.0361, 0.1807] (5/60, Wilson) | [studio_evidence_metrics_synthetic.json](results/studio_evidence_metrics_synthetic.json) |
+| Founder narrative (Studio S4) by a local model, SYNTHETIC-city scenarios | Drafts that passed the narrative grammar | counts only: 6/6 scenarios fell back to the template; drafts valid on the first try 0/6, after a retry 0/6 (ollama qwen2.5-1.5b-instruct-f16, 12 calls) | [studio_evidence_metrics_ollama.json](results/studio_evidence_metrics_ollama.json) |
+| Path to approval (Studio S5), SYNTHETIC plans that needed a change | Plans for which a one- or two-lever path was found | 0.1026 [0.0784, 0.1306] (n=536) | [studio_path_metrics.json](results/studio_path_metrics.json) |
+| Path to approval (Studio S5), SYNTHETIC plans that needed a change | Plans with a path that also meets the SYNTHETIC startup program's equity and loan rules | 0.0392 [0.0243, 0.0578] (n=536) | [studio_path_metrics.json](results/studio_path_metrics.json) |
+| Lender-ready package and handoff (Studio S6), SYNTHETIC golden founder scenarios | Printed numbers not traced to the ledger | 0 in the package text and 0 in the PDF text, of 30,681 numbers read back | [studio_handoff_metrics.json](results/studio_handoff_metrics.json) |
+| Lender-ready package and handoff (Studio S6), SYNTHETIC golden founder scenarios | Packages that reached the agent's human checkpoint | 1.0000 [0.9036, 1.0000] (36/36, Wilson) | [studio_handoff_metrics.json](results/studio_handoff_metrics.json) |
+| Lender-ready package and handoff (Studio S6), SYNTHETIC golden founder scenarios | Decisions recorded without a human | 0.0000 [0.0000, 0.0964] (0/36, Wilson) | [studio_handoff_metrics.json](results/studio_handoff_metrics.json) |
+| Handoff (Studio S6), SYNTHETIC startup applications (labels written against the same SYNTHETIC program) | Recommendation agreement with the hand-written labels | 1.0000 [0.9011, 1.0000] (35/35, Wilson) | [studio_handoff_metrics.json](results/studio_handoff_metrics.json) |
+| Founder Studio end to end (Studio S12), golden SYNTHETIC founder scenarios | Seconds from inputs to an audited PDF package, median (machine-dependent wall clock, not a user time) | 7.199 [6.767, 7.494] (n=36) | [studio_business_metrics.json](results/studio_business_metrics.json) |
+| Founder Studio end to end (Studio S12), golden SYNTHETIC founder scenarios | Printed figures with a checkable source (rule S): Studio vs baseline B0, a plan made without SiteIQ, the simulation and the ledger | 0.8482 [0.8388, 0.8587] (12,222/14,410) vs 0.0251 [0.0182, 0.0320] (33/1,316) | [studio_business_metrics.json](results/studio_business_metrics.json) |
+| Founder Studio end to end (Studio S12), golden SYNTHETIC founder scenarios | Rule S share, Studio minus baseline B0 | 0.8231 [0.8118, 0.8352] | [studio_business_metrics.json](results/studio_business_metrics.json) |
+| Founder Studio end to end (Studio S12), golden SYNTHETIC founder scenarios | Language-model cost per package | 0 USD (0 by construction: the narrative is the template provider and the lender memo is the deterministic template (FAKE LLM - test mode)) | [studio_business_metrics.json](results/studio_business_metrics.json) |
+| Founder Studio end to end (Studio S12), golden SYNTHETIC founder scenarios | Compute cost per package | not measured (no cloud resource was used and the machine's cost is not metered) | [studio_business_metrics.json](results/studio_business_metrics.json) |
+| Founder Studio with real people | Usability test | not measured (no usability test with real people was done, so there is no n, protocol or raw time) | [studio_business_metrics.json](results/studio_business_metrics.json) |
+
+**Web app and deployment**
+
+| Component | Metric | Value [95% CI] | Source |
+|---|---|---|---|
+| Web app on a LOCAL container (dev login, SYNTHETIC inputs; not the Space) | Playwright end-to-end flows | 5 flows, all passed | [web_metrics.json](results/web_metrics.json) |
+| Web app on a LOCAL container (dev login, SYNTHETIC inputs; not the Space) | axe-core scans with a serious or critical issue | 0 of 32 scans | [web_metrics.json](results/web_metrics.json) |
+| Web app on the Hugging Face Space | Playwright end-to-end flows | not measured (no `runs.hf-space.e2e.flows` in the file) | [web_metrics.json](results/web_metrics.json) |
+| Container smoke test on a LOCAL container (not the Space) | Smoke checks | 9 checks, all passed | [deployment_metrics.json](results/deployment_metrics.json) |
+| Container smoke test on a LOCAL container (not the Space) | Request latency p95 over every path, one client (ms) | 5.73 (n=100, no interval recorded) | [deployment_metrics.json](results/deployment_metrics.json) |
+| Hugging Face Space deployment | Smoke checks | not measured (no `runs.hf-space.checks` in the file) | [deployment_metrics.json](results/deployment_metrics.json) |
 <!-- RESULTS:END -->
 
 GenAI track: retrieval, sanctions screening, the agent and the MCP server, written by `make readme-results`
