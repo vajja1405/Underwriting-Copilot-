@@ -10,8 +10,21 @@ import pytest
 from monitoring_test_helpers import run_paths, small_config, write_inputs
 
 import monitor
-from uwcopilot.governance.monitoring_config import MonitoringConfig
-from uwcopilot.governance.monitoring_report import CSP, escape, fmt, fmt_interval, render_monitoring_report, table
+from uwcopilot.governance.monitoring_config import BootstrapSettings, MonitoringConfig
+from uwcopilot.governance.monitoring_report import (
+    CSP,
+    escape,
+    fmt,
+    fmt_delay,
+    fmt_detail,
+    fmt_interval,
+    fmt_rate,
+    render_monitoring_report,
+    table,
+)
+from uwcopilot.governance.monitoring_stream import delay_summary, rate_with_ci
+
+BOOTSTRAP = BootstrapSettings(resamples=1000, seed=42, confidence=0.95)
 
 HOSTILE = '<script>alert("x")</script>'
 
@@ -71,3 +84,40 @@ def test_rendering_twice_gives_the_same_page(report: tuple[str, dict[str, Any]])
     _, payload = report
     at = datetime(2026, 10, 20, tzinfo=UTC)
     assert render_monitoring_report(payload, at) == render_monitoring_report(payload, at)
+
+
+def test_the_page_says_the_delay_covers_detected_streams_and_is_capped(report: tuple[str, dict[str, Any]]) -> None:
+    """P6-STAT-3 on the small run (4 windows, drift from window 2, so a delay is at most 1)."""
+    page, payload = report
+    assert "mean delay among detected streams, windows [95% CI] (n detected; capped at 1)" in page
+    assert "the delay is at most 1" in page and "cover the detected streams only" in page
+    assert "delay &lt;= 0 [95% CI] (streams)" in page and "delay &lt;= 1 [95% CI] (streams)" in page
+    delay = payload["validation"]["claim_rate_up_25pct"]["detection_delay_windows"]
+    if delay.get("mean"):
+        assert escape(fmt_delay(delay)) in page
+
+
+def test_a_rate_shows_the_exact_interval_when_the_bootstrap_one_misleads() -> None:
+    """P6-STAT-4: 1 of 300 and 300 of 300 show the exact interval; 150 of 300 does not need it."""
+    one = fmt_rate(rate_with_ci([True] + [False] * 299, BOOTSTRAP))
+    assert one == "0.0033 [0.0000, 0.0100] (1/300); exact [0.0001, 0.0184]"
+    every = fmt_rate(rate_with_ci([True] * 300, BOOTSTRAP))
+    assert every == "1.0000 [1.0000, 1.0000] (300/300); exact [0.9878, 1.0000]"
+    assert "exact" not in fmt_rate(rate_with_ci([True, False] * 150, BOOTSTRAP))
+
+
+def test_the_delay_cell_names_n_the_cap_and_a_missing_delay() -> None:
+    capped = delay_summary([0, 5, 5, None, 2], max_delay=5, bootstrap=BOOTSTRAP)
+    text = fmt_delay(capped)
+    assert text.startswith("3.00 [") and "(4 of 5 streams detected; 2 at the maximum of 5)" in text
+    assert "zero-width" not in text
+    assert "zero-width bootstrap interval" in fmt_delay(delay_summary([0, 0, None], max_delay=5, bootstrap=BOOTSTRAP))
+    nothing = delay_summary([None, None], max_delay=5, bootstrap=BOOTSTRAP)
+    assert fmt_delay(nothing) == "not applicable (no stream detected)"
+
+
+def test_indicator_details_show_the_override_reasons() -> None:
+    detail = {"override_reasons": {"data_error_in_model_input": 2, "policy_exception_approved": 0}, "decisions": 65}
+    expected = "override_reasons: data_error_in_model_input 2, policy_exception_approved 0; decisions: 65"
+    assert fmt_detail(detail) == expected
+    assert fmt_detail({}) == "-"

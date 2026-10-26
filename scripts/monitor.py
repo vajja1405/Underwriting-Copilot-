@@ -12,13 +12,18 @@ What it does, in order:
     data/governance/monitoring/ when it was trained on the same files with the same split (monitoring_model.py).
  3. Bin the held-out split against the training split (PSI bins) and score it (monitoring.py).
  4. Validate the monitor: n_streams SIMULATED streams per scenario; false alert rate on no-drift streams, detection
-    rate and delay on drifted ones, each with a bootstrap 95% CI over streams (monitoring_stream.py).
+    rate and delay (among detected streams, capped by the stream length) on drifted ones, each with a bootstrap 95%
+    CI over streams and, for rates, the exact interval too (monitoring_stream.py).
  5. Demonstration stream (named in the config): every window is reported; each breach is appended to
     data/governance/monitoring_alerts.jsonl and the model is marked under review in data/governance/model_status.json.
- 6. Indicators read from the latest results files (document extraction, agent, reviewer overrides;
+ 6. Indicators read from the latest results files (document extraction, agent, reviewer overrides and their reasons;
     monitoring_indicators.py). A breach is an alert record too; it changes no model status (not registered models).
  7. Write results/governance_metrics.json, section "monitoring" (risk/results.py update_results), and the HTML report
     results/monitoring_report.html (monitoring_report.py), which reads only that section's payload.
+
+Run order: step 6 reads the "feedback" section of results/governance_metrics.json, so run scripts/feedback_report.py
+first. `make governance-results` runs every governance producer in order (feedback-report, champion-challenger,
+monitor, release-gate --write-results, governance-packs).
 
 The Lending Club credit model cannot be monitored here (its data and models are absent from this checkout): the
 section says "not measured" for it. Nothing here is a production monitoring system or a compliance programme.
@@ -403,10 +408,17 @@ def print_summary(payload: dict[str, Any]) -> None:
         key = "detection_rate" if summary["drifted"] else "false_alert_rate"
         rate = summary[key]
         line = f"{name}: {key} {rate['estimate']:.3f} [{rate['ci_low']:.3f}, {rate['ci_high']:.3f}]"
-        delay = summary.get("detection_delay_windows", {}).get("mean")
-        if delay:
-            line += f", mean delay {delay['estimate']:.2f} windows [{delay['ci_low']:.2f}, {delay['ci_high']:.2f}]"
+        delay = summary.get("detection_delay_windows", {})
+        mean = delay.get("mean")
+        if mean:
+            line += (
+                f", mean delay among {delay['n_detected_streams']} detected streams {mean['estimate']:.2f} windows "
+                f"[{mean['ci_low']:.2f}, {mean['ci_high']:.2f}] (capped at {delay['max_possible_delay']})"
+            )
         print(line)
+    for indicator in payload["indicators"]["values"]:
+        if indicator["status"] != "measured":
+            print(f"indicator {indicator['name']}: {indicator['status']} ({indicator['note']})")
     print(f"alerts this run: {payload['alerts']['n_alerts_this_run']} -> {payload['alerts']['log']}")
     status = payload["model_status"]
     before, after = status.get("status_before_run"), status.get("status_after_run")

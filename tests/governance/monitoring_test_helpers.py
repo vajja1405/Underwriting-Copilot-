@@ -2,19 +2,49 @@
 
 - synthetic_policies / toy_frequency: cleaned freMTPL2-shaped policies and a stand-in "model" (no training);
 - small_config / write_inputs / run_paths: a short stream, input files and output paths for running
-  scripts/monitor.py end to end under a temporary folder (offline).
+  scripts/monitor.py end to end under a temporary folder (offline);
+- simulated_feedback_summary: what governance/feedback.py summarize_feedback writes for SIMULATED reviewer records
+  (the real producer of the "feedback" section the monitor reads).
 """
 
 import json
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
 import yaml
 
 import monitor
+from uwcopilot.governance.feedback import FEEDBACK_VERSION, summarize_feedback
 from uwcopilot.governance.monitoring_config import DEFAULT_CONFIG_PATH, MonitoringConfig
 from uwcopilot.risk.data.fremtpl2 import prepare_fremtpl2, synthetic_fremtpl2_frames
+
+
+def review_record(record_id: str, review_action: str, codes: list[str]) -> dict[str, Any]:
+    """A minimal SIMULATED agent decision record with a Phase 6 reviewer block."""
+    return {
+        "record_id": record_id,
+        "application_id": f"APP-{record_id}",
+        "policy_result": {"line": "credit"},
+        "reference_recommendation": "refer",
+        "reviewer": {
+            "action": "approve" if review_action == "override" else "refer",
+            "role": "senior_underwriter",
+            "rationale": "SIMULATED review of a SYNTHETIC file.",
+            "review_action": review_action,
+            "reason_codes": codes,
+            "feedback_version": FEEDBACK_VERSION,
+        },
+        "reviewer_label": "SIMULATED",
+    }
+
+
+def simulated_feedback_summary(override_codes: list[list[str]], accepts: int) -> dict[str, Any]:
+    """summarize_feedback output for one override per code list plus `accepts` accepted recommendations."""
+    records = [review_record(f"O{number}", "override", codes) for number, codes in enumerate(override_codes)]
+    records += [review_record(f"A{number}", "accept", []) for number in range(accepts)]
+    return summarize_feedback(records)
 
 
 def synthetic_policies(n_policies: int, seed: int) -> pd.DataFrame:

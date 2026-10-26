@@ -574,7 +574,7 @@ scan-secrets:  ## Scan every commit, merges included, for secrets (pinned gitlea
 # data/governance/ (gitignored). See src/uwcopilot/governance/monitoring*.py.
 .PHONY: monitor monitor-test
 
-monitor:  ## Drift, calibration and indicator monitoring -> results/governance_metrics.json + monitoring_report.html (make data first)
+monitor:  ## Drift, calibration and indicator monitoring -> results/governance_metrics.json + monitoring_report.html (make data, feedback-report first)
 	uv run python scripts/monitor.py
 
 monitor-test:  ## Monitoring tests only (offline, SYNTHETIC data)
@@ -616,7 +616,8 @@ champion-challenger-test:  ## Champion/challenger, outcomes and promotion tests 
 # Phase 6 part D: release gate. Compares the latest results/*.json with the reviewed baseline in results/baseline/ (rows,
 # directions and tolerances: the `gate:` section of config/release_gate.yaml) and exits 1 when a row is FAIL or MISSING.
 # Offline: it reads committed JSON only. ARGS="--write-results" also writes section "release_gate" of
-# results/governance_metrics.json. release-gate-baseline copies the gated results files into results/baseline/ with a
+# results/governance_metrics.json: write it with `make governance-results`, which runs the gate after the producers.
+# release-gate-baseline copies the gated results files into results/baseline/ with a
 # SHA-256 manifest: make it from committed results, review the diff, then commit results/baseline/. CI job: release-gate.
 .PHONY: release-gate release-gate-baseline release-gate-test
 
@@ -642,3 +643,15 @@ governance-packs:  ## Render docs/governance/bank_model_risk.md and insurance_ai
 
 governance-packs-test:  ## Governance pack tests only (offline; hand-made SYNTHETIC results and the committed results)
 	uv run pytest -q tests/governance/test_packs.py tests/test_render_reports.py
+
+# Phase 6, all governance results in dependency order. The monitor reads the "feedback" section (reviewer override
+# rate and reasons), so feedback-report runs before monitor; the release gate's section and the packs come last, so
+# the packs read every section of one run. The packs are rendered even when the gate fails (they report its verdict);
+# the target then exits with the gate's exit code. Needs `make data` (freMTPL2) for the monitor.
+.PHONY: governance-results
+
+governance-results:  ## Phase 6 producers in order: feedback-report, champion-challenger, monitor, release-gate --write-results, governance-packs
+	$(MAKE) feedback-report
+	$(MAKE) champion-challenger
+	$(MAKE) monitor
+	$(MAKE) release-gate ARGS=--write-results; gate_status=$$?; $(MAKE) governance-packs && exit $$gate_status

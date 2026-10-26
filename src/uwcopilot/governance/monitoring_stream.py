@@ -17,12 +17,17 @@ Validation, unit = stream:
 - false alert rate: share of no-drift streams with at least one alert (any check, any window);
 - detection rate: share of drifted streams with an alert in a drifted window;
 - detection delay: first drifted window with an alert minus drift_start_window (0 = caught in the first drifted
-  window), over the detected streams;
+  window). The mean, median and distribution cover the detected streams only, and the delay is capped: it cannot
+  exceed n_windows - 1 - drift_start_window, because a stream that would alert after its last window counts as not
+  detected. detected_within_windows keeps every stream in the denominator: for each k up to that cap, the share of
+  all streams with an alert within k windows of the drift start;
 - pre-drift false alert rate: share of drifted streams with an alert before the drift started;
 - warn rate (no-drift streams): share with at least one check at level warn or worse, overall and by check.
 Every rate and the mean delay get a percentile bootstrap CI over streams (risk/bootstrap.py). All streams draw from
 one held-out pool, so they are not independent samples of the world: the intervals describe stream-to-stream
-variation for this pool and this model.
+variation for this pool and this model. When 0, 1, n - 1 or n streams of n count, the percentile bootstrap interval
+is zero-width or too narrow, so every rate also carries the exact (Clopper-Pearson) interval and, in those cases, a
+note saying to read it (bootstrap_interval_note).
 """
 
 from collections import Counter
@@ -33,6 +38,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from uwcopilot.docintel.evaluation_intervals import clopper_pearson
 from uwcopilot.governance.monitoring import CHECK_NAMES, LEVEL_RANK, MonitoredPool, WindowResult, evaluate_window
 from uwcopilot.governance.monitoring_config import (
     BootstrapSettings,
@@ -42,6 +48,9 @@ from uwcopilot.governance.monitoring_config import (
     Thresholds,
 )
 from uwcopilot.risk.bootstrap import bootstrap_ci
+
+EXACT_METHOD = "Clopper-Pearson (exact binomial; streams counted as independent)"
+DELAY_MEAN_OVER = "detected streams only: streams with no alert after the drift started are left out"
 
 
 @dataclass(frozen=True)
@@ -190,25 +199,49 @@ def run_scenario(
     return outcomes
 
 
+def bootstrap_interval_note(numerator: int, denominator: int) -> str | None:
+    """A warning when the percentile bootstrap interval of numerator / denominator misleads, else None.
+
+    With 0 or n streams counted, every resample gives the same share, so the interval has zero width; with 1 or
+    n - 1 it is too narrow (an exact 95% interval for 1 of 300 reaches 0.018, the bootstrap one stops near 0.010).
+    """
+    if numerator in (0, denominator):
+        return f"{numerator} of {denominator} streams: zero-width bootstrap interval; read the exact interval"
+    if numerator in (1, denominator - 1):
+        return f"{numerator} of {denominator} streams: the bootstrap interval is too narrow; read the exact interval"
+    return None
+
+
 def rate_with_ci(indicators: Sequence[bool], bootstrap: BootstrapSettings) -> dict[str, Any]:
-    """Share of True with a percentile bootstrap CI (unit = stream), plus numerator and denominator."""
+    """Share of True with a percentile bootstrap CI (unit = stream), the exact interval, numerator and denominator.
+
+    The bootstrap interval stays the reported interval (ci_low, ci_high); exact_ci_low / exact_ci_high are the
+    Clopper-Pearson interval at the same confidence, and bootstrap_interval_note says when to read them instead.
+    """
     values = np.asarray(indicators, dtype=float)
     if values.size == 0:
         raise ValueError("a rate needs at least one stream")
     interval = bootstrap_ci(
         np.mean, values, n_resamples=bootstrap.resamples, seed=bootstrap.seed, alpha=1 - bootstrap.confidence
     )
+    numerator, denominator = int(values.sum()), int(values.size)
+    exact = clopper_pearson(numerator, denominator, bootstrap.confidence)  # a pair: denominator > 0 here
+    assert exact is not None
     return {
         "estimate": interval["estimate"],
         "ci_low": interval["ci_low"],
         "ci_high": interval["ci_high"],
-        "numerator": int(values.sum()),
-        "denominator": int(values.size),
+        "numerator": numerator,
+        "denominator": denominator,
         "n_resamples": interval["n_resamples"],
         "seed": interval["seed"],
         "confidence": bootstrap.confidence,
         "method": "percentile bootstrap",
         "unit": "stream",
+        "exact_ci_low": exact[0],
+        "exact_ci_high": exact[1],
+        "exact_method": EXACT_METHOD,
+        "bootstrap_interval_note": bootstrap_interval_note(numerator, denominator),
     }
 
 
@@ -218,17 +251,42 @@ def first_alert_delay(alert_windows: Sequence[int], drift_start: int) -> int | N
     return min(after) - drift_start if after else None
 
 
-def delay_summary(delays: Sequence[int], bootstrap: BootstrapSettings) -> dict[str, Any]:
-    """Mean delay with a bootstrap CI over detected streams, the median, the maximum and the distribution."""
-    if not delays:
-        return {"status": "not available", "reason": "no stream was detected, so there is no delay to report"}
-    values = np.asarray(delays, dtype=float)
+def delay_summary(delays: Sequence[int | None], max_delay: int, bootstrap: BootstrapSettings) -> dict[str, Any]:
+    """Detection delay of a drifted scenario; `delays` has one entry per stream (None = not detected).
+
+    The mean (bootstrap CI), median and distribution cover the detected streams only. max_delay is the largest
+    delay a stream can show (its last window); detected_within_windows divides by all streams instead.
+    """
+    detected = [int(delay) for delay in delays if delay is not None]
+    scope: dict[str, Any] = {
+        "unit": "windows after the drift started (0 = the first drifted window)",
+        "mean_over": DELAY_MEAN_OVER,
+        "n_streams": len(delays),
+        "n_detected_streams": len(detected),
+        "max_possible_delay": max_delay,
+        "max_possible_delay_reason": (
+            "the stream ends max_possible_delay windows after the drift starts; a later alert is not observed, so "
+            "that stream counts as not detected"
+        ),
+    }
+    within = {
+        str(k): rate_with_ci([delay is not None and delay <= k for delay in delays], bootstrap)
+        for k in range(max_delay + 1)
+    }
+    if not detected:
+        return {
+            "status": "not available",
+            "reason": "no stream was detected, so there is no delay to report",
+            **scope,
+            "detected_within_windows": within,
+        }
+    values = np.asarray(detected, dtype=float)
     interval = bootstrap_ci(
         np.mean, values, n_resamples=bootstrap.resamples, seed=bootstrap.seed, alpha=1 - bootstrap.confidence
     )
-    distribution = Counter(int(delay) for delay in delays)
+    distribution = Counter(detected)
     return {
-        "unit": "windows after the drift started (0 = the first drifted window)",
+        **scope,
         "mean": {
             "estimate": interval["estimate"],
             "ci_low": interval["ci_low"],
@@ -241,8 +299,9 @@ def delay_summary(delays: Sequence[int], bootstrap: BootstrapSettings) -> dict[s
         },
         "median": float(np.median(values)),
         "max": int(values.max()),
-        "n_detected_streams": int(values.size),
+        "streams_at_max_possible_delay": distribution[max_delay],
         "streams_by_delay": {str(delay): distribution[delay] for delay in sorted(distribution)},
+        "detected_within_windows": within,
     }
 
 
@@ -280,8 +339,9 @@ def summarize_scenario(
         }
         return summary
     delays = [first_alert_delay(outcome.alert_windows, start) for outcome in outcomes]
+    max_delay = settings.n_windows - 1 - start
     summary["detection_rate"] = rate_with_ci([delay is not None for delay in delays], bootstrap)
-    summary["detection_delay_windows"] = delay_summary([delay for delay in delays if delay is not None], bootstrap)
+    summary["detection_delay_windows"] = delay_summary(delays, max_delay, bootstrap)
     summary["pre_drift_false_alert_rate"] = rate_with_ci(
         [any(window < start for window in outcome.alert_windows) for outcome in outcomes], bootstrap
     )
