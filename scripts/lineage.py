@@ -6,12 +6,18 @@
 The chain it prints: the record (application, reviewer, final status) -> its versions (graph, policy, prompt, LLM)
 -> the lineage block (governance/lineage.py): the models behind its score_risk calls, the results files and the
 provenance that validated them (git commit, time, dirty flag), the dataset checksum lines those results copied, the
-prompt file hashes and the eval-set versions. Every recorded hash or version is compared with the working tree now:
+prompt file hashes, the eval-set versions and the hashes of the decision-logic files (the reference policy, the
+approval checkpoint and the graph). Each of those hashes and versions is compared with the working tree now:
 
 - OK: it still matches;
-- STALE: it no longer matches (the file, the results or the model version changed since the decision);
+- STALE: it no longer matches (the file, a rule, the results or the model version changed since the decision);
 - NOT CHECKABLE: the file is not present here (for example the Lending Club data, which needs a Kaggle key, or a
-  raw data file that was not downloaded). Nothing is assumed to match.
+  raw data file that was not downloaded), or the part was not recorded when the decision was made. Nothing is
+  assumed to match.
+
+Not compared: the code commit of the decision is printed next to today's commit, but a different commit is not
+flagged, because every later commit would flag every record. The versions block is printed as it was recorded; only
+its prompt label is compared (the policy and graph labels are fixed strings, so the rule files are hashed instead).
 
 "Now" is the working tree, i.e. HEAD plus any uncommitted edit; the script prints the commit and the dirty flag.
 --no-data-files skips hashing the raw data files (the checksum log is still compared). --strict exits with 3 when
@@ -172,13 +178,26 @@ def describe_models(lineage: Mapping[str, Any], checks: list[LineageCheck]) -> l
     return lines
 
 
+def describe_decision_logic(lineage: Mapping[str, Any], checks: list[LineageCheck]) -> list[str]:
+    """The decision-logic files (policy, approval checkpoint, graph) and whether each still matches."""
+    lines = ["  Decision logic (rule files):"]
+    if "decision_logic" not in lineage:
+        lines.append(f"    {status_text(find_check(checks, 'decision_logic_file', 'decision logic'))}")
+        return lines
+    for logic_file, digest in (lineage.get("decision_logic") or {}).items():
+        check = find_check(checks, "decision_logic_file", logic_file)
+        lines.append(f"    - {logic_file} sha256 {short(digest)} {status_text(check)}")
+    return lines
+
+
 def describe_lineage(lineage: Mapping[str, Any], checks: list[LineageCheck], repo_root: Path) -> list[str]:
     """The lineage block with a status per recorded value."""
     code = lineage.get("code") or {}
     lines = [
         f"Lineage ({lineage.get('lineage_version')})",
         f"  Code: decided at commit {short(code.get('git_sha'))} (dirty: {code.get('git_dirty')}); working tree now "
-        f"{short(git_sha(repo_root))} (dirty: {git_dirty(repo_root)})",
+        f"{short(git_sha(repo_root))} (dirty: {git_dirty(repo_root)}) [shown, not compared]",
+        *describe_decision_logic(lineage, checks),
         *describe_models(lineage, checks),
         "  Prompts:",
     ]
@@ -203,7 +222,7 @@ def describe_lineage(lineage: Mapping[str, Any], checks: list[LineageCheck], rep
         lines.append(f"    - {results_file} sha256 {short(digest)} {status_text(check)}")
         lines.extend(results_provenance(results_file, repo_root))
     for reason in lineage.get("not_recorded") or []:
-        lines.append(f"  Not recorded: {reason}")
+        lines.append(f"  Not recorded: {reason} [NOT CHECKABLE]")
     return lines
 
 

@@ -372,7 +372,9 @@ def main(argv: list[str] | None = None) -> int:
         "lineage_version": LINEAGE_VERSION,
         "interpretation": "Each record's lineage hashes were compared with the working tree right after the records "
         "were written, so matching hashes are expected. not_checkable items are files that are not present here "
-        "(the Lending Club data needs a Kaggle key; some raw files were not kept); they are not assumed to match.",
+        "(the Lending Club data needs a Kaggle key; some raw files were not kept) or parts the record could not "
+        "record; they are not assumed to match. The code commit is recorded but not compared; the decision-logic "
+        "files (policy, approval checkpoint, graph) are compared by hash.",
         "checks": lineage_summary,
         "versions_named": lineage_overview(records),
     }
