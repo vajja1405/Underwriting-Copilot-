@@ -4,8 +4,9 @@ The SBA section names are NOT typed here: scripts/studio_fetch_sba_plan_guide.py
 your business plan" guidance page and wrote config/studio/sba_business_plan_sections.json (requested URL, the URL
 that answered, retrieval time, SHA-256 of the page). sba_record() reads that file; docs/studio/sources.md cites it.
 Each package section names the SBA sections it covers, and a test checks every name against the record, so a
-renamed or missing SBA section is caught instead of silently cited. The package's extra sections (stress tests,
-risks, the path-to-approval history, the evidence appendix) name no SBA section.
+renamed or missing SBA section is caught instead of silently cited. The stress tests count as part of the SBA's
+financial projections; the package's other extra sections (risks, the path-to-approval history, the evidence
+appendix) name no SBA section.
 """
 
 import json
