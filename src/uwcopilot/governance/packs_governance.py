@@ -159,19 +159,37 @@ def monitoring_block(sources: Mapping[str, Any]) -> list[str]:
     return lines
 
 
+def _missing_indicator(item: Mapping[str, Any]) -> tuple[str, str]:
+    """(value text, level text) for an indicator without a value: the status and note the monitor recorded, as
+    written ("not available (... has no 'feedback' section ...)"), so the reader sees why it is missing. With no
+    recorded status, or a contradictory "measured", it says "not measured"."""
+    status = item.get("status")
+    if not isinstance(status, str) or not status or status == "measured":
+        status = NOT_MEASURED
+    note = item.get("note")
+    if not isinstance(note, str) or not note:
+        return status, status
+    return (note if note.startswith(status) else f"{status} ({note})"), status
+
+
 def indicator_table(result: Mapping[str, Any]) -> list[str]:
-    """The extraction, agent and reviewer indicators the monitor read from results files."""
+    """The extraction, agent and reviewer indicators the monitor read from results files when it ran."""
     values = lookup(result, "indicators.values")
     rows = []
     for item in values if isinstance(values, list) else []:
+        if not is_number(item.get("value")):
+            shown, level = _missing_indicator(item)
+            rows.append([text(item.get("name")), text(item.get("component")), shown, level])
+            continue
         bounds = item.get("interval")
         shown = _bounds(item.get("value"), bounds) if bounds else number(item.get("value"))
         level = item.get("level")
-        if level is None:  # monitoring_indicators.py: no level when the value is missing or the indicator has no rule
-            level = "no rule (reported only)" if is_number(item.get("value")) else NOT_MEASURED
+        if level is None:  # monitoring_indicators.py: no level when the indicator has no rule
+            level = "no rule (reported only)"
         rows.append([text(item.get("name")), text(item.get("component")), shown, text(level)])
     return [
-        "Indicators read from the latest results files (single values, not a stream):",
+        "Indicators the monitor read from the results files when it ran (single values, not a stream; a missing "
+        "value shows the status and note the monitor recorded):",
         "",
         *table(["Indicator", "Component", "Value", "Level"], rows or [[NOT_MEASURED] * 4]),
     ]

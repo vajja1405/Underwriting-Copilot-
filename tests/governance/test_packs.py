@@ -436,6 +436,40 @@ def test_monitoring_block_edge_cases() -> None:
     assert "| unsupported_claims | agent | not measured | not measured |" in block
 
 
+def test_missing_indicator_keeps_the_status_and_note_the_monitor_recorded() -> None:
+    """P6-PACKS-2: an indicator the monitor could not read says why ('not available' and its note), instead of a
+    bare 'not measured' that hides that the feedback section was absent when the monitor ran."""
+    sources = full_sources()
+    monitoring = sources[GOVERNANCE]["monitoring"]["results"]
+    monitoring["indicators"]["values"] = [
+        {
+            "name": "override_rate",
+            "component": "review_feedback",
+            "status": "not available",
+            "value": None,
+            "interval": None,
+            "level": None,
+            "note": "results/governance_metrics.json has no 'feedback' section (the feedback track has not run)",
+        },
+        {
+            "name": "unsupported_claim_rate",
+            "component": "agent",
+            "status": "not measured",
+            "value": None,
+            "level": None,
+            "note": "not measured: no LLM provider was used",
+        },
+    ]
+    block = "\n".join(monitoring_block(sources))
+    assert (
+        "| override_rate | review_feedback | not available (results/governance_metrics.json has no 'feedback' "
+        "section (the feedback track has not run)) | not available |"
+    ) in block
+    assert "| unsupported_claim_rate | agent | not measured: no LLM provider was used | not measured |" in block
+    assert "| override_rate | review_feedback | not measured |" not in block
+    assert "Indicators the monitor read from the results files when it ran" in block
+
+
 def test_mean_delay_says_it_covers_detected_streams_only() -> None:
     """P6-STAT-3 / P6-PACKS-11: the mean delay names its population and the window cap, a zero-width interval is not
     printed as an interval, and a scenario where no stream was detected says not applicable, not not measured."""
