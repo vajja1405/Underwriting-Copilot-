@@ -13,8 +13,10 @@ Every value is read from its results file at render time, with the interval that
 - a value with no interval says so.
 
 A metric that the file marks "not measured" prints "not measured (<the reason recorded in the file>)"; a missing file
-prints "not measured (no results file)" and a missing entry "not measured (no `<path>` in the file)". Runs on a
-handful of cases (smoke runs and the local-model narrative run) show counts only, never a rate.
+prints "not measured (no results file)" and a missing entry "not measured (no `<path>` in the file)". An entry the
+file records as null is not a missing entry: it prints the reason the file records next to it when the row names
+one (Spec.null_reason), else "not measured (no value recorded)". Runs on a handful of cases (smoke runs and the
+local-model narrative run) show counts only, never a rate.
 
 Ground rule 1: nothing in this table is typed by hand. tests/governance/test_readme_headlines.py checks that every
 number in a row appears in the row's source file, that no row reports a value the file marks "not measured", and
@@ -113,12 +115,17 @@ class Headline:
 @dataclass(frozen=True)
 class Spec:
     """How to read one row: the JSON paths in the results file, and a function that turns their values into text
-    (it receives one argument per path, in order)."""
+    (it receives one argument per path, in order).
+
+    null_reason is the path of a text in the same file that says why a value of the row may be null (for example
+    "cost_per_package.llm_cost_basis" next to a null LLM cost); without it a null value prints NO_VALUE.
+    """
 
     component: str
     metric: str
     paths: tuple[str, ...]
     show: Callable[..., str]
+    null_reason: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -176,6 +183,29 @@ def not_measured(reason: str) -> str:
 def missing_path(path: str) -> str:
     """The reason given when a results file has no entry at path."""
     return f"no `{path}` in the file"
+
+
+def has_entry(document: Any, path: str) -> bool:
+    """True when the file has an entry at path, even one whose value is JSON null.
+
+    lookup() returns None both for a missing entry and for a null value; this tells the two apart.
+    """
+    parent_path, _, key = path.rpartition(".")
+    parent = lookup(document, parent_path) if parent_path else document
+    if isinstance(parent, Mapping):
+        return key in parent
+    if isinstance(parent, list):
+        return key.isdigit() and int(key) < len(parent)
+    return False
+
+
+def null_value_reason(document: Any, reason_path: str | None) -> str:
+    """Why an entry the file records as null has no value: the first clause of the text at reason_path when the file
+    has one there, else NO_VALUE."""
+    text = lookup(document, reason_path) if reason_path else None
+    if not isinstance(text, str) or not text.strip():
+        return NO_VALUE
+    return not_measured_reason(text) or short_reason(text)
 
 
 # ---------------------------------------------------------------------------
@@ -318,8 +348,8 @@ def counts_only(entry: Any) -> str:
 
 
 def spec_row(sources: Mapping[str, Any], source: str, spec: Spec) -> Headline:
-    """One row: 'not measured' with the reason when the file is missing, a path is missing or the file marks a value
-    not measured; otherwise spec.show applied to the values at spec.paths."""
+    """One row: 'not measured' with the reason when the file is missing, a path is missing, the file records a value
+    as null or marks it not measured; otherwise spec.show applied to the values at spec.paths."""
     data = sources.get(source)
     if data is None:
         return Headline(spec.component, spec.metric, not_measured(NO_FILE), source, spec.paths)
@@ -327,7 +357,11 @@ def spec_row(sources: Mapping[str, Any], source: str, spec: Spec) -> Headline:
     for path in spec.paths:
         value = lookup(data, path)
         if value is None:
-            return Headline(spec.component, spec.metric, not_measured(missing_path(path)), source, spec.paths)
+            if has_entry(data, path):
+                reason = null_value_reason(data, spec.null_reason)
+            else:
+                reason = missing_path(path)
+            return Headline(spec.component, spec.metric, not_measured(reason), source, spec.paths)
         reason = not_measured_reason(value)
         if reason is not None:
             return Headline(spec.component, spec.metric, not_measured(reason), source, spec.paths)
@@ -736,6 +770,29 @@ def coverage_pair_text(studio: Any, baseline: Any) -> str:
     return f"{interval_text(studio)} vs {interval_text(baseline)}"
 
 
+def founder_figures_text(studio: Any, baseline: Any, expected: Any) -> str:
+    """The founder-figure pair and the result the file says was expected before measuring:
+    '0.1315 [0.0958, 0.1693] (33/251) vs 0.1315 [0.0958, 0.1693] (33/251); expected equal by construction: ...'."""
+    return f"{coverage_pair_text(studio, baseline)}; {expected}"
+
+
+def site_scored_text(this_run: Any, note: Any) -> str:
+    """Per metro, the scenarios whose package had a SiteIQ site score in this run, then the file's note:
+    'synthetic_metro 6/6, chicago_il_in 0/6, ...; depends on which metro snapshots exist on the machine ...'."""
+    if not isinstance(this_run, Mapping) or not this_run:
+        return not_measured(NO_VALUE)
+    counts = []
+    for metro, observed in this_run.items():
+        if not isinstance(observed, Mapping):
+            return not_measured(NO_VALUE)
+        scored = observed.get("site_scored")
+        scenarios = observed.get("scenarios")
+        if not (is_number(scored) and is_number(scenarios)):
+            return not_measured(NO_VALUE)
+        counts.append(f"{metro} {integer(scored)}/{integer(scenarios)}")
+    return f"{', '.join(counts)}; {note}"
+
+
 def llm_cost_text(cost: Any, basis: Any) -> str:
     """'0 USD (0 by construction: ...)', the recorded basis cut to its first clause."""
     return f"{integer(cost)} USD ({short_reason(str(basis))})"
@@ -743,6 +800,24 @@ def llm_cost_text(cost: Any, basis: Any) -> str:
 
 BUSINESS_COMPONENT = "Founder Studio end to end (Studio S12), golden SYNTHETIC founder scenarios"
 RULE_S = "headline.evidence_coverage_rule_s"
+RULE_E = "headline.evidence_coverage_rule_e"
+FOUNDER_FIGURES = "headline.founder_figures_backed_by_a_document"
+SITE_SCORED = "data_coverage_by_metro.this_run"
+# The LLM cost is null when a package's narrative was not the template; the basis next to it then says why.
+LLM_COST_PATH = "cost_per_package.llm_cost_usd_per_package"
+LLM_COST_BASIS_PATH = "cost_per_package.llm_cost_basis"
+# docs/studio/s12_baseline.md, section 2: how B0 is described, and what every row comparing Studio with B0 must say
+# (B0's sources follow from its definition). The rule S caveat is the "Reading" of metric M2 there.
+B0_DESCRIPTION = (
+    "baseline B0, a plan made without SiteIQ, the simulation and the ledger from the same SYNTHETIC inputs and "
+    "documents (a construction, not a sample of real plans)"
+)
+B0_BY_DEFINITION = "B0's sources follow from its definition, not from how real founders write plans"
+RULE_S_CAVEAT = (
+    "Most of the gap follows from the definitions, not from how real founders write plans: model estimates and "
+    "calculations count for Studio because its ledger records their run or formula and inputs, and B0 prints no such "
+    "record. The rule E and founder-figure rows show the comparison without that credit"
+)
 STUDIO_BUSINESS_SPECS: tuple[Spec, ...] = (
     one_path(
         BUSINESS_COMPONENT,
@@ -750,19 +825,56 @@ STUDIO_BUSINESS_SPECS: tuple[Spec, ...] = (
         "headline.time_to_complete_package_median_s",
         seconds_text,
     ),
+    one_path(
+        BUSINESS_COMPONENT,
+        "Scenarios with a complete package: an audited PDF, no untraced number in the package or PDF text, every "
+        "page labelled",
+        "time_to_complete_package.complete_packages",
+    ),
     Spec(
         BUSINESS_COMPONENT,
-        "Printed figures with a checkable source (rule S): Studio vs baseline B0, a plan made without SiteIQ, the "
-        "simulation and the ledger",
+        "Scenarios whose Studio package had a SiteIQ site score in this run, by metro (scored/scenarios)",
+        (SITE_SCORED, "data_coverage_by_metro.this_run_note"),
+        site_scored_text,
+    ),
+    Spec(
+        BUSINESS_COMPONENT,
+        f"Printed figures with a checkable source (rule S): Studio vs {B0_DESCRIPTION}. {RULE_S_CAVEAT}",
         (f"{RULE_S}.studio", f"{RULE_S}.baseline_b0"),
         coverage_pair_text,
     ),
-    one_path(BUSINESS_COMPONENT, "Rule S share, Studio minus baseline B0", f"{RULE_S}.difference"),
+    one_path(
+        BUSINESS_COMPONENT,
+        "Rule S share, Studio minus B0, paired over scenarios (most of the gap follows from the definitions, not "
+        "from how real founders write plans)",
+        f"{RULE_S}.difference",
+    ),
+    Spec(
+        BUSINESS_COMPONENT,
+        "Printed figures backed by a document page, a public-data row or a program or target section (rule E, "
+        "stricter: model estimates, calculations, assumptions and founder statements do not count): Studio vs B0, "
+        f"whose only sources are the founder's documents. {B0_BY_DEFINITION}",
+        (f"{RULE_E}.studio", f"{RULE_E}.baseline_b0"),
+        coverage_pair_text,
+    ),
+    one_path(
+        BUSINESS_COMPONENT,
+        f"Rule E share, Studio minus B0, paired over scenarios ({B0_BY_DEFINITION})",
+        f"{RULE_E}.difference",
+    ),
+    Spec(
+        BUSINESS_COMPONENT,
+        "The founder's typed plan and loan figures backed by a document, one population for both: Studio vs B0. "
+        f"{B0_BY_DEFINITION}",
+        (f"{FOUNDER_FIGURES}.studio", f"{FOUNDER_FIGURES}.baseline_b0", f"{FOUNDER_FIGURES}.expected"),
+        founder_figures_text,
+    ),
     Spec(
         BUSINESS_COMPONENT,
         "Language-model cost per package",
-        ("cost_per_package.llm_cost_usd_per_package", "cost_per_package.llm_cost_basis"),
+        (LLM_COST_PATH, LLM_COST_BASIS_PATH),
         llm_cost_text,
+        null_reason=LLM_COST_BASIS_PATH,
     ),
     one_path(BUSINESS_COMPONENT, "Compute cost per package", "cost_per_package.compute_cost", plain_text),
     one_path("Founder Studio with real people", "Usability test", "usability_test", plain_text),
