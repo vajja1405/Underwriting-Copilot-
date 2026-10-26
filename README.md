@@ -7,7 +7,9 @@ stress test, a path-to-approval search and a lender-ready package that hands off
 
 **How it was built:** Rahul Vajja and Bhavani Adula wrote the specs, build prompts and evaluation protocol and
 review the work; Claude Code is the implementer. Each built phase has a walkthrough so both owners can explain it
-(the SIG section planned in [docs/innovations.md](docs/innovations.md) is not written yet).
+(the SIG section planned in [docs/innovations.md](docs/innovations.md) is not written yet). One study guide merges
+them: [docs/INTERVIEW_GUIDE.md](docs/INTERVIEW_GUIDE.md); a 3-minute demo script is in
+[docs/demo_script.md](docs/demo_script.md).
 
 > **Synthetic data notice.** A portfolio project, not a product. It uses only public datasets and **SYNTHETIC**
 > (computer-generated) documents, applications, customers, founder plans and cities, each labeled as synthetic. No
@@ -79,6 +81,13 @@ Not wired yet: the web Lender Desk runs the Phase 5 agent on SYNTHETIC **structu
 | S6 lender-ready package (PDF + JSON) and handoff to the Lender Desk | Built + measured (template memo); review fixes applied | 36 golden SYNTHETIC packages: 30,681 printed numbers read back, 0 untraced in the package text and 0 in the PDF text; 36/36 reached the agent's human checkpoint and 0 decisions were recorded without a human (Wilson 95% [0.0, 0.0964]). 35 SYNTHETIC startup applications: 35/35 agree with their hand-written labels (Wilson 95% [0.9011, 1.0]; labels written against the same SYNTHETIC program). The 30 real-metro packages ran in limited mode (no data snapshot). The web app does not call the handoff | [studio_handoff_metrics.json](results/studio_handoff_metrics.json) | [S6](docs/studio/walkthrough_s6.md), [sources](docs/studio/sources.md) |
 | S12 end-to-end evaluation: the 36 golden scenarios from inputs to an audited PDF package, against a baseline B0 defined before the first run | Built + measured (SYNTHETIC; template narrative and memo, no LLM) | 36/36 complete packages; median 7.199 s [6.767, 7.494] from inputs to an audited PDF (machine wall clock on a shared machine, not a user time: nobody's time was observed). Printed figures with a checkable source (rule S): 0.8482 [0.8388, 0.8587] vs 0.0251 [0.0182, 0.0320] for B0, a plan made without SiteIQ, the simulation and the ledger (B0 is a construction, not a sample of real plans). Language-model cost 0 USD per package by construction; compute cost and a usability test with real people not measured | [studio_business_metrics.json](results/studio_business_metrics.json) | [S12](docs/studio/walkthrough_s12.md), [baseline](docs/studio/s12_baseline.md) |
 | S8 privacy and security: plan access log, expiring share links, "Delete all my data", upload screen, CI dependency and secret scans, Privacy and Terms pages, STRIDE threat model | Built + checked; adversarial review fixes applied (no metric) | Checks, not measurements: the offline suite passes; `make scan-secrets` found no leaks in 145 commits and `make audit-deps` no known vulnerabilities (2026-10-20). There is no upload route, so the upload screen is not called yet. The new pages were not part of the Playwright or axe runs. Privacy and Terms are drafts pending the owners' approval | none (no metric) | [S8](docs/studio/walkthrough_s8.md), [threat model](docs/studio/threat_model.md), [privacy](docs/studio/privacy.md) |
+
+**Supported metros.** The five largest US metropolitan statistical areas in the Census Bureau's population estimates
+(`results/studio_metro_ranking.json`, `configured_equals_top_five: true`): `new_york_ny_nj_pa` (rank 1),
+`los_angeles_ca` (2), `chicago_il_in` (3), `dallas_fort_worth_tx` (4) and `houston_tx` (5), plus a SYNTHETIC metro
+that works offline. Each has a config in `config/studio/metros/`. All five real metros run in limited mode (see S1
+above). Why these five and how to add a sixth: [S12 walkthrough](docs/studio/walkthrough_s12.md) and
+[docs/studio/metros.md](docs/studio/metros.md).
 
 ### Web app and deployment
 
@@ -184,6 +193,7 @@ flowchart LR
 | `src/uwcopilot/governance` | Results provenance, freeze proofs, LLM migration gate; Phase 6 lineage, monitoring, reviewer feedback, outcomes, champion/challenger, model status registry, release gate, governance packs |
 | `src/uwcopilot/studio` | Founder Studio: data fabric, SiteIQ, feasibility, path to approval, narrative, package and handoff |
 | `src/uwcopilot/web`, `frontend/` | Web app v0.1: FastAPI backend and Next.js static export |
+| `src/uwcopilot/resume` | Phase 8 resume lines: bullets built only from `results/*.json`, with what was left out and why |
 
 The full plans are [docs/build_prompts.md](docs/build_prompts.md) (lender side) and
 [docs/studio/founder_studio_build_prompts.md](docs/studio/founder_studio_build_prompts.md) (Founder Studio).
