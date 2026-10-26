@@ -703,3 +703,36 @@ def test_load_report_data_adds_the_evidence_results_when_present(tmp_path: Path)
     evidence.write_text(json.dumps(evidence_results()), encoding="utf-8")
     data = render_reports.load_report_data(risk, evidence)
     assert data[render_reports.EVIDENCE_KEY] == evidence_results() and "fairness_demo" in data
+
+
+# ---------------------------------------------------------------------------
+# Phase 8: the headline table after the existing rows (src/uwcopilot/governance/readme_headlines.py)
+# ---------------------------------------------------------------------------
+
+
+def test_headline_table_is_appended_and_the_existing_rows_stay_byte_identical(template: str) -> None:
+    data = {**minimal_results(), render_reports.EVIDENCE_KEY: evidence_results()}
+    without = render_reports.render_all(data, template)["README results block"]
+    with_table = render_reports.render_all({**data, render_reports.HEADLINES_KEY: {}}, template)["README results block"]
+    assert with_table.startswith(without + "\n\n**Headline metric per results file.**")
+    assert "| Component | Metric | Value [95% CI] | Source |" in with_table
+    # With no results file, every headline row says so.
+    added = [line for line in with_table[len(without) :].splitlines() if line.startswith("| ")]
+    rows = [line for line in added if not line.startswith("| Component |")]
+    assert rows and all("| not measured (no results file) |" in line for line in rows)
+
+
+def test_load_report_data_adds_the_headline_sources(tmp_path: Path) -> None:
+    risk = tmp_path / "risk.json"
+    risk.write_text(json.dumps({"fairness_demo": {"results": {}}}), encoding="utf-8")
+    missing = tmp_path / "missing.json"
+    web = {"runs": {"local-container": {"e2e": {"flows": [{"name": "signed_out", "passed": True}]}}}}
+    (tmp_path / "web_metrics.json").write_text(json.dumps(web), encoding="utf-8")
+    data = render_reports.load_report_data(risk, missing, missing, headline_results_dir=tmp_path)
+    assert data[render_reports.HEADLINES_KEY] == {"web_metrics.json": web}
+    readme = render_reports.render_all(data)["README results block"]
+    assert (
+        "| Playwright end-to-end flows | 1 flow, all passed | [web_metrics.json](results/web_metrics.json) |" in readme
+    )
+    without = render_reports.load_report_data(risk, missing, missing, headline_results_dir=None)
+    assert render_reports.HEADLINES_KEY not in without
