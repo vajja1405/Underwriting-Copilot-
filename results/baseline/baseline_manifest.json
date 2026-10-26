@@ -1,0 +1,31 @@
+{
+  "description": "Reviewed baseline for scripts/release_gate.py: byte copies of the results files the gate reads, made by `scripts/release_gate.py --update-baseline`. Do not edit the copies by hand: the gate checks them against these SHA-256 values.",
+  "created_by": "scripts/release_gate.py --update-baseline",
+  "created_at_utc": "2026-10-26T16:04:44+00:00",
+  "git_commit": "fb7eb1d0bf2863801fff87121afff21c1043e9e8",
+  "files": {
+    "agent_metrics.json": {
+      "sha256": "99fa6dbbe9619c61945cd07dc9a6c3a0c3482d529480d9613e912e1565897a28",
+      "source_matches_head_commit": true
+    },
+    "docintel_metrics.json": {
+      "sha256": "08617618c71bb24e73e449344456977804bc27e66a6f0ebc1c22262cc4d8e194",
+      "source_matches_head_commit": true
+    },
+    "risk_metrics.json": {
+      "sha256": "365bdc569608df84ed378d32e1e1dd585a064e7e5499bab265c80382ad02c989",
+      "source_matches_head_commit": true
+    },
+    "studio_evidence_metrics.json": {
+      "sha256": "4ef4e8a2d3942a7f7df5c8d918f45bd89af229f2007450c399647827aaf8d359",
+      "source_matches_head_commit": true
+    },
+    "studio_handoff_metrics.json": {
+      "sha256": "b4cb134f2bf6766939c67800306ba71452323d755e7cd8d240e9d4b4dce7ecff",
+      "source_matches_head_commit": true
+    }
+  },
+  "absent_when_made": [
+    "injection_metrics.json"
+  ]
+}
