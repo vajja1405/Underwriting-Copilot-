@@ -164,7 +164,11 @@ class BulletDraft:
         """The bullet (or None when its core metric or every metric is missing) and the omissions."""
         measured = [text for text, is_measured in self.clauses if is_measured]
         if self.core_missing or not measured:
-            why = "its core metric is not measured" if self.core_missing else "none of its metrics is measured"
+            why = (
+                "its core metric is not quoted (see its reason above)"
+                if self.core_missing
+                else "none of its metrics is measured"
+            )
             return None, [*self.omissions, Omission(self.bullet_id, "whole bullet", why)]
         text = f"{self.lead}: {'; '.join(clause for clause, _ in self.clauses)}."
         check_wording(text)

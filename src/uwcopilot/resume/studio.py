@@ -25,9 +25,9 @@ MISSPECIFIED = "misspecified"
 # docs/studio/s12_baseline.md (section 2 and M2 "Reading") requires this caveat wherever the Studio vs B0 comparison
 # is shown. Fixed wording, no number: it follows from the definitions, not from a measurement.
 B0_CAVEAT = (
-    "B0 is a construction from the same SYNTHETIC inputs, not a sample of real plans, and most of the rule S gap "
-    "follows from the definitions (rule S credits the model runs and formulas the ledger records, and B0 has no "
-    "ledger)"
+    "B0 is a construction from the same SYNTHETIC inputs, not a sample of real plans, and the gap under both rules "
+    "follows mostly from the definitions (rule S credits the model runs and formulas the ledger records, rule E the "
+    "program and target sections the Studio prints, and B0 prints neither)"
 )
 
 Built = tuple[Bullet | None, list[Omission]]

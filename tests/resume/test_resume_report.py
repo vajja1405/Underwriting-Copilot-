@@ -235,7 +235,8 @@ def test_studio_business_comparison_always_carries_the_b0_caveat(results_dir: Pa
     text = bullet_text(build_report(results_dir, repo_root), "studio_business")
     assert "rule S" in text  # the comparison is shown
     assert "B0 is a construction from the same SYNTHETIC inputs, not a sample of real plans" in text
-    assert "most of the rule S gap follows from the definitions" in text
+    assert "the gap under both rules follows mostly from the definitions" in text
+    assert "rule E the program and target sections the Studio prints, and B0 prints neither" in text
 
 
 def test_studio_business_bullet_counts_the_scenarios_with_a_site_scored(results_dir: Path, repo_root: Path) -> None:

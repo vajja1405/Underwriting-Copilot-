@@ -809,14 +809,15 @@ LLM_COST_BASIS_PATH = "cost_per_package.llm_cost_basis"
 # docs/studio/s12_baseline.md, section 2: how B0 is described, and what every row comparing Studio with B0 must say
 # (B0's sources follow from its definition). The rule S caveat is the "Reading" of metric M2 there.
 B0_DESCRIPTION = (
-    "baseline B0, a plan made without SiteIQ, the simulation and the ledger from the same SYNTHETIC inputs and "
+    "baseline B0, a plan made without SiteIQ, the simulation and the ledger, built from the same SYNTHETIC inputs and "
     "documents (a construction, not a sample of real plans)"
 )
 B0_BY_DEFINITION = "B0's sources follow from its definition, not from how real founders write plans"
 RULE_S_CAVEAT = (
     "Most of the gap follows from the definitions, not from how real founders write plans: model estimates and "
     "calculations count for Studio because its ledger records their run or formula and inputs, and B0 prints no such "
-    "record. The rule E and founder-figure rows show the comparison without that credit"
+    "record. The rule E row removes that credit (it has its own: program and target sections), and the "
+    "founder-figure row compares one population"
 )
 STUDIO_BUSINESS_SPECS: tuple[Spec, ...] = (
     one_path(
@@ -853,13 +854,16 @@ STUDIO_BUSINESS_SPECS: tuple[Spec, ...] = (
         BUSINESS_COMPONENT,
         "Printed figures backed by a document page, a public-data row or a program or target section (rule E, "
         "stricter: model estimates, calculations, assumptions and founder statements do not count): Studio vs B0, "
-        f"whose only sources are the founder's documents. {B0_BY_DEFINITION}",
+        "whose only sources are the founder's documents. Program and target sections (the SYNTHETIC program's "
+        "thresholds and the Studio's own targets) count for Studio, and B0 by definition prints none. "
+        f"{B0_BY_DEFINITION}",
         (f"{RULE_E}.studio", f"{RULE_E}.baseline_b0"),
         coverage_pair_text,
     ),
     one_path(
         BUSINESS_COMPONENT,
-        f"Rule E share, Studio minus B0, paired over scenarios ({B0_BY_DEFINITION})",
+        "Rule E share, Studio minus B0, paired over scenarios (it comes mostly from the program and target sections "
+        f"B0 never prints; {B0_BY_DEFINITION})",
         f"{RULE_E}.difference",
     ),
     Spec(

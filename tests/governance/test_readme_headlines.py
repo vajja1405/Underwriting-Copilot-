@@ -336,7 +336,10 @@ def test_rows_comparing_studio_with_b0_carry_the_baseline_caveat() -> None:
     assert "a plan made without SiteIQ, the simulation and the ledger" in rule_s
     assert "a construction, not a sample of real plans" in rule_s
     assert "Most of the gap follows from the definitions" in rule_s
-    assert "rule E and founder-figure rows" in rule_s
+    assert "The rule E row removes that credit (it has its own: program and target sections)" in rule_s
+    rule_e = rows[f"{headlines.RULE_E}.studio"].metric
+    assert "count for Studio, and B0 by definition prints none" in rule_e
+    assert "program and target sections B0 never prints" in rows[f"{headlines.RULE_E}.difference"].metric
     compared = [row for row in rows.values() if "B0" in row.metric]
     assert {row.paths[0] for row in compared} == {
         f"{headlines.RULE_S}.studio",
