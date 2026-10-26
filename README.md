@@ -62,7 +62,7 @@ no rate from it. **In progress**: code is partial, unreviewed or not yet run. **
 | Security (Phase 5 B): roles, packet permissions, encryption at rest, hash-chained audit events | Built, tests only | Several controls are written and tested but not yet called by an entry point a user runs | none | [security.md](docs/security.md) |
 | Observability: OpenTelemetry / OpenInference spans with PII redaction | Built, tests only | none | none | [Phase 5](docs/walkthrough_phase5.md) |
 | Governance: results provenance blocks; LLM migration gate (frozen retrieval, pre-registered non-inferiority rule) and freeze proofs | Provenance built; gate in progress | The gate's code and tests exist; the full champion and challenger runs have not run, so no gate decision exists | none yet | [S1b](docs/walkthrough_innovations_s1.md) |
-| Governance (Phase 6): monitoring, reviewer feedback, champion/challenger in use | Not started | none | none | [build plan](docs/build_prompts.md) |
+| Governance (Phase 6): decision lineage, monitoring (drift, calibration, indicators), reviewer feedback with reason codes, champion/challenger and outcomes, release gate (CI job), governance packs | Built + measured (SYNTHETIC / SIMULATED; no LLM) | Monitor of a separate demonstration claim-frequency GLM (no inventory model is monitored) on SIMULATED freMTPL2 streams with SYNTHETIC injected drift: false alerts in 1/300 no-drift streams, a 25% claim-rate rise detected in 298/300 and a 10% rise in 49/300; SYNTHETIC champion/challenger AUC difference -0.0003 [-0.0029, 0.0025], keep champion; SIMULATED reviewer override rate 0.1385 [0.0615, 0.2308] (describes the simulation); release gate 11 PASS, 0 FAIL, 0 MISSING, 4 NOT_MEASURED. Credit-model monitoring, real-data champion/challenger and real outcomes not measured (no Lending Club data) | [governance_metrics.json](results/governance_metrics.json), [monitoring report](results/monitoring_report.html) | [Phase 6](docs/walkthrough_phase6.md), [bank pack](docs/governance/bank_model_risk.md), [insurance outline](docs/governance/insurance_ai_program.md) |
 
 Not wired yet: the web Lender Desk runs the Phase 5 agent on SYNTHETIC **structured** applications. The packet path
 (document intelligence, then the Evidence-to-Action Engine) runs from the command line (`make run-evidence`).
@@ -180,7 +180,7 @@ flowchart LR
 | `src/uwcopilot/security` | Phase 5 B roles, packet permissions, encryption at rest, audit chain, injection containment |
 | `src/uwcopilot/provenance` | SIG numbers, numeric checker, slot grammar and renderer |
 | `src/uwcopilot/llm`, `rag`, `tools`, `mcp_server`, `observability` | GenAI layer: providers, Qdrant retrieval, tool allow-list, MCP server, tracing |
-| `src/uwcopilot/governance` | Results provenance, freeze proofs, LLM migration gate |
+| `src/uwcopilot/governance` | Results provenance, freeze proofs, LLM migration gate; Phase 6 lineage, monitoring, reviewer feedback, outcomes, champion/challenger, model status registry, release gate, governance packs |
 | `src/uwcopilot/studio` | Founder Studio: data fabric, SiteIQ, feasibility, path to approval, narrative, package and handoff |
 | `src/uwcopilot/web`, `frontend/` | Web app v0.1: FastAPI backend and Next.js static export |
 
