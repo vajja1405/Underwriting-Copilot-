@@ -22,6 +22,7 @@ from uwcopilot.governance.freeze_proof import migration_section_sha256
 from uwcopilot.governance.migration_gate import load_migration_settings
 from uwcopilot.governance.release_gate import (
     MANIFEST_NAME,
+    GateConfigError,
     GateReport,
     GateRow,
     GateSettings,
@@ -402,6 +403,16 @@ def test_the_script_exits_2_on_an_invalid_configuration(tmp_path: Path, capsys: 
     config.write_text("migration: {}\n", encoding="utf-8")  # no gate: section
     assert release_gate_script.main(["--config", str(config)]) == release_gate_script.EXIT_CONFIG
     assert "no `gate:` section" in capsys.readouterr().err
+
+
+def test_the_script_exits_2_on_malformed_yaml(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    # yaml.YAMLError is not a ValueError: without the re-raise it escaped as a traceback with exit 1 ("regression").
+    config = tmp_path / "release_gate.yaml"
+    config.write_text("gate:\n  rows: [\n", encoding="utf-8")
+    with pytest.raises(GateConfigError, match="not valid YAML"):
+        load_gate_settings(config)
+    assert release_gate_script.main(["--config", str(config)]) == release_gate_script.EXIT_CONFIG
+    assert "not valid YAML" in capsys.readouterr().err
 
 
 # --- Writing results ------------------------------------------------------------------------------------------------

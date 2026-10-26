@@ -70,7 +70,7 @@ BLOCKING_STATUSES: tuple[Status, ...] = ("FAIL", "MISSING")
 
 
 class GateConfigError(ValueError):
-    """config/release_gate.yaml has no usable `gate:` section."""
+    """config/release_gate.yaml is not valid YAML or has no usable `gate:` section."""
 
 
 class StrictModel(BaseModel):
@@ -137,8 +137,15 @@ class GateSettings(StrictModel):
 
 
 def load_gate_document(path: Path = DEFAULT_CONFIG_PATH) -> Mapping[str, Any]:
-    """The raw `gate:` section of the YAML file (GateConfigError when it is absent)."""
-    document = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+    """The raw `gate:` section of the YAML file (GateConfigError when the file is not YAML or the section is absent).
+
+    yaml.YAMLError is not a ValueError, so it is re-raised as GateConfigError: the script then exits 2 (invalid
+    configuration), not 1 (a regression).
+    """
+    try:
+        document = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError as error:
+        raise GateConfigError(f"{Path(path).name} is not valid YAML ({error})") from error
     section = document.get("gate") if isinstance(document, Mapping) else None
     if not isinstance(section, Mapping):
         raise GateConfigError(f"{Path(path).name} has no `gate:` section")
