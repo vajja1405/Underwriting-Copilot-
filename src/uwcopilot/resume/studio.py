@@ -194,7 +194,11 @@ def path_bullet(results: ResultsFolder) -> Built:
     if compliant is None:
         draft.omit("program-compliant path rate", missing_reason(metrics, PATHS, "headline"))
     else:
-        draft.add(f"{interval(compliant)} when every startup-program rule must also hold", PATHS)
+        # The metric covers only the program rules the search checks (NSP-3.1 equity injection, NSP-8.1 loan
+        # amount and term; definitions.path_found_and_program_compliant_rate), not every program rule.
+        draft.add(
+            f"{interval(compliant)} when the SYNTHETIC startup program's equity and loan rules must also hold", PATHS
+        )
     return draft.finish()
 
 

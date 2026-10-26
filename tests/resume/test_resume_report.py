@@ -232,6 +232,12 @@ def test_a_model_narrative_trace_rate_is_not_called_by_construction(results_dir:
     assert "by construction" not in text
 
 
+def test_program_rule_path_rate_names_only_the_rules_the_search_checks(results_dir: Path, repo_root: Path) -> None:
+    text = bullet_text(build_report(results_dir, repo_root), "studio_path")
+    assert "0.0456 [0.0321, 0.0598] when the SYNTHETIC startup program's equity and loan rules must also hold" in text
+    assert "every startup-program rule" not in text
+
+
 def test_missing_studio_business_file_drops_its_bullet_with_the_reason(results_dir: Path, repo_root: Path) -> None:
     (results_dir / "studio_business_metrics.json").unlink()
     report = build_report(results_dir, repo_root)
