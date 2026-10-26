@@ -53,6 +53,30 @@ def test_a_changed_prompt_is_stale_and_strict_exits_3(tmp_path: Path, capsys: py
     assert lineage_script.main([str(log), "DR-1", "--strict"], repo_root=root) == lineage_script.EXIT_STALE
 
 
+def test_a_changed_rule_file_is_stale_and_the_commit_is_only_shown(
+    tmp_path: Path, capsys: pytest.CaptureFixture
+) -> None:
+    root = fake_repo(tmp_path)
+    log = write_log(root)
+    assert lineage_script.main([str(log), "DR-1", "--strict"], repo_root=root) == 0
+    out = capsys.readouterr().out
+    assert "[shown, not compared]" in out and "- agent/policy.py sha256" in out and "-> current\n" in out
+    (root / "agent" / "policy.py").write_text("DSCR_MINIMUM = 1.10  # SYNTHETIC rule\n", encoding="utf-8")
+    assert lineage_script.main([str(log), "DR-1", "--strict"], repo_root=root) == lineage_script.EXIT_STALE
+    [rule_line] = [line for line in capsys.readouterr().out.splitlines() if "agent/policy.py sha256" in line]
+    assert "[STALE: recorded" in rule_line
+
+
+def test_a_part_not_recorded_is_counted_as_not_checkable(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    root = fake_repo(tmp_path)
+    (root / "results" / "agent_metrics.json").unlink()
+    log = write_log(root)
+    assert lineage_script.main([str(log), "DR-1", "--strict"], repo_root=root) == 0
+    out = capsys.readouterr().out
+    assert "Not recorded: results file results/agent_metrics.json is not present [NOT CHECKABLE]" in out
+    assert "1 not checkable -> current_where_checkable" in out
+
+
 def test_absent_data_is_not_checkable(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
     root = fake_repo(tmp_path)
     log = write_log(root)

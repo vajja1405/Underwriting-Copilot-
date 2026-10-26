@@ -1,4 +1,4 @@
-"""A small fake repository for the lineage tests: results, manifests, a prompt file and one raw data file.
+"""A small fake repository for the lineage tests: results, manifests, a prompt file, a rule file and one data file.
 
 Everything is written under tmp_path, so the tests never depend on the real results/ or data/raw/ folders.
 """
@@ -67,9 +67,12 @@ def fake_repo(root: Path) -> Path:
         },
     )
     write_json(root / "eval" / "applications" / "manifest.json", {"applications_sha256": "d" * 64})
+    write_json(root / "eval" / "startup_applications" / "manifest.json", {"applications_sha256": "9" * 64})
     write_json(root / "eval" / "packets" / "manifest.json", {"test_truth_sha256": "e" * 64})
     (root / "prompts").mkdir(parents=True, exist_ok=True)
     (root / "prompts" / "memo_prompt.py").write_text('SYSTEM_PROMPT = "You draft memos."\n', encoding="utf-8")
+    (root / "agent").mkdir(parents=True, exist_ok=True)
+    (root / "agent" / "policy.py").write_text("DSCR_MINIMUM = 1.25  # SYNTHETIC rule\n", encoding="utf-8")
     raw = root / "data" / "raw"
     (raw / "lending_club").mkdir(parents=True, exist_ok=True)
     (raw / "lending_club" / "loans.zip").write_bytes(DATA_BYTES)
@@ -86,4 +89,10 @@ def prompt_source(root: Path) -> PromptSource:
 def lineage_for(root: Path, tool_results: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     """A lineage block built against the fake repository."""
     calls = [CREDIT_CALL, INSURANCE_CALL] if tool_results is None else tool_results
-    return build_decision_lineage(calls, prompts=(prompt_source(root),), eval_sets=EVAL_SETS, repo_root=root)
+    return build_decision_lineage(
+        calls,
+        prompts=(prompt_source(root),),
+        eval_sets=EVAL_SETS,
+        repo_root=root,
+        decision_logic=(root / "agent" / "policy.py",),
+    )

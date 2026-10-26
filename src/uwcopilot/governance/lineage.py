@@ -12,9 +12,20 @@ Shape of the block:
      prompts{id: {file, sha256, prompt_version, note}},
      eval_sets{id: {file, file_sha256, set_hash_field, set_sha256}},
      results_files{path: sha256},
+     decision_logic{path: sha256},
      not_recorded[reason, ...]}
 
+decision_logic was added to lineage-v1 after the first Phase 6 records were written. It is optional like the block
+itself: a block without it still loads, and the check reports the decision logic as not checkable for that record.
+
 Where each value comes from:
+- code: the git commit and dirty flag of the working tree when the decision was made. They are shown next to today's
+  commit (scripts/lineage.py) but never compared, because every later commit would flag every record, whatever it
+  changed. The record's versions block (graph, policy, prompt and LLM labels) is not compared either, apart from
+  prompt_version: the policy and graph labels are fixed strings that stay the same when a rule changes.
+- decision_logic: so a change of the rules does show, the SHA-256 of each source file that decides what the agent
+  recommends and what a reviewer may do (DECISION_LOGIC_FILES: the reference policy of every line, the human approval
+  checkpoint in hitl.py and the graph). Like the prompt hash, any edit of one of these files changes it.
 - models: the score_risk calls of THIS decision name a product ("credit" or "insurance_frequency"); that is also the
   section of results/risk_metrics.json that measured the model. The section's mlflow block (registered model and
   version, run id), its model_version label and the git commit that measured it are copied. tool_status says whether
@@ -34,9 +45,11 @@ Where each value comes from:
 A file that is missing (for example in a deployment image that has no results/ folder) is listed in not_recorded with
 the reason. Nothing is guessed.
 
-verify_lineage() recomputes every recorded value from the files as they are in the working tree now and returns one
-LineageCheck per value: "ok", "STALE" (the recorded hash or version no longer matches) or "not_checkable" (the file is
-not present here, for example the Lending Club data, which needs a Kaggle key).
+verify_lineage() recomputes every recorded hash and version listed above (not the code commit) from the files as they
+are in the working tree now and returns one LineageCheck per value: "ok", "STALE" (the recorded hash or version no
+longer matches) or "not_checkable" (the file is not present here, for example the Lending Club data, which needs a
+Kaggle key). Every not_recorded entry also becomes a not_checkable check, because a part that was never recorded
+cannot be shown to match. overall_status() is "current" only when at least one check ran and every check is ok.
 """
 
 import json
@@ -55,6 +68,16 @@ RISK_RESULTS_FILE = Path("results/risk_metrics.json")
 AGENT_RESULTS_FILE = Path("results/agent_metrics.json")
 CHECKSUM_LOG_NAME = "checksums.jsonl"
 VALIDATING_RESULTS: tuple[Path, ...] = (RISK_RESULTS_FILE, AGENT_RESULTS_FILE)
+# The agent's rule files, found next to this package (this module does not import the agent, which imports it).
+AGENT_SOURCE_DIR = Path(__file__).resolve().parent.parent / "agent"
+DECISION_LOGIC_FILES: tuple[Path, ...] = (
+    AGENT_SOURCE_DIR / "policy.py",
+    AGENT_SOURCE_DIR / "policy_credit.py",
+    AGENT_SOURCE_DIR / "policy_insurance.py",
+    AGENT_SOURCE_DIR / "policy_startup.py",
+    AGENT_SOURCE_DIR / "hitl.py",
+    AGENT_SOURCE_DIR / "graph.py",
+)
 
 CheckStatus = Literal["ok", "STALE", "not_checkable"]
 
@@ -227,6 +250,20 @@ def eval_set_entries(eval_sets: Mapping[str, EvalSetSource], repo_root: Path) ->
     return entries, missing
 
 
+def decision_logic_entries(paths: Sequence[Path], repo_root: Path) -> tuple[dict[str, str], list[str]]:
+    """({file: sha256}, not-recorded reasons) for the source files that hold the decision rules."""
+    entries: dict[str, str] = {}
+    missing: list[str] = []
+    for path in paths:
+        resolved = resolve(path, repo_root)
+        shown = display_path(resolved, repo_root)
+        if not resolved.is_file():
+            missing.append(f"decision logic file {shown} is not present")
+            continue
+        entries[shown] = sha256_of_file(resolved)
+    return entries, missing
+
+
 def build_decision_lineage(
     tool_results: Sequence[Mapping[str, Any]],
     prompts: Sequence[PromptSource] = (),
@@ -234,6 +271,7 @@ def build_decision_lineage(
     risk_results_file: Path = RISK_RESULTS_FILE,
     validating_results: Sequence[Path] = VALIDATING_RESULTS,
     repo_root: Path = REPO_ROOT,
+    decision_logic: Sequence[Path] = DECISION_LOGIC_FILES,
 ) -> dict[str, Any]:
     """The lineage block of one decision (module docstring). Never raises for a missing file: it says so instead.
 
@@ -257,7 +295,8 @@ def build_decision_lineage(
             not_recorded.append(f"results file {display_path(results_path, repo_root)} is not present")
         else:
             results_block[display_path(results_path, repo_root)] = digest
-    not_recorded.extend(missing_prompts + missing_sets)
+    logic_block, missing_logic = decision_logic_entries(decision_logic, repo_root)
+    not_recorded.extend(missing_prompts + missing_sets + missing_logic)
     not_recorded.extend(model["not_recorded"] for model in models if "not_recorded" in model)
     return {
         "lineage_version": LINEAGE_VERSION,
@@ -266,6 +305,7 @@ def build_decision_lineage(
         "prompts": prompt_block,
         "eval_sets": eval_block,
         "results_files": results_block,
+        "decision_logic": logic_block,
         "not_recorded": not_recorded,
     }
 
@@ -344,6 +384,28 @@ def check_results_files(lineage: Mapping[str, Any], repo_root: Path, hasher: Fil
     return checks
 
 
+def check_decision_logic(lineage: Mapping[str, Any], repo_root: Path, hasher: FileHasher) -> list[LineageCheck]:
+    """The source files that hold the decision rules; not checkable for a block written before they were hashed."""
+    if "decision_logic" not in lineage:
+        detail = "not recorded: this block was written before decision-logic hashes were added"
+        return [LineageCheck("decision_logic_file", "decision logic", None, None, "not_checkable", detail)]
+    checks = []
+    for logic_file, digest in (lineage.get("decision_logic") or {}).items():
+        current = hasher.sha256(resolve(logic_file, repo_root))
+        checks.append(compare("decision_logic_file", logic_file, digest, current))
+    return checks
+
+
+def check_not_recorded(lineage: Mapping[str, Any]) -> list[LineageCheck]:
+    """One not_checkable check per part the block could not record (a model's own reason is checked by check_models)."""
+    model_reasons = {entry["not_recorded"] for entry in lineage.get("models") or [] if "not_recorded" in entry}
+    checks = []
+    for reason in lineage.get("not_recorded") or []:
+        if reason not in model_reasons:
+            checks.append(LineageCheck("not_recorded", reason, None, None, "not_checkable", "not recorded"))
+    return checks
+
+
 def model_identity(entry: Mapping[str, Any]) -> dict[str, Any]:
     """The parts of a model entry that name the model version (compared by check_models)."""
     return {
@@ -412,8 +474,9 @@ def verify_lineage(
     hasher: FileHasher | None = None,
     hash_data_files: bool = True,
 ) -> list[LineageCheck]:
-    """Every recorded value of a lineage block compared with the working tree now (module docstring).
+    """Every recorded hash and version of a lineage block compared with the working tree now (module docstring).
 
+    The code commit is not compared (module docstring); every not_recorded entry becomes a not_checkable check.
     prompt_labels gives the current prompt_version label per prompt id (the caller knows them; this module does not
     import the agent). hash_data_files=False skips hashing the raw data files (the checksum log is still compared).
     """
@@ -423,17 +486,23 @@ def verify_lineage(
         *check_prompts(lineage, repo_root, prompt_labels or {}, hasher),
         *check_eval_sets(lineage, repo_root, hasher),
         *check_results_files(lineage, repo_root, hasher),
+        *check_decision_logic(lineage, repo_root, hasher),
         *check_models(lineage, repo_root),
         *check_datasets(lineage, raw_dir, log, hasher if hash_data_files else None),
+        *check_not_recorded(lineage),
     ]
 
 
 def overall_status(checks: Iterable[LineageCheck]) -> str:
-    """STALE when any check is STALE, current when every check is ok, else current_where_checkable."""
-    statuses = {check.status for check in checks}
+    """STALE when any check is STALE; current when at least one check ran and every check is ok.
+
+    Anything else is current_where_checkable, including a block with no check at all: nothing was compared, so it
+    cannot be called current.
+    """
+    statuses = [check.status for check in checks]
     if "STALE" in statuses:
         return "STALE"
-    if statuses <= {"ok"}:
+    if statuses and all(status == "ok" for status in statuses):
         return "current"
     return "current_where_checkable"
 

@@ -3,6 +3,11 @@
 Writes sections "feedback" and "lineage" of results/governance_metrics.json (risk.results.update_results) and the
 SIMULATED decision log data/governance/simulated_review_log.jsonl (gitignored; rewritten on every run).
 
+The log is deleted and written again only when it holds SIMULATED records alone (or does not exist yet). A --log that
+is the agent's decision log (UWC_DECISION_LOG or its default), or that holds any other record or a line that is not a
+JSON record, is refused with exit code 2 and nothing is deleted: decision records of real reviews are append-only
+(agent/decision_record.py).
+
 What it does:
 1. Runs every application in eval/applications (65 SYNTHETIC files: 32 credit, 33 insurance) through the real agent
    graph up to the human checkpoint, offline. Screening returns the designed outcome (planted watchlist owners match,
@@ -34,7 +39,9 @@ it becomes informative when an older log is checked later (scripts/lineage.py).
 import argparse
 import json
 import random
+import sys
 import time
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -48,9 +55,11 @@ from uwcopilot.agent.fake_memo import template_memo_responder
 from uwcopilot.agent.graph import AgentDeps
 from uwcopilot.agent.memo import PROMPT_VERSION
 from uwcopilot.agent.runner import RunOutcome, compile_agent, resume_run, start_run
+from uwcopilot.agent.settings import DEFAULT_DECISION_LOG
 from uwcopilot.agent.vocab import FAKE_LLM_STAMP, MATCHING_ACTION
 from uwcopilot.common.files import sha256_of_file
-from uwcopilot.common.paths import DATA_DIR, REPO_ROOT, RESULTS_DIR
+from uwcopilot.common.paths import DATA_DIR, ENV_FILE, REPO_ROOT, RESULTS_DIR
+from uwcopilot.common.settings import env_reader
 from uwcopilot.governance.feedback import (
     OVERRIDE_REASONS_FILE,
     load_override_reasons,
@@ -66,6 +75,7 @@ DEFAULT_APPLICATIONS = REPO_ROOT / "eval" / "applications"
 DEFAULT_LOG = DATA_DIR / "governance" / "simulated_review_log.jsonl"
 DEFAULT_OUTPUT = RESULTS_DIR / "governance_metrics.json"
 SIMULATED = "SIMULATED"
+EXIT_LOG_REFUSED = 2
 DATA_LABEL = "SYNTHETIC applications; SIMULATED reviewer actions"
 RISK_UNAVAILABLE = (
     "score_risk is not called in the SIMULATED reviewer run: the trained credit model is not in this checkout and no "
@@ -119,10 +129,51 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--applications-dir", type=Path, default=DEFAULT_APPLICATIONS)
     parser.add_argument("--limit", type=int, default=None, help="use only the first N applications")
     parser.add_argument("--seed", type=int, default=SimulationParameters.seed)
-    parser.add_argument("--log", type=Path, default=DEFAULT_LOG, help="the SIMULATED decision log (rewritten)")
+    parser.add_argument(
+        "--log",
+        type=Path,
+        default=DEFAULT_LOG,
+        help="the SIMULATED decision log (rewritten; a log holding any other record is refused with exit code 2)",
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--no-data-files", action="store_true", help="do not hash raw data files in the lineage check")
     return parser.parse_args(argv)
+
+
+def agent_decision_logs(env_file: Path | None = ENV_FILE) -> list[Path]:
+    """The agent's own decision logs, never rewritten here: the default path and UWC_DECISION_LOG when it is set."""
+    logs = [DEFAULT_DECISION_LOG]
+    configured = env_reader(env_file)("UWC_DECISION_LOG")
+    if configured:
+        logs.append(Path(configured))
+    return logs
+
+
+def refusal_to_rewrite(log: Path, protected: Sequence[Path]) -> str | None:
+    """Why the --log file must not be deleted and rewritten, or None when that is safe (module docstring).
+
+    Safe means the file does not exist yet, or every record in it has reviewer_label "SIMULATED". A protected path
+    (the agent's decision log) is refused whatever it holds.
+    """
+    if any(log.resolve() == path.resolve() for path in protected):
+        return f"{log} is the agent's decision log (UWC_DECISION_LOG or its default), which is append-only"
+    if not log.exists():
+        return None
+    try:
+        lines = log.read_text(encoding="utf-8").split("\n")
+    except (OSError, UnicodeDecodeError) as error:
+        return f"{log} cannot be read as a decision log ({error.__class__.__name__})"
+    for number, line in enumerate(lines, start=1):
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError:
+            return f"line {number} of {log} is not a JSON decision record"
+        label = record.get("reviewer_label") if isinstance(record, dict) else None
+        if label != SIMULATED:
+            return f"line {number} of {log} is not a SIMULATED record (reviewer_label {label!r})"
+    return None
 
 
 def draw(rng: random.Random, codes: tuple[str, ...]) -> Draws:
@@ -245,6 +296,10 @@ def lineage_overview(records: list[dict[str, Any]]) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     """Run the simulation, summarize it and write the two results sections."""
     args = parse_args(argv)
+    refusal = refusal_to_rewrite(args.log, agent_decision_logs())
+    if refusal is not None:
+        print(f"Refused: {refusal}. Nothing was deleted or written.", file=sys.stderr)
+        return EXIT_LOG_REFUSED
     started_at = time.perf_counter()
     params = SimulationParameters(seed=args.seed)
     applications = load_applications(args.applications_dir)
@@ -255,7 +310,7 @@ def main(argv: list[str] | None = None) -> int:
     reasons = load_override_reasons()
 
     args.log.parent.mkdir(parents=True, exist_ok=True)
-    args.log.unlink(missing_ok=True)  # a generated simulation log: each run starts a fresh chain
+    args.log.unlink(missing_ok=True)  # only SIMULATED records (checked above): each run starts a fresh chain
     log = DecisionLog(args.log)
     deps = AgentDeps(
         llm=get_llm_client("fake", fake_responses=template_memo_responder),
@@ -317,7 +372,9 @@ def main(argv: list[str] | None = None) -> int:
         "lineage_version": LINEAGE_VERSION,
         "interpretation": "Each record's lineage hashes were compared with the working tree right after the records "
         "were written, so matching hashes are expected. not_checkable items are files that are not present here "
-        "(the Lending Club data needs a Kaggle key; some raw files were not kept); they are not assumed to match.",
+        "(the Lending Club data needs a Kaggle key; some raw files were not kept) or parts the record could not "
+        "record; they are not assumed to match. The code commit is recorded but not compared; the decision-logic "
+        "files (policy, approval checkpoint, graph) are compared by hash.",
         "checks": lineage_summary,
         "versions_named": lineage_overview(records),
     }
