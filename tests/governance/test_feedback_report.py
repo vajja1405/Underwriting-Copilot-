@@ -90,6 +90,39 @@ def test_the_script_writes_both_sections_from_a_simulated_log(tmp_path: Path) ->
     assert results["lineage"]["metadata"]["git_commit"]  # stamped by update_results
 
 
+def test_a_log_with_a_record_no_script_simulated_is_never_deleted(tmp_path: Path) -> None:
+    log = tmp_path / "human_log.jsonl"
+    human = {"record_id": "DR-human", "reviewer_label": "human", "data_label": "SYNTHETIC"}
+    log.write_text(json.dumps(human) + "\n", encoding="utf-8")
+    before = log.read_bytes()
+    output = tmp_path / "out.json"
+    arguments = ["--limit", "1", "--log", str(log), "--output", str(output), "--no-data-files"]
+    assert feedback_report.main(arguments) == feedback_report.EXIT_LOG_REFUSED
+    assert log.read_bytes() == before and not output.exists()
+
+
+def test_only_an_absent_or_simulated_log_may_be_rewritten(tmp_path: Path) -> None:
+    refusal = feedback_report.refusal_to_rewrite
+    agent_log = tmp_path / "agent" / "decision_records.jsonl"
+    assert refusal(tmp_path / "new.jsonl", [agent_log]) is None
+    assert "append-only" in str(refusal(agent_log, [agent_log]))  # refused even before it exists
+    simulated = tmp_path / "simulated.jsonl"
+    simulated.write_text(json.dumps({"reviewer_label": "SIMULATED"}) + "\n\n", encoding="utf-8")
+    assert refusal(simulated, [agent_log]) is None
+    for name, text in [("old.jsonl", '{"record_id": "DR-old"}\n'), ("notes.md", "# notes\n"), ("list.jsonl", "[1]\n")]:
+        other = tmp_path / name
+        other.write_text(text, encoding="utf-8")
+        assert refusal(other, [agent_log]) is not None, name
+    assert refusal(tmp_path, [agent_log]) is not None  # a folder is not a log
+    assert feedback_report.agent_decision_logs(env_file=None)[0].name == "decision_records.jsonl"
+
+
+def test_the_script_rewrites_its_own_simulated_log(tmp_path: Path) -> None:
+    run(tmp_path, "again", limit=1)
+    _, records = run(tmp_path, "again", limit=1)
+    assert len(records) == 1 and records[0]["reviewer_label"] == "SIMULATED"
+
+
 def test_the_same_seed_gives_the_same_decisions(tmp_path: Path) -> None:
     _, first = run(tmp_path, "a", limit=8)
     _, second = run(tmp_path, "b", limit=8)
