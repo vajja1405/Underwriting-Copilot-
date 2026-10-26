@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
-from resume_fixtures import allowed_numbers, fake_repo, numbers_in, wilson, write_json, write_results
+from resume_fixtures import allowed_numbers, ci, fake_repo, numbers_in, wilson, write_json, write_results
 
 from uwcopilot.common.paths import REPO_ROOT, RESULTS_DIR
 from uwcopilot.resume.report import ResumeReport, build_report, render_omissions, render_projects
@@ -236,6 +236,48 @@ def test_program_rule_path_rate_names_only_the_rules_the_search_checks(results_d
     text = bullet_text(build_report(results_dir, repo_root), "studio_path")
     assert "0.0456 [0.0321, 0.0598] when the SYNTHETIC startup program's equity and loan rules must also hold" in text
     assert "every startup-program rule" not in text
+
+
+def omission_reasons(report: ResumeReport, bullet_id: str, part: str) -> list[str]:
+    """The reasons recorded for one left-out part of one bullet."""
+    return [item.reason for item in report.omissions if item.bullet_id == bullet_id and item.part == part]
+
+
+def test_handoff_checkpoint_below_one_is_quoted_with_its_interval(results_dir: Path, repo_root: Path) -> None:
+    handoff = "studio_handoff_metrics.json"
+    edit(results_dir, handoff, "all_cases", "reached_human_checkpoint", value=ci(0.95, 0.9012, 0.9876, n=40))
+    edit(results_dir, handoff, "all_cases", "decisions_recorded_without_a_human", value=2)
+    report = build_report(results_dir, repo_root)
+    text = bullet_text(report, "studio_provenance")
+    assert (
+        "0.9500 [0.9012, 0.9876] of 40 handoff cases stopped at a human checkpoint; "
+        "2 decisions were recorded without a human" in text
+    )
+    assert "handoff human checkpoint" not in omitted_parts(report, "studio_provenance")
+
+
+def test_handoff_checkpoint_marked_not_measured_is_left_out_with_the_file_reason(
+    results_dir: Path, repo_root: Path
+) -> None:
+    edit(
+        results_dir,
+        "studio_handoff_metrics.json",
+        "all_cases",
+        "reached_human_checkpoint",
+        value="not measured (test reason)",
+    )
+    report = build_report(results_dir, repo_root)
+    assert "handoff cases" not in bullet_text(report, "studio_provenance")
+    reasons = omission_reasons(report, "studio_provenance", "handoff human checkpoint")
+    assert reasons == ["results/studio_handoff_metrics.json says: not measured (test reason)"]
+
+
+def test_metros_that_are_not_the_top_five_are_not_reported_as_not_measured(results_dir: Path, repo_root: Path) -> None:
+    edit(results_dir, "studio_metro_ranking.json", "configured_equals_top_five", value=False)
+    report = build_report(results_dir, repo_root)
+    assert "largest US metro areas" not in bullet_text(report, "studio_platform")
+    reasons = omission_reasons(report, "studio_platform", "supported metros")
+    assert reasons == ["results/studio_metro_ranking.json says the configured metros are not the top five"]
 
 
 def test_missing_studio_business_file_drops_its_bullet_with_the_reason(results_dir: Path, repo_root: Path) -> None:

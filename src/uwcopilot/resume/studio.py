@@ -37,7 +37,11 @@ def platform_bullet(results: ResultsFolder) -> Built:
     metros = dig(ranking, "configured_metros")
     ranked = number_at(ranking, "metropolitan_areas_ranked")
     business_types = dig(results.load(PATHS), "settings", "business_types")
-    if dig(ranking, "configured_equals_top_five") is True and isinstance(metros, list) and ranked is not None:
+    top_five = dig(ranking, "configured_equals_top_five")
+    if top_five is False:
+        # A measured "no": the clause would be untrue, and "not measured" would be untrue too.
+        draft.omit("supported metros", f"results/{RANKING} says the configured metros are not the top five")
+    elif top_five is True and isinstance(metros, list) and ranked is not None:
         types_text = f"{count(len(business_types))} business types in " if isinstance(business_types, list) else ""
         draft.add(
             f"covers {types_text}the {count(len(metros))} largest US metro areas by Census Bureau population estimates "
@@ -166,14 +170,27 @@ def add_handoff(draft: BulletDraft, handoff: dict[str, Any] | None) -> None:
         )
     reached = estimate_at(handoff, "all_cases", "reached_human_checkpoint")
     without_human = number_at(handoff, "all_cases", "decisions_recorded_without_a_human")
-    if reached is None or reached.n is None or without_human is None or reached.value != 1.0:
-        draft.omit("handoff human checkpoint", missing_reason(handoff, HANDOFF, "all_cases"))
+    if reached is None or reached.n is None:
+        reason = missing_reason(handoff, HANDOFF, "all_cases", "reached_human_checkpoint")
+        draft.omit("handoff human checkpoint", reason)
         return
-    draft.add(
-        f"all {count(reached.n)} handoff cases stopped at a human checkpoint and {count(without_human)} decisions "
-        "were recorded without a human",
-        HANDOFF,
-    )
+    if without_human is None:
+        reason = missing_reason(handoff, HANDOFF, "all_cases", "decisions_recorded_without_a_human")
+        draft.omit("handoff human checkpoint", reason)
+        return
+    # A measured rate below 1.0 is quoted with its interval, never hidden as "not measured".
+    if reached.value == 1.0:
+        draft.add(
+            f"all {count(reached.n)} handoff cases stopped at a human checkpoint and {count(without_human)} "
+            "decisions were recorded without a human",
+            HANDOFF,
+        )
+    else:
+        draft.add(
+            f"{interval(reached)} of {count(reached.n)} handoff cases stopped at a human checkpoint; "
+            f"{count(without_human)} decisions were recorded without a human",
+            HANDOFF,
+        )
 
 
 def path_bullet(results: ResultsFolder) -> Built:
