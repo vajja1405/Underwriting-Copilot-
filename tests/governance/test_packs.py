@@ -27,7 +27,7 @@ from uwcopilot.governance.packs import (
     RISK,
 )
 from uwcopilot.governance.packs_bank import render_bank_model_risk, sr_26_2_rows
-from uwcopilot.governance.packs_genai import genai_control_rows
+from uwcopilot.governance.packs_genai import genai_control_rows, third_party_model_rows
 from uwcopilot.governance.packs_governance import monitoring_block
 from uwcopilot.governance.packs_insurance import naic_rows, render_insurance_ai_program
 from uwcopilot.governance.packs_inventory import INVENTORY, inventory_entry, materiality_tier
@@ -262,7 +262,7 @@ def agent_results() -> dict[str, Any]:
             "prompt_version": "memo-prompt-SYNTHETIC",
             "git": {"commit": "a" * 40, "uncommitted_changes": True},
         },
-        "configuration": {"llm": "fake:fake-llm (SYNTHETIC render test)"},
+        "configuration": {"llm": "fake:fake-llm (SYNTHETIC render test)", "retrieval_mode": "hybrid"},
         "reference_policy": {
             "recommendation_agreement": {"value": 0.97531, "ci_low": 0.93827, "ci_high": 1.0, "n": 81}
         },
@@ -291,9 +291,16 @@ def provenance_block(commit: str) -> dict[str, Any]:
 def docintel_results() -> dict[str, Any]:
     """results/docintel_metrics.json (rules extractor only; SYNTHETIC values)."""
     return {
-        "provenance": provenance_block("d" * 40),
+        "provenance": {
+            **provenance_block("d" * 40),
+            "data_snapshots": {"tesseract_version": "tesseract SYNTHETIC-version"},
+        },
         "run": {"extractors": ["rules"], "provider": None},
-        "rules": {"fields": {"overall": {"f1": {"value": 0.98642, "ci_low": 0.97531, "ci_high": 0.99753}}}},
+        "rules": {
+            "fields": {"overall": {"f1": {"value": 0.98642, "ci_low": 0.97531, "ci_high": 0.99753}}},
+            "latency": {"ocr_pages_total": 37},
+            "page_classification": {"all": {"numerator": 412, "denominator": 412}},
+        },
         "comparisons": {"rules_vs_hybrid": "not measured (SYNTHETIC: no provider run)"},
     }
 
@@ -555,6 +562,34 @@ def test_bank_pack_states_the_llm_use_recorded_not_that_no_llm_was_available() -
     sources = full_sources()
     sources[DOCINTEL]["run"] = {"extractors": ["rules", "hybrid"], "provider": "ollama"}
     assert "extraction LLM provider: ollama" in render_bank_model_risk(sources)
+
+
+def test_third_party_pretrained_models_are_listed_with_their_recorded_use() -> None:
+    """P6-PACKS-4: Tesseract (a pretrained LSTM) read the scanned pages behind the extraction metrics, and the agent's
+    retrieval runs pretrained fastembed models; both packs list them instead of saying no third-party AI was used."""
+    rows = {row[0]: row[2] for row in third_party_model_rows(full_sources())}
+    assert rows["Tesseract OCR (tesseract SYNTHETIC-version)"].startswith(
+        "37 of 412 pages read by OCR in the extraction evaluation"
+    )
+    assert rows["Dense text embedding model (fastembed; `rag/settings.py` DENSE_MODEL_ID)"] == (
+        "yes (the agent evaluation recorded retrieval mode `hybrid`)"
+    )
+    assert rows["Cross-encoder reranker (fastembed; `rag/settings.py` RERANK_MODEL_ID)"] == (
+        "no (the agent evaluation recorded retrieval mode `hybrid`)"
+    )
+    absent = [row[2] for row in third_party_model_rows({})]
+    assert absent[0].startswith("not measured (no OCR page count") and absent[1].startswith("not measured")
+    program = render_insurance_ai_program(full_sources())
+    assert "none produced any number" not in program
+    assert "| Tesseract OCR (tesseract SYNTHETIC-version) |" in program
+    third_party = [row for row in naic_rows(full_sources()) if row[0] == "Third-party AI systems"][0]
+    assert "No third-party AI system produced these results" not in third_party[2]
+    assert "pretrained OCR and retrieval models" in third_party[2]
+    bank = render_bank_model_risk(full_sources())
+    assert "### Third-party pretrained models (not in the inventory)" in bank
+    assert "| Tesseract OCR (tesseract SYNTHETIC-version) |" in bank
+    vendor = {row[0]: row[2] for row in sr_26_2_rows(full_sources())}["VII. Vendor and other third-party products"]
+    assert "No vendor model is used by the inventory models" in vendor and "not validated here" in vendor
 
 
 def test_measured_injection_layers_and_certificates_are_shown() -> None:

@@ -37,7 +37,13 @@ from uwcopilot.governance.packs import (
     table,
     text,
 )
-from uwcopilot.governance.packs_genai import agent_control_rows, llm_quality_rows, llm_use
+from uwcopilot.governance.packs_genai import (
+    THIRD_PARTY_MODEL_HEADER,
+    agent_control_rows,
+    llm_quality_rows,
+    llm_use,
+    third_party_model_rows,
+)
 from uwcopilot.governance.packs_governance import (
     champion_challenger_block,
     feedback_block,
@@ -64,8 +70,8 @@ SOURCES_USED: tuple[tuple[str, str | None, str], ...] = (
     (GOVERNANCE, "release_gate", "6"),
     (GOVERNANCE, "lineage", "7"),
     (GOVERNANCE, "feedback", "7"),
-    (AGENT, None, "7"),
-    (DOCINTEL, None, "7"),
+    (AGENT, None, "1, 7"),
+    (DOCINTEL, None, "1, 7"),
     (INJECTION, None, "7"),
     (INJECTION_DETECTOR, None, "7"),
 )
@@ -135,8 +141,11 @@ def sr_26_2_rows(sources: Mapping[str, Any]) -> list[tuple[str, str, str]]:
         ),
         (
             "VII. Vendor and other third-party products",
-            "Open-source libraries (LightGBM, scikit-learn, statsmodels) and public data",
-            "No vendor model is used. Library versions are recorded in each results section's metadata.",
+            "Open-source libraries (LightGBM, scikit-learn, statsmodels) and public data; third-party pretrained OCR "
+            "and retrieval models (section 1)",
+            "No vendor model is used by the inventory models. The pretrained OCR and retrieval models are listed with "
+            "their recorded use in these results and are not validated here. Library versions are recorded in each "
+            "results section's metadata.",
         ),
         (
             "Footnote 3: generative and agentic AI are not within the scope",
@@ -168,18 +177,22 @@ def regulatory_basis() -> list[str]:
                 f'Not models under its definition, which excludes "{SR_26_2_NOT_A_MODEL}" (section II): the Phase 4 '
                 "financial calculations and reconciliation rules, the agent's rule-based reference policy, the rules "
                 "document extractor and the release gate. They are deterministic and are tested, not validated as "
-                "models.",
+                "models. The rules extractor reads scanned pages through Tesseract OCR, a third-party pretrained model "
+                "listed in section 1.",
                 "Outside its scope: generative and agentic AI (footnote 3). The LLM extraction and the agent are "
                 "governed in section 7, not by stretching SR 26-2 to cover them.",
                 "Still within its principles: traditional statistical and quantitative models and non-generative, "
-                "non-agentic AI models (footnote 3, last sentence).",
+                "non-agentic AI models (footnote 3, last sentence). The third-party pretrained OCR and retrieval "
+                "models of section 1 are non-generative; whether an institution treats such components as models "
+                "depends on the institution. They are listed, not validated, here.",
             ]
         ),
     ]
 
 
 def inventory_section(sources: Mapping[str, Any]) -> list[str]:
-    """One table per model: purpose, use, data, version, tier, ownership; then the Phase 6 registry entries."""
+    """One table per model: purpose, use, data, version, tier, ownership; then the Phase 6 registry entries and the
+    third-party pretrained models the extraction and the agent run."""
     lines = ["## 1. Model inventory", ""]
     for entry in INVENTORY:
         tier = entry.tier()
@@ -216,6 +229,18 @@ def inventory_section(sources: Mapping[str, Any]) -> list[str]:
         source_note(sources, GOVERNANCE, "monitoring"),
         "",
         source_note(sources, GOVERNANCE, "champion_challenger"),
+        "",
+        "### Third-party pretrained models (not in the inventory)",
+        "",
+        "The document extraction and the agent's guideline search run these pretrained, non-generative models as "
+        "published. They return text or a ranking of retrieved text rather than the quantitative estimates of the "
+        "models above, so they are not listed as inventory models; they were not validated by this project.",
+        "",
+        *table(THIRD_PARTY_MODEL_HEADER, third_party_model_rows(sources)),
+        "",
+        source_note(sources, DOCINTEL),
+        "",
+        source_note(sources, AGENT),
         "",
     ]
     return lines

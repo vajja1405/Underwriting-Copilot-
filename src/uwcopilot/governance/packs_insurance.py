@@ -38,7 +38,14 @@ from uwcopilot.governance.packs import (
     text,
     value_in,
 )
-from uwcopilot.governance.packs_genai import genai_control_rows, llm_quality_rows, oversight_rows
+from uwcopilot.governance.packs_genai import (
+    THIRD_PARTY_MODEL_HEADER,
+    genai_control_rows,
+    llm_quality_rows,
+    llm_use,
+    oversight_rows,
+    third_party_model_rows,
+)
 from uwcopilot.governance.packs_governance import (
     feedback_block,
     lineage_block,
@@ -92,7 +99,9 @@ def naic_rows(sources: Mapping[str, Any]) -> list[tuple[str, str, str]]:
         (
             "Third-party AI systems",
             "4. Third-party AI systems and data",
-            "No third-party AI system produced these results; the expectations for one are listed.",
+            "Section 4 lists the third-party pretrained OCR and retrieval models with their recorded use in these "
+            "results (not validated here) and the LLM use recorded; the expectations for a vendor AI system are "
+            "listed.",
         ),
         (
             "In proportion to the potential harm to consumers",
@@ -289,7 +298,6 @@ def risk_management_section(sources: Mapping[str, Any]) -> list[str]:
 
 def third_party_section(sources: Mapping[str, Any]) -> list[str]:
     """Third-party data and models used, and what a vendor AI system would need."""
-    provider = value_in(sources, DOCINTEL, "run.provider")
     data_rows = [
         ["freMTPL2freq / freMTPL2sev", "Claim frequency and severity models", "OpenML 41214 / 41215; OpenML lists CC0"],
         [
@@ -305,11 +313,14 @@ def third_party_section(sources: Mapping[str, Any]) -> list[str]:
         "",
         *table(["Third-party data", "Used for", "Source and terms"], data_rows),
         "",
+        *table(THIRD_PARTY_MODEL_HEADER, third_party_model_rows(sources)),
+        "",
         *bullets(
             [
-                "Third-party AI models: none produced any number in this outline. Agent memo writer: "
-                f"{text(value_in(sources, AGENT, 'configuration.llm'))}. Extraction LLM provider: "
-                f"{text(provider) if provider else 'none (rules extractor only)'}.",
+                "Third-party pretrained, non-generative models: the table above shows, from the results files, which "
+                "ones ran in the evaluations behind this outline. They are used as published and were not validated "
+                "by this project.",
+                f"Generative AI (LLM) use recorded in these results: {llm_use(sources)}.",
                 "The repository holds client code for a local Ollama model and for hosted LLM APIs; none was called "
                 "to produce these results, and none is described here as having been used.",
                 "If a vendor AI system were used, the program would require: due diligence on its development data, "
@@ -319,6 +330,8 @@ def third_party_section(sources: Mapping[str, Any]) -> list[str]:
                 "testing, because an insurer may not rely solely on a vendor's claim of non-discrimination.",
             ]
         ),
+        "",
+        source_note(sources, DOCINTEL),
         "",
         source_note(sources, AGENT),
     ]
