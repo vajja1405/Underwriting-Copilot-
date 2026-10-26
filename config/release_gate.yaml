@@ -92,10 +92,11 @@ migration:
 # absent or "not measured" now); MISSING (required evidence absent, or a measured current value with no reviewed
 # baseline value); NOT_MEASURED. FAIL and MISSING make the gate exit 1.
 #
-# The tolerances are design choices, written before the gate's first run and not fitted to any result. The evaluations
-# behind these rows are deterministic (fixed seeds, fixed SYNTHETIC or public test sets), so re-running unchanged code
-# should reproduce the baseline: a tolerance only leaves room for a small, deliberate trade-off. Anything larger needs
-# a reviewed baseline update (`make release-gate-baseline`, then commit results/baseline/).
+# The tolerances are design choices, written before the gate's first run and not fitted to any result. Apart from the
+# injection rows (a local model at temperature 0, not guaranteed to be bit-for-bit reproducible), the evaluations behind
+# these rows use fixed seeds and fixed SYNTHETIC or public test sets, so re-running unchanged code should reproduce the
+# baseline: a tolerance only leaves room for a small, deliberate trade-off. Anything larger needs a reviewed baseline
+# update (`make release-gate-baseline`, then commit results/baseline/).
 gate:
   rows:
     - id: credit_auc_ci_low
