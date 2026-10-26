@@ -669,7 +669,7 @@ resume-lines:  ## Print honest resume bullets from results/*.json (+ per-person 
 resume-lines-test:  ## Resume-lines tests only (offline; fixture results folder and the committed results)
 	uv run pytest -q tests/resume
 
-# Track: Studio S12 evaluation (branch p8/eval-studio). The baseline B0 and every metric are defined in
+# Studio S12 evaluation. The baseline B0 and every metric are defined in
 # docs/studio/s12_baseline.md, committed before the first run. Runs the golden SYNTHETIC founder scenarios end to end
 # and cites the S1 coverage, S5 path and S6 handoff results (run those first). Needs `make data` for the handoff
 # check (full sanctions lists); ARGS=--skip-handoff runs without them.
