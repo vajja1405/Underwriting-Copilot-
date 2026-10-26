@@ -20,10 +20,10 @@ Every number below is read from these files when the outline is rendered. The gi
 | `results/risk_metrics.json` | `insurance_frequency` | 1, 3 | 2026-10-11T00:41:27+00:00 | `bbedb8d30fa8f4d761a926d70c61cf25d7771743` | yes |
 | `results/risk_metrics.json` | `insurance_severity` | 1, 3 | 2026-10-11T00:41:27+00:00 | `bbedb8d30fa8f4d761a926d70c61cf25d7771743` | yes |
 | `results/risk_metrics.json` | `fairness_demo` | 1, 5 | 2026-10-11T00:30:33+00:00 | `bbedb8d30fa8f4d761a926d70c61cf25d7771743` | yes |
-| `results/governance_metrics.json` | `monitoring` | 3 | absent | not measured | not measured |
-| `results/governance_metrics.json` | `release_gate` | 3 | absent | not measured | not measured |
-| `results/governance_metrics.json` | `lineage` | 3 | absent | not measured | not measured |
-| `results/governance_metrics.json` | `feedback` | 2 | absent | not measured | not measured |
+| `results/governance_metrics.json` | `monitoring` | 3 | 2026-10-26T16:44:50+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
+| `results/governance_metrics.json` | `release_gate` | 3 | 2026-10-26T16:45:20+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
+| `results/governance_metrics.json` | `lineage` | 3 | 2026-10-26T16:45:04+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
+| `results/governance_metrics.json` | `feedback` | 2 | 2026-10-26T16:45:04+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
 | `results/agent_metrics.json` | whole file | 1, 2, 3, 4 | 2026-10-11T00:38:27+00:00 | `6fcdbb02243a2ac4e8217229573e9ffa24d47df0` | yes |
 | `results/docintel_metrics.json` | whole file | 1, 3, 4 | 2026-10-14T00:58:15+00:00 | `271ca4d759f205ac457c6e692dc93de33269f632` | yes |
 | `results/injection_metrics.json` | whole file | 3 | absent | not measured | not measured |
@@ -78,9 +78,21 @@ Source: `results/agent_metrics.json`, written at git commit `6fcdbb02243a2ac4e82
 
 Every review records accept or override, reason codes from a fixed list (`config/override_reasons.yaml`) plus free text, and the reviewer's role. Measured on a SIMULATED reviewer only:
 
-Reviewer feedback results: not measured yet: `results/governance_metrics.json` has no section `feedback`; `make feedback-report` writes it.
+Data: SYNTHETIC applications; SIMULATED reviewer actions. These rates describe the simulation (its made-up probabilities and the checkpoint's rules), not real reviewers. They show that review actions and reason codes are recorded and counted; they say nothing about how often real underwriters override.
 
-Source: `results/governance_metrics.json`, section `feedback`: the file is absent, so every value from it is not measured.
+- Decisions: 65; overrides: 9; override rate 0.1385 [0.0615, 0.2308] (9/65).
+- Overrides without a reason code: 0.
+- Definition: override = an approve or decline that differs from the reference policy recommendation (NBC-8.2, HM-10.2; agent.hitl.is_override); a referral or an information request is never an override.
+
+| Override reason code | Overrides citing it |
+|---|---|
+| `documented_compensating_factor` | 1 |
+| `data_error_in_model_input` | 2 |
+| `information_not_available_to_model` | 2 |
+| `policy_exception_approved` | 1 |
+| `referral_resolved_in_writing` | 6 |
+
+Source: `results/governance_metrics.json`, section `feedback`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ## 3. Risk management and internal controls
 
@@ -125,9 +137,40 @@ Source: `results/risk_metrics.json`, section `insurance_severity`, written at gi
 
 The Phase 6 monitor watches a freMTPL2 claim-frequency GLM on a SIMULATED stream (thresholds in `config/monitoring.yaml`; a breach writes an alert record and marks the model `under_review`):
 
-Ongoing monitoring results: not measured yet: `results/governance_metrics.json` has no section `monitoring`; `make monitor` writes it.
+Data: SYNTHETIC; measured on a SIMULATED stream: PUBLIC freMTPL2 held-out policies with SYNTHETIC injected drift; indicators read from the latest results files.
 
-Source: `results/governance_metrics.json`, section `monitoring`: the file is absent, so every value from it is not measured.
+- Monitored model: `fremtpl2-frequency-glm-monitoring-v1`, Poisson GLM, log link, offset log(Exposure) (risk/insurance.py fit_frequency_glm).
+- Thresholds: `config/monitoring.yaml` (SHA-256 `2aed698d447cb45a4ab0cf92d8766ee10cfea3ac43418955152238694f58cb5c`).
+- Observed / predicted claims on the whole held-out pool: 1.0060 [0.9791, 1.0335] (exact (Garwood) Poisson 95% interval of the observed count / predicted).
+- No out-of-time stream: freMTPL2 has no date or policy-year field, so no real stream of new business and no out-of-time split exist. Windows are random draws from the held-out split and every drift is INJECTED (SYNTHETIC scenarios).
+
+Validation of the monitor on SIMULATED streams (rate [95% bootstrap CI over streams] (streams)):
+
+| Scenario | Drift injected | Measure | Rate [95% CI] (streams) | Mean delay, windows [95% CI] |
+|---|---|---|---|---|
+| `no_drift` | no | false alert rate | 0.0033 [0.0000, 0.0100] (1/300) | not applicable |
+| `covariate_shift_young_drivers` | yes | detection rate | 1.0000 (300/300; zero-width bootstrap interval, exact interval not recorded) | 0.00 [0.00, 0.00] |
+| `covariate_shift_young_drivers_mild` | yes | detection rate | 0.0000 (0/300; zero-width bootstrap interval, exact interval not recorded) | not measured |
+| `covariate_shift_region` | yes | detection rate | 1.0000 (300/300; zero-width bootstrap interval, exact interval not recorded) | 0.00 [0.00, 0.00] |
+| `claim_rate_up_25pct` | yes | detection rate | 0.9933 [0.9833, 1.0000] (298/300) | 0.80 [0.67, 0.93] |
+| `claim_rate_up_10pct` | yes | detection rate | 0.1633 [0.1233, 0.2100] (49/300) | 2.47 [1.94, 3.00] |
+
+- Demonstration stream `covariate_shift_young_drivers`: 6 alert records this run (log `data/governance/monitoring_alerts.jsonl`); model status not registered before the run -> under_review.
+- Credit model: not measured (The Lending Club data and every trained credit model are absent from this checkout (downloading them needs a Kaggle key). results/risk_metrics.json keeps the credit results measured earlier, but no credit application stream could be scored here, so the credit model is not monitored.).
+
+Indicators read from the latest results files (single values, not a stream):
+
+| Indicator | Component | Value | Level |
+|---|---|---|---|
+| citation_support_rate | document_extraction | 0.9984 [0.9975, 0.9992] | ok |
+| ocr_page_share | document_extraction | 0.1675 | ok |
+| low_confidence_field_share | document_extraction | not measured | not measured |
+| required_escalations_escalated | agent | 1.0000 (zero-width interval) | ok |
+| escalation_share | agent | 0.9231 | no rule (reported only) |
+| unsupported_claim_rate | agent | not measured | not measured |
+| override_rate | review_feedback | not measured | not measured |
+
+Source: `results/governance_metrics.json`, section `monitoring`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ### Change management
 
@@ -136,15 +179,35 @@ Source: `results/governance_metrics.json`, section `monitoring`: the file is abs
 - Monitoring may only mark a model `under_review`. Promoting a challenger and closing a review need a principal whose role may take the action `promote_model` in `security/rbac.py`: `model_validator` only. Anyone else gets a PermissionError and nothing is written. Roles are claimed in this demonstration (no identity provider), so this shows how authority is enforced once a role is known.
 - Promoting a challenger makes it the champion of its family and retires the previous champion.
 
-Release gate results: not measured yet: `results/governance_metrics.json` has no section `release_gate`; `make release-gate ARGS=--write-results` writes it.
+- Verdict: **PASS** (rows: 15, PASS: 11, FAIL: 0, MISSING: 0, NOT_MEASURED: 4). Configuration: `config/release_gate.yaml`, section `gate`; baseline made at commit `fb7eb1d0bf2863801fff87121afff21c1043e9e8`.
 
-Source: `results/governance_metrics.json`, section `release_gate`: the file is absent, so every value from it is not measured.
+| Row | Status | Compared | Current | Baseline | Reason |
+|---|---|---|---|---|---|
+| `credit_auc_ci_low` | PASS | ci_bound | 0.7123 | 0.7123 | 0.712266 >= 0.707266 (baseline - tolerance 0.005) |
+| `insurance_frequency_deviance_ci_high` | PASS | ci_bound | 0.4583 | 0.4583 | 0.458274 <= 0.463274 (baseline + tolerance 0.005) |
+| `insurance_severity_deviance_ci_high` | PASS | ci_bound | 1.2565 | 1.2565 | 1.25651 <= 1.27651 (baseline + tolerance 0.02) |
+| `agent_required_escalations` | PASS | value | 1.0000 | 1.0000 | 1 >= 1 (target 1 - tolerance 0) |
+| `agent_reached_human_checkpoint` | PASS | value | 1.0000 | 1.0000 | 1 >= 1 (target 1 - tolerance 0) |
+| `agent_decisions_without_human` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+| `studio_decisions_without_human` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+| `llm_citation_accuracy` | NOT_MEASURED | value | not measured | not measured | not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made |
+| `llm_unsupported_claim_rate` | NOT_MEASURED | value | not measured | not measured | not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made |
+| `docintel_citation_support_ci_low` | PASS | ci_bound | 0.9975 | 0.9975 | 0.9975 >= 0.9955 (baseline - tolerance 0.002) |
+| `injection_asr_l1` | NOT_MEASURED | value | not measured | not measured | injection_metrics.json is absent |
+| `injection_asr_l2` | NOT_MEASURED | value | not measured | not measured | injection_metrics.json is absent |
+| `studio_package_untraced_numbers` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+| `studio_pdf_untraced_numbers` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+| `studio_narrative_untraced_numbers` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+
+Source: `results/governance_metrics.json`, section `release_gate`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ### Decision lineage
 
-Lineage results: not measured yet: `results/governance_metrics.json` has no section `lineage`; `make feedback-report` writes it.
+- Data: SYNTHETIC applications; SIMULATED reviewer actions; measured on the SIMULATED decision log written by this run.
+- Records with a lineage block: 65 of 65; by status: current_where_checkable: 65.
+- Each record's lineage hashes were compared with the working tree right after the records were written, so matching hashes are expected. not_checkable items are files that are not present here (the Lending Club data needs a Kaggle key; some raw files were not kept); they are not assumed to match.
 
-Source: `results/governance_metrics.json`, section `lineage`: the file is absent, so every value from it is not measured.
+Source: `results/governance_metrics.json`, section `lineage`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ### Controls on the generative and agentic AI
 
@@ -231,7 +294,7 @@ Elements as summarized in docs/build_prompts.md (the bulletin text was not check
 |---|---|---|
 | A written AIS Program | This outline | An outline rendered from results files; not adopted by any insurer or board. |
 | Governance | 2. Governance | Roles enforced in code (security/rbac.py); roles are claimed and one person holds them all. |
-| Risk management and internal controls | 3. Risk management and internal controls | Validation measured on public data (developer testing). Monitoring on a SIMULATED stream: not measured yet (`make monitor`). Release gate: not measured yet (`make release-gate ARGS=--write-results`). |
+| Risk management and internal controls | 3. Risk management and internal controls | Validation measured on public data (developer testing). Monitoring on a SIMULATED stream: measured (section 3). Release gate: run against the reviewed baseline (section 3). |
 | Third-party AI systems | 4. Third-party AI systems and data | No third-party AI system produced these results; the expectations for one are listed. |
 | In proportion to the potential harm to consumers | 1. AI systems in scope (tiering) | Rule stated (a design choice); no system has exposure. |
 | Fairness testing (from NY DFS Circular Letter No. 7, not from the NAIC summary) | 5. Fairness testing | Demonstrated on German Credit; not measurable on freMTPL2 (no protected attributes). |

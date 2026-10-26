@@ -1,0 +1,4497 @@
+{
+  "monitoring": {
+    "results": {
+      "data_label": "SYNTHETIC",
+      "status": "measured on a SIMULATED stream: PUBLIC freMTPL2 held-out policies with SYNTHETIC injected drift; indicators read from the latest results files",
+      "description": "Continuous monitoring demonstration (Phase 6 B): input drift (PSI per feature), score drift (PSI of the predicted frequency), calibration drift (observed/predicted claims with an exact Poisson interval, ECE of P(claim > 0)) of a Poisson GLM, validated on SIMULATED streams; extraction, agent and reviewer indicators read from results files.",
+      "config": {
+        "path": "config/monitoring.yaml",
+        "sha256": "2aed698d447cb45a4ab0cf92d8766ee10cfea3ac43418955152238694f58cb5c",
+        "thresholds": {
+          "input_drift_psi": {
+            "n_bins": 10,
+            "rule": {
+              "direction": "higher_is_worse",
+              "warn": 0.1,
+              "alert": 0.25,
+              "rationale": "The same bands as risk/stability.py and the model cards (stable < 0.10 <= moderate shift <= 0.25 < significant shift). A common industry rule of thumb, not a statistical test."
+            }
+          },
+          "score_drift_psi": {
+            "n_bins": 10,
+            "rule": {
+              "direction": "higher_is_worse",
+              "warn": 0.1,
+              "alert": 0.25,
+              "rationale": "Same bands as the input PSI, so one scale reads every PSI in the report."
+            }
+          },
+          "calibration_ratio": {
+            "band_low": 0.9,
+            "band_high": 1.1,
+            "confidence": 0.95,
+            "min_expected_claims": 50.0,
+            "rationale": "A +/-10% tolerance on the claim level is a round pricing tolerance. \"warn\" when the point estimate leaves the band; \"alert\" only when the whole 95% interval lies outside it, so the random noise of one window should rarely alert (the false alert rate actually measured is in the results). Below 50 predicted claims the check reports insufficient_data instead of a level."
+          },
+          "calibration_ece": {
+            "n_bins": 10,
+            "strategy": "quantile",
+            "rule": {
+              "direction": "higher_is_worse",
+              "warn": 0.015,
+              "alert": 0.025,
+              "rationale": "Equal-count bins, because most policies have no claim and equal-width bins would put almost every policy in the first bin. With 5,000 policies per window a bin holds 500 policies at a claim share of a few percent, so binomial noise alone keeps the ECE of every window above zero; the warn and alert levels were set above the size that noise was expected to have (the ECE of every demonstration window is in the results)."
+            }
+          },
+          "indicators": {
+            "citation_support_rate": {
+              "direction": "lower_is_worse",
+              "warn": 0.995,
+              "alert": 0.99,
+              "rationale": "Share of extracted values whose cited page prints the value (results/docintel_metrics.json rules.citations.supported_all_values). One unsupported citation in 100 is the alert level."
+            },
+            "ocr_page_share": {
+              "direction": "higher_is_worse",
+              "warn": 0.25,
+              "alert": 0.4,
+              "rationale": "Share of pages with no text layer that had to be read by OCR (the OCR fallback). Field accuracy is lower on scanned pages, so a growing share is an early warning about the input mix."
+            },
+            "low_confidence_field_share": {
+              "direction": "higher_is_worse",
+              "warn": 0.05,
+              "alert": 0.1,
+              "rationale": "Share of extracted fields below the extractor's confidence cut. Kept so the rule exists when the metric does; results/docintel_metrics.json has no field-confidence metric today."
+            },
+            "required_escalations_escalated": {
+              "direction": "lower_is_worse",
+              "warn": null,
+              "alert": 1.0,
+              "rationale": "Every case that must reach a senior human (sanctions potential match, detected injection, policy referral) must be escalated; anything below 100% is a breach (results/agent_metrics.json)."
+            },
+            "unsupported_claim_rate": {
+              "direction": "higher_is_worse",
+              "warn": 0.01,
+              "alert": 0.02,
+              "rationale": "Share of memo claims with no supporting citation. Needs an LLM run; not measured in this checkout."
+            },
+            "override_rate": {
+              "direction": "higher_is_worse",
+              "warn": 0.1,
+              "alert": 0.2,
+              "rationale": "Share of reviewed decisions where the reviewer overrode the recommendation, read from the \"feedback\" section of results/governance_metrics.json (SIMULATED reviewer decisions). A high rate says reviewers often disagree with the system."
+            }
+          }
+        },
+        "stream": {
+          "window_size": 5000,
+          "n_windows": 12,
+          "drift_start_window": 6,
+          "n_streams": 300,
+          "seed": 42,
+          "scenarios": {
+            "no_drift": {
+              "description": "SIMULATED stream with no injected drift (random held-out windows, recorded outcomes).",
+              "covariate_shift": null,
+              "claim_rate_multiplier": 1.0
+            },
+            "covariate_shift_young_drivers": {
+              "description": "SYNTHETIC covariate shift - drivers under 26 make up 30% of each drifted window.",
+              "covariate_shift": {
+                "subgroup": {
+                  "column": "DrivAge",
+                  "below": 26.0,
+                  "equals": null
+                },
+                "target_share": 0.3
+              },
+              "claim_rate_multiplier": 1.0
+            },
+            "covariate_shift_young_drivers_mild": {
+              "description": "SYNTHETIC mild covariate shift - drivers under 26 make up 15% of each drifted window.",
+              "covariate_shift": {
+                "subgroup": {
+                  "column": "DrivAge",
+                  "below": 26.0,
+                  "equals": null
+                },
+                "target_share": 0.15
+              },
+              "claim_rate_multiplier": 1.0
+            },
+            "covariate_shift_region": {
+              "description": "SYNTHETIC covariate shift - region R93 makes up 35% of each drifted window.",
+              "covariate_shift": {
+                "subgroup": {
+                  "column": "Region",
+                  "below": null,
+                  "equals": "R93"
+                },
+                "target_share": 0.35
+              },
+              "claim_rate_multiplier": 1.0
+            },
+            "claim_rate_up_25pct": {
+              "description": "SYNTHETIC claim-rate drift - SIMULATED outcomes with 25% more claims than recorded.",
+              "covariate_shift": null,
+              "claim_rate_multiplier": 1.25
+            },
+            "claim_rate_up_10pct": {
+              "description": "SYNTHETIC mild claim-rate drift - SIMULATED outcomes with 10% more claims than recorded.",
+              "covariate_shift": null,
+              "claim_rate_multiplier": 1.1
+            }
+          },
+          "demonstration": {
+            "scenario": "covariate_shift_young_drivers",
+            "stream": 0
+          }
+        },
+        "bootstrap": {
+          "resamples": 1000,
+          "seed": 42,
+          "confidence": 0.95
+        }
+      },
+      "monitored_model": {
+        "model_id": "fremtpl2-frequency-glm-monitoring-v1",
+        "family": "fremtpl2_frequency",
+        "version": "1",
+        "description": "Poisson GLM of claim frequency (log link, offset log(Exposure); risk/insurance.py fit_frequency_glm), trained by scripts/monitor.py on the seeded random training split of freMTPL2 (split seed 42, 60/20/20) and cached under data/governance/monitoring/.",
+        "type": "Poisson GLM, log link, offset log(Exposure) (risk/insurance.py fit_frequency_glm)",
+        "training_split": {
+          "method": "random, stratified on ClaimNb > 0 (risk/data/fremtpl2.py split_policies)",
+          "seed": 42,
+          "n_train_policies": 406807,
+          "n_held_out_policies": 135603,
+          "validation_split": "not used by the monitor"
+        },
+        "score": "predicted_frequency: predicted claims per policy-year",
+        "cache": {
+          "cache_file": "data/governance/monitoring/frequency_glm.json",
+          "loaded_from_cache": false,
+          "model_file_sha256": "998004016bc3fb392b7ec786281b9a1d524d74bfb81b0c3eca1beaa961266d7f",
+          "fingerprint": {
+            "data_files_sha256": {
+              "freMTPL2freq.csv": "b894039a42a5f6c74a0dec457138c2dd633378122a827ebc37e62c396560f1aa",
+              "freMTPL2sev.csv": "2237a084c5d3543b64171133245c7141b778f274245a262a761d1a6a9f800ffc"
+            },
+            "split_seed": 42,
+            "cache_version": "monitoring-frequency-glm-v1",
+            "n_train_rows": 406807
+          }
+        },
+        "held_out_calibration": {
+          "observed_claims": 5295,
+          "predicted_claims": 5263.446220317119,
+          "observed_to_predicted": 1.005994889728536,
+          "interval": [
+            0.9790789298360678,
+            1.0334632913229824
+          ],
+          "interval_method": "exact (Garwood) Poisson 95% interval of the observed count / predicted"
+        },
+        "psi_reference": "the training split (the model's development sample)"
+      },
+      "stream_design": {
+        "pool": "the held-out (test) split of freMTPL2",
+        "pool_size": 135603,
+        "window_size": 5000,
+        "n_windows": 12,
+        "drift_start_window": 6,
+        "n_streams_per_scenario": 300,
+        "seed": 42,
+        "random_numbers": "stream i uses numpy default_rng([seed, i]); clean windows match across scenarios",
+        "no_time_field": "freMTPL2 has no date or policy-year field, so no real stream of new business and no out-of-time split exist. Windows are random draws from the held-out split and every drift is INJECTED (SYNTHETIC scenarios)."
+      },
+      "scenarios": {
+        "no_drift": {
+          "description": "SIMULATED stream with no injected drift (random held-out windows, recorded outcomes).",
+          "data_label": "SYNTHETIC",
+          "drifted": false,
+          "claim_rate_multiplier": 1.0,
+          "covariate_shift": null
+        },
+        "covariate_shift_young_drivers": {
+          "description": "SYNTHETIC covariate shift - drivers under 26 make up 30% of each drifted window.",
+          "data_label": "SYNTHETIC",
+          "drifted": true,
+          "claim_rate_multiplier": 1.0,
+          "covariate_shift": {
+            "subgroup": "DrivAge < 26",
+            "target_share_of_drifted_windows": 0.3,
+            "share_of_held_out_pool": 0.05769046407527857
+          }
+        },
+        "covariate_shift_young_drivers_mild": {
+          "description": "SYNTHETIC mild covariate shift - drivers under 26 make up 15% of each drifted window.",
+          "data_label": "SYNTHETIC",
+          "drifted": true,
+          "claim_rate_multiplier": 1.0,
+          "covariate_shift": {
+            "subgroup": "DrivAge < 26",
+            "target_share_of_drifted_windows": 0.15,
+            "share_of_held_out_pool": 0.05769046407527857
+          }
+        },
+        "covariate_shift_region": {
+          "description": "SYNTHETIC covariate shift - region R93 makes up 35% of each drifted window.",
+          "data_label": "SYNTHETIC",
+          "drifted": true,
+          "claim_rate_multiplier": 1.0,
+          "covariate_shift": {
+            "subgroup": "Region == R93",
+            "target_share_of_drifted_windows": 0.35,
+            "share_of_held_out_pool": 0.1174605281594065
+          }
+        },
+        "claim_rate_up_25pct": {
+          "description": "SYNTHETIC claim-rate drift - SIMULATED outcomes with 25% more claims than recorded.",
+          "data_label": "SYNTHETIC",
+          "drifted": true,
+          "claim_rate_multiplier": 1.25,
+          "covariate_shift": null
+        },
+        "claim_rate_up_10pct": {
+          "description": "SYNTHETIC mild claim-rate drift - SIMULATED outcomes with 10% more claims than recorded.",
+          "data_label": "SYNTHETIC",
+          "drifted": true,
+          "claim_rate_multiplier": 1.1,
+          "covariate_shift": null
+        }
+      },
+      "validation": {
+        "no_drift": {
+          "description": "SIMULATED stream with no injected drift (random held-out windows, recorded outcomes).",
+          "data_label": "SIMULATED",
+          "drifted": false,
+          "n_streams": 300,
+          "windows_with_an_alert": {
+            "numerator": 1,
+            "denominator": 3600,
+            "estimate": 0.0002777777777777778
+          },
+          "false_alert_rate": {
+            "estimate": 0.0033333333333333335,
+            "ci_low": 0.0,
+            "ci_high": 0.01,
+            "numerator": 1,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "warn_rate": {
+            "estimate": 0.8733333333333333,
+            "ci_low": 0.8333333333333334,
+            "ci_high": 0.91,
+            "numerator": 262,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "warn_rate_by_check": {
+            "input_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "score_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ratio": {
+              "estimate": 0.87,
+              "ci_low": 0.8332500000000002,
+              "ci_high": 0.9066666666666666,
+              "numerator": 261,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ece": {
+              "estimate": 0.0033333333333333335,
+              "ci_low": 0.0,
+              "ci_high": 0.013333333333333334,
+              "numerator": 1,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            }
+          },
+          "false_alert_rate_by_check": {
+            "input_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "score_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ratio": {
+              "estimate": 0.0033333333333333335,
+              "ci_low": 0.0,
+              "ci_high": 0.01,
+              "numerator": 1,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ece": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            }
+          }
+        },
+        "covariate_shift_young_drivers": {
+          "description": "SYNTHETIC covariate shift - drivers under 26 make up 30% of each drifted window.",
+          "data_label": "SIMULATED",
+          "drifted": true,
+          "n_streams": 300,
+          "windows_with_an_alert": {
+            "numerator": 1800,
+            "denominator": 3600,
+            "estimate": 0.5
+          },
+          "detection_rate": {
+            "estimate": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "numerator": 300,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_delay_windows": {
+            "unit": "windows after the drift started (0 = the first drifted window)",
+            "mean": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "detected stream"
+            },
+            "median": 0.0,
+            "max": 0,
+            "n_detected_streams": 300,
+            "streams_by_delay": {
+              "0": 300
+            }
+          },
+          "pre_drift_false_alert_rate": {
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "numerator": 0,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_rate_by_check": {
+            "input_drift": {
+              "estimate": 1.0,
+              "ci_low": 1.0,
+              "ci_high": 1.0,
+              "numerator": 300,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "score_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ratio": {
+              "estimate": 0.013333333333333334,
+              "ci_low": 0.0033333333333333335,
+              "ci_high": 0.02666666666666667,
+              "numerator": 4,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ece": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            }
+          }
+        },
+        "covariate_shift_young_drivers_mild": {
+          "description": "SYNTHETIC mild covariate shift - drivers under 26 make up 15% of each drifted window.",
+          "data_label": "SIMULATED",
+          "drifted": true,
+          "n_streams": 300,
+          "windows_with_an_alert": {
+            "numerator": 0,
+            "denominator": 3600,
+            "estimate": 0.0
+          },
+          "detection_rate": {
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "numerator": 0,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_delay_windows": {
+            "status": "not available",
+            "reason": "no stream was detected, so there is no delay to report"
+          },
+          "pre_drift_false_alert_rate": {
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "numerator": 0,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_rate_by_check": {
+            "input_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "score_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ratio": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ece": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            }
+          }
+        },
+        "covariate_shift_region": {
+          "description": "SYNTHETIC covariate shift - region R93 makes up 35% of each drifted window.",
+          "data_label": "SIMULATED",
+          "drifted": true,
+          "n_streams": 300,
+          "windows_with_an_alert": {
+            "numerator": 1800,
+            "denominator": 3600,
+            "estimate": 0.5
+          },
+          "detection_rate": {
+            "estimate": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "numerator": 300,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_delay_windows": {
+            "unit": "windows after the drift started (0 = the first drifted window)",
+            "mean": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "detected stream"
+            },
+            "median": 0.0,
+            "max": 0,
+            "n_detected_streams": 300,
+            "streams_by_delay": {
+              "0": 300
+            }
+          },
+          "pre_drift_false_alert_rate": {
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "numerator": 0,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_rate_by_check": {
+            "input_drift": {
+              "estimate": 1.0,
+              "ci_low": 1.0,
+              "ci_high": 1.0,
+              "numerator": 300,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "score_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ratio": {
+              "estimate": 0.006666666666666667,
+              "ci_low": 0.0,
+              "ci_high": 0.016666666666666666,
+              "numerator": 2,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ece": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            }
+          }
+        },
+        "claim_rate_up_25pct": {
+          "description": "SYNTHETIC claim-rate drift - SIMULATED outcomes with 25% more claims than recorded.",
+          "data_label": "SIMULATED",
+          "drifted": true,
+          "n_streams": 300,
+          "windows_with_an_alert": {
+            "numerator": 919,
+            "denominator": 3600,
+            "estimate": 0.25527777777777777
+          },
+          "detection_rate": {
+            "estimate": 0.9933333333333333,
+            "ci_low": 0.9833333333333333,
+            "ci_high": 1.0,
+            "numerator": 298,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_delay_windows": {
+            "unit": "windows after the drift started (0 = the first drifted window)",
+            "mean": {
+              "estimate": 0.7953020134228188,
+              "ci_low": 0.6711409395973155,
+              "ci_high": 0.9295302013422819,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "detected stream"
+            },
+            "median": 0.0,
+            "max": 5,
+            "n_detected_streams": 298,
+            "streams_by_delay": {
+              "0": 173,
+              "1": 59,
+              "2": 33,
+              "3": 22,
+              "4": 9,
+              "5": 2
+            }
+          },
+          "pre_drift_false_alert_rate": {
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "numerator": 0,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_rate_by_check": {
+            "input_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "score_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ratio": {
+              "estimate": 0.9933333333333333,
+              "ci_low": 0.9833333333333333,
+              "ci_high": 1.0,
+              "numerator": 298,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ece": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            }
+          }
+        },
+        "claim_rate_up_10pct": {
+          "description": "SYNTHETIC mild claim-rate drift - SIMULATED outcomes with 10% more claims than recorded.",
+          "data_label": "SIMULATED",
+          "drifted": true,
+          "n_streams": 300,
+          "windows_with_an_alert": {
+            "numerator": 53,
+            "denominator": 3600,
+            "estimate": 0.014722222222222222
+          },
+          "detection_rate": {
+            "estimate": 0.16333333333333333,
+            "ci_low": 0.12333333333333334,
+            "ci_high": 0.21,
+            "numerator": 49,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_delay_windows": {
+            "unit": "windows after the drift started (0 = the first drifted window)",
+            "mean": {
+              "estimate": 2.4693877551020407,
+              "ci_low": 1.9382653061224493,
+              "ci_high": 3.0005102040816323,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "detected stream"
+            },
+            "median": 2.0,
+            "max": 5,
+            "n_detected_streams": 49,
+            "streams_by_delay": {
+              "0": 11,
+              "1": 8,
+              "2": 7,
+              "3": 6,
+              "4": 4,
+              "5": 13
+            }
+          },
+          "pre_drift_false_alert_rate": {
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "numerator": 0,
+            "denominator": 300,
+            "n_resamples": 1000,
+            "seed": 42,
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "unit": "stream"
+          },
+          "detection_rate_by_check": {
+            "input_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "score_drift": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ratio": {
+              "estimate": 0.16333333333333333,
+              "ci_low": 0.12333333333333334,
+              "ci_high": 0.21,
+              "numerator": 49,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            },
+            "calibration_ece": {
+              "estimate": 0.0,
+              "ci_low": 0.0,
+              "ci_high": 0.0,
+              "numerator": 0,
+              "denominator": 300,
+              "n_resamples": 1000,
+              "seed": 42,
+              "confidence": 0.95,
+              "method": "percentile bootstrap",
+              "unit": "stream"
+            }
+          }
+        }
+      },
+      "demonstration_stream": {
+        "scenario": "covariate_shift_young_drivers",
+        "stream": 0,
+        "data_label": "SIMULATED",
+        "note": "Stream 0 of this scenario's validation streams (same seed), checked window by window.",
+        "windows": [
+          {
+            "window": 0,
+            "drifted": false,
+            "n_policies": 5000,
+            "exposure_years": 2631.470218579235,
+            "observed_claims": 193,
+            "predicted_claims": 193.75038187899494,
+            "level": "ok",
+            "alert_ids": [],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.0007299183666416309,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.002774548765287003,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.002296244172563357,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.002199255190761559,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.0014348069963310923,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.0006139875955599736,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.00042696065022485735,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.0005548844101002683,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.0022276124180456505,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.0019862614649768626,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 0.9961270689032057,
+                "interval": [
+                  0.860542689800518,
+                  1.1470099058728631
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.006024679861543801,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 1,
+            "drifted": false,
+            "n_policies": 5000,
+            "exposure_years": 2643.935110412456,
+            "observed_claims": 211,
+            "predicted_claims": 195.51475010544118,
+            "level": "ok",
+            "alert_ids": [],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.0012652526073334506,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.0011336138328891766,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.0017345115252454634,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.00040678196516471355,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.0037391161919069597,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.0008813524350612788,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.002053684659732069,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.0002576522640070516,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.002401519543232126,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.002329063369852679,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 1.0792024636821909,
+                "interval": [
+                  0.938489475870585,
+                  1.2350604658081692
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.005694385617459971,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 2,
+            "drifted": false,
+            "n_policies": 5000,
+            "exposure_years": 2613.8226072310804,
+            "observed_claims": 169,
+            "predicted_claims": 188.87212860444345,
+            "level": "warn",
+            "alert_ids": [],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.0003306114993732871,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.0013497474483342563,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.003232349111176007,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.0004250116708169347,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.0028983486313815285,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.0003545608408478668,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.0009920824912976898,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.0001755601226193574,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.00385986825763651,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.0018027604089952836,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 0.894785277471713,
+                "interval": [
+                  0.7649642671808848,
+                  1.040324919890547
+                ],
+                "level": "warn"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.005908596552946191,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 3,
+            "drifted": false,
+            "n_policies": 5000,
+            "exposure_years": 2665.8861292012875,
+            "observed_claims": 193,
+            "predicted_claims": 193.29487731486358,
+            "level": "ok",
+            "alert_ids": [],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.0005411145167884062,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.002892616246656163,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.0018919230188948427,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.002115243255412791,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.0013399689072838509,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.0009322088773500818,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.000719087807208607,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.0008040676988827882,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.004279227696019919,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.002571830101687289,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 0.9984744690652962,
+                "interval": [
+                  0.8625705817357786,
+                  1.149712865488176
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.007517598224730795,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 4,
+            "drifted": false,
+            "n_policies": 5000,
+            "exposure_years": 2621.149997005764,
+            "observed_claims": 214,
+            "predicted_claims": 192.67439562237146,
+            "level": "warn",
+            "alert_ids": [],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.0005575360010988115,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.0014832374291679266,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.0024971204231902786,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.000501441993949357,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.001962231090721165,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.0009925595341082525,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.0014019185871670535,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 5.981943344874292e-06,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.003851766126777477,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.0012027436405123233,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 1.1106820878235697,
+                "interval": [
+                  0.9668475998976428,
+                  1.2698824433860665
+                ],
+                "level": "warn"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.008486984464613698,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 5,
+            "drifted": false,
+            "n_policies": 5000,
+            "exposure_years": 2636.458161539037,
+            "observed_claims": 198,
+            "predicted_claims": 193.63393258909718,
+            "level": "ok",
+            "alert_ids": [],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.0009720229888871437,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.0013808436932817825,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.0009181578569606519,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.001967593934905242,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.0019607724302405155,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.0017507080960333162,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.0017434957019198333,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 7.666340201127013e-05,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.002458636642292584,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.0021216358233771336,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 1.0225480490558847,
+                "interval": [
+                  0.8850715192926393,
+                  1.175327711286348
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.008805558452734858,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 6,
+            "drifted": true,
+            "n_policies": 5000,
+            "exposure_years": 2520.289068044015,
+            "observed_claims": 215,
+            "predicted_claims": 228.26155024716533,
+            "level": "alert",
+            "alert_ids": [
+              "MON-20261026T164450Z-0001"
+            ],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.005773388360405708,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.008692748074308221,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.37117317889425927,
+                "interval": null,
+                "level": "alert"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.17313223163670374,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.004464346315236897,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.002150657543831761,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.007938889747198202,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.0019084823796792238,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.008507049975857836,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.11224616168163896,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 0.9419019531199823,
+                "interval": [
+                  0.8201987537832014,
+                  1.0765747331608122
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.0066369519620220275,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 7,
+            "drifted": true,
+            "n_policies": 5000,
+            "exposure_years": 2519.7901938767873,
+            "observed_claims": 226,
+            "predicted_claims": 230.32747689137872,
+            "level": "alert",
+            "alert_ids": [
+              "MON-20261026T164450Z-0002"
+            ],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.009524567859389814,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.006596110110764422,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.37504631987642834,
+                "interval": null,
+                "level": "alert"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.17357793766708748,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.0023114226985644984,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.0017224439199488685,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.01157901756659705,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.002390963935943357,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.00928021770121759,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.11587316639194387,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 0.9812116341923914,
+                "interval": [
+                  0.8574468096807144,
+                  1.1178227082401773
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.008410745282413335,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 8,
+            "drifted": true,
+            "n_policies": 5000,
+            "exposure_years": 2472.546320832397,
+            "observed_claims": 203,
+            "predicted_claims": 224.35304684308255,
+            "level": "alert",
+            "alert_ids": [
+              "MON-20261026T164450Z-0003"
+            ],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.0074225782021553575,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.006859947690201011,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.3839185106820471,
+                "interval": null,
+                "level": "alert"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.1806363597423089,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.003715655012271987,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.0032972754350400484,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.008172354073954263,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.0003259068921685169,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.005443758226174102,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.12204650978179037,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 0.9048239052531462,
+                "interval": [
+                  0.7846280159762844,
+                  1.0382238126634
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.007953441552639535,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 9,
+            "drifted": true,
+            "n_policies": 5000,
+            "exposure_years": 2520.9826446590314,
+            "observed_claims": 211,
+            "predicted_claims": 228.13801559364,
+            "level": "alert",
+            "alert_ids": [
+              "MON-20261026T164450Z-0004"
+            ],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.005959437032830505,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.011834441924190727,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.3759281890392752,
+                "interval": null,
+                "level": "alert"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.18063230849599787,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.002579177274198508,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.002049627551354158,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.013433994918142553,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.0008563475850914312,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.007935173384638781,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.12708912386798943,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 0.9248787382100917,
+                "interval": [
+                  0.8042874173073115,
+                  1.058449367630625
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.006543111009001243,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 10,
+            "drifted": true,
+            "n_policies": 5000,
+            "exposure_years": 2534.032849015645,
+            "observed_claims": 242,
+            "predicted_claims": 224.57394573981745,
+            "level": "alert",
+            "alert_ids": [
+              "MON-20261026T164450Z-0005"
+            ],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.007524064376403836,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.00565339475766608,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.36489906372743347,
+                "interval": null,
+                "level": "alert"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.17308918409389445,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.0031015648391510353,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.0020860838761928733,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.005213605427043068,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.000658406446856081,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.007903398747050927,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.10553552980893421,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 1.0775960639724953,
+                "interval": [
+                  0.9460938634112348,
+                  1.2222640696267812
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.005764010742362545,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          },
+          {
+            "window": 11,
+            "drifted": true,
+            "n_policies": 5000,
+            "exposure_years": 2555.0461688749156,
+            "observed_claims": 214,
+            "predicted_claims": 231.85130958887004,
+            "level": "alert",
+            "alert_ids": [
+              "MON-20261026T164450Z-0006"
+            ],
+            "checks": [
+              {
+                "check": "input_drift",
+                "subject": "VehPower",
+                "value": 0.0037371175033958175,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehAge",
+                "value": 0.005611714648513352,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "DrivAge",
+                "value": 0.36790205359005973,
+                "interval": null,
+                "level": "alert"
+              },
+              {
+                "check": "input_drift",
+                "subject": "BonusMalus",
+                "value": 0.1768699257010598,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Density",
+                "value": 0.004816718543484966,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Area",
+                "value": 0.004034553560985205,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehBrand",
+                "value": 0.007572161815287478,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "VehGas",
+                "value": 0.002714968246423051,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "input_drift",
+                "subject": "Region",
+                "value": 0.010070274066111523,
+                "interval": null,
+                "level": "ok"
+              },
+              {
+                "check": "score_drift",
+                "subject": "predicted_frequency",
+                "value": 0.11547520023098692,
+                "interval": null,
+                "level": "warn"
+              },
+              {
+                "check": "calibration_ratio",
+                "subject": "observed/predicted claims",
+                "value": 0.9230053536444334,
+                "interval": [
+                  0.8034751983913806,
+                  1.0553049397251117
+                ],
+                "level": "ok"
+              },
+              {
+                "check": "calibration_ece",
+                "subject": "P(claim > 0)",
+                "value": 0.010482176647227563,
+                "interval": null,
+                "level": "ok"
+              }
+            ]
+          }
+        ]
+      },
+      "indicators": {
+        "sources": {
+          "results/docintel_metrics.json": {
+            "sha256": "08617618c71bb24e73e449344456977804bc27e66a6f0ebc1c22262cc4d8e194"
+          },
+          "results/agent_metrics.json": {
+            "sha256": "99fa6dbbe9619c61945cd07dc9a6c3a0c3482d529480d9613e912e1565897a28"
+          },
+          "results/governance_metrics.json": {
+            "sha256": null
+          }
+        },
+        "values": [
+          {
+            "name": "citation_support_rate",
+            "component": "document_extraction",
+            "source": "results/docintel_metrics.json: rules.citations.supported_all_values",
+            "status": "measured",
+            "value": 0.9984,
+            "interval": [
+              0.9975,
+              0.9992
+            ],
+            "level": "ok",
+            "rule": "warn <= 0.995, alert < 0.99",
+            "detail": {
+              "supported_values": 36230,
+              "extracted_values": 36288,
+              "citation_failures": 58
+            },
+            "note": "CI copied from the file (bootstrap over packets)."
+          },
+          {
+            "name": "ocr_page_share",
+            "component": "document_extraction",
+            "source": "results/docintel_metrics.json: rules.latency.ocr_pages_total / rules.page_classification.all.denominator",
+            "status": "measured",
+            "value": 0.16754478398314016,
+            "interval": null,
+            "level": "ok",
+            "rule": "warn >= 0.25, alert > 0.4",
+            "detail": {
+              "ocr_pages": 159,
+              "pages": 949
+            },
+            "note": "Share of pages with no text layer, read by OCR (the OCR fallback). No CI: a count ratio."
+          },
+          {
+            "name": "low_confidence_field_share",
+            "component": "document_extraction",
+            "source": "results/docintel_metrics.json",
+            "status": "not available",
+            "value": null,
+            "interval": null,
+            "level": null,
+            "rule": null,
+            "detail": {},
+            "note": "the file has no field-confidence metric"
+          },
+          {
+            "name": "required_escalations_escalated",
+            "component": "agent",
+            "source": "results/agent_metrics.json: deterministic_path.escalation.all_required_escalations",
+            "status": "measured",
+            "value": 1.0,
+            "interval": [
+              1.0,
+              1.0
+            ],
+            "level": "ok",
+            "rule": "alert < 1",
+            "detail": {
+              "cases_requiring_escalation": 60
+            },
+            "note": "Deterministic path (no LLM); CI copied from the file."
+          },
+          {
+            "name": "escalation_share",
+            "component": "agent",
+            "source": "results/agent_metrics.json: all_required_escalations.n / deterministic_path.cases",
+            "status": "measured",
+            "value": 0.9230769230769231,
+            "interval": null,
+            "level": null,
+            "rule": null,
+            "detail": {
+              "cases_requiring_escalation": 60,
+              "cases": 65
+            },
+            "note": "Reported only, no rule: the SYNTHETIC evaluation set's mix is designed, so it has no reference."
+          },
+          {
+            "name": "unsupported_claim_rate",
+            "component": "agent",
+            "source": "results/agent_metrics.json: llm_dependent.unsupported_claim_rate",
+            "status": "not measured",
+            "value": null,
+            "interval": null,
+            "level": null,
+            "rule": null,
+            "detail": {},
+            "note": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
+          },
+          {
+            "name": "override_rate",
+            "component": "review_feedback",
+            "source": "results/governance_metrics.json: section 'feedback', key override_rate",
+            "status": "not available",
+            "value": null,
+            "interval": null,
+            "level": null,
+            "rule": null,
+            "detail": {},
+            "note": "results/governance_metrics.json has no 'feedback' section (the feedback track has not run)"
+          }
+        ]
+      },
+      "alerts": {
+        "log": "data/governance/monitoring_alerts.jsonl",
+        "run_id": "20261026T164450Z",
+        "n_alerts_this_run": 6,
+        "records": [
+          {
+            "alert_id": "MON-20261026T164450Z-0001",
+            "created_at_utc": "2026-10-26T16:44:50Z",
+            "run_id": "20261026T164450Z",
+            "data_label": "SYNTHETIC",
+            "component": "fremtpl2_frequency_model",
+            "model_id": "fremtpl2-frequency-glm-monitoring-v1",
+            "check": "input_drift",
+            "subject": "DrivAge",
+            "window": 6,
+            "scenario": "covariate_shift_young_drivers",
+            "value": 0.37117317889425927,
+            "interval": null,
+            "rule": "warn >= 0.1, alert > 0.25",
+            "action": "mark_under_review"
+          },
+          {
+            "alert_id": "MON-20261026T164450Z-0002",
+            "created_at_utc": "2026-10-26T16:44:50Z",
+            "run_id": "20261026T164450Z",
+            "data_label": "SYNTHETIC",
+            "component": "fremtpl2_frequency_model",
+            "model_id": "fremtpl2-frequency-glm-monitoring-v1",
+            "check": "input_drift",
+            "subject": "DrivAge",
+            "window": 7,
+            "scenario": "covariate_shift_young_drivers",
+            "value": 0.37504631987642834,
+            "interval": null,
+            "rule": "warn >= 0.1, alert > 0.25",
+            "action": "mark_under_review"
+          },
+          {
+            "alert_id": "MON-20261026T164450Z-0003",
+            "created_at_utc": "2026-10-26T16:44:50Z",
+            "run_id": "20261026T164450Z",
+            "data_label": "SYNTHETIC",
+            "component": "fremtpl2_frequency_model",
+            "model_id": "fremtpl2-frequency-glm-monitoring-v1",
+            "check": "input_drift",
+            "subject": "DrivAge",
+            "window": 8,
+            "scenario": "covariate_shift_young_drivers",
+            "value": 0.3839185106820471,
+            "interval": null,
+            "rule": "warn >= 0.1, alert > 0.25",
+            "action": "mark_under_review"
+          },
+          {
+            "alert_id": "MON-20261026T164450Z-0004",
+            "created_at_utc": "2026-10-26T16:44:50Z",
+            "run_id": "20261026T164450Z",
+            "data_label": "SYNTHETIC",
+            "component": "fremtpl2_frequency_model",
+            "model_id": "fremtpl2-frequency-glm-monitoring-v1",
+            "check": "input_drift",
+            "subject": "DrivAge",
+            "window": 9,
+            "scenario": "covariate_shift_young_drivers",
+            "value": 0.3759281890392752,
+            "interval": null,
+            "rule": "warn >= 0.1, alert > 0.25",
+            "action": "mark_under_review"
+          },
+          {
+            "alert_id": "MON-20261026T164450Z-0005",
+            "created_at_utc": "2026-10-26T16:44:50Z",
+            "run_id": "20261026T164450Z",
+            "data_label": "SYNTHETIC",
+            "component": "fremtpl2_frequency_model",
+            "model_id": "fremtpl2-frequency-glm-monitoring-v1",
+            "check": "input_drift",
+            "subject": "DrivAge",
+            "window": 10,
+            "scenario": "covariate_shift_young_drivers",
+            "value": 0.36489906372743347,
+            "interval": null,
+            "rule": "warn >= 0.1, alert > 0.25",
+            "action": "mark_under_review"
+          },
+          {
+            "alert_id": "MON-20261026T164450Z-0006",
+            "created_at_utc": "2026-10-26T16:44:50Z",
+            "run_id": "20261026T164450Z",
+            "data_label": "SYNTHETIC",
+            "component": "fremtpl2_frequency_model",
+            "model_id": "fremtpl2-frequency-glm-monitoring-v1",
+            "check": "input_drift",
+            "subject": "DrivAge",
+            "window": 11,
+            "scenario": "covariate_shift_young_drivers",
+            "value": 0.36790205359005973,
+            "interval": null,
+            "rule": "warn >= 0.1, alert > 0.25",
+            "action": "mark_under_review"
+          }
+        ]
+      },
+      "model_status": {
+        "registry": "data/governance/model_status.json",
+        "model_id": "fremtpl2-frequency-glm-monitoring-v1",
+        "registration": "registered as champion by this run",
+        "status_before_run": null,
+        "status_after_run": "under_review",
+        "history": [
+          {
+            "at": "2026-10-26T16:44:50Z",
+            "from_status": null,
+            "to_status": "champion",
+            "actor": "register",
+            "role": null,
+            "reason": "registered by scripts/monitor.py as the model the monitoring demonstration watches",
+            "alert_id": null
+          },
+          {
+            "at": "2026-10-26T16:44:50Z",
+            "from_status": "champion",
+            "to_status": "under_review",
+            "actor": "monitor",
+            "role": null,
+            "reason": "monitoring alert MON-20261026T164450Z-0001: input_drift on DrivAge = 0.3712 in window 6 (warn >= 0.1, alert > 0.25)",
+            "alert_id": "MON-20261026T164450Z-0001"
+          }
+        ]
+      },
+      "credit_model": {
+        "status": "not measured",
+        "reason": "The Lending Club data and every trained credit model are absent from this checkout (downloading them needs a Kaggle key). results/risk_metrics.json keeps the credit results measured earlier, but no credit application stream could be scored here, so the credit model is not monitored."
+      },
+      "llm_dependent": {
+        "unsupported_claim_rate": {
+          "status": "not measured",
+          "reason": "needs an LLM run; no LLM is available in this checkout"
+        },
+        "citation_accuracy_of_llm_memos": {
+          "status": "not measured",
+          "reason": "needs an LLM run; no LLM is available in this checkout"
+        }
+      },
+      "limitations": [
+        "freMTPL2 has no date or policy-year field, so no real stream of new business and no out-of-time split exist. Windows are random draws from the held-out split and every drift is INJECTED (SYNTHETIC scenarios).",
+        "All streams draw from one held-out pool of policies, so they are not independent samples of the world; the bootstrap intervals describe stream-to-stream variation for this pool and this model.",
+        "A window is an independent random draw (without replacement inside the window), so a policy can appear in two windows of one stream.",
+        "Outcomes are assumed known at the end of each window (no claim reporting lag, no IBNR); a real book sees claims months later, which adds that lag to every calibration detection delay.",
+        "Thresholds are design choices (config/monitoring.yaml), not fitted limits. The detection results hold for these scenarios, this window size and this model only.",
+        "The extraction, agent and reviewer indicators are single values read from the latest results files, not a stream; they cannot show drift over time.",
+        "Demonstration only: not a production monitoring system and not a compliance programme. Whether and how any monitoring expectation applies depends on the institution and its risk profile."
+      ],
+      "report": "results/monitoring_report.html",
+      "runtime_seconds": {
+        "split and model (train or load cache)": 17.55,
+        "score and bin the held-out pool": 4.24,
+        "validation streams": 47.41,
+        "demonstration stream, indicators and alerts": 0.03,
+        "total": 69.24
+      }
+    },
+    "metadata": {
+      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_worktree_dirty": false,
+      "generated_at_utc": "2026-10-26T16:44:50+00:00",
+      "python_version": "3.11.17",
+      "package_versions": {
+        "numpy": "2.4.6",
+        "pandas": "3.0.6",
+        "scipy": "1.17.1",
+        "scikit-learn": "1.9.1",
+        "lightgbm": "4.7.0",
+        "statsmodels": "0.15.0",
+        "shap": "0.51.0",
+        "mlflow": "3.17.2"
+      },
+      "datasets": {
+        "fremtpl2": {
+          "files": [
+            {
+              "file": "freMTPL2freq.arff.gz",
+              "sha256": "e8f3c575e76287ff213957c82a4aa5164857605fb6e2a5818fcab54b15a955a5",
+              "size_bytes": 6999116,
+              "source": "https://www.openml.org/d/41214",
+              "hashed_at_utc": "2026-10-10T22:02:58+00:00"
+            },
+            {
+              "file": "freMTPL2freq.csv",
+              "sha256": "b894039a42a5f6c74a0dec457138c2dd633378122a827ebc37e62c396560f1aa",
+              "size_bytes": 33905437,
+              "source": "https://www.openml.org/d/41214",
+              "hashed_at_utc": "2026-10-10T22:02:58+00:00"
+            },
+            {
+              "file": "freMTPL2sev.arff.gz",
+              "sha256": "56d1ce287e2b29e76d4c5bcbd2d869a9b1d1f1bab3b3d3a8e16316a2115a2085",
+              "size_bytes": 228612,
+              "source": "https://www.openml.org/d/41215",
+              "hashed_at_utc": "2026-10-10T22:02:58+00:00"
+            },
+            {
+              "file": "freMTPL2sev.csv",
+              "sha256": "2237a084c5d3543b64171133245c7141b778f274245a262a761d1a6a9f800ffc",
+              "size_bytes": 397397,
+              "source": "https://www.openml.org/d/41215",
+              "hashed_at_utc": "2026-10-10T22:02:58+00:00"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "lineage": {
+    "results": {
+      "data_label": "SYNTHETIC applications; SIMULATED reviewer actions",
+      "status": "measured on the SIMULATED decision log written by this run",
+      "lineage_version": "lineage-v1",
+      "interpretation": "Each record's lineage hashes were compared with the working tree right after the records were written, so matching hashes are expected. not_checkable items are files that are not present here (the Lending Club data needs a Kaggle key; some raw files were not kept); they are not assumed to match.",
+      "checks": {
+        "lineage_version": "lineage-v1",
+        "records_read": 65,
+        "records_with_lineage": 65,
+        "records_by_status": {
+          "current_where_checkable": 65
+        },
+        "checks_by_status": {
+          "not_checkable": 130,
+          "ok": 913
+        },
+        "stale_items": {},
+        "not_checkable_items": {
+          "dataset_checksum_log:lending_club/lending-club.zip (no line for this file in checksums.jsonl)": 32,
+          "dataset_file:fremtpl2/freMTPL2freq.arff.gz (data file not present)": 33,
+          "dataset_file:fremtpl2/freMTPL2sev.arff.gz (data file not present)": 33,
+          "dataset_file:lending_club/lending-club.zip (data file not present)": 32
+        },
+        "data_files_hashed": true
+      },
+      "versions_named": {
+        "models": [
+          {
+            "product": "credit",
+            "model_version_label": "uwcopilot_credit_pd v1",
+            "tool_status": "unavailable"
+          },
+          {
+            "product": "insurance_frequency",
+            "model_version_label": "freq-lgbm v4 / sev-lgbm v4 @ bbedb8d30fa8",
+            "tool_status": "unavailable"
+          }
+        ],
+        "prompts": [
+          {
+            "prompt_id": "agent_memo_prompt",
+            "sha256": "b2201b4f0055fcba870c17cbbaf6a50d03db29491c3ca87c6fefffc054d92c89"
+          }
+        ],
+        "eval_sets": [
+          {
+            "eval_set": "agent_applications",
+            "set_sha256": "35a66a1d76adf2896ac43fb7164fbbbf1b104723a2963369bfb402a183c9317a"
+          },
+          {
+            "eval_set": "docintel_packets_test",
+            "set_sha256": "474259082b709e8df866cf3b8d3bb36b18a9cd7a1527b02782da7c8fd6af5b1d"
+          },
+          {
+            "eval_set": "startup_applications",
+            "set_sha256": "ef4b9f5216ece4ab8d9022b39025b1a1e85657e2259498f85826866af044c204"
+          }
+        ]
+      }
+    },
+    "metadata": {
+      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_worktree_dirty": false,
+      "generated_at_utc": "2026-10-26T16:45:04+00:00",
+      "python_version": "3.11.17",
+      "package_versions": {
+        "numpy": "2.4.6",
+        "pandas": "3.0.6",
+        "scipy": "1.17.1",
+        "scikit-learn": "1.9.1",
+        "lightgbm": "4.7.0",
+        "statsmodels": "0.15.0",
+        "shap": "0.51.0",
+        "mlflow": "3.17.2"
+      },
+      "datasets": {
+        "lending_club": {
+          "files": [],
+          "note": "no checksum record found in checksums.jsonl"
+        },
+        "fremtpl2": {
+          "files": [
+            {
+              "file": "freMTPL2freq.arff.gz",
+              "sha256": "e8f3c575e76287ff213957c82a4aa5164857605fb6e2a5818fcab54b15a955a5",
+              "size_bytes": 6999116,
+              "source": "https://www.openml.org/d/41214",
+              "hashed_at_utc": "2026-10-10T22:02:58+00:00"
+            },
+            {
+              "file": "freMTPL2freq.csv",
+              "sha256": "b894039a42a5f6c74a0dec457138c2dd633378122a827ebc37e62c396560f1aa",
+              "size_bytes": 33905437,
+              "source": "https://www.openml.org/d/41214",
+              "hashed_at_utc": "2026-10-10T22:02:58+00:00"
+            },
+            {
+              "file": "freMTPL2sev.arff.gz",
+              "sha256": "56d1ce287e2b29e76d4c5bcbd2d869a9b1d1f1bab3b3d3a8e16316a2115a2085",
+              "size_bytes": 228612,
+              "source": "https://www.openml.org/d/41215",
+              "hashed_at_utc": "2026-10-10T22:02:58+00:00"
+            },
+            {
+              "file": "freMTPL2sev.csv",
+              "sha256": "2237a084c5d3543b64171133245c7141b778f274245a262a761d1a6a9f800ffc",
+              "size_bytes": 397397,
+              "source": "https://www.openml.org/d/41215",
+              "hashed_at_utc": "2026-10-10T22:02:58+00:00"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "feedback": {
+    "results": {
+      "data_label": "SYNTHETIC applications; SIMULATED reviewer actions",
+      "status": "measured on a SIMULATED reviewer log",
+      "interpretation": "These rates describe the simulation (its made-up probabilities and the checkpoint's rules), not real reviewers. They show that review actions and reason codes are recorded and counted; they say nothing about how often real underwriters override.",
+      "applications": {
+        "dir": "eval/applications",
+        "count": 65,
+        "by_line": {
+          "credit": 32,
+          "insurance": 33
+        },
+        "set_sha256": "35a66a1d76adf2896ac43fb7164fbbbf1b104723a2963369bfb402a183c9317a",
+        "limited_to_first": null
+      },
+      "simulation": {
+        "seed": 42,
+        "override_probability": 0.15,
+        "senior_probability": 0.35,
+        "second_reason_probability": 0.25,
+        "reason_text_probability": 0.5,
+        "probabilities_are": "made up for this demonstration; not estimated from any data",
+        "draws": "six uniform draws per application in application-id order (random.Random(seed))",
+        "refused_decision_rule": "retry as senior_underwriter, then refer (the refusals stay in the record)"
+      },
+      "configuration": {
+        "screening": "designed ground truth (planted owners match; no list screened)",
+        "guideline_search": "off (reported unavailable)",
+        "risk_tool": "score_risk is not called in the SIMULATED reviewer run: the trained credit model is not in this checkout and no risk service is started",
+        "memo": "deterministic template memo (FAKE LLM \u2014 test mode); no language model called"
+      },
+      "override_reason_list": {
+        "file": "config/override_reasons.yaml",
+        "version": "override-reasons-v1",
+        "sha256": "ea8c681d6c1d8a9f945638980ef149fdf2977fd14ce6ea6e86d20beb31b454f0",
+        "codes": [
+          "documented_compensating_factor",
+          "data_error_in_model_input",
+          "information_not_available_to_model",
+          "policy_exception_approved",
+          "referral_resolved_in_writing"
+        ]
+      },
+      "checkpoint": {
+        "override_drawn": 11,
+        "override_not_possible": 2,
+        "override_attempt_refused": 5,
+        "refused_attempts": 6,
+        "escalated_to_senior": 6,
+        "fell_back_to_refer": 0,
+        "final_actions": {
+          "approve": 12,
+          "decline": 12,
+          "refer": 37,
+          "request_more_information": 4
+        },
+        "decisions_recorded": 65
+      },
+      "decision_log": {
+        "file": "data/governance/simulated_review_log.jsonl",
+        "note": "gitignored; rewritten on every run",
+        "records": 65,
+        "chain_problems": 0
+      },
+      "summary": {
+        "feedback_version": "review-feedback-v1",
+        "records_read": 65,
+        "records_without_reviewer": 0,
+        "decisions": 65,
+        "overrides": 9,
+        "accepts": 56,
+        "override_rate": {
+          "value": 0.1385,
+          "ci_low": 0.0615,
+          "ci_high": 0.2308,
+          "k": 9,
+          "n": 65,
+          "confidence": 0.95,
+          "n_resamples": 1000,
+          "seed": 42,
+          "method": "percentile bootstrap",
+          "unit": "decision"
+        },
+        "reasons_on_overrides": {
+          "documented_compensating_factor": 1,
+          "data_error_in_model_input": 2,
+          "information_not_available_to_model": 2,
+          "policy_exception_approved": 1,
+          "referral_resolved_in_writing": 6
+        },
+        "reason_codes_on_accepts": {},
+        "unknown_reason_codes": {},
+        "overrides_without_reason": 0,
+        "overrides_with_two_or_more_reasons": 3,
+        "overrides_with_reason_text": 4,
+        "by_reviewer_role": {
+          "senior_underwriter": {
+            "decisions": 58,
+            "overrides": 9,
+            "override_rate": 0.1552
+          },
+          "underwriter": {
+            "decisions": 7,
+            "overrides": 0,
+            "override_rate": 0.0
+          }
+        },
+        "by_action": {
+          "approve": 12,
+          "decline": 12,
+          "refer": 37,
+          "request_more_information": 4
+        },
+        "by_line": {
+          "credit": {
+            "decisions": 32,
+            "overrides": 4,
+            "override_rate": 0.125
+          },
+          "insurance": {
+            "decisions": 33,
+            "overrides": 5,
+            "override_rate": 0.1515
+          }
+        },
+        "by_reference_recommendation": {
+          "approve": {
+            "decisions": 15,
+            "overrides": 4,
+            "override_rate": 0.2667
+          },
+          "decline_for_review": {
+            "decisions": 4,
+            "overrides": 0,
+            "override_rate": 0.0
+          },
+          "refer": {
+            "decisions": 41,
+            "overrides": 4,
+            "override_rate": 0.0976
+          },
+          "request_more_information": {
+            "decisions": 5,
+            "overrides": 1,
+            "override_rate": 0.2
+          }
+        },
+        "by_reviewer_label": {
+          "SIMULATED": 65
+        },
+        "legacy_records_mapped": 0,
+        "definition": "override = an approve or decline that differs from the reference policy recommendation (NBC-8.2, HM-10.2; agent.hitl.is_override); a referral or an information request is never an override"
+      }
+    },
+    "metadata": {
+      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_worktree_dirty": false,
+      "generated_at_utc": "2026-10-26T16:45:04+00:00",
+      "python_version": "3.11.17",
+      "package_versions": {
+        "numpy": "2.4.6",
+        "pandas": "3.0.6",
+        "scipy": "1.17.1",
+        "scikit-learn": "1.9.1",
+        "lightgbm": "4.7.0",
+        "statsmodels": "0.15.0",
+        "shap": "0.51.0",
+        "mlflow": "3.17.2"
+      },
+      "datasets": {}
+    }
+  },
+  "champion_challenger": {
+    "results": {
+      "data_label": "SYNTHETIC Lending Club-shaped loans (risk/data/lending_club.py synthetic_accepted_loans)",
+      "status": "measured on SYNTHETIC data",
+      "interpretation": "Both models were fitted and compared on SYNTHETIC Lending Club-shaped loans. The numbers show the champion/challenger procedure, not how the real credit model would behave.",
+      "synthetic_data": {
+        "label": "SYNTHETIC",
+        "why": "the Lending Club data is not in this checkout (it needs a Kaggle key)",
+        "generator": "uwcopilot.risk.data.lending_club.synthetic_accepted_loans",
+        "n_rows_generated": 60000,
+        "seed": 42,
+        "prepared_with": "risk/data/lending_club.py prepare_loans (individual applications; unfinished loans kept)",
+        "n_loans_prepared": 58211,
+        "n_finished": 39620,
+        "issue_years": [
+          2013,
+          2014,
+          2015,
+          2016,
+          2017,
+          2018
+        ],
+        "prepared_loans_sha256": "47111bf21517689fa02bdb0711534be9a9deccbed9b5b1d7b0363fd786e0f09e",
+        "application_ids": "SYNTHETIC-LC-NNNNNN, assigned in row order after preparation"
+      },
+      "model": {
+        "algorithm": "lightgbm",
+        "code": "risk/credit.py fit_lightgbm (unchanged): class weighting, early stopping on validation AUC, Platt recalibration on the validation year",
+        "features": [
+          "loan_amnt",
+          "term_months",
+          "annual_inc",
+          "loan_to_income",
+          "dti",
+          "emp_length_years",
+          "fico_range_low",
+          "credit_history_months",
+          "delinq_2yrs",
+          "inq_last_6mths",
+          "mths_since_last_delinq",
+          "mths_since_last_record",
+          "open_acc",
+          "pub_rec",
+          "revol_bal",
+          "revol_util",
+          "total_acc",
+          "collections_12_mths_ex_med",
+          "mths_since_last_major_derog",
+          "acc_now_delinq",
+          "tot_coll_amt",
+          "tot_cur_bal",
+          "total_rev_hi_lim",
+          "acc_open_past_24mths",
+          "avg_cur_bal",
+          "bc_open_to_buy",
+          "bc_util",
+          "chargeoff_within_12_mths",
+          "delinq_amnt",
+          "mo_sin_old_il_acct",
+          "mo_sin_old_rev_tl_op",
+          "mo_sin_rcnt_rev_tl_op",
+          "mo_sin_rcnt_tl",
+          "mort_acc",
+          "mths_since_recent_bc",
+          "mths_since_recent_bc_dlq",
+          "mths_since_recent_inq",
+          "mths_since_recent_revol_delinq",
+          "num_accts_ever_120_pd",
+          "num_actv_bc_tl",
+          "num_actv_rev_tl",
+          "num_bc_sats",
+          "num_bc_tl",
+          "num_il_tl",
+          "num_op_rev_tl",
+          "num_rev_accts",
+          "num_rev_tl_bal_gt_0",
+          "num_sats",
+          "num_tl_120dpd_2m",
+          "num_tl_30dpd",
+          "num_tl_90g_dpd_24m",
+          "num_tl_op_past_12m",
+          "pct_tl_nvr_dlq",
+          "percent_bc_gt_75",
+          "pub_rec_bankruptcies",
+          "tax_liens",
+          "tot_hi_cred_lim",
+          "total_bal_ex_mort",
+          "total_bc_limit",
+          "total_il_high_credit_limit",
+          "home_ownership",
+          "verification_status",
+          "purpose"
+        ],
+        "leakage_check": "passed: assert_no_leakage on the feature list (fit_lightgbm checks booster inputs too)"
+      },
+      "windows": {
+        "champion": {
+          "rule": "fitted on issue years <= 2014; early stopping and Platt recalibration on 2015",
+          "train": {
+            "n_rows": 18953,
+            "n_bad": 5612,
+            "bad_rate": 0.29610088112699834,
+            "issue_years": [
+              2013,
+              2014
+            ]
+          },
+          "validation": {
+            "n_rows": 7951,
+            "n_bad": 2262,
+            "bad_rate": 0.2844925166645705,
+            "issue_years": [
+              2015
+            ]
+          }
+        },
+        "challenger": {
+          "rule": "fitted on issue years <= 2015; early stopping and Platt recalibration on 2016",
+          "train": {
+            "n_rows": 26904,
+            "n_bad": 7874,
+            "bad_rate": 0.29267023490930716,
+            "issue_years": [
+              2013,
+              2014,
+              2015
+            ]
+          },
+          "validation": {
+            "n_rows": 6105,
+            "n_bad": 1771,
+            "bad_rate": 0.29009009009009007,
+            "issue_years": [
+              2016
+            ]
+          }
+        },
+        "out_of_time": {
+          "rule": "finished loans issued 2017-2018; seen by neither model",
+          "n_rows": 6611,
+          "n_bad": 1933,
+          "bad_rate": 0.29239146876418093,
+          "issue_years": [
+            2017,
+            2018
+          ]
+        }
+      },
+      "training": {
+        "champion": {
+          "class_imbalance": "scale_pos_weight",
+          "scale_pos_weight": 2.3772273699215964,
+          "n_good_train": 13341,
+          "n_bad_train": 5612,
+          "best_iteration": 84,
+          "rounds_trained": 184,
+          "max_rounds": 3000,
+          "early_stopping_rounds": 100,
+          "early_stopping_metric": "validation AUC (2015)",
+          "best_validation_auc_lightgbm_internal": 0.7489931630044734,
+          "recalibration": {
+            "method": "Platt scaling on the 2015 validation set (same set used for early stopping)",
+            "slope": 1.1016967360002192,
+            "intercept": -0.8672467818571268
+          },
+          "params": {
+            "objective": "binary",
+            "metric": "auc",
+            "learning_rate": 0.05,
+            "num_leaves": 31,
+            "min_data_in_leaf": 500,
+            "feature_fraction": 0.8,
+            "bagging_fraction": 0.8,
+            "bagging_freq": 1,
+            "lambda_l2": 1.0,
+            "seed": 42,
+            "deterministic": true,
+            "force_row_wise": true,
+            "num_threads": 4,
+            "verbose": -1,
+            "scale_pos_weight": 2.3772273699215964
+          },
+          "categorical_features": [
+            "home_ownership",
+            "verification_status",
+            "purpose"
+          ]
+        },
+        "challenger": {
+          "class_imbalance": "scale_pos_weight",
+          "scale_pos_weight": 2.416814833629667,
+          "n_good_train": 19030,
+          "n_bad_train": 7874,
+          "best_iteration": 100,
+          "rounds_trained": 200,
+          "max_rounds": 3000,
+          "early_stopping_rounds": 100,
+          "early_stopping_metric": "validation AUC (2016)",
+          "best_validation_auc_lightgbm_internal": 0.7571753500807894,
+          "recalibration": {
+            "method": "Platt scaling on the 2016 validation set (same set used for early stopping)",
+            "slope": 1.0941882578320572,
+            "intercept": -0.852661129348139
+          },
+          "params": {
+            "objective": "binary",
+            "metric": "auc",
+            "learning_rate": 0.05,
+            "num_leaves": 31,
+            "min_data_in_leaf": 500,
+            "feature_fraction": 0.8,
+            "bagging_fraction": 0.8,
+            "bagging_freq": 1,
+            "lambda_l2": 1.0,
+            "seed": 42,
+            "deterministic": true,
+            "force_row_wise": true,
+            "num_threads": 4,
+            "verbose": -1,
+            "scale_pos_weight": 2.416814833629667
+          },
+          "categorical_features": [
+            "home_ownership",
+            "verification_status",
+            "purpose"
+          ]
+        }
+      },
+      "comparison": {
+        "champion": {
+          "n_rows": 6611,
+          "n_bad": 1933,
+          "observed_bad_rate": 0.29239146876418093,
+          "mean_predicted_pd": 0.28540487127325515,
+          "auc": {
+            "estimate": 0.7460809278420061,
+            "ci_low": 0.7321253191263536,
+            "ci_high": 0.759094645344374,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "ks": {
+            "estimate": 0.3750652192616836,
+            "ci_low": 0.3519701730549767,
+            "ci_high": 0.40211158280774906,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "gini": {
+            "estimate": 0.49216185568401216,
+            "ci_low": 0.4642506382527071,
+            "ci_high": 0.518189290688748,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier": {
+            "estimate": 0.17364258106597127,
+            "ci_low": 0.1687694145341714,
+            "ci_high": 0.1784940328474199,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "ece": {
+            "estimate": 0.013824023650139466,
+            "ci_low": 0.009927497796385286,
+            "ci_high": 0.02612578508591295,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "ece_bins": 10,
+          "calibration_by_predicted_decile": [
+            {
+              "bin": 1,
+              "n_rows": 662,
+              "total_weight": 662.0,
+              "mean_predicted": 0.05795134782531161,
+              "mean_observed": 0.0634441087613293,
+              "min_predicted": 0.025410984000336024,
+              "max_predicted": 0.07908920813461014
+            },
+            {
+              "bin": 2,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.09692913147252849,
+              "mean_observed": 0.09682299546142209,
+              "min_predicted": 0.07912571974071735,
+              "max_predicted": 0.11585144724508978
+            },
+            {
+              "bin": 3,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.1370732989359635,
+              "mean_observed": 0.1573373676248109,
+              "min_predicted": 0.11589701340055414,
+              "max_predicted": 0.15744072745466614
+            },
+            {
+              "bin": 4,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.1792391502416288,
+              "mean_observed": 0.19969742813918306,
+              "min_predicted": 0.15748531901587393,
+              "max_predicted": 0.20164422221668066
+            },
+            {
+              "bin": 5,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.22313294198872408,
+              "mean_observed": 0.22239031770045387,
+              "min_predicted": 0.20166964227656986,
+              "max_predicted": 0.2473563266387011
+            },
+            {
+              "bin": 6,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.2759638245809405,
+              "mean_observed": 0.2405446293494705,
+              "min_predicted": 0.24741828321536735,
+              "max_predicted": 0.3065441788780875
+            },
+            {
+              "bin": 7,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.3375299033736886,
+              "mean_observed": 0.3494704992435703,
+              "min_predicted": 0.30674773534917943,
+              "max_predicted": 0.37107869890207656
+            },
+            {
+              "bin": 8,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.4094833084280301,
+              "mean_observed": 0.41603630862329805,
+              "min_predicted": 0.37117491252433693,
+              "max_predicted": 0.4510353968800387
+            },
+            {
+              "bin": 9,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.5000976059341797,
+              "mean_observed": 0.5279878971255674,
+              "min_predicted": 0.45113495626199857,
+              "max_predicted": 0.5570994189596385
+            },
+            {
+              "bin": 10,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.6369923051307513,
+              "mean_observed": 0.6505295007564297,
+              "min_predicted": 0.5571210180533199,
+              "max_predicted": 0.8173591503331418
+            }
+          ]
+        },
+        "challenger": {
+          "n_rows": 6611,
+          "n_bad": 1933,
+          "observed_bad_rate": 0.29239146876418093,
+          "mean_predicted_pd": 0.28962397420512026,
+          "auc": {
+            "estimate": 0.7457720556115991,
+            "ci_low": 0.732041341237877,
+            "ci_high": 0.7587954808025287,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "ks": {
+            "estimate": 0.3673306958837163,
+            "ci_low": 0.3474253730079538,
+            "ci_high": 0.39552376852785326,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "gini": {
+            "estimate": 0.4915441112231982,
+            "ci_low": 0.46408268247575396,
+            "ci_high": 0.5175909616050572,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "brier": {
+            "estimate": 0.17380227862798908,
+            "ci_low": 0.1689563938748532,
+            "ci_high": 0.1785846751364494,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "ece": {
+            "estimate": 0.012827756886605297,
+            "ci_low": 0.009820329135795095,
+            "ci_high": 0.024878839853410394,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "ece_bins": 10,
+          "calibration_by_predicted_decile": [
+            {
+              "bin": 1,
+              "n_rows": 662,
+              "total_weight": 662.0,
+              "mean_predicted": 0.051476548276661954,
+              "mean_observed": 0.0634441087613293,
+              "min_predicted": 0.017667474156949546,
+              "max_predicted": 0.07276332219179667
+            },
+            {
+              "bin": 2,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.09158424498175582,
+              "mean_observed": 0.11346444780635401,
+              "min_predicted": 0.07282982705939962,
+              "max_predicted": 0.11109515676681896
+            },
+            {
+              "bin": 3,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.13226263447039338,
+              "mean_observed": 0.15279878971255673,
+              "min_predicted": 0.1111096648268422,
+              "max_predicted": 0.15437708906205178
+            },
+            {
+              "bin": 4,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.1772590464601587,
+              "mean_observed": 0.17397881996974282,
+              "min_predicted": 0.15449626717686313,
+              "max_predicted": 0.20039732471920288
+            },
+            {
+              "bin": 5,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.22640741031826866,
+              "mean_observed": 0.2314674735249622,
+              "min_predicted": 0.20052572610920988,
+              "max_predicted": 0.2502278547941299
+            },
+            {
+              "bin": 6,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.28046650178953797,
+              "mean_observed": 0.264750378214826,
+              "min_predicted": 0.2502346448701438,
+              "max_predicted": 0.3101113651949812
+            },
+            {
+              "bin": 7,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.34659740700842245,
+              "mean_observed": 0.32829046898638425,
+              "min_predicted": 0.31020781143913906,
+              "max_predicted": 0.38321554841322114
+            },
+            {
+              "bin": 8,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.424729884012615,
+              "mean_observed": 0.4266263237518911,
+              "min_predicted": 0.3832551159201923,
+              "max_predicted": 0.4660292456517812
+            },
+            {
+              "bin": 9,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.5149671696269547,
+              "mean_observed": 0.5173978819969742,
+              "min_predicted": 0.46619220510316894,
+              "max_predicted": 0.5675545901074102
+            },
+            {
+              "bin": 10,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.6508491786554935,
+              "mean_observed": 0.6520423600605144,
+              "min_predicted": 0.5676528942302648,
+              "max_predicted": 0.8342711009502781
+            }
+          ]
+        },
+        "paired_difference_challenger_minus_champion": {
+          "auc": {
+            "estimate": -0.00030887223040698686,
+            "estimate_a": 0.7457720556115991,
+            "estimate_b": 0.7460809278420061,
+            "ci_low": -0.00294422997288602,
+            "ci_high": 0.002458348346521571,
+            "share_a_greater": 0.409,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "definition": "auc(challenger) - auc(champion), paired bootstrap on the same rows",
+            "direction": "higher is better"
+          },
+          "ks": {
+            "estimate": -0.007734523377967317,
+            "estimate_a": 0.3673306958837163,
+            "estimate_b": 0.3750652192616836,
+            "ci_low": -0.016748412871817213,
+            "ci_high": 0.004127453979019422,
+            "share_a_greater": 0.128,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "definition": "ks(challenger) - ks(champion), paired bootstrap on the same rows",
+            "direction": "higher is better"
+          },
+          "brier": {
+            "estimate": 0.0001596975620178076,
+            "estimate_a": 0.17380227862798908,
+            "estimate_b": 0.17364258106597127,
+            "ci_low": -0.0006189868701274998,
+            "ci_high": 0.0009254907581623963,
+            "share_a_greater": 0.65,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "definition": "brier(challenger) - brier(champion), paired bootstrap on the same rows",
+            "direction": "lower is better"
+          },
+          "ece": {
+            "estimate": -0.000996266763534169,
+            "estimate_a": 0.012827756886605297,
+            "estimate_b": 0.013824023650139466,
+            "ci_low": -0.008608432500044215,
+            "ci_high": 0.007758268956134199,
+            "share_a_greater": 0.475,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile",
+            "definition": "ece(challenger) - ece(champion), paired bootstrap on the same rows",
+            "direction": "lower is better"
+          }
+        }
+      },
+      "recommendation": {
+        "recommendation": "keep_champion",
+        "reason": "not met: AUC difference CI low > 0.0",
+        "rule": "recommend promotion only if the lower end of the paired bootstrap 95% CI of AUC(challenger) - AUC(champion) is above 0.0 AND the upper end of the paired bootstrap 95% CI of ECE(challenger) - ECE(champion) is at most 0.01; otherwise keep the champion. The recommendation is advice to a model validator; this code never promotes.",
+        "conditions": [
+          {
+            "condition": "AUC difference CI low > 0.0",
+            "value": -0.00294422997288602,
+            "met": false
+          },
+          {
+            "condition": "ECE difference CI high <= 0.01",
+            "value": 0.007758268956134199,
+            "met": true
+          }
+        ],
+        "promoted_by_this_run": false,
+        "who_decides": "a model_validator, with scripts/promote_model.py (security/rbac.py action promote_model)"
+      },
+      "bootstrap": {
+        "n_resamples": 1000,
+        "seed": 42,
+        "alpha": 0.05,
+        "method": "percentile; paired differences use the same resampled rows for both models"
+      },
+      "limitations": [
+        "SYNTHETIC data: the generator draws every issue year from the same distribution (no drift), so this shows the procedure, not how much a retrain helps on real loans. Real champion/challenger evidence needs the Lending Club data (a Kaggle key) and the trained credit model.",
+        "Finished loans only. In the SYNTHETIC data a loan is unfinished at random; in the real data the finished loans of 2017-2018 are mostly early payoffs and early charge-offs (right censoring), which would affect both models.",
+        "Platt recalibration and early stopping use each model's own last development year, as in risk/credit.py.",
+        "One comparison window (2017-2018). A model validator would also look at stability across windows, segments, and qualitative changes (features, data sources, code) before promoting."
+      ],
+      "registry": {
+        "registry": "data/governance/model_status.json",
+        "family": "synthetic_lc_credit_pd",
+        "models": {
+          "champion": {
+            "model_id": "SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3",
+            "role_in_this_comparison": "champion",
+            "registration": "registered as champion by this run",
+            "status_in_registry": "champion",
+            "history": [
+              {
+                "at": "2026-10-26T16:45:18Z",
+                "from_status": null,
+                "to_status": "champion",
+                "actor": "register",
+                "role": null,
+                "reason": "scripts/champion_challenger.py: champion of the SYNTHETIC comparison (fitted on issue years <= 2014; early stopping and Platt recalibration on 2015)",
+                "alert_id": null
+              }
+            ],
+            "fingerprint_sha256": "759ddde7b357a6bd81368ffed031a121e5b078a52618c1daacbfc585186a0ac1",
+            "files": {
+              "booster": "data/governance/champion_challenger/SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3/lightgbm.txt",
+              "metadata": "data/governance/champion_challenger/SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3/metadata.json"
+            }
+          },
+          "challenger": {
+            "model_id": "SYNTHETIC-lc-pd-lightgbm-to2016-a9f6032da1",
+            "role_in_this_comparison": "challenger",
+            "registration": "registered as challenger by this run",
+            "status_in_registry": "challenger",
+            "history": [
+              {
+                "at": "2026-10-26T16:45:18Z",
+                "from_status": null,
+                "to_status": "challenger",
+                "actor": "register",
+                "role": null,
+                "reason": "scripts/champion_challenger.py: challenger of the SYNTHETIC comparison (fitted on issue years <= 2015; early stopping and Platt recalibration on 2016)",
+                "alert_id": null
+              }
+            ],
+            "fingerprint_sha256": "a9f6032da1978296d02ec2a1b141bff3df76a22049d238e942a38d7d21deefcb",
+            "files": {
+              "booster": "data/governance/champion_challenger/SYNTHETIC-lc-pd-lightgbm-to2016-a9f6032da1/lightgbm.txt",
+              "metadata": "data/governance/champion_challenger/SYNTHETIC-lc-pd-lightgbm-to2016-a9f6032da1/metadata.json"
+            }
+          }
+        },
+        "promotion": "nothing is promoted by this script; a model_validator decides with scripts/promote_model.py",
+        "how_to_promote": "uv run python scripts/promote_model.py SYNTHETIC-lc-pd-lightgbm-to2016-a9f6032da1 --role model_validator --principal <id> --reason '<why>'"
+      }
+    },
+    "metadata": {
+      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_worktree_dirty": false,
+      "generated_at_utc": "2026-10-26T16:45:19+00:00",
+      "python_version": "3.11.17",
+      "package_versions": {
+        "numpy": "2.4.6",
+        "pandas": "3.0.6",
+        "scipy": "1.17.1",
+        "scikit-learn": "1.9.1",
+        "lightgbm": "4.7.0",
+        "statsmodels": "0.15.0",
+        "shap": "0.51.0",
+        "mlflow": "3.17.2"
+      },
+      "datasets": {}
+    }
+  },
+  "outcomes": {
+    "results": {
+      "data_label": "SYNTHETIC outcomes joined to SIMULATED decisions on SYNTHETIC Lending Club-shaped loans",
+      "status": "measured on SYNTHETIC data with SIMULATED decisions",
+      "interpretation": "These are synthetic outcomes, not real loan performance, and the decisions come from a stated SIMULATED rule, not from underwriters or the agent. They show that outcomes are joined to decisions by application id and how default rates and calibration are reported. Real outcome analysis needs the Lending Club data and real decisions.",
+      "window": {
+        "issue_years": [
+          2017,
+          2018
+        ],
+        "applications": 18786,
+        "outcomes_arrived": 6611,
+        "pending": "unfinished SYNTHETIC loans have no outcome yet and stay pending"
+      },
+      "decision_model": {
+        "model_id": "SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3",
+        "why": "the champion is the model in use; a challenger never makes decisions"
+      },
+      "decision_rule": {
+        "order": [
+          "decline_for_review if PD >= 0.636153 (the 'very high' band)",
+          "request_more_information if income is not verified and loan_to_income > 0.3 (or loan_to_income is missing)",
+          "refer if PD >= 0.455848 (the 'high' band)",
+          "approve otherwise"
+        ],
+        "refer_from_pd": 0.45584756436538953,
+        "decline_from_pd": 0.6361530672771958,
+        "max_unverified_loan_to_income": 0.3,
+        "verified_income_values": [
+          "Verified",
+          "Source Verified"
+        ],
+        "note": "SIMULATED: a stated demonstration rule, not the agent's reference policy and not a lending policy",
+        "bands_from": {
+          "method": "quantiles of the model's predictions on its training split",
+          "score": "probability of default (champion)",
+          "population": "finished SYNTHETIC loans in the champion's training years (<= 2014)",
+          "n_scores": 18953,
+          "quantiles": [
+            0.5,
+            0.8,
+            0.95
+          ],
+          "cutoffs": [
+            0.25296742951064144,
+            0.45584756436538953,
+            0.6361530672771958
+          ],
+          "labels": [
+            "low",
+            "medium",
+            "high",
+            "very high"
+          ],
+          "rule": "a score equal to a cut-off goes to the higher band"
+        }
+      },
+      "decided_by": "SIMULATED rule",
+      "summary": {
+        "join": {
+          "key": "application_id",
+          "n_decisions": 18786,
+          "n_outcomes_received": 6611,
+          "n_decisions_with_outcome": 6611,
+          "n_decisions_pending": 12175,
+          "n_outcomes_without_decision": 0
+        },
+        "decisions": {
+          "approve": 13037,
+          "refer": 2156,
+          "decline_for_review": 888,
+          "request_more_information": 2705
+        },
+        "default_rate_by_decision": {
+          "approve": {
+            "n_decisions": 13037,
+            "n_with_outcome": 4632,
+            "n_pending": 8405,
+            "n_defaulted": 1010,
+            "default_rate": {
+              "estimate": 0.21804835924006907,
+              "ci_low": 0.20595854922279794,
+              "ci_high": 0.23100712435233162,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile",
+              "k": 1010,
+              "n": 4632
+            },
+            "mean_recorded_pd_with_outcome": 0.2122758620333362
+          },
+          "refer": {
+            "n_decisions": 2156,
+            "n_with_outcome": 759,
+            "n_pending": 1397,
+            "n_defaulted": 431,
+            "default_rate": {
+              "estimate": 0.5678524374176548,
+              "ci_low": 0.530961791831357,
+              "ci_high": 0.6034255599472991,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile",
+              "k": 431,
+              "n": 759
+            },
+            "mean_recorded_pd_with_outcome": 0.5339259040761194
+          },
+          "decline_for_review": {
+            "n_decisions": 888,
+            "n_with_outcome": 304,
+            "n_pending": 584,
+            "n_defaulted": 217,
+            "default_rate": {
+              "estimate": 0.7138157894736842,
+              "ci_low": 0.6644736842105263,
+              "ci_high": 0.7664473684210527,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile",
+              "k": 217,
+              "n": 304
+            },
+            "mean_recorded_pd_with_outcome": 0.6865191790229195
+          },
+          "request_more_information": {
+            "n_decisions": 2705,
+            "n_with_outcome": 916,
+            "n_pending": 1789,
+            "n_defaulted": 275,
+            "default_rate": {
+              "estimate": 0.3002183406113537,
+              "ci_low": 0.26962336244541485,
+              "ci_high": 0.3296943231441048,
+              "n_resamples": 1000,
+              "n_valid_resamples": 1000,
+              "seed": 42,
+              "alpha": 0.05,
+              "method": "percentile",
+              "k": 275,
+              "n": 916
+            },
+            "mean_recorded_pd_with_outcome": 0.3161552613890114
+          }
+        },
+        "approved_and_defaulted": {
+          "n_approved": 13037,
+          "n_approved_with_outcome": 4632,
+          "n_approved_and_defaulted": 1010,
+          "share_of_approved_with_outcome": 0.21804835924006907
+        },
+        "recorded_pd_calibration": {
+          "n_rows": 6611,
+          "observed_default_rate": 0.29239146876418093,
+          "mean_recorded_pd": 0.28540487127325515,
+          "observed_over_expected": 1.0244796014159008,
+          "ece": {
+            "estimate": 0.013824023650139466,
+            "ci_low": 0.009927497796385286,
+            "ci_high": 0.02612578508591295,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "ece_bins": 10,
+          "brier": {
+            "estimate": 0.17364258106597127,
+            "ci_low": 0.1687694145341714,
+            "ci_high": 0.1784940328474199,
+            "n_resamples": 1000,
+            "n_valid_resamples": 1000,
+            "seed": 42,
+            "alpha": 0.05,
+            "method": "percentile"
+          },
+          "calibration_by_recorded_pd_decile": [
+            {
+              "bin": 1,
+              "n_rows": 662,
+              "total_weight": 662.0,
+              "mean_predicted": 0.05795134782531161,
+              "mean_observed": 0.0634441087613293,
+              "min_predicted": 0.025410984000336024,
+              "max_predicted": 0.07908920813461014
+            },
+            {
+              "bin": 2,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.09692913147252849,
+              "mean_observed": 0.09682299546142209,
+              "min_predicted": 0.07912571974071735,
+              "max_predicted": 0.11585144724508978
+            },
+            {
+              "bin": 3,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.1370732989359635,
+              "mean_observed": 0.1573373676248109,
+              "min_predicted": 0.11589701340055414,
+              "max_predicted": 0.15744072745466614
+            },
+            {
+              "bin": 4,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.1792391502416288,
+              "mean_observed": 0.19969742813918306,
+              "min_predicted": 0.15748531901587393,
+              "max_predicted": 0.20164422221668066
+            },
+            {
+              "bin": 5,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.22313294198872408,
+              "mean_observed": 0.22239031770045387,
+              "min_predicted": 0.20166964227656986,
+              "max_predicted": 0.2473563266387011
+            },
+            {
+              "bin": 6,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.2759638245809405,
+              "mean_observed": 0.2405446293494705,
+              "min_predicted": 0.24741828321536735,
+              "max_predicted": 0.3065441788780875
+            },
+            {
+              "bin": 7,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.3375299033736886,
+              "mean_observed": 0.3494704992435703,
+              "min_predicted": 0.30674773534917943,
+              "max_predicted": 0.37107869890207656
+            },
+            {
+              "bin": 8,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.4094833084280301,
+              "mean_observed": 0.41603630862329805,
+              "min_predicted": 0.37117491252433693,
+              "max_predicted": 0.4510353968800387
+            },
+            {
+              "bin": 9,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.5000976059341797,
+              "mean_observed": 0.5279878971255674,
+              "min_predicted": 0.45113495626199857,
+              "max_predicted": 0.5570994189596385
+            },
+            {
+              "bin": 10,
+              "n_rows": 661,
+              "total_weight": 661.0,
+              "mean_predicted": 0.6369923051307513,
+              "mean_observed": 0.6505295007564297,
+              "min_predicted": 0.5571210180533199,
+              "max_predicted": 0.8173591503331418
+            }
+          ],
+          "decisions_without_recorded_pd": 0
+        },
+        "bootstrap": {
+          "n_resamples": 1000,
+          "seed": 42,
+          "method": "percentile",
+          "unit": "application"
+        }
+      },
+      "caveats": [
+        "Every decision has outcomes here only because the SYNTHETIC rows are all issued loans. In a real portfolio a declined application produces no outcome, so default rates for non-approved decisions exist only for files that were later booked (selective labels).",
+        "The recorded PD is the champion's PD; its calibration here uses the same finished 2017-2018 rows as the champion's ECE in section champion_challenger, so the two must agree."
+      ]
+    },
+    "metadata": {
+      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_worktree_dirty": false,
+      "generated_at_utc": "2026-10-26T16:45:19+00:00",
+      "python_version": "3.11.17",
+      "package_versions": {
+        "numpy": "2.4.6",
+        "pandas": "3.0.6",
+        "scipy": "1.17.1",
+        "scikit-learn": "1.9.1",
+        "lightgbm": "4.7.0",
+        "statsmodels": "0.15.0",
+        "shap": "0.51.0",
+        "mlflow": "3.17.2"
+      },
+      "datasets": {}
+    }
+  },
+  "release_gate": {
+    "results": {
+      "data_label": "reads results of SYNTHETIC and public-data evaluations; the gate measures nothing itself",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "counts": {
+        "rows": 15,
+        "PASS": 11,
+        "FAIL": 0,
+        "MISSING": 0,
+        "NOT_MEASURED": 4
+      },
+      "blocking_statuses": [
+        "FAIL",
+        "MISSING"
+      ],
+      "config": {
+        "file": "config/release_gate.yaml",
+        "section": "gate"
+      },
+      "config_gate_section_sha256": "3b5fc077cfc874e70454859e81c256911c048887e750701590f6eb8e92aaf311",
+      "baseline": {
+        "dir": "results/baseline",
+        "manifest_git_commit": "fb7eb1d0bf2863801fff87121afff21c1043e9e8",
+        "manifest_created_at_utc": "2026-10-26T16:04:44+00:00",
+        "manifest_problem": null,
+        "problems": []
+      },
+      "rows": [
+        {
+          "id": "credit_auc_ci_low",
+          "title": "Credit PD model (LightGBM, Lending Club) test AUC, lower bound of the 95% bootstrap CI",
+          "status": "PASS",
+          "reason": "0.712266 >= 0.707266 (baseline - tolerance 0.005)",
+          "file": "results/risk_metrics.json",
+          "value_path": "credit.results.models.lightgbm.test.auc.estimate",
+          "ci_bound_path": "credit.results.models.lightgbm.test.auc.ci_low",
+          "gate_on": "ci_bound",
+          "direction": "higher_is_better",
+          "kind": "baseline_relative",
+          "tolerance": 0.005,
+          "target": null,
+          "required": true,
+          "limit": 0.7072662969509443,
+          "headroom": 0.0050000000000000044,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 0.715104822716429,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 0.7122662969509443,
+              "detail": ""
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 0.715104822716429,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 0.7122662969509443,
+              "detail": ""
+            }
+          },
+          "why_critical": "Discrimination of the probability-of-default model that ranks credit applicants. The lower CI bound is gated, not the point estimate, so a release must keep the conservative end of the interval. The tolerance equals the minimum AUC gain the model-selection rule treats as material (credit.results.model_selection.min_auc_gain).",
+          "note": ""
+        },
+        {
+          "id": "insurance_frequency_deviance_ci_high",
+          "title": "Claim-frequency model (preferred LightGBM, freMTPL2) test mean Poisson deviance, upper bound of the 95% CI",
+          "status": "PASS",
+          "reason": "0.458274 <= 0.463274 (baseline + tolerance 0.005)",
+          "file": "results/risk_metrics.json",
+          "value_path": "insurance_frequency.results.test_metrics.lgbm.mean_poisson_deviance.estimate",
+          "ci_bound_path": "insurance_frequency.results.test_metrics.lgbm.mean_poisson_deviance.ci_high",
+          "gate_on": "ci_bound",
+          "direction": "lower_is_better",
+          "kind": "baseline_relative",
+          "tolerance": 0.005,
+          "target": null,
+          "required": true,
+          "limit": 0.4632742546386005,
+          "headroom": 0.0050000000000000044,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 0.4493220350378819,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 0.4582742546386005,
+              "detail": ""
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 0.4493220350378819,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 0.4582742546386005,
+              "detail": ""
+            }
+          },
+          "why_critical": "Fit of the claim-frequency model that drives the expected-loss price. Deviance is lower-is-better, so the upper CI bound is gated. The tolerance is below the LightGBM-over-GLM deviance gain recorded on the same test split (insurance_frequency.results.test_metrics.lgbm_minus_glm), so a regression that erases most of the reason for preferring LightGBM blocks a release.",
+          "note": "The path names the model preferred when the baseline was made (preferred_model.name = lgbm). freMTPL2 has no date field, so this is a random-split test, not an out-of-time test."
+        },
+        {
+          "id": "insurance_severity_deviance_ci_high",
+          "title": "Claim-severity model (preferred Gamma GLM, freMTPL2) test mean Gamma deviance, upper bound of the 95% CI",
+          "status": "PASS",
+          "reason": "1.25651 <= 1.27651 (baseline + tolerance 0.02)",
+          "file": "results/risk_metrics.json",
+          "value_path": "insurance_severity.results.test_metrics.glm.mean_gamma_deviance.estimate",
+          "ci_bound_path": "insurance_severity.results.test_metrics.glm.mean_gamma_deviance.ci_high",
+          "gate_on": "ci_bound",
+          "direction": "lower_is_better",
+          "kind": "baseline_relative",
+          "tolerance": 0.02,
+          "target": null,
+          "required": true,
+          "limit": 1.2765070336184257,
+          "headroom": 0.020000000000000018,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 1.1678268250923562,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 1.2565070336184256,
+              "detail": ""
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 1.1678268250923562,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 1.2565070336184256,
+              "detail": ""
+            }
+          },
+          "why_critical": "Fit of the claim-severity model, the other factor of the expected-loss price. The tolerance is wider than the frequency row's because mean Gamma deviance is on a different, larger scale than mean Poisson deviance.",
+          "note": "The path names the model preferred when the baseline was made (preferred_model.name = glm). Random-split test (freMTPL2 has no date field)."
+        },
+        {
+          "id": "agent_required_escalations",
+          "title": "Agent escalation correctness (share of required escalations that were escalated)",
+          "status": "PASS",
+          "reason": "1 >= 1 (target 1 - tolerance 0)",
+          "file": "results/agent_metrics.json",
+          "value_path": "deterministic_path.escalation.all_required_escalations.value",
+          "ci_bound_path": "deterministic_path.escalation.all_required_escalations.ci_low",
+          "gate_on": "value",
+          "direction": "higher_is_better",
+          "kind": "absolute",
+          "tolerance": 0.0,
+          "target": 1.0,
+          "required": true,
+          "limit": 1.0,
+          "headroom": 0.0,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 1.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 1.0,
+              "detail": ""
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 1.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 1.0,
+              "detail": ""
+            }
+          },
+          "why_critical": "Every sanctions potential match, detected injection and policy referral must reach a human with an escalation. One missed escalation is a control failure, so the target is 100% with no tolerance (measured on the SYNTHETIC applications, deterministic path).",
+          "note": ""
+        },
+        {
+          "id": "agent_reached_human_checkpoint",
+          "title": "Agent applications that reached the human checkpoint",
+          "status": "PASS",
+          "reason": "1 >= 1 (target 1 - tolerance 0)",
+          "file": "results/agent_metrics.json",
+          "value_path": "deterministic_path.reached_human_checkpoint.value",
+          "ci_bound_path": "deterministic_path.reached_human_checkpoint.ci_low",
+          "gate_on": "value",
+          "direction": "higher_is_better",
+          "kind": "absolute",
+          "tolerance": 0.0,
+          "target": 1.0,
+          "required": true,
+          "limit": 1.0,
+          "headroom": 0.0,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 1.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 1.0,
+              "detail": ""
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 1.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 1.0,
+              "detail": ""
+            }
+          },
+          "why_critical": "The agent may never approve or decline on its own (ground rule 8): every application must stop at the human checkpoint.",
+          "note": ""
+        },
+        {
+          "id": "agent_decisions_without_human",
+          "title": "Agent decisions recorded without a human (count)",
+          "status": "PASS",
+          "reason": "0 <= 0 (target 0 + tolerance 0)",
+          "file": "results/agent_metrics.json",
+          "value_path": "deterministic_path.decisions_recorded_without_a_human",
+          "ci_bound_path": null,
+          "gate_on": "value",
+          "direction": "lower_is_better",
+          "kind": "absolute",
+          "tolerance": 0.0,
+          "target": 0.0,
+          "required": true,
+          "limit": 0.0,
+          "headroom": 0.0,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "why_critical": "The same rule from the other side, no decision record may exist without a human reviewer.",
+          "note": ""
+        },
+        {
+          "id": "studio_decisions_without_human",
+          "title": "Studio hand-off decisions recorded without a human (count, all cases)",
+          "status": "PASS",
+          "reason": "0 <= 0 (target 0 + tolerance 0)",
+          "file": "results/studio_handoff_metrics.json",
+          "value_path": "all_cases.decisions_recorded_without_a_human",
+          "ci_bound_path": null,
+          "gate_on": "value",
+          "direction": "lower_is_better",
+          "kind": "absolute",
+          "tolerance": 0.0,
+          "target": 0.0,
+          "required": true,
+          "limit": 0.0,
+          "headroom": 0.0,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "why_critical": "The founder-package hand-off reuses the underwriting graph; it must not record a decision without a human either (SYNTHETIC startup applications and golden founder scenarios).",
+          "note": ""
+        },
+        {
+          "id": "llm_citation_accuracy",
+          "title": "LLM memo citation accuracy",
+          "status": "NOT_MEASURED",
+          "reason": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+          "file": "results/agent_metrics.json",
+          "value_path": "llm_dependent.citation_accuracy",
+          "ci_bound_path": null,
+          "gate_on": "value",
+          "direction": "higher_is_better",
+          "kind": "baseline_relative",
+          "tolerance": 0.02,
+          "target": null,
+          "required": false,
+          "limit": null,
+          "headroom": null,
+          "current": {
+            "value": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "why_critical": "A memo that cites the wrong guideline misleads the human reviewer. Not measured while no LLM has been run; the gate lists it as NOT_MEASURED and never fills in a value.",
+          "note": ""
+        },
+        {
+          "id": "llm_unsupported_claim_rate",
+          "title": "LLM memo unsupported-claim rate",
+          "status": "NOT_MEASURED",
+          "reason": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made",
+          "file": "results/agent_metrics.json",
+          "value_path": "llm_dependent.unsupported_claim_rate",
+          "ci_bound_path": null,
+          "gate_on": "value",
+          "direction": "lower_is_better",
+          "kind": "baseline_relative",
+          "tolerance": 0.02,
+          "target": null,
+          "required": false,
+          "limit": null,
+          "headroom": null,
+          "current": {
+            "value": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made"
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "why_critical": "Claims the evidence does not support are the main generative-AI failure in a memo. Not measured while no LLM has been run.",
+          "note": ""
+        },
+        {
+          "id": "docintel_citation_support_ci_low",
+          "title": "Document extraction (rules extractor) citation support, lower bound of the 95% CI",
+          "status": "PASS",
+          "reason": "0.9975 >= 0.9955 (baseline - tolerance 0.002)",
+          "file": "results/docintel_metrics.json",
+          "value_path": "rules.citations.supported_all_values.value",
+          "ci_bound_path": "rules.citations.supported_all_values.ci_low",
+          "gate_on": "ci_bound",
+          "direction": "higher_is_better",
+          "kind": "baseline_relative",
+          "tolerance": 0.002,
+          "target": null,
+          "required": true,
+          "limit": 0.9955,
+          "headroom": 0.0020000000000000018,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 0.9984,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 0.9975,
+              "detail": ""
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 0.9984,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "measured",
+              "value": 0.9975,
+              "detail": ""
+            }
+          },
+          "why_critical": "Share of extracted values whose cited page prints the value (SYNTHETIC held-out packets). Every downstream number and citation shown to a reviewer starts here. The deterministic extractor should reproduce its baseline, so the tolerance (0.2 percentage points) only allows a small deliberate trade-off.",
+          "note": ""
+        },
+        {
+          "id": "injection_asr_l1",
+          "title": "Injection attack success rate, layer L1 (current RAG prompt), all frozen payloads",
+          "status": "NOT_MEASURED",
+          "reason": "injection_metrics.json is absent",
+          "file": "results/injection_metrics.json",
+          "value_path": "layers.L1.asr.all.rate",
+          "ci_bound_path": "layers.L1.asr.all.wilson_ci95.1",
+          "gate_on": "value",
+          "direction": "lower_is_better",
+          "kind": "baseline_relative",
+          "tolerance": 0.05,
+          "target": null,
+          "required": false,
+          "limit": null,
+          "headroom": null,
+          "current": {
+            "value": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "injection_metrics.json is absent"
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "injection_metrics.json is absent"
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "injection_metrics.json is absent"
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "injection_metrics.json is absent"
+            }
+          },
+          "why_critical": "Text-level attack success on the frozen payload set for the prompt layer in use. The rate itself is gated against the committed baseline rate plus the tolerance (3 of the 60 frozen payloads); it holds for this payload set and model only.",
+          "note": "results/injection_metrics.json is written only by a full run of scripts/eval_injection.py, which needs a local model. Until then the row is NOT_MEASURED. Action-level containment is a test (tests/security/ test_containment.py), not this rate. L0 (naive concatenation) is a measurement baseline, not a shipped layer, so it is not gated."
+        },
+        {
+          "id": "injection_asr_l2",
+          "title": "Injection attack success rate, layer L2 (containment prompt), all frozen payloads",
+          "status": "NOT_MEASURED",
+          "reason": "injection_metrics.json is absent",
+          "file": "results/injection_metrics.json",
+          "value_path": "layers.L2.asr.all.rate",
+          "ci_bound_path": "layers.L2.asr.all.wilson_ci95.1",
+          "gate_on": "value",
+          "direction": "lower_is_better",
+          "kind": "baseline_relative",
+          "tolerance": 0.05,
+          "target": null,
+          "required": false,
+          "limit": null,
+          "headroom": null,
+          "current": {
+            "value": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "injection_metrics.json is absent"
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "injection_metrics.json is absent"
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "injection_metrics.json is absent"
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "injection_metrics.json is absent"
+            }
+          },
+          "why_critical": "Same as injection_asr_l1, for the containment prompt layer.",
+          "note": "NOT_MEASURED until results/injection_metrics.json exists (see injection_asr_l1)."
+        },
+        {
+          "id": "studio_package_untraced_numbers",
+          "title": "Founder package text, numbers that do not trace to the ledger (count, golden scenarios)",
+          "status": "PASS",
+          "reason": "0 <= 0 (target 0 + tolerance 0)",
+          "file": "results/studio_handoff_metrics.json",
+          "value_path": "golden_founder_scenarios.untraced_numbers_package_text",
+          "ci_bound_path": null,
+          "gate_on": "value",
+          "direction": "lower_is_better",
+          "kind": "absolute",
+          "tolerance": 0.0,
+          "target": 0.0,
+          "required": true,
+          "limit": 0.0,
+          "headroom": 0.0,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "why_critical": "Numbers come from the calculation, not the writer. An untraced number in a lender-facing package is an unsupported figure, so zero is the only acceptable count.",
+          "note": ""
+        },
+        {
+          "id": "studio_pdf_untraced_numbers",
+          "title": "Founder package PDF, numbers that do not trace to the ledger (count, golden scenarios)",
+          "status": "PASS",
+          "reason": "0 <= 0 (target 0 + tolerance 0)",
+          "file": "results/studio_handoff_metrics.json",
+          "value_path": "golden_founder_scenarios.untraced_numbers_pdf_text",
+          "ci_bound_path": null,
+          "gate_on": "value",
+          "direction": "lower_is_better",
+          "kind": "absolute",
+          "tolerance": 0.0,
+          "target": 0.0,
+          "required": true,
+          "limit": 0.0,
+          "headroom": 0.0,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "why_critical": "The same check on the rendered PDF, which is what a lender reads.",
+          "note": ""
+        },
+        {
+          "id": "studio_narrative_untraced_numbers",
+          "title": "Founder narrative, numbers not bound to a claim their own sentence cites (count, golden scenarios)",
+          "status": "PASS",
+          "reason": "0 <= 0 (target 0 + tolerance 0)",
+          "file": "results/studio_evidence_metrics.json",
+          "value_path": "headline.narrative_numbers_traced_bound.untraced_total",
+          "ci_bound_path": null,
+          "gate_on": "value",
+          "direction": "lower_is_better",
+          "kind": "absolute",
+          "tolerance": 0.0,
+          "target": 0.0,
+          "required": true,
+          "limit": 0.0,
+          "headroom": 0.0,
+          "current": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "baseline": {
+            "value": {
+              "state": "measured",
+              "value": 0.0,
+              "detail": ""
+            },
+            "ci_bound": {
+              "state": "not_measured",
+              "value": null,
+              "detail": "no CI bound path in the row"
+            }
+          },
+          "why_critical": "The stricter of the two narrative checks (each number must equal a claim cited by its own sentence). The template narrative passes by construction; this row keeps that construction from breaking.",
+          "note": ""
+        }
+      ],
+      "warnings": [
+        {
+          "kind": "git_dirty",
+          "file": "results/risk_metrics.json",
+          "where": "insurance_frequency.metadata.git_worktree_dirty",
+          "git_commit": "bbedb8d30fa8f4d761a926d70c61cf25d7771743",
+          "message": "written from a working tree with uncommitted changes: the commit alone does not pin the code",
+          "rows": [
+            "insurance_frequency_deviance_ci_high"
+          ]
+        },
+        {
+          "kind": "git_dirty",
+          "file": "results/risk_metrics.json",
+          "where": "insurance_severity.metadata.git_worktree_dirty",
+          "git_commit": "bbedb8d30fa8f4d761a926d70c61cf25d7771743",
+          "message": "written from a working tree with uncommitted changes: the commit alone does not pin the code",
+          "rows": [
+            "insurance_severity_deviance_ci_high"
+          ]
+        },
+        {
+          "kind": "git_dirty",
+          "file": "results/agent_metrics.json",
+          "where": "versions.git.uncommitted_changes",
+          "git_commit": "6fcdbb02243a2ac4e8217229573e9ffa24d47df0",
+          "message": "written from a working tree with uncommitted changes: the commit alone does not pin the code",
+          "rows": [
+            "agent_required_escalations",
+            "agent_reached_human_checkpoint",
+            "agent_decisions_without_human",
+            "llm_citation_accuracy",
+            "llm_unsupported_claim_rate"
+          ]
+        },
+        {
+          "kind": "git_dirty",
+          "file": "results/docintel_metrics.json",
+          "where": "provenance.git_dirty",
+          "git_commit": "271ca4d759f205ac457c6e692dc93de33269f632",
+          "message": "written from a working tree with uncommitted changes: the commit alone does not pin the code",
+          "rows": [
+            "docintel_citation_support_ci_low"
+          ]
+        },
+        {
+          "kind": "git_dirty",
+          "file": "results/studio_evidence_metrics.json",
+          "where": "provenance.git_dirty",
+          "git_commit": "330ce3d439e2b7a3b81a5acb39709a777068623f",
+          "message": "written from a working tree with uncommitted changes: the commit alone does not pin the code",
+          "rows": [
+            "studio_narrative_untraced_numbers"
+          ]
+        }
+      ],
+      "notes": [
+        "The gate reads numbers other scripts wrote to results/*.json and recomputes none of them. They come from evaluations on SYNTHETIC data (packets, applications, founder scenarios) and on public data (Lending Club, freMTPL2); none is a production measurement.",
+        "NOT_MEASURED rows are listed, never counted as passing: the metric has no value in the current results or the baseline (for example the LLM-dependent metrics, because no LLM was run).",
+        "Injection: action-level containment (injected text cannot make the agent take a decision) is enforced by tests/security/test_containment.py in the CI test job, which the release-gate job waits for; that is a test result, not an attack success rate. The per-layer attack success rates are gated only when results/injection_metrics.json exists; they hold for the frozen payload set only.",
+        "git_dirty warnings do not fail the gate today: most committed results files were written from a working tree with uncommitted changes. They are listed so the files can be regenerated at a clean commit.",
+        "STALE (evidence measured on another prompt, corpus or model than HEAD, docs/innovations.md S3) is not checked: this gate recomputes no provenance hash.",
+        "This is a demonstration of a release gate, not a compliance programme; whether such a gate is adequate depends on the institution and its risk profile."
+      ]
+    },
+    "metadata": {
+      "git_commit": "b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2",
+      "git_worktree_dirty": false,
+      "generated_at_utc": "2026-10-26T16:45:20+00:00",
+      "python_version": "3.11.17",
+      "package_versions": {
+        "numpy": "2.4.6",
+        "pandas": "3.0.6",
+        "scipy": "1.17.1",
+        "scikit-learn": "1.9.1",
+        "lightgbm": "4.7.0",
+        "statsmodels": "0.15.0",
+        "shap": "0.51.0",
+        "mlflow": "3.17.2"
+      },
+      "datasets": {}
+    }
+  }
+}

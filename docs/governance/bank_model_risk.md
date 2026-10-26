@@ -25,12 +25,12 @@ Every number below is read from these files when the pack is rendered. The git c
 | `results/risk_metrics.json` | `insurance_frequency` | 1, 3 | 2026-10-11T00:41:27+00:00 | `bbedb8d30fa8f4d761a926d70c61cf25d7771743` | yes |
 | `results/risk_metrics.json` | `insurance_severity` | 1, 3 | 2026-10-11T00:41:27+00:00 | `bbedb8d30fa8f4d761a926d70c61cf25d7771743` | yes |
 | `results/risk_metrics.json` | `fairness_demo` | 1, 3 | 2026-10-11T00:30:33+00:00 | `bbedb8d30fa8f4d761a926d70c61cf25d7771743` | yes |
-| `results/governance_metrics.json` | `monitoring` | 1, 4 | absent | not measured | not measured |
-| `results/governance_metrics.json` | `outcomes` | 5 | absent | not measured | not measured |
-| `results/governance_metrics.json` | `champion_challenger` | 1, 6 | absent | not measured | not measured |
-| `results/governance_metrics.json` | `release_gate` | 6 | absent | not measured | not measured |
-| `results/governance_metrics.json` | `lineage` | 7 | absent | not measured | not measured |
-| `results/governance_metrics.json` | `feedback` | 7 | absent | not measured | not measured |
+| `results/governance_metrics.json` | `monitoring` | 1, 4 | 2026-10-26T16:44:50+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
+| `results/governance_metrics.json` | `outcomes` | 5 | 2026-10-26T16:45:19+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
+| `results/governance_metrics.json` | `champion_challenger` | 1, 6 | 2026-10-26T16:45:19+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
+| `results/governance_metrics.json` | `release_gate` | 6 | 2026-10-26T16:45:20+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
+| `results/governance_metrics.json` | `lineage` | 7 | 2026-10-26T16:45:04+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
+| `results/governance_metrics.json` | `feedback` | 7 | 2026-10-26T16:45:04+00:00 | `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` | no |
 | `results/agent_metrics.json` | whole file | 7 | 2026-10-11T00:38:27+00:00 | `6fcdbb02243a2ac4e8217229573e9ffa24d47df0` | yes |
 | `results/docintel_metrics.json` | whole file | 7 | 2026-10-14T00:58:15+00:00 | `271ca4d759f205ac457c6e692dc93de33269f632` | yes |
 | `results/injection_metrics.json` | whole file | 7 | absent | not measured | not measured |
@@ -120,12 +120,13 @@ The model status registry (`data/governance/model_status.json`, gitignored) also
 
 | Model id | Registered by | Status after the run |
 |---|---|---|
-| not measured yet: `results/governance_metrics.json` has no section `monitoring`; `make monitor` writes it | scripts/monitor.py | not measured |
-| not measured yet: `results/governance_metrics.json` has no section `champion_challenger`; `make champion-challenger` writes it | scripts/champion_challenger.py | not measured |
+| `fremtpl2-frequency-glm-monitoring-v1` | scripts/monitor.py | under_review |
+| `SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3` | scripts/champion_challenger.py (champion) | champion |
+| `SYNTHETIC-lc-pd-lightgbm-to2016-a9f6032da1` | scripts/champion_challenger.py (challenger) | challenger |
 
-Source: `results/governance_metrics.json`, section `monitoring`: the file is absent, so every value from it is not measured.
+Source: `results/governance_metrics.json`, section `monitoring`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
-Source: `results/governance_metrics.json`, section `champion_challenger`: the file is absent, so every value from it is not measured.
+Source: `results/governance_metrics.json`, section `champion_challenger`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ## 2. Materiality tiering
 
@@ -216,17 +217,63 @@ Source: `results/risk_metrics.json`, section `fairness_demo`, written at git com
 
 The plan per model (population stability, calibration, discrimination, overrides) is in each model card. Phase 6 runs it on a SIMULATED stream: every threshold is in `config/monitoring.yaml`; a breach writes an alert record and marks the monitored model `under_review` in the model status registry.
 
-Ongoing monitoring results: not measured yet: `results/governance_metrics.json` has no section `monitoring`; `make monitor` writes it.
+Data: SYNTHETIC; measured on a SIMULATED stream: PUBLIC freMTPL2 held-out policies with SYNTHETIC injected drift; indicators read from the latest results files.
 
-Source: `results/governance_metrics.json`, section `monitoring`: the file is absent, so every value from it is not measured.
+- Monitored model: `fremtpl2-frequency-glm-monitoring-v1`, Poisson GLM, log link, offset log(Exposure) (risk/insurance.py fit_frequency_glm).
+- Thresholds: `config/monitoring.yaml` (SHA-256 `2aed698d447cb45a4ab0cf92d8766ee10cfea3ac43418955152238694f58cb5c`).
+- Observed / predicted claims on the whole held-out pool: 1.0060 [0.9791, 1.0335] (exact (Garwood) Poisson 95% interval of the observed count / predicted).
+- No out-of-time stream: freMTPL2 has no date or policy-year field, so no real stream of new business and no out-of-time split exist. Windows are random draws from the held-out split and every drift is INJECTED (SYNTHETIC scenarios).
+
+Validation of the monitor on SIMULATED streams (rate [95% bootstrap CI over streams] (streams)):
+
+| Scenario | Drift injected | Measure | Rate [95% CI] (streams) | Mean delay, windows [95% CI] |
+|---|---|---|---|---|
+| `no_drift` | no | false alert rate | 0.0033 [0.0000, 0.0100] (1/300) | not applicable |
+| `covariate_shift_young_drivers` | yes | detection rate | 1.0000 (300/300; zero-width bootstrap interval, exact interval not recorded) | 0.00 [0.00, 0.00] |
+| `covariate_shift_young_drivers_mild` | yes | detection rate | 0.0000 (0/300; zero-width bootstrap interval, exact interval not recorded) | not measured |
+| `covariate_shift_region` | yes | detection rate | 1.0000 (300/300; zero-width bootstrap interval, exact interval not recorded) | 0.00 [0.00, 0.00] |
+| `claim_rate_up_25pct` | yes | detection rate | 0.9933 [0.9833, 1.0000] (298/300) | 0.80 [0.67, 0.93] |
+| `claim_rate_up_10pct` | yes | detection rate | 0.1633 [0.1233, 0.2100] (49/300) | 2.47 [1.94, 3.00] |
+
+- Demonstration stream `covariate_shift_young_drivers`: 6 alert records this run (log `data/governance/monitoring_alerts.jsonl`); model status not registered before the run -> under_review.
+- Credit model: not measured (The Lending Club data and every trained credit model are absent from this checkout (downloading them needs a Kaggle key). results/risk_metrics.json keeps the credit results measured earlier, but no credit application stream could be scored here, so the credit model is not monitored.).
+
+Indicators read from the latest results files (single values, not a stream):
+
+| Indicator | Component | Value | Level |
+|---|---|---|---|
+| citation_support_rate | document_extraction | 0.9984 [0.9975, 0.9992] | ok |
+| ocr_page_share | document_extraction | 0.1675 | ok |
+| low_confidence_field_share | document_extraction | not measured | not measured |
+| required_escalations_escalated | agent | 1.0000 (zero-width interval) | ok |
+| escalation_share | agent | 0.9231 | no rule (reported only) |
+| unsupported_claim_rate | agent | not measured | not measured |
+| override_rate | review_feedback | not measured | not measured |
+
+Source: `results/governance_metrics.json`, section `monitoring`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ## 5. Outcomes analysis
 
 At validation: observed against predicted by predicted decile on the held-out test split, in each model card (section 6). After decisions: outcomes joined to the decisions that were made (Phase 6), below.
 
-Outcomes analysis results: not measured yet: `results/governance_metrics.json` has no section `outcomes`; `make champion-challenger` writes it.
+Data: SYNTHETIC outcomes joined to SIMULATED decisions on SYNTHETIC Lending Club-shaped loans. These are synthetic outcomes, not real loan performance, and the decisions come from a stated SIMULATED rule, not from underwriters or the agent. They show that outcomes are joined to decisions by application id and how default rates and calibration are reported. Real outcome analysis needs the Lending Club data and real decisions.
 
-Source: `results/governance_metrics.json`, section `outcomes`: the file is absent, so every value from it is not measured.
+- Window: issue years 2017, 2018; 18,786 decisions, 6,611 outcomes arrived (join key `application_id`).
+- Decision model: `SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3`, decided by SIMULATED rule.
+
+| Decision | Decisions | With outcome | Pending | Default rate [95% CI] (defaults/with outcome) | Mean recorded PD (with outcome) |
+|---|---|---|---|---|---|
+| `approve` | 13,037 | 4,632 | 8,405 | 0.2180 [0.2060, 0.2310] (1,010/4,632) | 0.2123 |
+| `refer` | 2,156 | 759 | 1,397 | 0.5679 [0.5310, 0.6034] (431/759) | 0.5339 |
+| `decline_for_review` | 888 | 304 | 584 | 0.7138 [0.6645, 0.7664] (217/304) | 0.6865 |
+| `request_more_information` | 2,705 | 916 | 1,789 | 0.3002 [0.2696, 0.3297] (275/916) | 0.3162 |
+
+- Approved and defaulted: 1,010 of 4,632 approved decisions with an outcome.
+- Recorded PD calibration: ECE 0.0138 [0.0099, 0.0261], Brier 0.1736 [0.1688, 0.1785], observed / expected defaults 1.0245.
+- Every decision has outcomes here only because the SYNTHETIC rows are all issued loans. In a real portfolio a declined application produces no outcome, so default rates for non-approved decisions exist only for files that were later booked (selective labels).
+- The recorded PD is the champion's PD; its calibration here uses the same finished 2017-2018 rows as the champion's ECE in section champion_challenger, so the two must agree.
+
+Source: `results/governance_metrics.json`, section `outcomes`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ## 6. Change management
 
@@ -239,17 +286,53 @@ Source: `results/governance_metrics.json`, section `outcomes`: the file is absen
 
 ### Champion/challenger
 
-Champion/challenger results: not measured yet: `results/governance_metrics.json` has no section `champion_challenger`; `make champion-challenger` writes it.
+Data: SYNTHETIC Lending Club-shaped loans (risk/data/lending_club.py synthetic_accepted_loans). Both models were fitted and compared on SYNTHETIC Lending Club-shaped loans. The numbers show the champion/challenger procedure, not how the real credit model would behave.
 
-Source: `results/governance_metrics.json`, section `champion_challenger`: the file is absent, so every value from it is not measured.
+- Champion: fitted on issue years <= 2014; early stopping and Platt recalibration on 2015.
+- Challenger: fitted on issue years <= 2015; early stopping and Platt recalibration on 2016.
+- Both scored on: finished loans issued 2017-2018; seen by neither model (6,611 rows).
+
+| Metric (out of time) | Champion [95% CI] | Challenger [95% CI] | Challenger minus champion [95% CI] |
+|---|---|---|---|
+| AUC | 0.7461 [0.7321, 0.7591] | 0.7458 [0.7320, 0.7588] | -0.0003 [-0.0029, 0.0025] |
+| KS | 0.3751 [0.3520, 0.4021] | 0.3673 [0.3474, 0.3955] | -0.0077 [-0.0167, 0.0041] |
+| Brier (lower is better) | 0.1736 [0.1688, 0.1785] | 0.1738 [0.1690, 0.1786] | 0.0002 [-0.0006, 0.0009] |
+| ECE (lower is better) | 0.0138 [0.0099, 0.0261] | 0.0128 [0.0098, 0.0249] | -0.0010 [-0.0086, 0.0078] |
+
+- Recommendation: `keep_champion` (not met: AUC difference CI low > 0.0). Promoted by this run: no. Who decides: a model_validator, with scripts/promote_model.py (security/rbac.py action promote_model).
+
+| Role in the comparison | Model id | Status in the registry |
+|---|---|---|
+| champion | `SYNTHETIC-lc-pd-lightgbm-to2015-759ddde7b3` | champion |
+| challenger | `SYNTHETIC-lc-pd-lightgbm-to2016-a9f6032da1` | challenger |
+
+Source: `results/governance_metrics.json`, section `champion_challenger`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ### Release gate
 
 `scripts/release_gate.py` compares the latest results with a reviewed baseline (`results/baseline/`) and fails the CI job when a critical metric regresses beyond the tolerance stated in `config/release_gate.yaml` (Phase 6 D).
 
-Release gate results: not measured yet: `results/governance_metrics.json` has no section `release_gate`; `make release-gate ARGS=--write-results` writes it.
+- Verdict: **PASS** (rows: 15, PASS: 11, FAIL: 0, MISSING: 0, NOT_MEASURED: 4). Configuration: `config/release_gate.yaml`, section `gate`; baseline made at commit `fb7eb1d0bf2863801fff87121afff21c1043e9e8`.
 
-Source: `results/governance_metrics.json`, section `release_gate`: the file is absent, so every value from it is not measured.
+| Row | Status | Compared | Current | Baseline | Reason |
+|---|---|---|---|---|---|
+| `credit_auc_ci_low` | PASS | ci_bound | 0.7123 | 0.7123 | 0.712266 >= 0.707266 (baseline - tolerance 0.005) |
+| `insurance_frequency_deviance_ci_high` | PASS | ci_bound | 0.4583 | 0.4583 | 0.458274 <= 0.463274 (baseline + tolerance 0.005) |
+| `insurance_severity_deviance_ci_high` | PASS | ci_bound | 1.2565 | 1.2565 | 1.25651 <= 1.27651 (baseline + tolerance 0.02) |
+| `agent_required_escalations` | PASS | value | 1.0000 | 1.0000 | 1 >= 1 (target 1 - tolerance 0) |
+| `agent_reached_human_checkpoint` | PASS | value | 1.0000 | 1.0000 | 1 >= 1 (target 1 - tolerance 0) |
+| `agent_decisions_without_human` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+| `studio_decisions_without_human` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+| `llm_citation_accuracy` | NOT_MEASURED | value | not measured | not measured | not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made |
+| `llm_unsupported_claim_rate` | NOT_MEASURED | value | not measured | not measured | not measured: no LLM provider was used (no ANTHROPIC_API_KEY or OPENAI_API_KEY configured, or --provider none); no LLM call was made |
+| `docintel_citation_support_ci_low` | PASS | ci_bound | 0.9975 | 0.9975 | 0.9975 >= 0.9955 (baseline - tolerance 0.002) |
+| `injection_asr_l1` | NOT_MEASURED | value | not measured | not measured | injection_metrics.json is absent |
+| `injection_asr_l2` | NOT_MEASURED | value | not measured | not measured | injection_metrics.json is absent |
+| `studio_package_untraced_numbers` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+| `studio_pdf_untraced_numbers` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+| `studio_narrative_untraced_numbers` | PASS | value | 0.0000 | 0.0000 | 0 <= 0 (target 0 + tolerance 0) |
+
+Source: `results/governance_metrics.json`, section `release_gate`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ### Versions recorded with every decision
 
@@ -297,15 +380,29 @@ Source: `results/injection/injection_metrics_detector_only.json`, written at git
 
 ### Decision lineage
 
-Lineage results: not measured yet: `results/governance_metrics.json` has no section `lineage`; `make feedback-report` writes it.
+- Data: SYNTHETIC applications; SIMULATED reviewer actions; measured on the SIMULATED decision log written by this run.
+- Records with a lineage block: 65 of 65; by status: current_where_checkable: 65.
+- Each record's lineage hashes were compared with the working tree right after the records were written, so matching hashes are expected. not_checkable items are files that are not present here (the Lending Club data needs a Kaggle key; some raw files were not kept); they are not assumed to match.
 
-Source: `results/governance_metrics.json`, section `lineage`: the file is absent, so every value from it is not measured.
+Source: `results/governance_metrics.json`, section `lineage`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ### Reviewer feedback (SIMULATED reviewer)
 
-Reviewer feedback results: not measured yet: `results/governance_metrics.json` has no section `feedback`; `make feedback-report` writes it.
+Data: SYNTHETIC applications; SIMULATED reviewer actions. These rates describe the simulation (its made-up probabilities and the checkpoint's rules), not real reviewers. They show that review actions and reason codes are recorded and counted; they say nothing about how often real underwriters override.
 
-Source: `results/governance_metrics.json`, section `feedback`: the file is absent, so every value from it is not measured.
+- Decisions: 65; overrides: 9; override rate 0.1385 [0.0615, 0.2308] (9/65).
+- Overrides without a reason code: 0.
+- Definition: override = an approve or decline that differs from the reference policy recommendation (NBC-8.2, HM-10.2; agent.hitl.is_override); a referral or an information request is never an override.
+
+| Override reason code | Overrides citing it |
+|---|---|
+| `documented_compensating_factor` | 1 |
+| `data_error_in_model_input` | 2 |
+| `information_not_available_to_model` | 2 |
+| `policy_exception_approved` | 1 |
+| `referral_resolved_in_writing` | 6 |
+
+Source: `results/governance_metrics.json`, section `feedback`, written at git commit `b8eef4b6a71ccaa7c7c2be5891fc36dac04375b2` (uncommitted changes recorded by the script: no).
 
 ## 8. Map to the structure of SR 26-2
 
@@ -320,9 +417,9 @@ Section numbers are those of the local copy of the attachment. "Status here" des
 | IV. Model development: purpose, data, out-of-sample and out-of-time testing | Model cards; 3. Validation | Credit: out-of-time test. Insurance and German Credit: random split only (no date field). |
 | IV. Model use: limitations, use beyond the intended purpose | 1. Inventory (not for); model card limitations | Documented. |
 | V. Validation: conceptual soundness | Model cards (methodology); docs/model_cards/validation_report.md | Developer testing only. |
-| V. Outcomes analysis | 5. Outcomes analysis | Held-out backtests in the model cards; outcome join: not measured yet (`make champion-challenger`). |
-| V. Ongoing model monitoring | 4. Ongoing monitoring | not measured yet (`make monitor`). |
-| VI. Governance and controls: policies, roles and responsibilities | 6. Change management; security/rbac.py | Roles enforced in code; roles are claimed (no identity provider) and one person holds them all. Champion/challenger: not measured yet (`make champion-challenger`). Release gate: not measured yet (`make release-gate ARGS=--write-results`). |
+| V. Outcomes analysis | 5. Outcomes analysis | Held-out backtests in the model cards; outcome join: SYNTHETIC outcomes joined to SIMULATED decisions (section 5). |
+| V. Ongoing model monitoring | 4. Ongoing monitoring | SIMULATED stream on freMTPL2; the credit model is not monitored (data absent). |
+| VI. Governance and controls: policies, roles and responsibilities | 6. Change management; security/rbac.py | Roles enforced in code; roles are claimed (no identity provider) and one person holds them all. Champion/challenger: SYNTHETIC champion/challenger compared (section 6). Release gate: release gate run against the reviewed baseline (section 6). |
 | VI. Model inventory | 1. Model inventory; model status registry | Listed. |
 | VI. Documentation | Model cards, validation report, this pack | Rendered from results files; a test compares the committed copies with a fresh render. |
 | VII. Vendor and other third-party products | Open-source libraries (LightGBM, scikit-learn, statsmodels) and public data | No vendor model is used. Library versions are recorded in each results section's metadata. |
