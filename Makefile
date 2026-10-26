@@ -105,7 +105,7 @@ train-credit:  ## Lending Club credit PD (scorecard vs LightGBM, out-of-time) ->
 	uv run python scripts/train_credit.py
 
 .PHONY: reports
-reports:  ## Render model cards, validation report, walkthrough and README results from results/risk_metrics.json
+reports:  ## Render model cards, validation report, walkthrough, README results and the governance packs from results/*.json
 	uv run python scripts/render_reports.py
 
 .PHONY: phase1
@@ -594,3 +594,17 @@ lineage:  ## Print one decision record's lineage and flag STALE hashes: LOG=<log
 
 feedback-report:  ## SIMULATED reviewer on the 65 SYNTHETIC applications -> results/governance_metrics.json (lineage, feedback)
 	uv run python scripts/feedback_report.py
+
+# Phase 6 part E: governance packs, rendered from results/*.json only by scripts/render_reports.py
+# (src/uwcopilot/governance/packs*.py). docs/governance/bank_model_risk.md is aligned to the structure of SR 26-2 (with a
+# separate section for the LLM extraction and the agent, which SR 26-2 footnote 3 places out of scope);
+# docs/governance/insurance_ai_program.md is an AIS Program outline mapped to the NAIC AI Model Bulletin. A
+# governance_metrics.json section not generated yet prints "not measured yet". The rendered packs are committed: rerun
+# after any results run (`make reports` renders them too). Demonstration only, not a compliance program.
+.PHONY: governance-packs governance-packs-test
+
+governance-packs:  ## Render docs/governance/bank_model_risk.md and insurance_ai_program.md from results/*.json
+	uv run python scripts/render_reports.py --governance-packs-only
+
+governance-packs-test:  ## Governance pack tests only (offline; hand-made SYNTHETIC results and the committed results)
+	uv run pytest -q tests/governance/test_packs.py tests/test_render_reports.py
