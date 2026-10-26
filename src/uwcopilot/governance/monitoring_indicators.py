@@ -13,9 +13,16 @@ config/monitoring.yaml. The files are read as JSON; nothing is recomputed and no
   (reported, no rule: the mix of the evaluation set is designed, so there is no reference level) =
   all_required_escalations.n / deterministic_path.cases; unsupported_claim_rate = llm_dependent.
   unsupported_claim_rate, "not measured" while no LLM has been run.
-- results/governance_metrics.json, section "feedback" (SIMULATED reviewer decisions, written by the feedback track):
-  override_rate and override_reasons are the first keys with those names anywhere in the section's results. When
-  the section or the keys are absent the indicator is "not available"; nothing is guessed.
+- results/governance_metrics.json, section "feedback" (SIMULATED reviewer decisions, written by
+  scripts/feedback_report.py): override_rate = summary.override_rate and the override reasons =
+  summary.reasons_on_overrides, the keys governance/feedback.py summarize_feedback writes. For another shape, the
+  first key with that name anywhere in the section's results is used ("override_reasons" is accepted for the
+  reasons too). When the section or a key is absent, the indicator or its reasons are "not available"; nothing is
+  guessed. The indicator also records which feedback section it read (its commit, time and SHA-256).
+
+The monitor reads the feedback section when it runs, so it must run after scripts/feedback_report.py (`make
+governance-results` runs the producers in order). override_indicator_problems() says when the monitoring section of a
+results file did not read the feedback section that the same file holds now.
 """
 
 import hashlib
@@ -34,9 +41,11 @@ DOCINTEL_FILE = "docintel_metrics.json"
 AGENT_FILE = "agent_metrics.json"
 GOVERNANCE_FILE = "governance_metrics.json"
 FEEDBACK_SECTION = "feedback"
+MONITORING_SECTION = "monitoring"
 EXTRACTION = "document_extraction"
 AGENT = "agent"
 REVIEW = "review_feedback"
+NO_REASONS = "not available: the feedback section has no reasons_on_overrides or override_reasons key"
 
 
 @dataclass(frozen=True)
@@ -142,9 +151,16 @@ def _measured(
     )
 
 
-def _without_value(name: str, component: str, source: str, status: IndicatorStatus, note: str) -> Indicator:
+def _without_value(
+    name: str,
+    component: str,
+    source: str,
+    status: IndicatorStatus,
+    note: str,
+    detail: dict[str, Any] | None = None,
+) -> Indicator:
     """An indicator that has no value ('not measured' or 'not available'), with the reason."""
-    return Indicator(name=name, component=component, source=source, status=status, note=note)
+    return Indicator(name=name, component=component, source=source, status=status, note=note, detail=detail or {})
 
 
 def extraction_indicators(docintel: dict[str, Any] | None, rules: dict[str, LevelRule]) -> list[Indicator]:
@@ -276,9 +292,23 @@ def agent_indicators(agent: dict[str, Any] | None, rules: dict[str, LevelRule]) 
     return indicators
 
 
+def override_reasons(section: Any) -> dict[str, Any] | None:
+    """Overrides per reason code from the feedback section's results, or None when the section has no reasons key.
+
+    feedback.summarize_feedback writes them under summary.reasons_on_overrides; another shape may put them under a
+    'reasons_on_overrides' or 'override_reasons' key anywhere in the section.
+    """
+    reasons = dig(section, "summary", "reasons_on_overrides")
+    if reasons is None:
+        reasons = find_key(section, "reasons_on_overrides")
+    if reasons is None:
+        reasons = find_key(section, "override_reasons")
+    return reasons if isinstance(reasons, dict) else None
+
+
 def override_indicators(governance: dict[str, Any] | None, rules: dict[str, LevelRule]) -> list[Indicator]:
-    """Reviewer override rate (and reasons) from the 'feedback' section of governance_metrics.json."""
-    source = f"results/{GOVERNANCE_FILE}: section {FEEDBACK_SECTION!r}, key override_rate"
+    """Reviewer override rate and override reasons from the 'feedback' section of governance_metrics.json."""
+    source = f"results/{GOVERNANCE_FILE}: section {FEEDBACK_SECTION!r}, summary.override_rate"
     section = dig(governance, FEEDBACK_SECTION, "results")
     if section is None:
         return [
@@ -290,19 +320,28 @@ def override_indicators(governance: dict[str, Any] | None, rules: dict[str, Leve
                 f"results/{GOVERNANCE_FILE} has no {FEEDBACK_SECTION!r} section (the feedback track has not run)",
             )
         ]
-    rate = find_key(section, "override_rate")
-    reasons = find_key(section, "override_reasons")
-    detail: dict[str, Any] = {"override_reasons": reasons} if reasons is not None else {}
-    detail["feedback_section_git_commit"] = dig(governance, FEEDBACK_SECTION, "metadata", "git_commit")
+    detail: dict[str, Any] = {
+        "feedback_section_git_commit": dig(governance, FEEDBACK_SECTION, "metadata", "git_commit"),
+        "feedback_section_generated_at_utc": dig(governance, FEEDBACK_SECTION, "metadata", "generated_at_utc"),
+        "feedback_section_sha256": section_sha256(dig(governance, FEEDBACK_SECTION)),
+    }
+    reasons = override_reasons(section)
+    detail["override_reasons"] = NO_REASONS if reasons is None else reasons
+
+    rate = dig(section, "summary", "override_rate")
+    if rate is None:
+        rate = find_key(section, "override_rate")
     if is_not_measured(rate):
-        return [_without_value("override_rate", REVIEW, source, "not measured", str(rate.get("reason", "")))]
+        note = str(rate.get("reason", ""))
+        return [_without_value("override_rate", REVIEW, source, "not measured", note, detail)]
     value = as_number(rate)
     if value is None:
-        return [
-            _without_value(
-                "override_rate", REVIEW, source, "not available", "the feedback section has no numeric override_rate"
-            )
-        ]
+        note = "the feedback section has no numeric override_rate"
+        return [_without_value("override_rate", REVIEW, source, "not available", note, detail)]
+    if isinstance(dig(rate, "k"), int) and isinstance(dig(rate, "n"), int):
+        detail["overrides"] = rate["k"]
+        detail["decisions"] = rate["n"]
+    reasons_note = f" Override reasons: {NO_REASONS}." if reasons is None else ""
     return [
         _measured(
             "override_rate",
@@ -312,9 +351,54 @@ def override_indicators(governance: dict[str, Any] | None, rules: dict[str, Leve
             rules["override_rate"],
             interval=as_interval(rate),
             detail=detail,
-            note="SIMULATED reviewer decisions (feedback track).",
+            note="SIMULATED reviewer decisions (feedback track); CI copied from the file." + reasons_note,
         )
     ]
+
+
+def section_sha256(section: Any) -> str | None:
+    """SHA-256 of a results section as canonical JSON (sorted keys), or None when there is no section."""
+    if section is None:
+        return None
+    return hashlib.sha256(json.dumps(section, sort_keys=True).encode("utf-8")).hexdigest()
+
+
+def override_indicator_problems(governance: dict[str, Any] | None) -> list[str]:
+    """Why a results file's monitoring section did not read the feedback section the same file holds (empty: it did).
+
+    scripts/monitor.py reads the feedback section when it runs and records its SHA-256 (feedback_section_sha256).
+    When the feedback section is written after the monitor ran, or did not exist then, the two sections of one file
+    disagree: the monitoring section says the override rate is 'not available', or shows an older value. Nothing is
+    compared when either section is absent. `make governance-results` runs the producers in the right order.
+    """
+    feedback = dig(governance, FEEDBACK_SECTION)
+    indicators = dig(governance, MONITORING_SECTION, "results", "indicators")
+    if dig(feedback, "results") is None or not isinstance(indicators, dict):
+        return []
+    feedback_written = dig(feedback, "metadata", "generated_at_utc")
+    problems = []
+    if dig(indicators, "sources", f"results/{GOVERNANCE_FILE}", "sha256") is None:
+        problems.append(f"the monitor ran when results/{GOVERNANCE_FILE} did not exist yet (its SHA-256 is null)")
+    override = None
+    for item in indicators.get("values") or []:
+        if isinstance(item, dict) and item.get("name") == "override_rate":
+            override = item
+    if override is None:
+        problems.append("the monitoring section has no override_rate indicator")
+        return problems
+    read_hash = dig(override, "detail", "feedback_section_sha256")
+    if read_hash is None:
+        problems.append(
+            f"the monitor read no feedback section (override_rate is {override.get('status')!r}: "
+            f"{override.get('note')}), but the file has one, written at {feedback_written}"
+        )
+    elif read_hash != section_sha256(feedback):
+        read_written = dig(override, "detail", "feedback_section_generated_at_utc")
+        problems.append(
+            f"the monitor read the feedback section written at {read_written}, but the file's feedback section "
+            f"differs from it (written at {feedback_written})"
+        )
+    return problems
 
 
 def read_json(path: Path) -> dict[str, Any] | None:

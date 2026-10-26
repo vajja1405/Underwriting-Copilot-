@@ -5,18 +5,27 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from monitoring_test_helpers import simulated_feedback_summary
 
+from uwcopilot.common.paths import RESULTS_DIR
 from uwcopilot.governance.monitoring_config import LevelRule, load_monitoring_config
 from uwcopilot.governance.monitoring_indicators import (
+    NO_REASONS,
     agent_indicators,
     as_number,
     extraction_indicators,
     find_key,
+    override_indicator_problems,
     override_indicators,
     read_indicators,
 )
 
 NOT_MEASURED_TEXT = "not measured: no LLM provider was used"
+COMMITTED_GOVERNANCE = RESULTS_DIR / "governance_metrics.json"
+REASONS = [
+    ["referral_resolved_in_writing"],
+    ["data_error_in_model_input", "documented_compensating_factor"],
+]
 
 
 @pytest.fixture(scope="module")
@@ -146,3 +155,88 @@ def test_read_indicators_hashes_each_source_file(tmp_path: Path, rules: dict[str
     assert sources["results/agent_metrics.json"]["sha256"] is None
     statuses = {indicator.name: indicator.status for indicator in indicators}
     assert statuses["citation_support_rate"] == "measured" and statuses["override_rate"] == "not available"
+
+
+# --- The feedback section as scripts/feedback_report.py writes it (P6-STAT-1, P6-STAT-2) ----------------------------
+
+
+def feedback_section(summary: dict[str, Any], written_at: str = "2026-10-26T16:45:04+00:00") -> dict[str, Any]:
+    """A "feedback" results section shaped like scripts/feedback_report.py writes it (SIMULATED decisions)."""
+    return {
+        "results": {"data_label": "SYNTHETIC", "status": "measured on a SIMULATED reviewer log", "summary": summary},
+        "metadata": {"git_commit": "b" * 40, "generated_at_utc": written_at},
+    }
+
+
+def monitoring_section(governance_read: dict[str, Any] | None, rules: dict[str, LevelRule]) -> dict[str, Any]:
+    """The indicators of a monitoring section, as scripts/monitor.py writes them after reading `governance_read`."""
+    indicators = override_indicators(governance_read, rules)
+    file_hash = None if governance_read is None else "c" * 64
+    return {
+        "results": {
+            "indicators": {
+                "sources": {"results/governance_metrics.json": {"sha256": file_hash}},
+                "values": [indicator.to_dict() for indicator in indicators],
+            }
+        }
+    }
+
+
+def test_the_rate_and_reasons_summarize_feedback_writes_reach_the_indicator(rules: dict[str, LevelRule]) -> None:
+    summary = simulated_feedback_summary(REASONS, accepts=14)  # 2 overrides in 16 decisions: 0.125, at warn level
+    (indicator,) = override_indicators({"feedback": feedback_section(summary)}, rules)
+    assert (indicator.status, indicator.value, indicator.level) == ("measured", 0.125, "warn")
+    assert indicator.interval == (summary["override_rate"]["ci_low"], summary["override_rate"]["ci_high"])
+    reasons = indicator.detail["override_reasons"]
+    assert reasons == summary["reasons_on_overrides"]
+    assert reasons["referral_resolved_in_writing"] == 1 and reasons["data_error_in_model_input"] == 1
+    assert (indicator.detail["overrides"], indicator.detail["decisions"]) == (2, 16)
+    assert indicator.detail["feedback_section_generated_at_utc"] == "2026-10-26T16:45:04+00:00"
+    assert NO_REASONS not in indicator.note
+
+
+def test_a_feedback_section_without_reason_counts_says_so(rules: dict[str, LevelRule]) -> None:
+    summary = simulated_feedback_summary(REASONS, accepts=14)
+    del summary["reasons_on_overrides"]
+    (indicator,) = override_indicators({"feedback": feedback_section(summary)}, rules)
+    assert indicator.value == 0.125 and indicator.detail["override_reasons"] == NO_REASONS
+    assert NO_REASONS in indicator.note
+
+
+def test_a_monitoring_section_written_before_the_feedback_section_is_flagged(rules: dict[str, LevelRule]) -> None:
+    """The committed state of P6-STAT-1: the monitor ran before results/governance_metrics.json existed."""
+    feedback = feedback_section(simulated_feedback_summary(REASONS, accepts=14))
+    problems = override_indicator_problems({"monitoring": monitoring_section(None, rules), "feedback": feedback})
+    assert len(problems) == 2
+    assert "did not exist yet" in problems[0]
+    assert "read no feedback section" in problems[1] and "'not available'" in problems[1]
+
+
+def test_a_monitoring_section_that_read_the_current_feedback_section_is_consistent(
+    rules: dict[str, LevelRule],
+) -> None:
+    governance: dict[str, Any] = {"feedback": feedback_section(simulated_feedback_summary(REASONS, accepts=14))}
+    governance["monitoring"] = monitoring_section(governance, rules)
+    assert override_indicator_problems(json.loads(json.dumps(governance))) == []  # as read back from the file
+
+
+def test_a_feedback_section_rewritten_after_the_monitor_ran_is_flagged(rules: dict[str, LevelRule]) -> None:
+    earlier = feedback_section(simulated_feedback_summary(REASONS, accepts=14), "2026-10-26T16:00:00+00:00")
+    later = feedback_section(simulated_feedback_summary(REASONS[:1], accepts=14), "2026-10-26T17:00:00+00:00")
+    governance = {"monitoring": monitoring_section({"feedback": earlier}, rules), "feedback": later}
+    (problem,) = override_indicator_problems(governance)
+    assert "written at 2026-10-26T16:00:00+00:00" in problem and "2026-10-26T17:00:00+00:00" in problem
+
+
+def test_nothing_is_compared_without_both_sections(rules: dict[str, LevelRule]) -> None:
+    feedback = feedback_section(simulated_feedback_summary(REASONS, accepts=14))
+    assert override_indicator_problems(None) == []
+    assert override_indicator_problems({"feedback": feedback}) == []
+    assert override_indicator_problems({"monitoring": monitoring_section(None, rules)}) == []
+
+
+@pytest.mark.skipif(not COMMITTED_GOVERNANCE.exists(), reason="no committed governance results")
+def test_the_committed_monitoring_section_read_the_committed_feedback_section() -> None:
+    """When this fails, regenerate with `make governance-results` (it runs feedback-report before monitor)."""
+    governance = json.loads(COMMITTED_GOVERNANCE.read_text(encoding="utf-8"))
+    assert override_indicator_problems(governance) == []
