@@ -6,7 +6,8 @@ front of a reader: a script that prints resume bullets built only from `results/
 left out and why, and a headline table at the end of the README RESULTS block with one row per headline metric of each
 results file the README Status tables cite (apart from the three files the existing rows already read). The Founder
 Studio S12 evaluation is merged into this phase ("Studio S12 is merged with Phase 8" in the build plan); section 6
-summarizes it and [walkthrough_s12.md](studio/walkthrough_s12.md) explains it.
+summarizes it and [walkthrough_s12.md](studio/walkthrough_s12.md) explains it. Section 10 lists the fixes made after a
+code review of this phase, and why S12 was measured a second time.
 This walkthrough is written so both owners (Rahul Vajja and Bhavani Adula) can explain the work in their own words.
 
 Every number in this project comes from public datasets or SYNTHETIC data, and some runs are SIMULATED. Phase 8
@@ -16,13 +17,16 @@ accuracy, savings or production readiness. Founder Studio is an educational plan
 lending advice; lenders make their own decisions.
 
 **What ran and what did not.**
-- Ran: `scripts/resume_lines.py` at commit `1928a19` with no changes to tracked files on 2026-10-26, exit code 0
-  (the full output is in section 3). The README results block was regenerated from the results files (`ac325fb`),
-  and a test checks that the committed README equals a fresh render (section 9). The S12 evaluation
-  (`scripts/eval_studio.py`, the script behind `make studio-business-metrics`) ran at commit `e68b88d` with a clean
-  tree (`results/studio_business_metrics.json`, `provenance.git_sha` and `provenance.git_dirty: false`) and was
-  committed in `b44b581`. The Phase 8 offline tests ran too (section 9).
-- Not done: Prompt 8 step 4 (final CI, tag `v1.0`, pull request) waits for the owners (section 10).
+- Ran: `scripts/resume_lines.py` at commit `717bb1c` (the README regeneration `c7e389c` plus a docstring change in
+  `src/uwcopilot/studio/package/sba.py`) on 2026-10-26, from an export of that commit (`git archive`, so no
+  uncommitted change was present), exit code 0 (the full output is in section 3). The README results block was
+  regenerated from the results files (last in `c7e389c`), and a test checks that the committed README equals a fresh
+  render (section 9). The S12 evaluation (`scripts/eval_studio.py`, the script behind `make studio-business-metrics`)
+  ran twice: first at commit `e68b88d` (committed in `b44b581`), then,
+  after the review fixes, at commit `6fcfad9` with a clean tree (`results/studio_business_metrics.json`,
+  `provenance.git_sha` and `provenance.git_dirty: false`), committed in `667db85`. Every S12 number below is from the
+  second run unless it is marked as the first run's. The Phase 8 offline tests ran too (section 9).
+- Not done: Prompt 8 step 4 (final CI, tag `v1.0`, pull request) waits for the owners (section 11).
 - Not part of Phase 8, and not run anywhere in this project: any call to Anthropic or OpenAI (no API key was
   configured), any cloud service, and any deployment. The only real LLM calls in the project are the small local
   Ollama smoke runs listed in the README section "Language models: what has actually run". The Hugging Face Space is
@@ -38,11 +42,11 @@ customers, 3 decimals for seconds). Intervals are 95% intervals: percentile boot
 
 | Item | Prompt 8 asked for | Where it is | State |
 |---|---|---|---|
-| 1. README | One-paragraph summary, architecture diagram, a results table generated only from `results/*.json` with CIs, datasets and licenses, limitations (synthetic documents, public datasets, no production users, not a compliance program), how to run in 3 commands, and a 3-minute demo script (`docs/demo_script.md`) | `README.md`: summary at the top, Status tables, Architecture (Mermaid diagram), Results, Datasets and licenses, Limitations, Run the demo. New in this phase: the headline table (`governance/readme_headlines.py`, rendered by `scripts/render_reports.py`), the S12 status row, the supported-metros paragraph, the run steps for S12 and the resume lines, the `src/uwcopilot/resume` package row, and links to the study guide and the demo script | Headline table built, tested and rendered. "Run the demo" is `cp .env.example .env` followed by three make commands (`make setup`, `make web-install`, `make web-dev`). The demo script is a separate document of this phase, linked from the README and not described here |
+| 1. README | One-paragraph summary, architecture diagram, a results table generated only from `results/*.json` with CIs, datasets and licenses, limitations (synthetic documents, public datasets, no production users, not a compliance program), how to run in 3 commands, and a 3-minute demo script (`docs/demo_script.md`) | `README.md`: summary at the top, Status tables, Architecture (Mermaid diagram), Results, Datasets and licenses, Limitations, Run the demo. New in this phase: the headline table (`governance/readme_headlines.py`, rendered by `scripts/render_reports.py`), the S12 status row, the supported-metros paragraph, the run steps for S12 and the resume lines, the `src/uwcopilot/resume` package row, and links to the study guide and the demo script | Headline table built, tested and rendered (last in `c7e389c`). "Run the demo" is `cp .env.example .env` followed by three make commands (`make setup`, `make web-install`, `make web-dev`). The demo script is a separate document of this phase (`c6407dd`), linked from the README and not described here |
 | 2. Resume lines | `scripts/resume_lines.py` reads `results/*.json` and prints 4-6 honest bullets using only measured numbers, omitting any bullet whose metric was not measured; six templates | `scripts/resume_lines.py`, `src/uwcopilot/resume/`, `config/contributions.yaml`, `tests/resume/`, `make resume-lines`, `make resume-lines-test` | Built and run: 6 Lender Desk bullets (inside 4-6) plus 6 Founder Studio bullets for Prompt S12. Every template was changed or partly dropped; section 4 says how and why |
-| 3. Study guide | `docs/INTERVIEW_GUIDE.md` merges all walkthroughs into one study guide | Linked from the README (`1928a19`) | A separate document of this phase, not described here |
-| 4. Release | Final CI green, tag v1.0, open the PR | - | **Not done.** Waits for the owners (section 10) |
-| Studio S12 (merged) | `scripts/eval_studio.py` with business metrics against a baseline written down first; README; S12 walkthrough; per-person resume lines | Section 6, [walkthrough_s12.md](studio/walkthrough_s12.md), [s12_baseline.md](studio/s12_baseline.md) | Built + measured on 36 SYNTHETIC scenarios. Per-person lines come from `config/contributions.yaml`, which stays empty until the owners fill it in (section 5). No live URL and no demo GIF: the Space is not deployed; the README shows two screenshots taken from a local container |
+| 3. Study guide | `docs/INTERVIEW_GUIDE.md` merges all walkthroughs into one study guide | `docs/INTERVIEW_GUIDE.md` (`e49b45d`), linked from the README (`1928a19`) | A separate document of this phase, not described here |
+| 4. Release | Final CI green, tag v1.0, open the PR | - | **Not done.** Waits for the owners (section 11) |
+| Studio S12 (merged) | `scripts/eval_studio.py` with business metrics against a baseline written down first; README; S12 walkthrough; per-person resume lines | Section 6, [walkthrough_s12.md](studio/walkthrough_s12.md), [s12_baseline.md](studio/s12_baseline.md) | Built + measured on 36 SYNTHETIC scenarios, re-measured after the review fixes (`667db85`). Per-person lines come from `config/contributions.yaml`, which stays empty until the owners fill it in (section 5). No live URL and no demo GIF: the Space is not deployed; the README shows two screenshots taken from a local container |
 
 ## 2. Files
 
@@ -50,25 +54,28 @@ customers, 3 decimals for seconds). Intervals are 95% intervals: percentile boot
 
 | File | What it does | Why it is built this way |
 |---|---|---|
-| `scripts/resume_lines.py` | Entry point. Loads `config/contributions.yaml`, builds the report, prints the "Projects" bullets and the per-person section to stdout, and every left-out bullet or clause with its reason to stderr. Options: `--results-dir`, `--contributions`, `--repo-root`. Exit 0 when printed, 2 when `config/contributions.yaml` has a bad shape (for example `owners` is not a mapping of names to lists) or names an unknown component. | Read-only: it runs no model and writes no file. Stdout and stderr are split so `> resume.txt` keeps only the bullets while the omissions stay on screen. |
+| `scripts/resume_lines.py` | Entry point. Loads `config/contributions.yaml`, builds the report, prints the "Projects" bullets and the per-person section to stdout, and every left-out bullet or clause with its reason to stderr. Options: `--results-dir`, `--contributions`, `--repo-root`. Exit 0 when printed, 2 when `config/contributions.yaml` is malformed (not valid YAML, a top level that is not a mapping or has a key other than `owners`, or `owners` not a mapping of names to lists) or names an unknown component. | Read-only: it runs no model and writes no file. Stdout and stderr are split so `> resume.txt` keeps only the bullets while the omissions stay on screen. |
 | `__init__.py` | Package docstring only. | |
-| `results.py` | `ResultsFolder` loads each JSON file once. `dig` and `number_at` walk keys and return None when a step is missing. `read_estimate` turns one entry into an `Estimate` (value, low, high, method, n) from the four layouts it knows (`ci_low`/`ci_high`, `ci95_low`/`ci95_high`, a `wilson_ci95` list, a `ci95` list). `missing_reason` says why a value is not quoted: the file is absent, the file's own "not measured" text, or the key is absent. | Nothing here computes a metric. An entry without an interval is not an `Estimate`, so a value read with `read_estimate` always comes with its interval. A few values are read with `number_at` and printed without one: counts, the two group means next to a paired difference that carries the interval (requests per case, decision-error rate), the coverage-share range and the 0.7984 coverage reference. |
-| `text.py` | `BulletDraft` assembles one bullet from measured clauses (a number and its source file), context clauses (no number) and omissions; `finish()` drops the whole bullet when its core metric is missing or nothing is measured. Number formats: `num` (4 decimals), `signed`, `count` (thousands separators), `interval` (writes "Wilson" inside the brackets for a Wilson interval). `FORBIDDEN_WORDING` and `check_wording` (the wording guard), and `STATIC_PHRASES` (names and dates with digits that are not metrics, such as "SR 26-2"). | One place for formats, so no clause rounds a value to a friendlier figure. A context clause ("SHAP reason codes") is printed only next to a measured clause, so a bullet cannot be all adjectives. |
+| `results.py` | `ResultsFolder` loads each JSON file once. `dig` and `number_at` walk keys and return None when a step is missing. `read_estimate` turns one entry into an `Estimate` (value, low, high, method, n) and picks the interval in the same order as the README headline table (section 7): the percentile bootstrap interval (`ci_low`/`ci_high`, `ci95_low`/`ci95_high` or a `ci95` list) unless it has zero width or the file flags it (`bootstrap_degenerate: true` or a `bootstrap_interval_note`); then the exact Clopper-Pearson interval (`exact_ci_low`/`exact_ci_high`); then the Wilson interval (`wilson_ci95`); last the narrow bootstrap interval, marked `NARROW_BOOTSTRAP` so it is never printed as an interval (`22fd31d`). `missing_reason` says why a value is not quoted: the file is absent, the file's own "not measured" text, or the key is absent. | Nothing here computes a metric. An entry without an interval is not an `Estimate`, so a value read with `read_estimate` always comes with its interval. A zero-width interval such as [1.0000, 1.0000] would read as certainty, so it is replaced or flagged. A few values are read with `number_at` and printed without an interval: counts, the two group means next to a paired difference that carries the interval (requests per case, decision-error rate), the coverage-share range and the 0.7984 coverage reference. |
+| `text.py` | `BulletDraft` assembles one bullet from measured clauses (a number and its source file), context clauses (no number) and omissions; `finish()` drops the whole bullet when its core metric is missing or not quoted, or nothing is measured, and records "its core metric is not quoted (see its reason above)" (`6fcfad9`: a failing release gate is measured, so "not measured" would be wrong). Number formats: `num` (4 decimals), `signed`, `count` (thousands separators), `interval` (writes "exact" or "Wilson" inside the brackets for those intervals; a `NARROW_BOOTSTRAP` estimate prints the value and a note, "zero-width bootstrap interval, no other interval recorded", instead of brackets). `FORBIDDEN_WORDING` and `check_wording` (the wording guard), and `STATIC_PHRASES` (names and dates with digits that are not metrics, such as "SR 26-2" and, since `f48c467`, "B0"). | One place for formats, so no clause rounds a value to a friendlier figure. A context clause ("SHAP reason codes") is printed only next to a measured clause, so a bullet cannot be all adjectives. |
 | `lender_platform.py` | The evidence-platform bullet (template 1) and the document-extraction bullet (template 4), with the injection clauses. | Section 4.1 and 4.4. |
 | `lender_models.py` | The credit bullet (template 2), the insurance bullet (template 3), the sanctions-screening bullet (template 5) and the SR 26-2 footnote. | Sections 4.2, 4.3 and 4.5. The model-card clause is written only when `docs/model_cards/credit_model_card.md` exists. |
-| `lender_governance.py` | The governance bullet (template 6): release-gate counts and the drift-monitor validation, plus the recorded reasons why tracing cost, p95, cloud and IaC are left out. | Section 4.6. "In the CI workflow" is written only when `.github/workflows/ci.yml` contains `make release-gate`. |
-| `studio.py` | The six Founder Studio bullets (platform, feasibility, provenance, path to approval, SiteIQ, and the S12 business bullet) and `studio_notes`, which says why the local-model narrative file is not quoted. | Section 4.7. Every Studio bullet says SYNTHETIC or SIMULATED in its text (not every clause does; the Studio heading says it too). |
-| `report.py` | `build_report` builds all twelve bullets in print order and collects the omissions, footnotes and notes. It adds a note when fewer than 4 lender bullets are measured ("do not pad them"). `render_projects` and `render_omissions` produce the text. | The headings and the note about brackets live here, so the output explains its own intervals. |
-| `contributions.py` | `COMPONENTS` (one id per bullet), `load_contributions`, `parse_contributions` (an unknown id or a bad shape raises `ContributionsError`), `render_per_person`. | Section 5. |
+| `lender_governance.py` | The governance bullet (template 6): the release gate's verdict and every status count (PASS, FAIL, MISSING, NOT_MEASURED), the drift-monitor validation, and the recorded reasons why tracing cost, p95, cloud and IaC are left out. Only a PASS verdict with no FAIL or MISSING row is quoted; a verdict other than PASS, a missing verdict or count, or a PASS verdict next to FAIL or MISSING rows (an inconsistent file) leaves the whole bullet out with the reason on stderr (`231b97d`). | Section 4.6. "In the CI workflow" is written only when `.github/workflows/ci.yml` contains `make release-gate`. |
+| `studio.py` | The six Founder Studio bullets (platform, feasibility, provenance, path to approval, SiteIQ, and the S12 business bullet) and `studio_notes`, which says why the local-model narrative file is not quoted. The S12 bullet quotes rule S and rule E, carries `B0_CAVEAT`, and names SiteIQ only with the number of scenarios in which it scored a site (`sites_scored`, `b0_built_without`); it is left out when rule E is missing. Review changes are listed in section 4.7. | Section 4.7. Every Studio bullet says SYNTHETIC or SIMULATED in its text (not every clause does; the Studio heading says it too). |
+| `report.py` | `build_report` builds all twelve bullets in print order and collects the omissions, footnotes and notes. It adds a note when fewer than 4 lender bullets are measured ("do not pad them"). `render_projects` and `render_omissions` produce the text. `INTERVAL_NOTE` now also explains when an exact or Wilson interval replaces the bootstrap one and that a value with no other interval says so (`22fd31d`). | The headings and the note about brackets live here, so the output explains its own intervals. |
+| `contributions.py` | `COMPONENTS` (one id per bullet), `load_contributions` (invalid YAML is a `ContributionsError`), `parse_contributions` (a top level that is not a mapping, a top-level key other than `owners`, a bad shape or an unknown id raises `ContributionsError`; an empty file or one with only comments is valid and empty), `render_per_person` (`6b93885`). | Section 5. A misspelled `owner:` used to give an empty result without an error. |
 | `config/contributions.yaml` | Who owns which component. Ships with both owners listed and no component (`Rahul Vajja: []`, `Bhavani Adula: []`), and a comment that explains why. | Empty by design until the owners fill it in. |
 
 | Test file | What it covers |
 |---|---|
-| `tests/resume/resume_fixtures.py` | A complete fixture results folder with distinctive values, a fake repo root (with or without the model card and the CI gate), and the helpers `allowed_numbers` and `numbers_in`. |
+| `tests/resume/resume_fixtures.py` | A complete fixture results folder with distinctive values, a fake repo root (with or without the model card and the CI gate), and the helpers `allowed_numbers` and `numbers_in`. Since the review the gate section has its `verdict`, and the S12 file has rule E and `data_coverage_by_metro.this_run`. |
 | `tests/resume/test_resume_results.py` | Each interval layout, missing values and keys, missing files, and the reason text. |
+| `tests/resume/test_resume_intervals.py` (new, `22fd31d`) | A zero-width or flagged bootstrap interval falls back to the exact interval, then to the Wilson one; with neither it is printed with a note, not as an interval; an informative bootstrap interval is still quoted; exact bounds written as None are not an interval; the `ci95` list falls back like the key pairs; the choice matches the README headline table's on the same entries (`test_interval_choice_matches_the_readme_headline_table`); no bullet prints a zero-width interval; the interval note names the exact interval and the zero-width case. |
 | `tests/resume/test_resume_text.py` | Formats, the Wilson label, year ranges, the wording guard (what it rejects and what it accepts), a draft with only context is dropped, a missing core metric drops the bullet, `finish()` refuses forbidden wording. |
-| `tests/resume/test_resume_report.py` | Six lender and six Studio bullets from the full fixture; every number in a bullet appears in the results folder; values appear with their intervals; a not-measured clause or core metric is dropped and reported; the circular agreement is never quoted; attack success is quoted per layer only from a measured full run, never from a partial one; no forbidden wording in the output; a local container is never called a deployment; the model-card and CI clauses follow the repo files; the S12 bullet; and the committed results give 4-6 lender bullets whose numbers all appear in `results/`. |
+| `tests/resume/test_resume_report.py` | Six lender and six Studio bullets from the full fixture; every number in a bullet appears in the results folder; values appear with their intervals; a not-measured clause or core metric is dropped and reported; the circular agreement is never quoted; attack success is quoted per layer only from a measured full run, never from a partial one; no forbidden wording in the output; a local container is never called a deployment; the model-card and CI clauses follow the repo files; the S12 bullet; and the committed results give 4-6 lender bullets whose numbers all appear in `results/`. New since the review: the S12 comparison always carries the B0 caveat; the S12 bullet counts the scenarios with a site scored and names SiteIQ only with that count; rule S is not quoted without rule E; the template trace rate says "by construction" and a model's does not; the program-rule path clause names only the rules the search checks; a handoff checkpoint rate below 1.0 is quoted with its interval, and one marked not measured is left out with the file's reason; metros that are not the top five are not reported as "not measured". |
+| `tests/resume/test_resume_governance_gate.py` (new, `231b97d`) | A passing gate prints the verdict and the MISSING count; a FAIL verdict with a missing or a failed row is not quoted; a PASS verdict next to a blocking row is reported as inconsistent; a gate without a verdict or without a MISSING count is not quoted; a gate marked not measured quotes the file. |
 | `tests/resume/test_resume_contributions.py` | The committed file is empty and explains why; the component ids match the bullets; an empty or missing file prints the fill-in note; each person gets only the listed components; a listed component without a bullet goes to stderr; unknown ids and bad shapes are errors. |
+| `tests/resume/test_resume_contributions_errors.py` (new, `6b93885`) | Invalid YAML, a top level that is not a mapping, and a misspelled or extra top-level key are errors; an empty file or one with only comments stays valid and empty; `main` exits 2 on a malformed file. |
 | `tests/resume/test_resume_lines_script.py` | The script end to end, including exit code 2 on an unknown component. |
 
 Make targets: `make resume-lines` (passes `ARGS`) and `make resume-lines-test`.
@@ -77,30 +84,45 @@ Make targets: `make resume-lines` (passes `ARGS`) and `make resume-lines-test`.
 
 | File | What changed | Why |
 |---|---|---|
-| `src/uwcopilot/governance/readme_headlines.py` (new) | Reads the results files the README Status tables cite (apart from `risk_metrics.json`, `docintel_metrics.json` and `evidence_metrics.json`, which the existing rows already read) and builds one row per headline metric in four sections: Lender Desk, Governance, Founder Studio, and Web app and deployment. Most rows are a `Spec`: the JSON paths it reads and a function that turns the values into text (the Studio data-coverage row is built by its own function, `coverage_row`). `interval_text` picks the interval (section 7); `not_measured_reason` understands the three "not measured" layouts the files use; smoke runs print counts only. | Every cell is read at render time, and the Source column links the file, so a reader can check any cell. It sits next to the governance packs and reuses their helpers (`lookup`, `table`, `integer`, `NOT_MEASURED`). |
+| `src/uwcopilot/governance/readme_headlines.py` (new) | Reads the results files the README Status tables cite (apart from `risk_metrics.json`, `docintel_metrics.json` and `evidence_metrics.json`, which the existing rows already read) and builds one row per headline metric in four sections: Lender Desk, Governance, Founder Studio, and Web app and deployment. Most rows are a `Spec`: the JSON paths it reads and a function that turns the values into text (the Studio data-coverage row is built by its own function, `coverage_row`). `interval_text` picks the interval (section 7); `not_measured_reason` understands the three "not measured" layouts the files use; smoke runs print counts only. Review changes: an entry the file records as JSON null is told apart from a missing one (`has_entry`, `Spec.null_reason`, `null_value_reason`, `3eb096e`); the S12 rows describe B0 as `s12_baseline.md` section 2 does and carry its caveat, and rows were added for rule E (pair and difference), the founder's figures backed by a document (with the file's "expected equal by construction" text), complete packages and SiteIQ site scores by metro (`founder_figures_text`, `site_scored_text`, `9af06cd`); the rule E rows say the gap comes mostly from program and target sections B0 never prints (`6fcfad9`). | Every cell is read at render time, and the Source column links the file, so a reader can check any cell. It sits next to the governance packs and reuses their helpers (`lookup`, `table`, `integer`, `NOT_MEASURED`). |
 | `scripts/render_reports.py` (changed) | `load_report_data` loads the headline files under the key `readme_headline_sources` (`--headline-results-dir`, default `results/`); `readme_block` appends `headline_section(...)` after the existing Phase 1, 2 and 4 rows and their notes. | The existing rows stay byte-identical (tested). `headline_results_dir=None` leaves the table out. |
-| `tests/governance/test_readme_headlines.py` (new) | With no results file every row is "not measured" and the table text holds no metric; hand-made results render with their own interval; not-measured rows give the file's reason; runs on a handful of cases show counts only; the checks catch a typed number, a number borrowed from another results file and an invented reason, and find the SYNTHETIC / SIMULATED label a row must repeat (no test feeds them a row that lacks the label); the committed results pass every check. | Ground rule 1, checked per row against the row's own file. |
+| `tests/governance/test_readme_headlines.py` (new) | With no results file every row is "not measured" and the table text holds no metric; hand-made results render with their own interval; not-measured rows give the file's reason; runs on a handful of cases show counts only; the checks catch a typed number, a number borrowed from another results file and an invented reason, and find the SYNTHETIC / SIMULATED label a row must repeat (no test feeds them a row that lacks the label); the committed results pass every check. New since the review: rows comparing Studio with B0 carry the baseline caveat; the S12 rows show rule E, the founder figures, the site scores and complete packages; an entry recorded as null is not reported as missing; a null LLM cost gives the reason the file records. | Ground rule 1, checked per row against the row's own file. |
 | `tests/test_render_reports.py` (two new tests) | The existing rows stay byte-identical when the table is appended; `load_report_data` adds the headline sources. The existing `test_committed_documents_equal_a_fresh_render` now covers the table too. | |
 | `Makefile` | `make readme-headlines-test`. No new script: `make reports` renders the table. | |
-| `README.md` | Results block regenerated, together with the hand-written S12 status row, the run steps for S12 and the resume lines and the sentence on which script writes which table (`ac325fb`). Hand-written in `1928a19`: the supported metros, the package row and the links to the study guide and the demo script. | The Status tables are copied by hand from results files and are not checked by a unit test (the README says so). The Results tables are generated and tested. |
+| `README.md` | Results block regenerated, together with the hand-written S12 status row, the run steps for S12 and the resume lines and the sentence on which script writes which table (`ac325fb`). Hand-written in `1928a19`: the supported metros, the package row and the links to the study guide and the demo script. Regenerated again at the re-measured S12 results in `c7e389c`, where the hand-written S12 status row now states the B0 caveat for both rules and the SiteIQ coverage. | The Status tables are copied by hand from results files and are not checked by a unit test (the README says so). The Results tables are generated and tested. |
 
 ### Studio S12 (summary; the S12 walkthrough has the details)
 
 `docs/studio/s12_baseline.md` (the baseline and every metric definition, committed in `4a19865` before the first
 run), `src/uwcopilot/studio/business_metrics/` (`baseline.py`, `coverage.py`, `cited.py`, `intervals.py`,
 `scenario_run.py`, `report.py`), `scripts/eval_studio.py`, `make studio-business-metrics`,
-`tests/studio/test_business_metrics_*.py`, and `results/studio_business_metrics.json`.
+`tests/studio/test_business_metrics_*.py` with `tests/studio/business_metrics_helpers.py`, and
+`results/studio_business_metrics.json`. Two review fixes changed this code:
+- `baseline.py` (`99b7a93`): B0 now leaves out every input of the three shocks by prefix (`competitor_entry_`,
+  `rate_shock_`, `one_off_shock_`), so a variable-rate plan no longer prints the size of a rate rise
+  (`rate_shock_size_pct_points`) as an unsourced B0 input. Tests: the parametrized one-forecast test lists every shock
+  input; `test_a_variable_rate_plan_prints_no_rate_shock_input`; `test_an_input_left_out_of_b0_does_not_act_in_the_one_forecast_run`
+  (moving the most likely value of any left-out input does not change the one-forecast run).
+- `scripts/eval_studio.py` (`976bb7c`): the handoff check used to write the fixed label "full OFAC SDN + OpenSanctions
+  lists" and hash only `data/raw/ofac/sdn.csv`. It now builds the label from the lists the shared screening matcher
+  actually loaded (the setting `UWC_SCREENING_LISTS`) and records each loaded file's snapshot (file name, SHA-256,
+  first recorded date, attribution) under `provenance.data_snapshots.screening_list_snapshots`. The pre-run check asks
+  only for the files of the configured lists and refuses an invalid setting; `--skip-handoff` still writes "skipped".
+  Tests (offline, SYNTHETIC list files, the setting monkeypatched): the label and checksums follow each of three
+  configurations (OFAC only, OpenSanctions only, both); a full run names the configured lists; only the configured
+  lists' files must exist; an invalid setting is refused; a skipped handoff loads no list and says so.
 
 ## 3. The current output of `scripts/resume_lines.py`
 
-Command: `PYTHONPATH=src .venv/bin/python scripts/resume_lines.py`, run at commit `1928a19` (no changes to tracked
-files) on 2026-10-26. Exit code 0. Copied verbatim.
+Command: `PYTHONPATH=src python scripts/resume_lines.py` (the repository's `.venv` Python), run from the root of an
+export of commit `717bb1c` (`git archive`, no uncommitted changes) on 2026-10-26. Exit code 0. The two blocks below
+were inserted by a script from the captured stdout and stderr, not typed.
 
 Stdout:
 
 ```text
 Projects
-Brackets hold the 95% interval written in the results file (percentile bootstrap with 1,000 resamples and seed 42, unless marked Wilson). Every number comes from results/*.json. Re-run the producing scripts on your own machine before putting a number on a resume (docs/build_prompts.md, Notes for Rahul).
+Brackets hold the 95% interval written in the results file (percentile bootstrap with 1,000 resamples and seed 42, unless marked exact or Wilson). The exact (Clopper-Pearson) or Wilson interval is shown when the bootstrap interval has zero width or the file flags it as too narrow; a value with no other interval says so instead of showing brackets. Every number comes from results/*.json. Re-run the producing scripts on your own machine before putting a number on a resume (docs/build_prompts.md, Notes for Rahul).
 
 Fundproof Lender Desk (Underwriting Copilot): portfolio project on public datasets and SYNTHETIC documents
 - Evidence-driven underwriting copilot (LangGraph agent, FastAPI) for small-business loan and commercial insurance files: links claims to a source page or a calculation; cross-document contradiction recall 0.9412 [0.8723, 1.0000] and precision 0.7500 [0.6027, 0.8868] on 60 SYNTHETIC packets; a value-of-information request policy asked 0.3838 evidence requests per case vs 1.0703 for a fixed checklist (difference -0.6865 [-0.7784, -0.5946], 370 SIMULATED cases) with a decision-error rate of 0.0270 vs 0.0135 (difference +0.0135 [+0.0000, +0.0270]); all 65 SYNTHETIC applications stopped at a human checkpoint and 0 decisions were recorded without a human.
@@ -108,15 +130,15 @@ Fundproof Lender Desk (Underwriting Copilot): portfolio project on public datase
 - Insurance frequency-severity models on freMTPL2 (public French motor data): LightGBM claim-frequency model (chosen on validation) with test mean Poisson deviance 0.4493 [0.4395, 0.4583] vs 0.4584 [0.4488, 0.4672] for a Poisson GLM; Lorenz Gini 0.3208 [0.3065, 0.3365] vs 0.2767 [0.2619, 0.2928]; expected loss (frequency x severity) observed/predicted 1.0185 [0.9569, 1.0822] on the test split.
 - Document extraction with page citations on SYNTHETIC packets: rules extractor and OCR, no LLM call in the measured run; field F1 0.9936 [0.9889, 0.9971] on 60 packets; 0.9984 [0.9975, 0.9992] of extracted values supported by the printed text of their cited page; a pattern tripwire flags 16 of 60 frozen attack payloads after text normalization (0.2667 [Wilson 0.1713, 0.3901]); injected text cannot change the recommendation by construction (the policy never reads free text), enforced by 17 containment tests.
 - Sanctions screening against the OFAC SDN list and OpenSanctions (CC BY-NC 4.0) for SYNTHETIC customers: recall of true matches 0.6889 [0.5476, 0.8182] at 103.8 [89.9, 118.9] alerts per 1,000 screened (rules-only matcher, threshold set on validation for a budget of 100 alerts per 1,000, 45 test true matches); false-positive rate on clean customers 0.0887 [0.0760, 0.1030].
-- Model governance on public and SYNTHETIC data: a release gate in the CI workflow compares 15 results rows with a reviewed baseline and fails on a regression or a missing row (latest run: 11 pass, 0 fail, 4 not measured); drift monitoring checked on SIMULATED freMTPL2 streams: false alerts in 1 of 300 no-drift streams, claim-rate multiplier 1.25 detected in 298 of 300 streams, claim-rate multiplier 1.1 detected in 49 of 300 streams.
+- Model governance on public and SYNTHETIC data: a release gate in the CI workflow compares 15 results rows with a reviewed baseline and fails on a regression or a missing row (latest run: verdict PASS, 11 pass, 0 fail, 0 missing, 4 not measured); drift monitoring checked on SIMULATED freMTPL2 streams: false alerts in 1 of 300 no-drift streams, claim-rate multiplier 1.25 detected in 298 of 300 streams, claim-rate multiplier 1.1 detected in 49 of 300 streams.
 
 Fundproof Founder Studio: SYNTHETIC founder plans and cities; probabilities are SIMULATED
 - Founder Studio, the borrower side of Fundproof (Next.js and FastAPI): site scoring, a Monte Carlo feasibility check, a path-to-approval search and a lender-ready package: covers 6 business types in the 5 largest US metro areas by Census Bureau population estimates (ranked among 387) plus a SYNTHETIC test city; in each real metro the lowest data-coverage share of any business type's required factors is between 0.6779 and 0.6826; on a local container, 5 of 5 Playwright end-to-end flows passed and axe-core found 0 serious or critical violations in 32 page scans.
 - Monte Carlo feasibility simulator for founder plans (probabilities are SIMULATED from stated assumptions): on 2,400 SYNTHETIC validation worlds whose truth differs from the model, Brier score of P(year-2 DSCR meets the target) 0.1433 [0.1351, 0.1523] vs 0.4938 [0.4729, 0.5154] for a single most-likely forecast and 0.1557 [0.1460, 0.1654] for an in-sample base rate; P10-P90 revenue bands covered 0.6211 [0.6074, 0.6349] of months against 0.7984 expected for a correct model, so the bands are too narrow when the model is wrong.
-- Provenance-locked founder narrative and lender package: 1,673 of 1,673 narrative numbers traced to the ledger claim their sentence cites (1.0000 [Wilson 0.9977, 1.0000]) across 36 SYNTHETIC scenarios (template writer, no LLM); 0 untraced numbers among 30,681 read back from the package text and PDFs; all 71 handoff cases stopped at a human checkpoint and 0 decisions were recorded without a human.
-- Path-to-approval search over one- and two-lever plan changes: found a change meeting all 3 SIMULATED loan targets for 0.1026 [0.0784, 0.1306] of 536 SYNTHETIC plans that needed one; 0.0392 [0.0243, 0.0578] when every startup-program rule must also hold.
+- Provenance-locked founder narrative and lender package: 1,673 of 1,673 narrative numbers traced to the ledger claim their sentence cites (1.0000 [Wilson 0.9977, 1.0000]) across 36 SYNTHETIC scenarios with the template writer and no LLM (by construction for the template); 0 untraced numbers among 30,681 read back from the package text and PDFs; all 71 handoff cases stopped at a human checkpoint and 0 decisions were recorded without a human.
+- Path-to-approval search over one- and two-lever plan changes: found a change meeting all 3 SIMULATED loan targets for 0.1026 [0.0784, 0.1306] of 536 SYNTHETIC plans that needed one; 0.0392 [0.0243, 0.0578] when the SYNTHETIC startup program's equity and loan rules must also hold.
 - SiteIQ site scoring from public data: on SYNTHETIC cities with a hidden true demand, Spearman correlation 0.0719 to 0.7910 across 6 business types; better than the single-factor baseline for 1, worse for 1, no clear difference for 4 (paired bootstrap 95% intervals).
-- Founder Studio end-to-end evaluation against a baseline defined before the first run: 0.8482 [0.8388, 0.8587] of printed figures carry a checkable source vs 0.0251 [0.0182, 0.0320] for a plan made without the site scoring, the simulation and the ledger, on 36 SYNTHETIC scenarios; median 7.199 [6.767, 7.494] seconds from inputs to an audited PDF package (machine wall clock, not a user time); no language model is called (template narrative and memo).
+- Founder Studio end-to-end evaluation against a baseline defined before the first run: on 36 SYNTHETIC scenarios, 0.8482 [0.8388, 0.8587] of printed figures carry a checkable source (rule S) vs 0.0255 [0.0185, 0.0325] for B0, a plan built from the same founder inputs and documents without the simulation, the ledger or SiteIQ (which scored a site in 6 of 36 Studio scenarios); 0.0570 [0.0545, 0.0597] vs 0.0255 [0.0185, 0.0325] under the stricter rule E (figures backed by a document page, a public-data row or a section of the SYNTHETIC startup program or the Studio's own targets); B0 is a construction from the same SYNTHETIC inputs, not a sample of real plans, and the gap under both rules follows mostly from the definitions (rule S credits the model runs and formulas the ledger records, rule E the program and target sections the Studio prints, and B0 prints neither); median 6.227 [6.106, 6.456] seconds from inputs to an audited PDF package (machine wall clock, not a user time); no language model is called (template narrative and memo).
 
 Footnote: SR 26-2 = Revised Guidance on Model Risk Management (Federal Reserve SR 26-2, OCC Bulletin 2026-13, FDIC FIL-15-2026), April 17, 2026. The model card follows its structure only; applicability depends on the institution and its risk profile, and this is a demonstration, not a compliance claim.
 
@@ -138,6 +160,12 @@ Notes:
 - results/studio_evidence_metrics_ollama.json not quoted: a small local-model run (6 of 6 narratives fell back to the template)
 ```
 
+What changed against the first version of this output (at `1928a19`): the note on brackets now explains the exact and
+Wilson fallback; the governance bullet prints the gate's verdict and its MISSING count; the provenance bullet says the
+template's trace rate holds by construction; the path bullet names the SYNTHETIC startup program's equity and loan
+rules; and the S12 bullet quotes rule E next to rule S, counts the scenarios with a site score, carries the B0 caveat
+and quotes the re-measured B0 and time. The Lender Desk numbers did not change.
+
 Where each bullet reads its numbers:
 
 | Bullet id | Results file and keys |
@@ -147,16 +175,16 @@ Where each bullet reads its numbers:
 | `insurance_models` | `risk_metrics.json` (`insurance_frequency.results.preferred_model` and `.test_metrics`, `insurance_severity.results.expected_loss.served_pair.observed_to_predicted`) |
 | `document_extraction` | `docintel_metrics.json` (`rules.fields.overall.f1`, `rules.citations.supported_all_values`); `injection/injection_metrics_detector_only.json` (`detector.recall_normalized.all`, `action_level`) |
 | `kyc_screening` | `kyc_metrics.json` (`selected_operating_point`, the matching entry of `operating_points`, `data.counts_by_label_and_split`) |
-| `governance` | `governance_metrics.json` (`release_gate.results.counts`, `monitoring.results.validation` and `.scenarios`) |
-| `studio_platform` | `studio_metro_ranking.json`, `studio_path_metrics.json` (`settings.business_types`), `studio_metro_coverage.json` (`summary`), `web_metrics.json` (`runs.local-container`) |
+| `governance` | `governance_metrics.json` (`release_gate.results.verdict` and `.counts`, `monitoring.results.validation` and `.scenarios`) |
+| `studio_platform` | `studio_metro_ranking.json` (`configured_equals_top_five`, `configured_metros`, `metropolitan_areas_ranked`), `studio_path_metrics.json` (`settings.business_types`), `studio_metro_coverage.json` (`summary`), `web_metrics.json` (`runs.local-container`) |
 | `studio_feasibility` | `studio_feasibility_metrics.json` (the `misspecified` row of `headline`, `method.coverage_reference_if_well_specified`) |
-| `studio_provenance` | `studio_evidence_metrics.json` (`headline.narrative_numbers_traced_bound`, `golden.scenarios_run`); `studio_handoff_metrics.json` (`golden_founder_scenarios`, `all_cases`) |
+| `studio_provenance` | `studio_evidence_metrics.json` (`headline.narrative_numbers_traced_bound`, `golden.scenarios_run`, `provider`); `studio_handoff_metrics.json` (`golden_founder_scenarios`, `all_cases`) |
 | `studio_path` | `studio_path_metrics.json` (`headline`) |
 | `studio_siteiq` | `studio_siteiq_metrics.json` (`by_business_type`) |
-| `studio_business` | `studio_business_metrics.json` (`headline`, `cost_per_package`) |
+| `studio_business` | `studio_business_metrics.json` (`headline.evidence_coverage_rule_s` and `.evidence_coverage_rule_e`, `headline.time_to_complete_package_median_s`, `data_coverage_by_metro.this_run`, `cost_per_package.llm_cost_usd_per_package`) |
 
 Twelve bullets is too many for one resume. Pick 4-6, keep the numbers, intervals and SYNTHETIC / SIMULATED labels as
-printed, and say the caveats in section 10 out loud when you quote them. The Founder Studio bullets describe an
+printed, and say the caveats in section 11 out loud when you quote them. The Founder Studio bullets describe an
 educational planning tool: not financial, legal or lending advice; lenders make their own decisions.
 
 ## 4. Template by template: what changed and why
@@ -202,7 +230,7 @@ the bullets describe the project, not who typed the code (section 5).
   in the evaluation (`stability.score_psi_by_vintage`); ongoing monitoring of the credit model is not measured
   (`governance_metrics.json`, section `monitoring`, `credit_model`). "Aligned to SR 26-2" became "aligned to the
   structure of SR 26-2 (April 17, 2026; see footnote)", and the footnote names the guidance and says applicability
-  depends on the institution and its risk profile and that this is not a compliance claim (section 11).
+  depends on the institution and its risk profile and that this is not a compliance claim (section 12).
 
 ### 4.3 Insurance models (template 3)
 
@@ -259,9 +287,13 @@ the bullets describe the project, not who typed the code (section 5).
 - **Template:** "Traced every LLM/tool call: ${cost} and {p95}s p95 per packet; release gate in CI blocks metric
   regressions; deployed on {cloud} with {iac}."
 - **Kept, reworded:** the release gate. "A release gate in the CI workflow compares 15 results rows with a reviewed
-  baseline and fails on a regression or a missing row (latest run: 11 pass, 0 fail, 4 not measured)"
-  (`governance_metrics.json`, `release_gate.results.counts`). "Fails" instead of "blocks", because the wording guard
-  rejects "block" (the retired injection wording).
+  baseline and fails on a regression or a missing row (latest run: verdict PASS, 11 pass, 0 fail, 0 missing, 4 not
+  measured)" (`governance_metrics.json`, `release_gate.results.verdict` and `.counts`). "Fails" instead of "blocks",
+  because the wording guard rejects "block" (the retired injection wording).
+- **Changed in the review (`231b97d`):** the bullet used to read only the PASS, FAIL and NOT_MEASURED counts, so a FAIL
+  verdict caused by a MISSING row would still have printed a clean-looking line. It now reads the verdict and all four
+  counts. Only a PASS verdict with no FAIL or MISSING row is quoted; otherwise the whole bullet is left out with the
+  verdict and counts on stderr. A failing gate is a measured result, but not one to put on a resume.
 - **Added:** the drift monitor's validation on SIMULATED freMTPL2 streams: false alerts in 1 of 300 no-drift streams,
   a claim-rate multiplier of 1.25 detected in 298 of 300 streams and 1.1 in 49 of 300
   (`monitoring.results.validation`). The weak case (1.1) is printed too.
@@ -281,9 +313,32 @@ same rules as the lender ones and each names SYNTHETIC or SIMULATED in its text.
 flattering, on purpose: SiteIQ beats its single-factor baseline for 1 business type, is worse for 1 and shows no clear
 difference for 4; the path search finds a change for 0.1026 [0.0784, 0.1306] of 536 SYNTHETIC plans that needed one;
 the revenue bands cover 0.6211 [0.6074, 0.6349] of months against 0.7984 expected for a correct model, so they are too
-narrow when the model is wrong. The S12 business bullet (added in `d13225b`) quotes rule S (section 6) and says the time is
-machine wall clock, not a user time. `results/studio_evidence_metrics_ollama.json` is deliberately not quoted: a small
+narrow when the model is wrong. `results/studio_evidence_metrics_ollama.json` is deliberately not quoted: a small
 local-model run in which 6 of 6 narratives fell back to the template (stderr note).
+
+The S12 business bullet (added in `d13225b`, rewritten in `f48c467` and `6fcfad9`):
+- quotes rule S, 0.8482 [0.8388, 0.8587] against 0.0255 [0.0185, 0.0325] for B0, and next to it the stricter rule E,
+  0.0570 [0.0545, 0.0597] against 0.0255 [0.0185, 0.0325] (section 6). Rule S is never quoted alone: when rule E is
+  not in the file, the whole bullet is left out, because rule S alone mostly shows the gap its definition creates;
+- describes B0 as `s12_baseline.md` does (built from the same founder inputs and documents without the simulation,
+  the ledger or SiteIQ) and names SiteIQ only with the number of scenarios in which it scored a site, summed from
+  `data_coverage_by_metro.this_run`: 6 of 36 in this run, all of them in the SYNTHETIC metro;
+- carries the B0 caveat in fixed wording (`B0_CAVEAT`): B0 is a construction from the same SYNTHETIC inputs, not a
+  sample of real plans, and the gap under both rules follows mostly from the definitions (rule S credits the model
+  runs and formulas the ledger records, rule E the program and target sections the Studio prints, and B0 prints
+  neither);
+- says the median time, 6.227 [6.106, 6.456] seconds, is machine wall clock, not a user time.
+
+Other Studio bullet changes from the review:
+- **Provenance (`829d733`):** the narrative trace rate is 1.0 by construction for the template writer (the results
+  file's scope says so), so the bullet says "(by construction for the template)" when the provider is the template and
+  names the provider otherwise.
+- **Path to approval (`1ccd1c9`):** the program-compliant rate checks only NSP-3.1 (equity injection) and NSP-8.1
+  (loan amount and term), so "when every startup-program rule must also hold" became "when the SYNTHETIC startup
+  program's equity and loan rules must also hold".
+- **A measured miss is quoted (`0b846fd`):** a handoff checkpoint rate below 1.0 used to be dropped as "not measured";
+  it is now printed with its interval and n, and the number of decisions recorded without a human. A ranking file that
+  says the configured metros are not the top five drops the clause with that reason instead of "not measured".
 
 ### 4.8 The wording guard
 
@@ -307,8 +362,11 @@ for example `evidence_platform` or `studio_feasibility`). The rules in `contribu
   rewritten one;
 - a component both owners list is marked `[joint with ...]`;
 - a listed component that has no bullet (its metric is not measured) goes to stderr with the reason;
-- an unknown id or a bad shape stops the script with exit code 2;
-- an empty or missing file prints the fill-in note and no per-person bullet, as in section 3.
+- an unknown id or a bad shape stops the script with exit code 2, and so does a malformed file: invalid YAML, a top
+  level that is not a mapping, or a top-level key other than `owners` (a misspelled `owner:` used to give an empty
+  result without an error; `6b93885`);
+- an empty or missing file, or one with only comments, prints the fill-in note and no per-person bullet, as in
+  section 3.
 
 The file ships empty on purpose (`owners: Rahul Vajja: [], Bhavani Adula: []`), and a test checks that. Only the owners
 can fill it in. Until then the README's "How it was built" sentence is the accurate description. Once the file is
@@ -321,25 +379,51 @@ Founder Studio is an educational planning tool: not financial, legal or lending 
 decisions. Every figure below is from SYNTHETIC scenarios, and the probabilities inside the packages are SIMULATED.
 
 S12 ran `scripts/eval_studio.py` on the 36 golden SYNTHETIC founder scenarios (6 business types x (5 real metros + the
-SYNTHETIC metro); the prompt's 30 are the real-metro subset, reported separately in the file), at commit `e68b88d`
-with a clean tree, 1,000 simulated paths per plan, and the full OFAC SDN + OpenSanctions lists for the handoff check
-(`results/studio_business_metrics.json`, `provenance` and `configuration`). The baseline B0 was written down in
-[s12_baseline.md](studio/s12_baseline.md) and committed (`4a19865`) before the S12 script existed (`1958f6e`) and
-before any S12 result, and the file has not changed since. B0 is a plan made from the same SYNTHETIC inputs without
-SiteIQ, the simulation and the ledger. It is a construction, not a sample of real plans.
+SYNTHETIC metro); the prompt's 30 are the real-metro subset, reported separately in the file). The run quoted here is
+the second one, at commit `6fcfad9` with a clean tree on 2026-10-26 (`provenance.generated_at_utc`), with 1,000
+simulated paths per plan and the handoff check screening against the lists the matcher loaded, recorded as "full OFAC
++ OpenSanctions lists (sdn.csv, alt.csv, targets.simple.csv)" (`configuration.handoff_consistency_check`), each file
+with its SHA-256 and snapshot date in `provenance.data_snapshots.screening_list_snapshots` (OpenSanctions with its
+CC BY-NC 4.0 attribution). The whole run took 317.7 seconds (`configuration.runtime_s`). The baseline B0 was written
+down in [s12_baseline.md](studio/s12_baseline.md) and committed (`4a19865`) before the S12 script existed
+(`1958f6e`) and before any S12 result, and the file has not changed since: both runs record the same SHA-256 for it
+(`provenance.eval_sets`). B0 is a plan built from the same SYNTHETIC inputs and documents without SiteIQ, the
+simulation and the ledger. It is a construction, not a sample of real plans. Why there were two runs is in section 10.
 
-Results (`headline`, and `time_to_complete_package.complete_packages` for the package count): 36 of 36 complete
-packages (Wilson [0.9036, 1.0]); median 7.199
-[6.767, 7.494] seconds from inputs to an audited PDF, a wall clock on a shared machine, not a user time (nobody's time
-was observed); printed figures with a checkable source (rule S) 0.8482 [0.8388, 0.8587] (12,222 of 14,410) against
-0.0251 [0.0182, 0.0320] (33 of 1,316) for B0, difference 0.8231 [0.8118, 0.8352]. The file itself says most of that gap
-follows from the definitions (`evidence_coverage.reading`): model estimates and calculations count for Studio because
-the ledger records their run or formula. Under rule E, which counts only a document page, a public-data row or a
-program or target section, it is 0.0570 [0.0545, 0.0597] against 0.0251 [0.0182, 0.0320], difference 0.0319 [0.0259,
-0.0380]. Language-model cost is 0 USD per package by construction (template narrative and memo); compute cost and a
-usability test with real people are not measured (the file records why). Intervals are percentile bootstrap over
-scenarios (1,000 resamples, seed 42), unless marked Wilson. Everything else, including "Why these five cities?" and
-"How would you add a sixth?", is in [walkthrough_s12.md](studio/walkthrough_s12.md).
+Results (`headline`, `evidence_coverage`, `time_to_complete_package` and `data_coverage_by_metro`):
+- **Complete packages:** 36 of 36, 1.0000 [0.9036, 1.0000] (Wilson).
+- **Time:** median 6.227 [6.106, 6.456] seconds from inputs to an audited PDF, p95 7.561 [6.808, 8.069]; 6.171
+  [6.005, 6.276] for the 30 real-metro scenarios. This is wall clock on a shared machine (4 CPUs,
+  `provenance.environment`), not a user time: nobody's time was observed, and it varies by run (the first run recorded
+  a median of 7.199 [6.767, 7.494], `b44b581`). The handoff is timed apart: median 0.466 [0.457, 0.489] seconds; the
+  first handoff of the process took 69.126 seconds because it also loads the screening lists, and without it the
+  median is 0.463 [0.454, 0.485] (n=35).
+- **Rule S, printed figures with a checkable source:** 0.8482 [0.8388, 0.8587] (12,222 of 14,410) against 0.0255
+  [0.0185, 0.0325] (33 of 1,296) for B0, difference 0.8227 [0.8113, 0.8347]. The file itself says most of that gap
+  follows from the definitions (`evidence_coverage.reading`): model estimates and calculations count for Studio
+  because the ledger records their run or formula, and B0 prints no such record.
+- **Rule E, a document page, a public-data row or a program or target section only:** 0.0570 [0.0545, 0.0597] (821 of
+  14,410) against 0.0255 [0.0185, 0.0325], difference 0.0315 [0.0254, 0.0377]. This gap also follows mostly from the
+  definitions: 724 of Studio's 821 rule E figures are VERIFIED `policy` figures
+  (`evidence_coverage.studio_figures_by_status_kind_and_verdict`), that is sections of the SYNTHETIC startup program
+  and the Studio's own targets, which B0 by definition never prints.
+- **Founder figures backed by a document (one population for both):** 0.1315 [0.0958, 0.1693] (33 of 251) for both,
+  equal in every scenario, as the file said in advance ("expected equal by construction: the same documents and the
+  same tolerance decide both plans"). The ledger does not make a founder's figure better evidenced; it records whether
+  a document backs it. Studio surfaced 12 conflicts between a typed figure and a document; B0 has no step that could.
+- **Real-metro subset (30 scenarios):** rule S 0.8362 [0.8304, 0.8420] against 0.0250 [0.0175, 0.0324], difference
+  0.8112 [0.8026, 0.8202]; rule E 0.0539 [0.0527, 0.0551] against 0.0250 [0.0175, 0.0324], difference 0.0289
+  [0.0227, 0.0355]. The same caveat applies: B0 is a construction, and both gaps follow mostly from the definitions.
+- **SiteIQ in this run:** a site score in 6 of 6 SYNTHETIC-metro scenarios and 0 of 6 in each real metro
+  (`data_coverage_by_metro.this_run`, `site_scored`); the file notes this "depends on which metro snapshots exist on
+  the machine that ran the script". All 30 real-metro scenarios ran in limited mode.
+- **Cost and usability:** language-model cost is 0 USD per package by construction (template narrative and memo,
+  checked per package: 36 of 36 with no LLM called); compute cost and a usability test with real people are not
+  measured (the file records why).
+
+Intervals are percentile bootstrap over scenarios (1,000 resamples, seed 42), unless marked Wilson. Everything else,
+including "Why these five cities?" and "How would you add a sixth?", is in
+[walkthrough_s12.md](studio/walkthrough_s12.md).
 
 ## 7. How the README headline table works
 
@@ -353,12 +437,17 @@ checks), `spec_row()` looks up the row's JSON paths in its file:
 - file missing: "not measured (no results file)";
 - path missing: "not measured (no `<path>` in the file)", as for the Hugging Face Space rows of `web_metrics.json` and
   `deployment_metrics.json`;
+- the file records the value as JSON null (`3eb096e`): "not measured (<the reason the file records next to it>)" when
+  the row names that reason's path (`Spec.null_reason`; only the S12 language-model cost row does, with
+  `cost_per_package.llm_cost_basis`), else "not measured (no value recorded)". Before the fix a null value was
+  reported as a missing key;
 - the file marks the value not measured: "not measured (<the file's reason>)", for example "not measured (no LLM
   key)" for RAG faithfulness in `rag_metrics.json`. `short_reason` cuts a longer reason at its first clause: the
   credit model's drift-monitor row in `governance_metrics.json` keeps only the first sentence of the recorded reason;
 - otherwise the row's format function writes the value.
 
-`interval_text()` chooses the interval the file records, in this order:
+`interval_text()` chooses the interval the file records, in this order (since `22fd31d` the resume lines use the same
+order, and a test compares the two):
 1. the bootstrap interval, unless it has zero width or the file flags it as degenerate or too narrow;
 2. then the exact Clopper-Pearson interval, labelled "exact", for example the monitor's false alerts, "0.0033 exact
    [0.0001, 0.0184] (1/300)" (`governance_metrics.json`);
@@ -369,6 +458,20 @@ checks), `spec_row()` looks up the row's JSON paths in its file:
 
 Runs on a handful of cases print counts only, never a rate: "smoke only: 3 of 240 planned calls made, no rate quoted"
 for the injection smoke run, and "counts only" for the local-model narrative run.
+
+The S12 rows (`9af06cd`, `6fcfad9`): the median time; complete packages, "1.0000 [0.9036, 1.0000] (36/36, Wilson)";
+SiteIQ site scores by metro, "synthetic_metro 6/6, chicago_il_in 0/6, dallas_fort_worth_tx 0/6, houston_tx 0/6,
+los_angeles_ca 0/6, new_york_ny_nj_pa 0/6" followed by the file's note; rule S as a pair, "0.8482 [0.8388, 0.8587]
+(12,222/14,410) vs 0.0255 [0.0185, 0.0325] (33/1,296)", and its paired difference 0.8227 [0.8113, 0.8347]; rule E as a
+pair, "0.0570 [0.0545, 0.0597] (821/14,410) vs 0.0255 [0.0185, 0.0325] (33/1,296)", and its difference 0.0315 [0.0254,
+0.0377]; the founder figures, "0.1315 [0.0958, 0.1693] (33/251) vs 0.1315 [0.0958, 0.1693] (33/251)" with the file's
+"expected equal by construction" text; the language-model cost; compute cost and the usability test as not measured.
+Every row that compares Studio with B0 (the rule S and rule E pairs and differences, and the founder figures) says in
+its Metric cell that the result follows from the definitions, "not from how real founders write plans", and a test
+checks that phrase in each of the five. The rule S row carries the full caveat from `s12_baseline.md` (B0 is a
+construction, not a sample of real plans; most of the gap follows from the definitions); the rule E rows say that gap
+comes mostly from the program and target sections B0 never prints; the rule E and founder-figure rows add "B0's
+sources follow from its definition".
 
 The tests check four things per row, on hand-made results and on the committed ones: every number in the row appears
 in that row's own source file (a number that exists only in another results file fails); a value its file marks
@@ -384,11 +487,21 @@ file labels SYNTHETIC or SIMULATED says so. A separate test checks that the comm
 - **Drop a clause, not just a bullet, and say why.** Prompt 8 says to omit a bullet whose metric was not measured.
   The script goes one step further: a missing secondary clause (for example attack success by layer) is dropped while
   the measured clauses stay, and every drop is listed on stderr. A missing core metric drops the whole bullet.
+- **A measured miss is quoted, not called "not measured".** A handoff checkpoint rate below 1.0 is printed with its
+  interval; a ranking file that says "not the top five" is reported as that; a failing release gate leaves its bullet
+  out with the verdict on stderr, not with "not measured". "Not measured" is kept for values that are absent or that
+  the file marks so.
+- **One interval rule for both outputs.** The resume lines and the README table choose the interval in the same order
+  (bootstrap, then exact, then Wilson, then the value with a note), so a zero-width interval never reads as certainty
+  in either.
+- **The caveat travels with the comparison.** Wherever Studio is compared with B0 (the resume bullet, the README rows,
+  the S12 status row), the sentence or row says that B0 is a construction and that the gap follows mostly from the
+  definitions, as `s12_baseline.md` section 2 requires. Tests check the resume bullet and the README rows.
 - **Quote the cost next to the gain.** The evidence bullet prints the higher decision-error rate next to the fewer
   requests; the governance bullet prints the 49 of 300 detection next to the 298 of 300; the Studio bullets print the
   weak SiteIQ and path results.
-- **Fail loudly on bad wording.** The guard raises an error instead of rewriting a sentence, so a template that drifts
-  into a forbidden claim breaks the tests.
+- **Fail loudly on bad wording and bad config.** The guard raises an error instead of rewriting a sentence, so a
+  template that drifts into a forbidden claim breaks the tests; a malformed `config/contributions.yaml` exits 2.
 - **Claims about files check the files.** "A model card aligned to the structure of SR 26-2" is printed only when the
   model card exists; "a release gate in the CI workflow" only when `.github/workflows/ci.yml` contains
   `make release-gate`.
@@ -403,8 +516,8 @@ file labels SYNTHETIC or SIMULATED says so. A separate test checks that the comm
 - **The existing README rows stay byte-identical.** The table is appended after them, so earlier phases' tested
   output is not disturbed.
 - **The S12 baseline was written before measuring.** Its commit (`4a19865`) precedes the S12 script (`1958f6e`) and
-  the S12 results (`b44b581`), and the file has not changed since, so the committed results could not shape the
-  definitions.
+  the S12 results (`b44b581`, `667db85`), and the file has not changed since, so the committed results could not shape
+  the definitions. The B0 code fix (section 10) brought the code in line with the file; the file was not edited.
 
 ## 9. How it was built, and checks
 
@@ -423,24 +536,78 @@ After the merges, S12 was measured at the merge commit `e68b88d` with a clean tr
 added to the headline table (`83f9f80`) and the S12 bullet to the resume lines, together with the "after text
 normalization" wording of the tripwire clause (`d13225b`); the README was regenerated and gained the S12 status row
 and the run steps (`ac325fb`); a Makefile comment was fixed (`fc3075e`); and the README gained the supported metros,
-the links and the package row (`1928a19`).
+the links and the package row (`1928a19`). The first version of this walkthrough (`4ff9ae6`), the S12 walkthrough
+(`55ff5a3`), the interview guide (`e49b45d`) and the demo script (`c6407dd`) followed. Then came the review fixes on
+four branches, a follow-up commit, the second S12 run and the README regeneration (section 10).
 
 These are checks, not metrics, so they are not in `results/*.json`.
 
 | Check | Result |
 |---|---|
-| Offline tests at `1928a19` on 2026-10-26: `pytest -o addopts='' -m 'not integration'` on `tests/resume`, `tests/governance/test_readme_headlines.py` and `tests/test_render_reports.py` | 95 passed |
-| `scripts/resume_lines.py` at `1928a19` | Exit 0; 6 Lender Desk and 6 Founder Studio bullets, 6 omissions and 1 note on stderr (section 3) |
+| Offline tests at `717bb1c` on 2026-10-26: `pytest -o addopts='' -m 'not integration'` on `tests/resume`, `tests/governance/test_readme_headlines.py` and `tests/test_render_reports.py` | 138 passed |
+| Offline tests at `717bb1c` on 2026-10-26, same options, on `tests/studio/test_business_metrics_*.py` | 70 passed |
+| `scripts/resume_lines.py` at `717bb1c` | Exit 0; 6 Lender Desk and 6 Founder Studio bullets, 6 omissions and 1 note on stderr (section 3) |
 | GitHub Actions on the Phase 8 commits | Not checked in this walkthrough; it is part of step 4 |
 
-## 10. Limits, open items and the status of step 4
+## 10. Review and fixes
+
+After the first version of this walkthrough (`4ff9ae6`), the Phase 8 and S12 code was reviewed, and the fixes were
+made on four branches, each merged with the message "Phase 8 review fixes" (`c201e17`, `b73a8a2`, `8b2c495`,
+`83bd196`). The review had three reviewers with different lenses (S12 metric correctness, honesty and traceability
+of the generated text, robustness and tests), and each finding went to a second agent asked to refute it. It
+confirmed 17 findings (several are the same defect seen through two lenses) and refuted 3; the message of the commit
+that adds this paragraph records that tally. What is recorded for each fix is its commit message (which states the
+defect) and its offline tests:
+
+| Branch (merge) | Commit | What was wrong | What it does now |
+|---|---|---|---|
+| `p8fix/eval-studio` (`c201e17`) | `99b7a93` | `s12_baseline.md` section 2 leaves out of B0 the inputs a one-forecast plan does not use, naming the competitor-entry and one-off-shock sizes "which only act when a shock happens". The code's prefix list missed the rate shock, so in the first run B0 printed the size of a rate rise (`rate_shock_size_pct_points`) as an unsourced input in 20 of the 36 scenarios (one more input each in `per_scenario[].baseline_groups.input` of the first run's file) | B0 leaves out every input of the three shocks by prefix; tests listed in section 2 |
+| `p8fix/eval-studio` (`c201e17`) | `976bb7c` | The handoff check wrote the fixed label "full OFAC SDN + OpenSanctions lists" and hashed only `sdn.csv`, whatever lists the matcher loaded | The label names the lists actually loaded and every loaded file is hashed (`screening_list_snapshots`); the pre-run check follows `UWC_SCREENING_LISTS` |
+| `p8fix/headlines` (`b73a8a2`) | `3eb096e` | An entry recorded as JSON null was reported as a missing key | Null is told apart from missing; a null language-model cost prints the file's reason |
+| `p8fix/headlines` (`b73a8a2`) | `9af06cd` | The S12 rows showed Studio vs B0 without the caveat `s12_baseline.md` requires wherever the comparison is shown | The rule S row describes B0 as section 2 does and carries the "most of the gap follows from the definitions" reading; new rows for rule E, founder figures, complete packages and SiteIQ site scores by metro |
+| `p8fix/resume-studio` (`8b2c495`) | `829d733` | The provenance bullet did not say that the template's trace rate holds by construction | "(by construction for the template)" |
+| `p8fix/resume-studio` (`8b2c495`) | `1ccd1c9` | "when every startup-program rule must also hold" overstated a rate that checks only NSP-3.1 and NSP-8.1 | "when the SYNTHETIC startup program's equity and loan rules must also hold" |
+| `p8fix/resume-studio` (`8b2c495`) | `0b846fd` | A handoff checkpoint rate below 1.0, and a ranking file saying the metros are not the top five, were reported as "not measured" | The measured miss is quoted (rate, interval, n) or reported as what the file says |
+| `p8fix/resume-studio` (`8b2c495`) | `f48c467` | The S12 bullet quoted rule S alone, without the B0 caveat, and named SiteIQ as part of Studio although it scored a site only in the SYNTHETIC-metro scenarios | Rule E next to rule S, the fixed B0 caveat, SiteIQ named with its count; the bullet is left out without rule E |
+| `p8fix/resume-core` (`83bd196`) | `22fd31d` | A zero-width or flagged bootstrap interval was still printed as "bootstrap", unlike the README table | Exact, then Wilson, then the value with a note, as in the README table |
+| `p8fix/resume-core` (`83bd196`) | `231b97d` | The governance bullet ignored the verdict and the MISSING count, so a FAIL verdict caused by a MISSING row would still have printed | Verdict and all four counts; only a clean PASS is quoted |
+| `p8fix/resume-core` (`83bd196`) | `6b93885` | Invalid YAML in `config/contributions.yaml` gave a traceback, and a non-mapping top level or a misspelled key gave an empty result | `ContributionsError` and exit code 2; an empty or comments-only file stays valid |
+
+Then, on the main line:
+- `6fcfad9`: most of Studio's rule E figures are sections of the SYNTHETIC program and the Studio's own targets (724
+  of 821 in the second run's `evidence_coverage.studio_figures_by_status_kind_and_verdict`), which B0 by definition
+  never prints, so the resume caveat and the README rule S and rule E rows now say that the gap under both rules
+  follows mostly from the definitions. A bullet dropped because its core metric was measured but not quoted (a failing
+  release gate) no longer says "not measured".
+- `667db85`: S12 re-measured at `6fcfad9` with a clean tree.
+- `c7e389c`: the README regenerated at the re-measured results; the hand-written S12 status row states the B0 caveat
+  for both rules and the SiteIQ coverage.
+
+**What the fixes changed in the numbers.** Only S12 was re-measured; every other results file is unchanged, and so are
+the numbers in the Lender Desk bullets (the governance bullet's wording changed, not its counts). In S12, Studio's own
+shares did not change (rule S 12,222 of 14,410; rule E 821 of 14,410; founder figures 33 of 251 in both runs). B0
+printed 20 fewer figures: 1,296 instead of 1,316 (input figures 613 instead of 633,
+`evidence_coverage.figures_per_plan.baseline_b0_figures_by_group`), with the same 33 sourced, so its share went from
+0.0251 [0.0182, 0.0320] to 0.0255 [0.0185, 0.0325], and the rule S difference from 0.8231 [0.8118, 0.8352] to 0.8227
+[0.8113, 0.8347] and the rule E difference from 0.0319 [0.0259, 0.0380] to 0.0315 [0.0254, 0.0377]. The fix moved B0 up,
+in the baseline's favour; B0 is still a construction, not a sample of real plans, and both gaps still follow mostly from
+the definitions (section 6). The times changed because they are wall clock on a shared machine (median 7.199 seconds in
+the first run, 6.227 in the second). The first run's values are from its committed file (`b44b581`), the second's from
+`667db85`.
+
+**An honest note on the B0 fix.** It was found after the first results existed. The definitions file was not edited:
+it names the competitor-entry and one-off-shock sizes and gives the reason ("which only act when a shock happens"); it
+does not name the rate-shock size, which meets the same reason. The fix applies that stated reason to the third shock.
+Both runs are committed, so anyone can compare them.
+
+## 11. Limits, open items and the status of step 4
 
 **Step 4 is not done.** Final CI, the `v1.0` tag and the pull request wait for the owners. Before they do it:
 - run `make all` (or the producing targets) on their own machine and check that the numbers still match, as the build
   plan's "Notes for Rahul" says and the script repeats;
 - fill in `config/contributions.yaml` if they want per-person lines;
-- check that the documents the README links exist: `docs/INTERVIEW_GUIDE.md`, `docs/demo_script.md` and
-  `docs/studio/walkthrough_s12.md` were not yet committed at `1928a19`, when this walkthrough was written;
+- check that every document quoting S12 (the S12 walkthrough, the interview guide, the demo script) uses the
+  re-measured results of `667db85`, not the first run's;
 - check that CI is green on the final commit, then tag and open the PR with a summary and a results table.
 
 **Limits of the resume lines.**
@@ -452,14 +619,16 @@ These are checks, not metrics, so they are not in `results/*.json`.
   table's test is per file.
 - **The wording guard only knows its list.** It catches known bad phrases, not a misleading sentence built from
   allowed words. Caveats the bullets do not carry, which you must say when you quote them:
-  - the provenance bullet's 1,673 of 1,673 traced narrative numbers is by construction for the template writer and
-    was measured before the S4 review fixes; after them, the 6 SYNTHETIC-city scenarios gave 285 of 285
+  - the provenance bullet's 1,673 of 1,673 traced narrative numbers (the bullet says "by construction for the
+    template") was measured before the S4 review fixes; after them, the 6 SYNTHETIC-city scenarios gave 285 of 285
     (`studio_evidence_metrics_synthetic.json`) and the 30 real-city scenarios were not re-run (README status row, S4
     walkthrough);
   - "0 untraced numbers among 30,681" is partly by construction too: every printed number is a claim by design, so
     the audit guards against regressions (S6 walkthrough);
-  - the S12 rule S gap (0.8482 against 0.0251) is mostly a consequence of the definitions; rule E gives 0.0570
-    against 0.0251 (section 6).
+  - the S12 bullet carries the B0 caveat, but not the founder-figure result: on the one population both plans share,
+    the founder's typed figures backed by a document, Studio and B0 are equal by construction (0.1315 both);
+  - the S12 median time is wall clock on a shared machine and varies by run (7.199 seconds in the first run, 6.227 in
+    the second); do not compare it across machines.
 - **Provenance of the results files.** Many results files the bullets read were written from a working tree with
   uncommitted changes (README, Limitations), so their commit alone does not pin the code. Re-run before quoting.
 - **Hard-coded key paths.** If a producing script renames a key, the clause is dropped with a reason rather than
@@ -477,7 +646,7 @@ These are checks, not metrics, so they are not in `results/*.json`.
 - No live URL and no demo GIF (Prompt S12 asked for both): the Space is not deployed. The screenshots were taken on a
   local container.
 
-## 11. Regulatory references
+## 12. Regulatory references
 
 Only one regulatory reference appears in the Phase 8 output: the credit bullet's "aligned to the structure of SR 26-2"
 and its footnote.
@@ -496,15 +665,17 @@ Applicability depends on the institution and its risk profile. This project is a
 program: the model card follows the structure of the guidance, and nothing claims compliance with it. The wording guard
 rejects "compliant" and the superseded "SR 11-7".
 
-## 12. Likely interview questions
+## 13. Likely interview questions
 
 1. **How do you know every number in a resume bullet is real?**
    The script never computes a metric. Each clause reads one entry of a results file and prints the value with the
    interval written next to it, at 4 decimals; the most it does is count or pick (a list length, the lowest and
    highest of a set). If the entry is missing, has no interval, or the file says "not measured", the clause is dropped
-   and stderr says why. A test collects every number in every bullet and checks that it appears in the results
-   folder, on a fixture folder and on the committed `results/`. Two honest gaps: that test is folder-wide, not per
-   source file, and it lets any whole number from 0 to 10 through. And the script itself tells you to re-run the
+   and stderr says why. The interval is chosen like the README table's: a zero-width bootstrap interval (as when every
+   case passes) is replaced by the exact or Wilson interval in the file, and with neither the value is printed with a
+   note, never as [1.0000, 1.0000]. A test collects every number in every bullet and checks that it appears in the
+   results folder, on a fixture folder and on the committed `results/`. Two honest gaps: that test is folder-wide, not
+   per source file, and it lets any whole number from 0 to 10 through. And the script itself tells you to re-run the
    producing scripts on your own machine before you put a number on a resume.
 
 2. **Why don't you quote the next-best-evidence top-3 accuracy?**
@@ -524,26 +695,38 @@ rejects "compliant" and the superseded "SR 11-7".
    changed by injected text by construction, enforced by 17 containment tests. That last part is a design property
    checked by tests, not a measured rate.
 
-4. **The template mentions cost, p95, a cloud and infrastructure as code. Where did they go?**
-   None of them was measured. `agent_metrics.json` says the cost was not measured because no LLM provider was used,
-   and tracing spans were created but not exported. The deployment and web results files only list a local container,
-   and a local container is not a deployment; the Hugging Face Space has not been deployed. So those clauses are on
-   stderr with their reasons, and the wording guard would reject "deploy", "cloud", "$" and "p95" anyway. The
-   governance bullet quotes what was measured: the release gate (15 rows; 11 pass, 0 fail, 4 not measured in the
-   latest run) and the drift monitor's validation on SIMULATED streams.
+4. **The templates mention stress tests, cost, p95, a cloud and infrastructure as code. Where did they go?**
+   None of them was measured. `risk_metrics.json` has no stress-test result for either model, so the credit bullet
+   names the one-feature scenario sanity checks that are in the file, and the insurance bullet quotes a measured check
+   instead: expected loss observed / predicted 1.0185 [0.9569, 1.0822] on the test split, an interval that includes 1.
+   `agent_metrics.json` says the cost was not measured because no LLM provider was used, and tracing spans were
+   created but not exported. The deployment and web results files only list a local container, and a local container
+   is not a deployment; the Hugging Face Space has not been deployed. So those clauses are on stderr with their
+   reasons, and the wording guard would reject "deploy", "cloud", "$" and "p95" anyway. The governance bullet quotes
+   what was measured: the release gate (15 rows; verdict PASS, 11 pass, 0 fail, 0 missing, 4 not measured in the
+   latest run) and the drift monitor's validation on SIMULATED streams. If the verdict were not PASS, the bullet would
+   be left out with the verdict on stderr.
 
 5. **Why do per-person lines come from a YAML file and not git history?**
    Git history cannot say who built what here. Claude Code is the implementer, so almost every commit is authored by
    "Claude", and the owners' work (specs, build prompts, evaluation protocol, reviews) is not commit authorship.
    Counting commits would either credit the implementer with everything or invent a split. So the owners list their
    components in `config/contributions.yaml`, and the script prints the shared bullet for each listed component, marks
-   joint ones, and refuses unknown ids. The file is empty until the owners fill it in, and a test checks that.
+   joint ones, and refuses unknown ids. A malformed file, such as a misspelled `owner:` key, stops the script with
+   exit code 2 instead of quietly printing nothing. The file is empty until the owners fill it in, and a test checks
+   that.
 
-6. **What happened to the stress tests in the credit and insurance templates?**
-   There is no stress-test result for either model in `risk_metrics.json`, so the clause is dropped and stderr says
-   so. The credit bullet names the one-feature scenario sanity checks that are in the file. The insurance bullet quotes
-   a measured check instead: expected loss observed / predicted 1.0185 [0.9569, 1.0822] on the test split, which says
-   the frequency-times-severity pair is about right on average, with an interval that includes 1.
+6. **After the first S12 run you changed B0's code and measured again. Isn't that moving the baseline after seeing
+   the result?**
+   The written definition did not move: `s12_baseline.md` was committed before the S12 script and has not changed,
+   and both runs record the same SHA-256 for it. The review found that the code did not follow it. The file leaves out
+   of B0 the inputs a one-forecast plan does not use, naming the competitor-entry and one-off-shock sizes "which only
+   act when a shock happens"; the code also had to leave out the rate-shock size, which meets the same reason but is
+   not named, and it did not, so in 20 of the 36 scenarios B0 printed the size of a rate rise as an unsourced input.
+   Removing those 20 figures moved B0 from 33 of 1,316 (0.0251) to 33 of 1,296 (0.0255): up, in the baseline's
+   favour, and Studio's own shares did not change. Both runs are committed (`b44b581`, `667db85`), so anyone can
+   compare them. The caveat did not change either: B0 is a construction, and the gap under both rules follows mostly
+   from the definitions.
 
 7. **Why "aligned to the structure of SR 26-2", with a footnote?**
    SR 26-2 is the April 17, 2026 interagency guidance on model risk management that replaced SR 11-7. It is guidance,
@@ -558,23 +741,30 @@ rejects "compliant" and the superseded "SR 11-7".
    is 0.6889 [0.5476, 0.8182] on only 45 test true matches. SiteIQ beats its single-factor baseline for 1 of 6
    business types and is worse for 1. The path search finds a change for 0.1026 of the SYNTHETIC plans that need one.
    The feasibility bands cover 0.6211 of months when the model is wrong, against 0.7984 expected for a correct model.
-   In an interview, a weak result you can explain is worth more than a perfect number nobody believes.
+   And a measured miss is never relabelled: if the handoff checkpoint rate fell below 1.0, the bullet would print it
+   with its interval instead of calling it "not measured". In an interview, a weak result you can explain is worth
+   more than a perfect number nobody believes.
 
 9. **How does the README headline table pick an interval, and what do its tests check?**
    It uses the interval the file records. The bootstrap interval comes first, unless it has zero width (as when every
    case passes) or the file flags it as degenerate or too narrow; then the exact Clopper-Pearson interval, marked
    "exact"; then a Wilson interval, marked "Wilson"; otherwise the value with a note that no other interval is
-   recorded. Smoke runs show counts only. The tests check
-   that every number in a row appears in that row's own source file, that nothing marked "not measured" is printed as
-   a number, that "not measured" reasons come from the file, and that SYNTHETIC or SIMULATED rows say so. Another test
-   checks that the committed README equals a fresh render.
+   recorded. The resume lines use the same order, and a test compares the two. A value the file records as null is not
+   reported as a missing key: the row prints the reason the file records next to it. Smoke runs show counts only. The
+   tests check that every number in a row appears in that row's own source file, that nothing marked "not measured" is
+   printed as a number, that "not measured" reasons come from the file, and that SYNTHETIC or SIMULATED rows say so.
+   Another test checks that the committed README equals a fresh render.
 
-10. **What does the S12 result 0.8482 against 0.0251 mean, and how do you quote it honestly?**
-    It is the share of printed figures that carry a checkable source: the Studio package against a baseline plan B0
-    made from the same SYNTHETIC inputs without SiteIQ, the simulation and the ledger, on 36 SYNTHETIC scenarios.
-    B0 was defined in writing before the first run, and it is a construction, not real founders' plans. The results
-    file itself says most of the gap comes from the definitions: Studio gets credit for model estimates and
-    calculations because the ledger records them. Under the stricter rule E (a document page, a public-data row or a
-    program or target section only) it is 0.0570 against 0.0251. So say: the ledger makes most figures traceable to a
-    run, a formula or a source, and the gain in figures backed by outside evidence is much smaller. The 7.199-second median is machine
-    time from inputs to an audited PDF, not a user's time.
+10. **What does the S12 result 0.8482 against 0.0255 mean, and how do you quote it honestly?**
+    It is the share of printed figures that carry a checkable source (rule S): the Studio package against a baseline
+    plan B0 built from the same SYNTHETIC inputs and documents without SiteIQ, the simulation and the ledger, on 36
+    SYNTHETIC scenarios. B0 was defined in writing before the first run, and it is a construction, not real founders'
+    plans. Most of the gap comes from the definitions: Studio gets credit for model estimates and calculations because
+    the ledger records them. The stricter rule E (a document page, a public-data row or a program or target section)
+    gives 0.0570 against 0.0255, and that gap also follows mostly from the definitions: 724 of Studio's 821 rule E
+    figures are sections of the SYNTHETIC startup program or the Studio's own targets, which B0 never prints. On the
+    one population both share, the founder's typed figures backed by a document, they are equal by construction:
+    0.1315 for both. So say: the ledger makes most figures traceable to a run, a formula or a source; the comparison
+    with B0 mostly restates the definitions and says nothing about real founders. SiteIQ scored a site in only 6 of
+    the 36 scenarios (the SYNTHETIC metro), and the bullet says so. The 6.227-second median is machine wall clock from
+    inputs to an audited PDF on a shared machine (the first run recorded 7.199), not a user's time.
