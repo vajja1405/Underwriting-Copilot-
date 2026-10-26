@@ -677,3 +677,12 @@ resume-lines-test:  ## Resume-lines tests only (offline; fixture results folder 
 
 studio-business-metrics:  ## S12 business metrics on the 36 golden SYNTHETIC scenarios -> results/studio_business_metrics.json
 	uv run python scripts/eval_studio.py $(ARGS)
+
+# Phase 8, README results table track: the headline table at the end of the README RESULTS block (one row per
+# headline metric of each results file the Status tables cite, with its interval and source file). `make reports`
+# renders it (scripts/render_reports.py, src/uwcopilot/governance/readme_headlines.py); no new script. The tests are
+# offline: every number in a row must appear in that row's own results file.
+.PHONY: readme-headlines-test
+
+readme-headlines-test:  ## README headline table tests only (offline; hand-made results and the committed results)
+	uv run pytest -q tests/governance/test_readme_headlines.py tests/test_render_reports.py

@@ -26,6 +26,12 @@ results/docintel_metrics.json; load_report_data puts them under the keys "eviden
 next to the risk sections. The model cards, the validation report and the walkthrough read only
 results/risk_metrics.json.
 
+After those rows (which stay as they are), the README block ends with the Phase 8 headline table: one row per
+headline metric of every other results file the README Status tables cite (agent, KYC, RAG, MCP, provenance,
+injection, governance, Founder Studio, web and deployment), each with its interval and its source file.
+src/uwcopilot/governance/readme_headlines.py builds it; load_report_data puts those files under the key
+"readme_headline_sources" (read from --headline-results-dir, default results/).
+
 A share whose bootstrap interval is degenerate (every resample gives the same share, as for a 100% metric) is shown
 with its exact Clopper-Pearson interval, labelled "exact", because a zero-width bootstrap interval overstates the
 certainty (share_interval).
@@ -49,6 +55,8 @@ from uwcopilot.common.paths import DOCS_DIR, REPO_ROOT, RESULTS_DIR
 from uwcopilot.governance.packs import load_pack_sources
 from uwcopilot.governance.packs_bank import render_bank_model_risk
 from uwcopilot.governance.packs_insurance import render_insurance_ai_program
+from uwcopilot.governance.readme_headlines import headline_section
+from uwcopilot.governance.readme_headlines import load_sources as load_headline_sources
 from uwcopilot.risk.bands import BAND_LABELS, BAND_QUANTILES
 from uwcopilot.risk.credit import LIMITATIONS as CREDIT_CODE_LIMITATIONS
 from uwcopilot.risk.credit import MIN_AUC_GAIN_FOR_LIGHTGBM, REASON_CODE_REFERENCES
@@ -64,6 +72,8 @@ DOCINTEL_RESULTS_PATH = RESULTS_DIR / "docintel_metrics.json"
 # sections, so lookup adds no "results").
 EVIDENCE_KEY = "evidence_metrics"
 DOCINTEL_KEY = "docintel_metrics"
+# The key load_report_data puts the headline table's results files under ({file name under results/: parsed JSON}).
+HEADLINES_KEY = "readme_headline_sources"
 MODEL_CARDS_DIR = DOCS_DIR / "model_cards"
 README_PATH = REPO_ROOT / "README.md"
 WALKTHROUGH_TEMPLATE = DOCS_DIR / "templates" / "walkthrough_phase1.md"
@@ -1851,7 +1861,8 @@ def validation_report(data: Mapping[str, Any]) -> str:
 
 
 def readme_block(data: Mapping[str, Any]) -> str:
-    """The table between the RESULTS markers."""
+    """The table between the RESULTS markers, followed by the headline table when data holds its results files
+    (data[HEADLINES_KEY], added by load_report_data)."""
     pf = lookup(data, "insurance_frequency.preferred_model.name")
     ps = lookup(data, "insurance_severity.preferred_model.name")
     credit_auc = (
@@ -1927,6 +1938,8 @@ def readme_block(data: Mapping[str, Any]) -> str:
         "",
         EVIDENCE_NOTE,
     ]
+    if HEADLINES_KEY in data:
+        lines += ["", *headline_section(data[HEADLINES_KEY])]
     return "\n".join(lines)
 
 
@@ -2251,14 +2264,18 @@ def load_report_data(
     results_path: Path = RESULTS_PATH,
     evidence_path: Path = EVIDENCE_RESULTS_PATH,
     docintel_path: Path = DOCINTEL_RESULTS_PATH,
+    headline_results_dir: Path | None = RESULTS_DIR,
 ) -> dict[str, Any]:
     """The risk results, with results/evidence_metrics.json under EVIDENCE_KEY and results/docintel_metrics.json
-    under DOCINTEL_KEY when those files exist."""
+    under DOCINTEL_KEY when those files exist, and the headline table's results files (those that exist under
+    headline_results_dir) under HEADLINES_KEY. headline_results_dir=None leaves the headline table out."""
     data = dict(read_results(results_path))
     if evidence_path.exists():
         data[EVIDENCE_KEY] = read_results(evidence_path)
     if docintel_path.exists():
         data[DOCINTEL_KEY] = read_results(docintel_path)
+    if headline_results_dir is not None:
+        data[HEADLINES_KEY] = load_headline_sources(headline_results_dir)
     return data
 
 
@@ -2270,10 +2287,11 @@ def write_reports(
     walkthrough_path: Path = WALKTHROUGH_PATH,
     evidence_path: Path = EVIDENCE_RESULTS_PATH,
     docintel_path: Path = DOCINTEL_RESULTS_PATH,
+    headline_results_dir: Path = RESULTS_DIR,
 ) -> list[Path]:
     """Render everything from results_path (and evidence_path / docintel_path for the README's Phase 4 and Phase 2
-    rows) and write the files. Returns the paths written."""
-    data = load_report_data(results_path, evidence_path, docintel_path)
+    rows, headline_results_dir for its headline table) and write the files. Returns the paths written."""
+    data = load_report_data(results_path, evidence_path, docintel_path, headline_results_dir)
     template = (
         walkthrough_template.read_text(encoding="utf-8")
         if walkthrough_template is not None and walkthrough_template.exists()
@@ -2324,6 +2342,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--evidence-path", type=Path, default=EVIDENCE_RESULTS_PATH)
     parser.add_argument("--docintel-path", type=Path, default=DOCINTEL_RESULTS_PATH)
     parser.add_argument(
+        "--headline-results-dir",
+        type=Path,
+        default=RESULTS_DIR,
+        help="where the README headline table reads its results files",
+    )
+    parser.add_argument(
         "--packs-results-dir", type=Path, default=RESULTS_DIR, help="where the governance packs read results files"
     )
     parser.add_argument("--governance-dir", type=Path, default=GOVERNANCE_DOCS_DIR, help="where the packs are written")
@@ -2344,6 +2368,7 @@ def main(argv: list[str] | None = None) -> int:
             args.readme,
             evidence_path=args.evidence_path,
             docintel_path=args.docintel_path,
+            headline_results_dir=args.headline_results_dir,
         )
     written += write_governance_packs(args.packs_results_dir, args.governance_dir)
     for path in written:
