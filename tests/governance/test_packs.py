@@ -472,6 +472,16 @@ def test_both_packs_state_applicability_demonstration_and_data() -> None:
         assert "SR 11-7-style" not in body, name
 
 
+def test_data_statement_does_not_deny_the_real_records_in_the_public_data() -> None:
+    """Lending Club, freMTPL2 and German Credit are de-identified records of real loans and policies, and the
+    sanctions lists name real persons: the statement says so instead of 'no real applicant is involved'."""
+    statement = packs.DATA_STATEMENT
+    assert "No real applicant" not in statement
+    assert "de-identified records of real loans, credit applicants and motor policies" in statement
+    assert "name real sanctioned persons and entities" in statement
+    assert "every decision here is SYNTHETIC or SIMULATED" in statement
+
+
 def test_bank_pack_cites_sr_26_2_and_governs_genai_separately() -> None:
     bank = render_bank_model_risk({})
     assert "SR 26-2 / OCC Bulletin 2026-13 / FDIC FIL-15-2026" in bank and "April 17, 2026" in bank

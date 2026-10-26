@@ -110,8 +110,10 @@ APPLICABILITY = (
 DATA_STATEMENT = (
     "All data are public (Lending Club, freMTPL2 from OpenML 41214/41215, UCI Statlog German Credit, the OFAC SDN list "
     "and OpenSanctions) or SYNTHETIC / SIMULATED (the document packets, the agent applications, the reviewer "
-    "decisions, the monitoring stream's drift, the champion/challenger loans and their outcomes). No real applicant, "
-    "policyholder, reviewer or decision is involved."
+    "decisions, the monitoring stream's drift, the champion/challenger loans and their outcomes). The public loan and "
+    "policy datasets are de-identified records of real loans, credit applicants and motor policies; the OFAC SDN list "
+    "and OpenSanctions name real sanctioned persons and entities and are used only as screening references. Every "
+    "application the agent screens, every reviewer and every decision here is SYNTHETIC or SIMULATED."
 )
 
 # ---------------------------------------------------------------------------
