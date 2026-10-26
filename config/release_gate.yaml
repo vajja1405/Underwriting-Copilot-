@@ -210,7 +210,8 @@ gate:
     - id: llm_citation_accuracy
       title: LLM memo citation accuracy
       file: agent_metrics.json
-      value_path: llm_dependent.citation_accuracy
+      value_path: llm_dependent.citation_accuracy.value
+      ci_bound_path: llm_dependent.citation_accuracy.ci_low
       gate_on: value
       direction: higher_is_better
       kind: baseline_relative
@@ -219,11 +220,16 @@ gate:
       why_critical: >-
         A memo that cites the wrong guideline misleads the human reviewer. Not measured while no LLM has been run; the
         gate lists it as NOT_MEASURED and never fills in a value.
+      note: >-
+        When an LLM is run, scripts/eval_agent.py writes this metric as a block {value, ci_low, ci_high, n}
+        (agent/evaluation.py, rate()), so the paths name the number inside it. Until then the metric is the text
+        "not measured: ...", and a path that meets that text on the way is read as NOT_MEASURED.
 
     - id: llm_unsupported_claim_rate
       title: LLM memo unsupported-claim rate
       file: agent_metrics.json
-      value_path: llm_dependent.unsupported_claim_rate
+      value_path: llm_dependent.unsupported_claim_rate.value
+      ci_bound_path: llm_dependent.unsupported_claim_rate.ci_high
       gate_on: value
       direction: lower_is_better
       kind: baseline_relative
@@ -232,6 +238,7 @@ gate:
       why_critical: >-
         Claims the evidence does not support are the main generative-AI failure in a memo. Not measured while no LLM
         has been run.
+      note: The same block shape as llm_citation_accuracy (rate() writes {value, ci_low, ci_high, n}).
 
     - id: docintel_citation_support_ci_low
       title: Document extraction (rules extractor) citation support, lower bound of the 95% CI

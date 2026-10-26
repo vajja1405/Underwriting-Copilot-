@@ -17,6 +17,7 @@ import pytest
 from pydantic import ValidationError
 
 import release_gate as release_gate_script
+from uwcopilot.agent.evaluation import rate
 from uwcopilot.common.paths import CONFIG_DIR, RESULTS_DIR
 from uwcopilot.governance.freeze_proof import migration_section_sha256
 from uwcopilot.governance.migration_gate import load_migration_settings
@@ -288,6 +289,25 @@ def test_a_new_measurement_needs_a_reviewed_baseline_then_is_gated_per_layer(dir
     assert row_result(report, "injection_asr_l2").status == "FAIL"
     assert row_result(report, "injection_asr_l1").status == "PASS"
     assert row_result(report, "injection_asr_l2").current["ci_bound"].value == pytest.approx(0.089)
+
+
+def test_measured_llm_metrics_are_read_from_their_rate_block(dirs: tuple[Path, Path], settings) -> None:
+    # A real LLM run writes rate() blocks {value, ci_low, ci_high, n}; the rows used to point at the block itself and
+    # FAILed as "a dict, not a number" even against a baseline made from the same file.
+    results_dir, baseline_dir = dirs
+    agent_file = results_dir / "agent_metrics.json"
+    set_path(agent_file, "llm_dependent.citation_accuracy", rate([True] * 18 + [False] * 2))
+    set_path(agent_file, "llm_dependent.unsupported_claim_rate", rate([0.0] * 19 + [1.0]))
+    update_baseline(settings, results_dir, baseline_dir, repo_root=results_dir)
+    report = evaluate_gate(settings, results_dir, baseline_dir)
+    citation = row_result(report, "llm_citation_accuracy")
+    unsupported = row_result(report, "llm_unsupported_claim_rate")
+    assert citation.status == "PASS" and citation.current["value"].value == pytest.approx(0.9)
+    assert citation.current["ci_bound"].state == "measured"  # the lower bound is reported next to the value
+    assert unsupported.status == "PASS" and unsupported.current["value"].value == pytest.approx(0.05)
+    assert report.verdict == "PASS"
+    set_path(agent_file, "llm_dependent.citation_accuracy", rate([True] * 17 + [False] * 3))  # 0.85 < 0.9 - 0.02
+    assert row_result(evaluate_gate(settings, *dirs), "llm_citation_accuracy").status == "FAIL"
 
 
 def test_both_not_measured_is_listed_and_does_not_block(dirs: tuple[Path, Path], settings) -> None:
