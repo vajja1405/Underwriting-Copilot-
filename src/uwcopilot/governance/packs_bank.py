@@ -76,7 +76,10 @@ def sr_26_2_rows(sources: Mapping[str, Any]) -> list[tuple[str, str, str]]:
     them. The monitoring, outcomes and change-management rows say "not measured yet" until their sections exist."""
     outcomes = run_status(sources, "outcomes", "SYNTHETIC outcomes joined to SIMULATED decisions (section 5)")
     monitoring = run_status(
-        sources, "monitoring", "SIMULATED stream on freMTPL2; the credit model is not monitored (data absent)"
+        sources,
+        "monitoring",
+        "SIMULATED stream on a separate demonstration freMTPL2 GLM only (input, score and calibration drift; no "
+        "discrimination metric); none of the inventory models (section 1) is monitored",
     )
     challenger = run_status(sources, "champion_challenger", "SYNTHETIC champion/challenger compared (section 6)")
     gate = run_status(sources, "release_gate", "release gate run against the reviewed baseline (section 6)")
@@ -319,9 +322,13 @@ def monitoring_section(sources: Mapping[str, Any]) -> list[str]:
     return [
         "## 4. Ongoing monitoring",
         "",
-        "The plan per model (population stability, calibration, discrimination, overrides) is in each model card. "
-        "Phase 6 runs it on a SIMULATED stream: every threshold is in `config/monitoring.yaml`; a breach writes an "
-        "alert record and marks the monitored model `under_review` in the model status registry.",
+        "The plan per model (population stability, calibration, discrimination, overrides) is in each model card; it "
+        "is not run for any inventory model. Phase 6 demonstrates input drift, score drift and calibration checks "
+        "(no discrimination metric) on a SIMULATED stream for a separate demonstration GLM trained by "
+        "`scripts/monitor.py`, which is not an inventory model (section 1 lists it with the Phase 6 demonstrations). "
+        "Every threshold is in "
+        "`config/monitoring.yaml`; a breach writes an alert record and marks the monitored model `under_review` in "
+        "the model status registry.",
         "",
         *monitoring_block(sources),
     ]

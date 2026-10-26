@@ -501,12 +501,28 @@ def test_map_rows_follow_the_sections() -> None:
     present = {row[0]: row[2] for row in sr_26_2_rows(full_sources())}
     monitoring = "V. Ongoing model monitoring"
     assert absent[monitoring].startswith("not measured yet (`make monitor`)")
-    assert present[monitoring].startswith("SIMULATED stream on freMTPL2")
+    assert present[monitoring].startswith("SIMULATED stream on a separate demonstration freMTPL2 GLM only")
     assert absent.keys() == present.keys()
     risk_row = [row for row in naic_rows({}) if row[0] == "Risk management and internal controls"][0]
-    assert "Monitoring on a SIMULATED stream: not measured yet (`make monitor`)" in risk_row[2]
+    assert "of the extraction and the agent: not measured yet (`make monitor`)" in risk_row[2]
     risk_row = [row for row in naic_rows(full_sources()) if row[0] == "Risk management and internal controls"][0]
     assert "measured (section 3)" in risk_row[2]
+
+
+def test_packs_say_no_inventory_model_is_monitored() -> None:
+    """P6-PACKS-1: the monitor watches its own demonstration GLM with no discrimination metric; the packs must not
+    read as if the inventory models (or the frequency and severity models in scope) were monitored."""
+    present = {row[0]: row[2] for row in sr_26_2_rows(full_sources())}
+    row = present["V. Ongoing model monitoring"]
+    assert "none of the inventory models (section 1) is monitored" in row and "no discrimination metric" in row
+    bank = render_bank_model_risk(full_sources())
+    assert "Phase 6 runs it" not in bank
+    assert "it is not run for any inventory model" in bank
+    assert "separate demonstration GLM trained by `scripts/monitor.py`, which is not an inventory model" in bank
+    program = render_insurance_ai_program(full_sources())
+    assert "not the frequency or severity model of section 1 (neither of those is monitored)" in program
+    risk_row = [row for row in naic_rows(full_sources()) if row[0] == "Risk management and internal controls"][0]
+    assert "the frequency and severity models are not monitored; no discrimination metric" in risk_row[2]
 
 
 # ---------------------------------------------------------------------------

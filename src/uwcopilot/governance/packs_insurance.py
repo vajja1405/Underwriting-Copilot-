@@ -85,8 +85,9 @@ def naic_rows(sources: Mapping[str, Any]) -> list[tuple[str, str, str]]:
         (
             "Risk management and internal controls",
             "3. Risk management and internal controls",
-            "Validation measured on public data (developer testing). Monitoring on a SIMULATED stream: "
-            f"{monitoring}. Release gate: {gate}.",
+            "Validation measured on public data (developer testing). Monitoring of a separate demonstration GLM on a "
+            "SIMULATED stream (the frequency and severity models are not monitored; no discrimination metric), plus "
+            f"single-value indicators of the extraction and the agent: {monitoring}. Release gate: {gate}.",
         ),
         (
             "Third-party AI systems",
@@ -253,8 +254,10 @@ def risk_management_section(sources: Mapping[str, Any]) -> list[str]:
         "",
         "### Ongoing monitoring",
         "",
-        "The Phase 6 monitor watches a freMTPL2 claim-frequency GLM on a SIMULATED stream (thresholds in "
-        "`config/monitoring.yaml`; a breach writes an alert record and marks the model `under_review`):",
+        "The Phase 6 monitor watches a separate demonstration freMTPL2 claim-frequency GLM trained by "
+        "`scripts/monitor.py`, not the frequency or severity model of section 1 (neither of those is monitored). It "
+        "checks input drift, score drift and calibration on a SIMULATED stream, with no discrimination metric "
+        "(thresholds in `config/monitoring.yaml`; a breach writes an alert record and marks the model `under_review`):",
         "",
         *monitoring_block(sources),
         "",
