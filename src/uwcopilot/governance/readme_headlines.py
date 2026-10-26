@@ -770,6 +770,29 @@ def coverage_pair_text(studio: Any, baseline: Any) -> str:
     return f"{interval_text(studio)} vs {interval_text(baseline)}"
 
 
+def founder_figures_text(studio: Any, baseline: Any, expected: Any) -> str:
+    """The founder-figure pair and the result the file says was expected before measuring:
+    '0.1315 [0.0958, 0.1693] (33/251) vs 0.1315 [0.0958, 0.1693] (33/251); expected equal by construction: ...'."""
+    return f"{coverage_pair_text(studio, baseline)}; {expected}"
+
+
+def site_scored_text(this_run: Any, note: Any) -> str:
+    """Per metro, the scenarios whose package had a SiteIQ site score in this run, then the file's note:
+    'synthetic_metro 6/6, chicago_il_in 0/6, ...; depends on which metro snapshots exist on the machine ...'."""
+    if not isinstance(this_run, Mapping) or not this_run:
+        return not_measured(NO_VALUE)
+    counts = []
+    for metro, observed in this_run.items():
+        if not isinstance(observed, Mapping):
+            return not_measured(NO_VALUE)
+        scored = observed.get("site_scored")
+        scenarios = observed.get("scenarios")
+        if not (is_number(scored) and is_number(scenarios)):
+            return not_measured(NO_VALUE)
+        counts.append(f"{metro} {integer(scored)}/{integer(scenarios)}")
+    return f"{', '.join(counts)}; {note}"
+
+
 def llm_cost_text(cost: Any, basis: Any) -> str:
     """'0 USD (0 by construction: ...)', the recorded basis cut to its first clause."""
     return f"{integer(cost)} USD ({short_reason(str(basis))})"
@@ -777,9 +800,24 @@ def llm_cost_text(cost: Any, basis: Any) -> str:
 
 BUSINESS_COMPONENT = "Founder Studio end to end (Studio S12), golden SYNTHETIC founder scenarios"
 RULE_S = "headline.evidence_coverage_rule_s"
+RULE_E = "headline.evidence_coverage_rule_e"
+FOUNDER_FIGURES = "headline.founder_figures_backed_by_a_document"
+SITE_SCORED = "data_coverage_by_metro.this_run"
 # The LLM cost is null when a package's narrative was not the template; the basis next to it then says why.
 LLM_COST_PATH = "cost_per_package.llm_cost_usd_per_package"
 LLM_COST_BASIS_PATH = "cost_per_package.llm_cost_basis"
+# docs/studio/s12_baseline.md, section 2: how B0 is described, and what every row comparing Studio with B0 must say
+# (B0's sources follow from its definition). The rule S caveat is the "Reading" of metric M2 there.
+B0_DESCRIPTION = (
+    "baseline B0, a plan made without SiteIQ, the simulation and the ledger from the same SYNTHETIC inputs and "
+    "documents (a construction, not a sample of real plans)"
+)
+B0_BY_DEFINITION = "B0's sources follow from its definition, not from how real founders write plans"
+RULE_S_CAVEAT = (
+    "Most of the gap follows from the definitions, not from how real founders write plans: model estimates and "
+    "calculations count for Studio because its ledger records their run or formula and inputs, and B0 prints no such "
+    "record. The rule E and founder-figure rows show the comparison without that credit"
+)
 STUDIO_BUSINESS_SPECS: tuple[Spec, ...] = (
     one_path(
         BUSINESS_COMPONENT,
@@ -787,14 +825,50 @@ STUDIO_BUSINESS_SPECS: tuple[Spec, ...] = (
         "headline.time_to_complete_package_median_s",
         seconds_text,
     ),
+    one_path(
+        BUSINESS_COMPONENT,
+        "Scenarios with a complete package: an audited PDF, no untraced number in the package or PDF text, every "
+        "page labelled",
+        "time_to_complete_package.complete_packages",
+    ),
     Spec(
         BUSINESS_COMPONENT,
-        "Printed figures with a checkable source (rule S): Studio vs baseline B0, a plan made without SiteIQ, the "
-        "simulation and the ledger",
+        "Scenarios whose Studio package had a SiteIQ site score in this run, by metro (scored/scenarios)",
+        (SITE_SCORED, "data_coverage_by_metro.this_run_note"),
+        site_scored_text,
+    ),
+    Spec(
+        BUSINESS_COMPONENT,
+        f"Printed figures with a checkable source (rule S): Studio vs {B0_DESCRIPTION}. {RULE_S_CAVEAT}",
         (f"{RULE_S}.studio", f"{RULE_S}.baseline_b0"),
         coverage_pair_text,
     ),
-    one_path(BUSINESS_COMPONENT, "Rule S share, Studio minus baseline B0", f"{RULE_S}.difference"),
+    one_path(
+        BUSINESS_COMPONENT,
+        "Rule S share, Studio minus B0, paired over scenarios (most of the gap follows from the definitions, not "
+        "from how real founders write plans)",
+        f"{RULE_S}.difference",
+    ),
+    Spec(
+        BUSINESS_COMPONENT,
+        "Printed figures backed by a document page, a public-data row or a program or target section (rule E, "
+        "stricter: model estimates, calculations, assumptions and founder statements do not count): Studio vs B0, "
+        f"whose only sources are the founder's documents. {B0_BY_DEFINITION}",
+        (f"{RULE_E}.studio", f"{RULE_E}.baseline_b0"),
+        coverage_pair_text,
+    ),
+    one_path(
+        BUSINESS_COMPONENT,
+        f"Rule E share, Studio minus B0, paired over scenarios ({B0_BY_DEFINITION})",
+        f"{RULE_E}.difference",
+    ),
+    Spec(
+        BUSINESS_COMPONENT,
+        "The founder's typed plan and loan figures backed by a document, one population for both: Studio vs B0. "
+        f"{B0_BY_DEFINITION}",
+        (f"{FOUNDER_FIGURES}.studio", f"{FOUNDER_FIGURES}.baseline_b0", f"{FOUNDER_FIGURES}.expected"),
+        founder_figures_text,
+    ),
     Spec(
         BUSINESS_COMPONENT,
         "Language-model cost per package",

@@ -17,7 +17,12 @@ import pytest
 from test_render_reports import displayed_forms, json_leaves, numbers_in, without_json_strings
 from uwcopilot.governance import readme_headlines as headlines
 from uwcopilot.governance.packs import lookup
-from uwcopilot.studio.business_metrics.report import LLM_COST_NOT_REPORTED, cost_per_package
+from uwcopilot.studio.business_metrics.report import (
+    EQUAL_BY_CONSTRUCTION,
+    LLM_COST_NOT_REPORTED,
+    USABILITY,
+    cost_per_package,
+)
 
 REPO = Path(__file__).resolve().parents[2]
 RESULTS = REPO / "results"
@@ -130,6 +135,58 @@ def wilson(k: int, n: int, low: float, high: float) -> dict[str, Any]:
     return {"k": k, "n": n, "rate": k / n, "wilson_ci95": [low, high]}
 
 
+def share(value: float, low: float, high: float, k: int, n: int) -> dict[str, Any]:
+    """A pooled share with its scenario-bootstrap interval, as the S12 evaluation writes it."""
+    return {"value": value, "ci_low": low, "ci_high": high, "k": k, "n": n, "scenarios": 7}
+
+
+def studio_business_source() -> dict[str, Any]:
+    """results/studio_business_metrics.json in the shape scripts/eval_studio.py writes (7 SYNTHETIC scenarios)."""
+    baseline = share(0.04447, 0.03331, 0.05553, 9, 202)
+    founder = share(0.31113, 0.21117, 0.41119, 14, 45)
+    template_narratives = [{"narrative": {"no_llm_called": True, "provider": "template"}}] * 7
+    return {
+        "data_label": "SYNTHETIC",
+        "headline": {
+            "time_to_complete_package_median_s": {"value": 5.4321, "ci95": [4.9871, 6.1237], "n": 7},
+            "evidence_coverage_rule_s": {
+                "studio": share(0.81113, 0.80017, 0.82019, 1622, 2000),
+                "baseline_b0": baseline,
+                "difference": {"value": 0.76661, "ci_low": 0.75553, "ci_high": 0.77779, "scenarios": 7},
+            },
+            "evidence_coverage_rule_e": {
+                "studio": share(0.06661, 0.06113, 0.07219, 133, 2000),
+                "baseline_b0": baseline,
+                "difference": {"value": 0.02213, "ci_low": 0.01117, "ci_high": 0.03319, "scenarios": 7},
+            },
+            "founder_figures_backed_by_a_document": {
+                "studio": founder,
+                "baseline_b0": dict(founder),
+                "expected": EQUAL_BY_CONSTRUCTION,
+            },
+        },
+        "time_to_complete_package": {
+            "complete_packages": {
+                "value": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "n": 7,
+                "k": 7,
+                "wilson_ci95": [0.64567, 1.0],
+            }
+        },
+        "data_coverage_by_metro": {
+            "this_run": {
+                "synthetic_metro": {"scenarios": 4, "metro_modes": {"synthetic": 4}, "site_scored": 4},
+                "houston_tx": {"scenarios": 3, "metro_modes": {"limited": 3}, "site_scored": 0},
+            },
+            "this_run_note": "depends on which metro snapshots exist on the machine that ran the script",
+        },
+        "cost_per_package": cost_per_package(template_narratives),
+        "usability_test": {"status": USABILITY, "n": None, "protocol": None, "raw_times_s": None},
+    }
+
+
 def hand_made_sources() -> dict[str, Any]:
     """A few results files, in the shapes their scripts write, with values that appear nowhere else."""
     no_llm = "not measured: no LLM provider was used (no key configured); no LLM call was made"
@@ -189,6 +246,7 @@ def hand_made_sources() -> dict[str, Any]:
                 "llm_calls": 13,
             },
         },
+        headlines.STUDIO_BUSINESS: studio_business_source(),
         headlines.WEB: {
             "runs": {
                 "local-container": {
@@ -262,6 +320,49 @@ def test_a_run_on_a_handful_of_cases_shows_counts_only() -> None:
         "(ollama tiny-model-7, 13 calls)"
     )
     assert "[" not in row.value and "0.7143" not in row.value
+
+
+def business_rows() -> dict[str, headlines.Headline]:
+    """The S12 rows rendered from the hand-made file, keyed by the first JSON path each one reads."""
+    rows = [row for row in all_rows(hand_made_sources()) if row.source == headlines.STUDIO_BUSINESS]
+    return {row.paths[0]: row for row in rows}
+
+
+def test_rows_comparing_studio_with_b0_carry_the_baseline_caveat() -> None:
+    # docs/studio/s12_baseline.md: B0 is a construction, its sources follow from its definition (said wherever the
+    # comparison is shown), and most of the rule S gap follows from the definitions (M2 "Reading").
+    rows = business_rows()
+    rule_s = rows[f"{headlines.RULE_S}.studio"].metric
+    assert "a plan made without SiteIQ, the simulation and the ledger" in rule_s
+    assert "a construction, not a sample of real plans" in rule_s
+    assert "Most of the gap follows from the definitions" in rule_s
+    assert "rule E and founder-figure rows" in rule_s
+    compared = [row for row in rows.values() if "B0" in row.metric]
+    assert {row.paths[0] for row in compared} == {
+        f"{headlines.RULE_S}.studio",
+        f"{headlines.RULE_S}.difference",
+        f"{headlines.RULE_E}.studio",
+        f"{headlines.RULE_E}.difference",
+        f"{headlines.FOUNDER_FIGURES}.studio",
+    }
+    assert all("not from how real founders write plans" in row.metric for row in compared)
+
+
+def test_s12_rows_show_rule_e_the_founder_figures_site_scores_and_complete_packages() -> None:
+    rows = business_rows()
+    baseline = "0.0445 [0.0333, 0.0555] (9/202)"
+    assert rows[f"{headlines.RULE_S}.studio"].value == f"0.8111 [0.8002, 0.8202] (1,622/2,000) vs {baseline}"
+    assert rows[f"{headlines.RULE_E}.studio"].value == f"0.0666 [0.0611, 0.0722] (133/2,000) vs {baseline}"
+    assert rows[f"{headlines.RULE_E}.difference"].value == "0.0221 [0.0112, 0.0332]"
+    founder = "0.3111 [0.2112, 0.4112] (14/45)"
+    assert rows[f"{headlines.FOUNDER_FIGURES}.studio"].value == f"{founder} vs {founder}; {EQUAL_BY_CONSTRUCTION}"
+    complete = rows["time_to_complete_package.complete_packages"]
+    assert complete.value == "1.0000 [0.6457, 1.0000] (7/7, Wilson)"
+    # SiteIQ ran only where the machine had the metro's tracts: the row says so per metro, from the file.
+    assert rows[headlines.SITE_SCORED].value == (
+        "synthetic_metro 4/4, houston_tx 0/3; depends on which metro snapshots exist on the machine that ran the script"
+    )
+    assert headlines.site_scored_text({"houston_tx": {"scenarios": 3}}, "note") == "not measured (no value recorded)"
 
 
 def test_hand_made_rows_pass_every_check() -> None:
