@@ -21,7 +21,7 @@ is empty by design until the owners fill it in.
 **How to read the numbers in this guide.**
 - Every measured number is copied from a `results/*.json` file, named next to it (with the key where it helps). Rates
   are shown at 4 decimals, as the README prints them; the JSON holds full precision. A few values are shown as the
-  JSON prints them (for example `0.032`). Dates and figures in section 7 come from the primary sources as the build
+  JSON prints them (for example `0.842`). Dates and figures in section 7 come from the primary sources as the build
   plan (and, for OWASP, the S2 walkthrough) summarizes them.
 - Intervals are 95% intervals. Unless marked otherwise they are percentile bootstrap intervals: 1,000 resamples, seed
   42. "Wilson" marks a Wilson score interval and "exact" a Clopper-Pearson interval. Some files (SIG, the injection
@@ -210,9 +210,12 @@ I wrote the specs and evaluation protocol and reviewed the work; Claude Code imp
    DSCR meets the target" was 0.1405 [0.1321, 0.1493] against 0.4796 [0.4596, 0.4992] for a single forecast
    (`results/studio_feasibility_metrics.json`). In 36 SYNTHETIC packages, 30,681 printed numbers were read back and 0
    were untraced (`results/studio_handoff_metrics.json`). In the end-to-end evaluation on the same 36 SYNTHETIC
-   scenarios, against a baseline written before the first run, 0.8482 [0.8388, 0.8587] of printed figures had a checkable source against 0.0251 [0.0182,
-   0.0320] for the baseline, but most of that gap follows from the definitions; counting only outside evidence it is
-   0.0570 against 0.0251 (`results/studio_business_metrics.json`).
+   scenarios, against a baseline B0 written before the first run, 0.8482 [0.8388, 0.8587] of printed figures had a
+   checkable source (rule S) against 0.0255 [0.0185, 0.0325] for B0; counting only a document page, a public-data row
+   or a program or target section (rule E) it is 0.0570 [0.0545, 0.0597] against 0.0255. B0 is a construction from
+   the same SYNTHETIC inputs, not a sample of real plans, and both gaps follow mostly from the definitions: rule S
+   credits model runs and formulas, rule E program and target sections, and B0 prints neither
+   (`results/studio_business_metrics.json`).
 4. **What did not work (20 seconds).** SiteIQ beats a single-factor baseline for only 1 of 6 business types and is worse
    for 1 (`results/studio_siteiq_metrics.json`). A local 1.5B model never wrote a narrative that passed the grammar, so
    all 6 fell back to the template (`results/studio_evidence_metrics_ollama.json`). We report both.
@@ -813,37 +816,63 @@ From `results/studio_handoff_metrics.json`.
 
 #### F7 End-to-end evaluation against a baseline
 
-README rows: the six S12 rows and the Status row "S12 end-to-end evaluation".
+README rows: the S12 rows of the headline table (ten "Founder Studio end to end (Studio S12)" rows and "Founder Studio
+with real people") and the Status row "S12 end-to-end evaluation".
 
 | Row | Value |
 |---|---|
-| Seconds from inputs to an audited PDF package, median (machine wall clock, not a user time) | 7.199 [6.767, 7.494] (n = 36) |
-| Printed figures with a checkable source (rule S): Studio vs baseline B0 | 0.8482 [0.8388, 0.8587] (12,222 / 14,410) vs 0.0251 [0.0182, 0.032] (33 / 1,316) |
-| Rule S, Studio minus B0, paired | 0.8231 [0.8118, 0.8352] |
-| Rule E (outside evidence only): Studio vs B0; difference | 0.057 [0.0545, 0.0597] vs 0.0251 [0.0182, 0.032]; 0.0319 [0.0259, 0.038] |
-| Founder figures backed by a document, both plans | 0.1315 [0.0958, 0.1693] (33 / 251), equal by construction |
-| Language-model cost per package | 0.0 USD, by construction (template narrative and memo), checked per package |
+| Seconds from inputs to an audited PDF package, median (machine wall clock on a shared machine, varies by run; not a user time) | 6.227 [6.106, 6.456] (n = 36) |
+| Scenarios with a complete package (audited PDF, no untraced number in the package or PDF text, every page labelled) | 1.0000 [0.9036, 1.0000] (36 / 36, Wilson) |
+| Scenarios whose package had a SiteIQ site score in this run | SYNTHETIC metro 6 of 6; each of the five real metros 0 of 6 |
+| Printed figures with a checkable source (rule S): Studio vs baseline B0 | 0.8482 [0.8388, 0.8587] (12,222 / 14,410) vs 0.0255 [0.0185, 0.0325] (33 / 1,296) |
+| Rule S, Studio minus B0, paired | 0.8227 [0.8113, 0.8347] |
+| Printed figures backed by a document page, a public-data row or a program or target section (rule E): Studio vs B0 | 0.0570 [0.0545, 0.0597] (821 / 14,410) vs 0.0255 [0.0185, 0.0325] (33 / 1,296) |
+| Rule E, Studio minus B0, paired | 0.0315 [0.0254, 0.0377] |
+| The founder's typed figures backed by a document, one population for both plans | 0.1315 [0.0958, 0.1693] (33 / 251) for both; "expected equal by construction" |
+| Language-model cost per package | 0 USD, by construction (template narrative and memo), checked per package |
 | Compute cost per package | not measured: no cloud resource was used and the machine's cost is not metered |
-| Usability test with real people | not measured: no usability test with real people was done |
+| Usability test with real people | not measured: no usability test with real people was done, so there is no n, protocol or raw time |
 
-From `results/studio_business_metrics.json`, `headline` (run at `e68b88d` with a clean tree).
+From `results/studio_business_metrics.json`, `headline`, `time_to_complete_package.complete_packages` and
+`data_coverage_by_metro.this_run`. The run is at `6fcfad9` with a clean tree (`provenance.git_dirty: false`), generated
+2026-10-26T21:35:23 UTC and committed in `667db85`. It replaces the first run (at `e68b88d`, committed in `b44b581`)
+after the review fixed B0 (section 5.3). Every S12 row that compares Studio with B0 carries this caveat
+(`docs/studio/s12_baseline.md` section 2 requires saying, wherever the comparison is shown, that B0's sources follow
+from its definition, not from how real founders write plans): **B0 is a construction from the same SYNTHETIC inputs,
+not a sample of real plans, and the gap under both rules follows mostly from the definitions** (rule S credits model
+runs and formulas, rule E program and target sections; B0 prints neither).
 
 - **What it measures.** The whole Studio pipeline on the 36 golden scenarios: time to an audited package, and how many
   printed figures carry a source a reader can check.
-- **Data.** 36 SYNTHETIC scenarios (the prompt's 30 real-metro ones are also reported on their own: rule S 0.8362
-  [0.8304, 0.842] against 0.0246 [0.0173, 0.0319]).
-- **Compared with.** B0, a plan made from the same SYNTHETIC inputs without SiteIQ, the simulation and the ledger. It
-  is a construction, not a sample of real plans, and it was committed in `docs/studio/s12_baseline.md` (commit
-  `4a19865`) before the script and before any S12 number.
+- **Data.** 36 SYNTHETIC scenarios: 6 business types x the SYNTHETIC metro and the 5 real metros. The prompt's 30
+  real-metro ones are also reported on their own (`real_metro_scenarios` under
+  `evidence_coverage.rule_s_checkable_source` and `evidence_coverage.rule_e_external_evidence`): rule S 0.8362
+  [0.8304, 0.842] against 0.025 [0.0175, 0.0324] for B0; rule E 0.0539 [0.0527, 0.0551] against the same B0 share
+  (27 / 1,080), with the same caveat. The handoff consistency check screened against "full OFAC + OpenSanctions
+  lists (sdn.csv, alt.csv, targets.simple.csv)" (`configuration.handoff_consistency_check`), and the SHA-256 of each
+  list file is recorded (`provenance.data_snapshots.screening_list_snapshots`).
+- **Compared with.** B0, a plan made from the same SYNTHETIC inputs and documents without SiteIQ, the simulation and
+  the ledger: the founder's typed figures, the untyped inputs at their most likely value (the shock inputs and the
+  monthly noise left out) and years 1-3 of the one-forecast run. A B0 figure has a source only when it is a founder
+  figure that every document about it agrees with. B0 was committed in `docs/studio/s12_baseline.md` (commit
+  `4a19865`) before the script and before any S12 number, and that file has not been edited since (its SHA-256 in
+  `provenance.eval_sets` matches the committed file).
 - **The interval.** Scenario bootstrap: whole scenarios are resampled because figures in one package are not
   independent. The rule S gap is large, but the file's own reading says why: "Most of the Studio - B0 gap follows from
   the definitions: model estimates and calculations count for Studio because the ledger records their run or formula
-  and inputs, and B0 prints no such record." 10,745 of the Studio figures are model estimates. Rule E removes that
-  credit, and the gap shrinks to 0.0319.
-- **What it does not show.** A time saving (nobody was timed; B0 was not timed), anything about real founders' plans,
-  or usability. In this run no real-metro scenario had a site score (`data_coverage_by_metro.this_run`: 0 of 6 site
-  scored per real metro). The file only says this "depends on which metro snapshots exist on the machine that ran the
-  script"; the S12 walkthrough names the likely cause: that machine had no real-metro tract snapshot.
+  and inputs, and B0 prints no such record." 10,745 of the Studio figures are model estimates
+  (`evidence_coverage.studio_figures_by_status_kind_and_verdict`). Rule E removes that credit, and the gap shrinks to
+  0.0315. Rule E has a definitional credit of its own: 724 of Studio's 821 rule E figures are VERIFIED policy claims
+  (sections of the SYNTHETIC program and the Studio's own targets), which B0 by definition never prints. So the rule E
+  gap also follows mostly from the definitions. The founder-figure row uses one population for both plans and is equal
+  in every scenario (`equal_in_every_scenario: true`); Studio surfaced 12 conflicts between a typed figure and a
+  document, and B0 has no step that could.
+- **What it does not show.** A time saving (nobody was timed; B0's time is "not measured: no one was timed writing a
+  plan"), anything about real founders' plans, or usability. The time is machine wall clock on a shared machine, so it
+  varies by run. SiteIQ is not part of every package: in this run SiteIQ scored a site only in the 6 SYNTHETIC-metro
+  scenarios, 0 of 30 real-metro ones (`data_coverage_by_metro.this_run`). The file only says this "depends on which
+  metro snapshots exist on the machine that ran the script"; the S12 walkthrough names the likely cause: that machine
+  had no real-metro tract snapshot.
 
 ### 3.7 Web app and deployment
 
@@ -999,8 +1028,12 @@ Each trade-off: what we chose, the alternative, why, and what it costs, with the
 - **Chose.** S12 copies data coverage, path-found rate and handoff success from the S1, S5 and S6 results files, with
   their provenance and SHA-256, and builds B0 in code from the same inputs.
 - **Why.** Two scripts measuring one metric could disagree. A baseline described in words would be a guess.
-- **Cost.** B0 is a construction: the large rule S gap is mostly a consequence of the definitions, which is why rule E
-  is reported next to it.
+- **Cost.** B0 is a construction, not a sample of real plans, and the gap under both rules is mostly a consequence of
+  the definitions: rule S credits model runs and formulas, rule E program and target sections (724 of Studio's 821 rule
+  E figures, `results/studio_business_metrics.json`), and B0 prints neither. That is why rule E is reported next to
+  rule S, the founder-figure comparison (one population, equal by construction) next to both, and the caveat with
+  every comparison. A baseline in code also has to match its written definition: the first run's B0 printed one input
+  the definition leaves out, and the review fixed the code, not the definition (section 5.3).
 
 ### 4.12 Local Ollama only, no hosted model
 
@@ -1070,11 +1103,16 @@ disclosed.
 | Quick mode used fewer simulated paths and a re-check, so the website said "no path" where full mode found one | Same paths and seed, coarser grid | Fixed | [S5](studio/walkthrough_s5.md) |
 | A change could make a rule the plan already failed worse; explanations were orders; "no path" claimed to be exhaustive; the budget counted only cache misses | Refusals and listed rules; conditional scenarios; an honest "what was tried" message; every variant counts | Fixed | [S5](studio/walkthrough_s5.md) |
 | With only the two original targets, 0.749 of the shown changes would fail the lender's own NSP-4.2 check (`results/studio_path_metrics.json`, `stress_target_effect`) | A third target: the lender's revenue stress | Fixed | [S5](studio/walkthrough_s5.md) |
-| `render_pdf` trusted the package's stored audit; label masks could hide a real figure; a conflicting equity figure reached the application as typed; the package id was not reproducible | Re-audit before and after printing; bounded labels; lowest figure; the id hashes ledger and narrative | Fixed | [S6](studio/walkthrough_s6.md) |
+| `render_pdf` trusted the package's stored audit; label masks could hide a real figure; a conflicting equity figure reached the application as typed; the package id was not reproducible | Re-audit before and after printing; bounded labels; lowest figure; the id hashes ledger and narrative, and (since `408596c`) leaves out the path search's run time and cache counts, so the same plan always gets the same id | Fixed | [S6](studio/walkthrough_s6.md) |
 | "Apply this change" could miss the card's numbers because each version had its own seed; a very large body blocked the event loop | One seed per plan; a body size cap | Fixed | [S7](studio/walkthrough_s7.md) |
 | S8 review: a revoked share link could come back after a restart; the access log's cost grew with its size; delete-all said "done" while a plan stayed on the Hub; a quadratic regex in the upload screen; a scanned PDF passed unscreened | Fixed; verifiers then found the fixes broke some upload patterns, and those were fixed with their examples as tests | Fixed | [S8](studio/walkthrough_s8.md) |
-| In the S12 run no real-metro scenario had a site score (likely cause, per the S12 walkthrough: the machine had no real-metro tract snapshot); two cited files were written from a dirty tree | Reported in the results file and the walkthrough | Disclosed, not fixed | [S12](studio/walkthrough_s12.md) |
+| In both S12 runs no real-metro scenario had a site score (0 of 30 in the committed run, `data_coverage_by_metro.this_run`; likely cause, per the S12 walkthrough: the machine had no real-metro tract snapshot); two cited files (S1 coverage, S5 paths) were written from a dirty tree | Reported in the results file and the walkthrough; the README now has a row of site-scored scenarios by metro | Disclosed, not fixed | [S12](studio/walkthrough_s12.md) |
 | Every Prompt 8 resume template claimed something not measured (circular top-3 accuracy, stress tests, "traced every call", a cloud deployment) | Each clause is printed only from a measured value; dropped clauses go to stderr with the reason | Fixed | [Phase 8](walkthrough_phase8.md) |
+| Phase 8 / S12 code review (17 findings confirmed, 3 refuted, by the review's own tally; fixes in `git log --oneline c6407dd..c7e389c`). B0 counted the rate-shock size (`rate_shock_size_pct_points`) as an unsourced input in 20 of the 36 scenarios (the 20 more figures of the first run, `git show b44b581:results/studio_business_metrics.json`, `per_scenario`), although `docs/studio/s12_baseline.md` section 2 leaves out the inputs a one-forecast plan does not use, including the shock sizes "which only act when a shock happens" | `baseline.py` leaves out every input of the three shocks by prefix, with tests (`99b7a93`). S12 was re-measured at `6fcfad9` with a clean tree, committed in `667db85`: B0 now prints 1,296 figures instead of 1,316, and its share is 0.0255 [0.0185, 0.0325] instead of the first run's 0.0251 [0.0182, 0.032] (`git show b44b581:results/studio_business_metrics.json`). The definitions file was not edited | Fixed | [S12](studio/walkthrough_s12.md) |
+| The README rule S rows showed Studio vs B0 without the caveat the baseline file requires wherever the comparison is shown (B0 is a construction; the gap follows mostly from the definitions); rule E, the founder figures, complete packages and the SiteIQ coverage were missing; a value recorded as null was reported as a missing key | Every README row comparing Studio with B0 carries the caveat; rows for rule E (pair and difference), founder figures (equal by construction), complete packages and SiteIQ site scores by metro; a null value shows the file's reason (`9af06cd`, `3eb096e`) | Fixed | [S12](studio/walkthrough_s12.md), [Phase 8](walkthrough_phase8.md) |
+| Verifier advisory on that fix: the caveat covered rule S only, but 724 of Studio's 821 rule E figures are VERIFIED policy claims (sections of the SYNTHETIC program and the Studio's own targets) that B0 never prints (`results/studio_business_metrics.json`, `evidence_coverage.studio_figures_by_status_kind_and_verdict`) | The caveat covers both rules in the README rows, the S12 status row and the resume bullet: rule S credits model runs and formulas, rule E program and target sections, and B0 prints neither (`6fcfad9`, README regenerated in `c7e389c`) | Fixed | [S12](studio/walkthrough_s12.md) |
+| Resume wording overclaimed: the S12 bullet quoted rule S alone, without the B0 caveat, and named SiteIQ as if every scenario had a site score; the narrative trace rate read like a measurement; the path clause said "every startup-program rule". It also misreported: a measured handoff checkpoint rate below 1.0 would have printed as "not measured", the governance clause ignored the gate's verdict and MISSING rows, and a zero-width or flagged bootstrap interval was printed as a bootstrap interval | The S12 bullet quotes rule S only next to rule E, with the caveat for both rules and the number of scenarios that had a SiteIQ score (`f48c467`, `6fcfad9`); "by construction for the template" (`829d733`); "the SYNTHETIC startup program's equity and loan rules" (`1ccd1c9`); a measured rate is quoted with its interval (`0b846fd`); the gate's verdict and MISSING count are read, and a gate that is not a clean PASS leaves the bullet out (`231b97d`); the exact or Wilson interval is used instead (`22fd31d`) | Fixed | [Phase 8](walkthrough_phase8.md), [S12](studio/walkthrough_s12.md) |
+| The handoff check's label was fixed text ("full OFAC SDN + OpenSanctions lists") and only `sdn.csv` was hashed, whatever lists were loaded; a malformed `config/contributions.yaml` gave a traceback or a silently empty result | The label names the lists the matcher loaded and every loaded file's SHA-256 is recorded (`provenance.data_snapshots.screening_list_snapshots`, `976bb7c`); a malformed file exits with code 2 (`6b93885`) | Fixed | [S12](studio/walkthrough_s12.md) |
 
 ## 6. What we would do next
 
@@ -1208,6 +1246,19 @@ profile. This project is a demonstration, not a compliance program, and nothing 
     agent governed separately (SR 26-2 places them out of scope), a security review, and a decision on whether the
     guidance applies to that institution at all.
 
+13. **Studio sources 0.8482 of its printed figures and the baseline 0.0255. Isn't that the headline?**
+    No. The review fixes put the caveat next to every Studio vs B0 comparison in the README and the resume bullet,
+    and it is the answer here too. B0 is a construction from the same SYNTHETIC inputs, not a sample of real plans,
+    and the gap under both rules follows mostly from the definitions. Under rule S, Studio gets credit for model runs
+    and formulas because its ledger records them, and B0 has no ledger. Under the stricter rule E it is 0.0570
+    [0.0545, 0.0597] against 0.0255 [0.0185, 0.0325], but 724 of Studio's 821 rule E figures are program and target
+    sections, which B0 never prints. On the one population both plans share, the founder's typed figures, both are
+    0.1315 [0.0958, 0.1693], equal by construction (`results/studio_business_metrics.json`). What Studio adds by
+    design is a recorded status for every printed figure (a source, the founder's own figure or a labelled
+    assumption), and it surfaced 12 conflicts between a typed figure and a document, which B0 has no step to do. The
+    baseline was committed before the first run, and when the review found the code printing one input the definition
+    leaves out (the rate-shock size), we fixed the code and measured again.
+
 ## 9. Ten things to say in your own words
 
 1. "A human decides. The graph always stops at the checkpoint, and we count decisions without a human: zero."
@@ -1216,7 +1267,8 @@ profile. This project is a demonstration, not a compliance program, and nothing 
 3. "Not measured is an answer. We write it with the reason instead of a guess."
 4. "Our strongest-looking numbers are often by construction. We say which ones."
 5. "Containment over detection: the detector is a tripwire, the architecture is the protection."
-6. "We wrote the baseline before we measured, and the commit order shows it."
+6. "We wrote the baseline before we measured, and the commit order shows it. When the code did not match it, we fixed
+   the code, not the definition, and measured again."
 7. "SiteIQ mostly does not beat a simple baseline on our synthetic cities, and we know why."
 8. "The simulator's probabilities are simulated, based on stated assumptions, and its bands are too narrow when the
    model is wrong."
@@ -1270,10 +1322,12 @@ Each line is a claim this project cannot make, with what to say instead.
 4. **Quoting field F1 0.9936 as accuracy on real documents**, or "production-ready extraction". It is on SYNTHETIC
    packets, and 0.9159 on scanned pages.
 5. **Any time or cost saving**: "a package in seconds instead of days", "saves underwriters hours", "cuts evidence
-   requests in practice". The 7.199 s is machine wall clock, not a user time; nobody was timed; the VOI result is
-   simulated.
-6. **"Studio plans are many times better sourced"**, or any ratio built from 0.8482 and 0.0251. Most of that gap follows
-   from the definitions. If you quote rule S, quote rule E (0.0570 against 0.0251) with it.
+   requests in practice". The 6.227 s median is machine wall clock on a shared machine and varies by run; it is not a
+   user time; nobody was timed; the VOI result is simulated.
+6. **"Studio plans are many times better sourced"**, or any ratio built from 0.8482 or 0.0570 and 0.0255. B0 is a
+   construction from the same SYNTHETIC inputs, not a sample of real plans, and the gap under both rules follows mostly
+   from the definitions (rule S credits model runs and formulas, rule E program and target sections; B0 prints
+   neither). If you quote rule S, quote rule E (0.0570 against 0.0255) with it, and the caveat with both.
 7. **"SiteIQ predicts good sites"** or "SiteIQ beats the baseline". It beats it for 1 of 6 business types on SYNTHETIC
    cities and is worse for 1.
 8. **"A founder has an X% chance of approval."** Studio probabilities are simulated, based on stated assumptions, and
@@ -1312,6 +1366,8 @@ Each line is a claim this project cannot make, with what to say instead.
     guideline sentences, not memos.
 28. **"I built X"** for any one component, or a split of the work between the owners. Say: "We wrote the specs, build
     prompts and evaluation protocol and reviewed the work; Claude Code implemented it."
-29. **Real-metro accuracy for Studio.** All five real metros run in limited mode, and no real outcome data exists.
+29. **Real-metro accuracy for Studio**, or "every S12 package has a SiteIQ score". All five real metros run in limited
+    mode, no real outcome data exists, and in the S12 run SiteIQ scored a site in 0 of the 30 real-metro scenarios (6
+    of 6 SYNTHETIC-metro ones; `results/studio_business_metrics.json`, `data_coverage_by_metro.this_run`).
 30. **Any number not in a `results/*.json` file**, or a rounded "about" version of one. Quote the file's value with
     its interval and its label, or say "not measured".
