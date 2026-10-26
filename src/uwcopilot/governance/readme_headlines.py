@@ -50,6 +50,7 @@ STUDIO_EVIDENCE_SYNTHETIC = "studio_evidence_metrics_synthetic.json"
 STUDIO_EVIDENCE_OLLAMA = "studio_evidence_metrics_ollama.json"
 STUDIO_PATHS = "studio_path_metrics.json"
 STUDIO_HANDOFF = "studio_handoff_metrics.json"
+STUDIO_BUSINESS = "studio_business_metrics.json"
 WEB = "web_metrics.json"
 DEPLOYMENT = "deployment_metrics.json"
 HEADLINE_FILES: tuple[str, ...] = (
@@ -71,6 +72,7 @@ HEADLINE_FILES: tuple[str, ...] = (
     STUDIO_EVIDENCE_OLLAMA,
     STUDIO_PATHS,
     STUDIO_HANDOFF,
+    STUDIO_BUSINESS,
     WEB,
     DEPLOYMENT,
 )
@@ -724,8 +726,51 @@ STUDIO_HANDOFF_SPECS: tuple[Spec, ...] = (
 )
 
 
+def seconds_text(entry: Any) -> str:
+    """A time in seconds with its interval, three decimals: '7.199 [6.767, 7.494] (n=36)'."""
+    return interval_text(entry, digits=3)
+
+
+def coverage_pair_text(studio: Any, baseline: Any) -> str:
+    """'0.8482 [0.8388, 0.8587] (12,222/14,410) vs 0.0251 [0.0182, 0.0320] (33/1,316)'."""
+    return f"{interval_text(studio)} vs {interval_text(baseline)}"
+
+
+def llm_cost_text(cost: Any, basis: Any) -> str:
+    """'0 USD (0 by construction: ...)', the recorded basis cut to its first clause."""
+    return f"{integer(cost)} USD ({short_reason(str(basis))})"
+
+
+BUSINESS_COMPONENT = "Founder Studio end to end (Studio S12), golden SYNTHETIC founder scenarios"
+RULE_S = "headline.evidence_coverage_rule_s"
+STUDIO_BUSINESS_SPECS: tuple[Spec, ...] = (
+    one_path(
+        BUSINESS_COMPONENT,
+        "Seconds from inputs to an audited PDF package, median (machine-dependent wall clock, not a user time)",
+        "headline.time_to_complete_package_median_s",
+        seconds_text,
+    ),
+    Spec(
+        BUSINESS_COMPONENT,
+        "Printed figures with a checkable source (rule S): Studio vs baseline B0, a plan made without SiteIQ, the "
+        "simulation and the ledger",
+        (f"{RULE_S}.studio", f"{RULE_S}.baseline_b0"),
+        coverage_pair_text,
+    ),
+    one_path(BUSINESS_COMPONENT, "Rule S share, Studio minus baseline B0", f"{RULE_S}.difference"),
+    Spec(
+        BUSINESS_COMPONENT,
+        "Language-model cost per package",
+        ("cost_per_package.llm_cost_usd_per_package", "cost_per_package.llm_cost_basis"),
+        llm_cost_text,
+    ),
+    one_path(BUSINESS_COMPONENT, "Compute cost per package", "cost_per_package.compute_cost", plain_text),
+    one_path("Founder Studio with real people", "Usability test", "usability_test", plain_text),
+)
+
+
 def studio_rows(sources: Mapping[str, Any]) -> list[Headline]:
-    """Founder Studio S1 to S6."""
+    """Founder Studio S1 to S6 and the S12 end-to-end evaluation."""
     rows = [coverage_row(sources)]
     rows += siteiq_rows(sources)
     rows += spec_rows(sources, STUDIO_FEASIBILITY, feasibility_specs(sources.get(STUDIO_FEASIBILITY)))
@@ -734,6 +779,7 @@ def studio_rows(sources: Mapping[str, Any]) -> list[Headline]:
     rows += spec_rows(sources, STUDIO_EVIDENCE_OLLAMA, STUDIO_EVIDENCE_OLLAMA_SPECS)
     rows += spec_rows(sources, STUDIO_PATHS, STUDIO_PATH_SPECS)
     rows += spec_rows(sources, STUDIO_HANDOFF, STUDIO_HANDOFF_SPECS)
+    rows += spec_rows(sources, STUDIO_BUSINESS, STUDIO_BUSINESS_SPECS)
     return rows
 
 
