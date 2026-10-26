@@ -75,12 +75,14 @@ SR_26_2_LINKS = (
     "agencies-revise-interagency-model-risk-management-guidance)"
 )
 SR_26_2_LOCAL_COPY = "data/raw/regulatory/frb_sr_26_2.pdf"
-# Quoted from the local copy of the attachment, section II (Purpose and Scope), footnote 3.
+# Quoted from the local copy of the attachment, section II (Purpose and Scope): footnote 3 in full (four sentences;
+# the integration test in tests/governance/test_packs.py checks that no sentence of the footnote is left out).
 SR_26_2_FOOTNOTE_3 = (
     "Generative AI and agentic AI models are novel and rapidly evolving. As such, they are not within the scope of "
     "this guidance. Nonetheless, a banking organization's risk management and governance practices should guide the "
     "determination of appropriate governance and controls for any tools, processes, or systems not covered in this "
-    "document."
+    "document. However, the principles described in this guidance apply to traditional statistical and quantitative "
+    "models and non-generative, non-agentic AI models."
 )
 # Quoted from the same section: what the guidance does not count as a model.
 SR_26_2_NOT_A_MODEL = (

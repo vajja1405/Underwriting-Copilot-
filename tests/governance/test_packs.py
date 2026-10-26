@@ -578,6 +578,21 @@ def test_bank_pack_cites_sr_26_2_and_governs_genai_separately() -> None:
     assert "were not checked against it" in bank  # the OCC and FDIC identifiers
 
 
+def test_footnote_3_is_quoted_in_full_and_its_sentences_are_named_right() -> None:
+    """P6-PACKS-3: the quote keeps the footnote's fourth sentence (non-generative AI stays within the principles),
+    and the pack's own controls follow the third sentence, not 'the last sentence'."""
+    assert packs.SR_26_2_FOOTNOTE_3.endswith(
+        "However, the principles described in this guidance apply to traditional statistical and quantitative models "
+        "and non-generative, non-agentic AI models."
+    )
+    assert len(re.findall(r"\.(?: |$)", packs.SR_26_2_FOOTNOTE_3)) == 4
+    bank = render_bank_model_risk({})
+    assert "footnote 3 in full" in bank
+    assert "Following the footnote's third sentence" in bank
+    assert "footnote's last sentence" not in bank
+    assert "Still within its principles: traditional statistical and quantitative models and non-generative" in bank
+
+
 def test_insurance_pack_says_the_naic_text_was_not_checked() -> None:
     program = render_insurance_ai_program({})
     assert "adopted December 4, 2023" in program
@@ -598,6 +613,14 @@ def test_quoted_wording_matches_the_local_primary_sources() -> None:
         return re.sub(r"\s+", " ", re.sub(r"-[ \t]*\n\s*", "-", straight))
 
     pdf = flat(" ".join(page.extract_text() or "" for page in PdfReader(REGULATORY_DIR / "frb_sr_26_2.pdf").pages))
+    # Footnote 3 is quoted whole: its marker comes right before the quote, and the page number (the end of its page)
+    # right after it, so no sentence of the footnote is left out at either end.
+    footnote = flat(packs.SR_26_2_FOOTNOTE_3)
+    assert footnote in pdf
+    start = pdf.index(footnote)
+    assert pdf[:start].endswith(" 3 "), pdf[start - 80 : start]
+    after = pdf[start + len(footnote) :]
+    assert re.match(r" \d+ ", after), after[:80]
     for quoted in (
         packs.SR_26_2_FOOTNOTE_3,
         packs.SR_26_2_NOT_A_MODEL,

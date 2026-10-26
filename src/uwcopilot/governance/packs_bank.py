@@ -168,6 +168,8 @@ def regulatory_basis() -> list[str]:
                 "models.",
                 "Outside its scope: generative and agentic AI (footnote 3). The LLM extraction and the agent are "
                 "governed in section 7, not by stretching SR 26-2 to cover them.",
+                "Still within its principles: traditional statistical and quantitative models and non-generative, "
+                "non-agentic AI models (footnote 3, last sentence).",
             ]
         ),
     ]
@@ -371,11 +373,11 @@ def genai_section(sources: Mapping[str, Any]) -> list[str]:
     return [
         "## 7. The LLM extraction and the agent: governed outside SR 26-2",
         "",
-        f'SR 26-2, footnote 3 (local copy, section II): "{SR_26_2_FOOTNOTE_3}"',
+        f'SR 26-2, footnote 3 in full (local copy, section II): "{SR_26_2_FOOTNOTE_3}"',
         "",
         "The LLM field extraction (`docintel/extract_llm*.py`) and the underwriting agent (`agent/graph.py`: tool "
         "calls and the memo) are generative and agentic AI, so SR 26-2 does not cover them. Following the footnote's "
-        "last sentence, the project governs them with its own controls: a human decides every file, the agent may "
+        "third sentence, the project governs them with its own controls: a human decides every file, the agent may "
         "only call allow-listed tools, document text is data and never instructions, and a change of LLM or prompt "
         "is to be certified by `scripts/llm_migration_gate.py` and signed by a model_validator before release (no "
         "such change has been evaluated here). No LLM was available for the "
