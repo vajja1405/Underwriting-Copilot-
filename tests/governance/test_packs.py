@@ -27,10 +27,10 @@ from uwcopilot.governance.packs import (
     RISK,
 )
 from uwcopilot.governance.packs_bank import render_bank_model_risk, sr_26_2_rows
-from uwcopilot.governance.packs_genai import genai_control_rows
+from uwcopilot.governance.packs_genai import genai_control_rows, third_party_model_rows
 from uwcopilot.governance.packs_governance import monitoring_block
 from uwcopilot.governance.packs_insurance import naic_rows, render_insurance_ai_program
-from uwcopilot.governance.packs_inventory import INVENTORY, inventory_entry, materiality_tier
+from uwcopilot.governance.packs_inventory import INVENTORY, TIERING_RULE, inventory_entry, materiality_tier
 
 REPO = Path(__file__).resolve().parents[2]
 REGULATORY_DIR = REPO / "data" / "raw" / "regulatory"
@@ -78,13 +78,42 @@ def governance_results() -> dict[str, Any]:
                 "interval_method": "exact Poisson interval of the render test",
             },
         },
-        "stream_design": {"no_time_field": "SYNTHETIC: the render-test data has no date field."},
+        "stream_design": {
+            "no_time_field": "SYNTHETIC: the render-test data has no date field.",
+            "n_windows": 12,
+            "drift_start_window": 6,
+            "n_streams_per_scenario": 20,
+        },
         "validation": {
-            "no_drift": {"drifted": False, "false_alert_rate": rate(0.05, 0.0, 0.15, 1, 20)},
+            "no_drift": {"drifted": False, "n_streams": 20, "false_alert_rate": rate(0.05, 0.0, 0.15, 1, 20)},
             "claim_rate_up": {
                 "drifted": True,
+                "n_streams": 20,
                 "detection_rate": rate(0.95, 0.85, 1.0, 19, 20),
-                "detection_delay_windows": {"mean": ci(1.31579, 0.89474, 1.73684)},
+                "detection_delay_windows": {
+                    "mean": ci(1.31579, 0.89474, 1.73684),
+                    "n_detected_streams": 19,
+                    "streams_by_delay": {"0": 9, "1": 4, "2": 3, "5": 3},
+                },
+            },
+            "covariate_shift": {
+                "drifted": True,
+                "n_streams": 20,
+                "detection_rate": rate(1.0, 1.0, 1.0, 20, 20),
+                "detection_delay_windows": {
+                    "mean": ci(0.0, 0.0, 0.0),
+                    "n_detected_streams": 20,
+                    "streams_by_delay": {"0": 20},
+                },
+            },
+            "mild_shift": {
+                "drifted": True,
+                "n_streams": 20,
+                "detection_rate": rate(0.0, 0.0, 0.0, 0, 20),
+                "detection_delay_windows": {
+                    "status": "not available",
+                    "reason": "no stream was detected, so there is no delay to report",
+                },
             },
         },
         "demonstration_stream": {"scenario": "claim_rate_up"},
@@ -233,7 +262,7 @@ def agent_results() -> dict[str, Any]:
             "prompt_version": "memo-prompt-SYNTHETIC",
             "git": {"commit": "a" * 40, "uncommitted_changes": True},
         },
-        "configuration": {"llm": "fake:fake-llm (SYNTHETIC render test)"},
+        "configuration": {"llm": "fake:fake-llm (SYNTHETIC render test)", "retrieval_mode": "hybrid"},
         "reference_policy": {
             "recommendation_agreement": {"value": 0.97531, "ci_low": 0.93827, "ci_high": 1.0, "n": 81}
         },
@@ -262,9 +291,16 @@ def provenance_block(commit: str) -> dict[str, Any]:
 def docintel_results() -> dict[str, Any]:
     """results/docintel_metrics.json (rules extractor only; SYNTHETIC values)."""
     return {
-        "provenance": provenance_block("d" * 40),
+        "provenance": {
+            **provenance_block("d" * 40),
+            "data_snapshots": {"tesseract_version": "tesseract SYNTHETIC-version"},
+        },
         "run": {"extractors": ["rules"], "provider": None},
-        "rules": {"fields": {"overall": {"f1": {"value": 0.98642, "ci_low": 0.97531, "ci_high": 0.99753}}}},
+        "rules": {
+            "fields": {"overall": {"f1": {"value": 0.98642, "ci_low": 0.97531, "ci_high": 0.99753}}},
+            "latency": {"ocr_pages_total": 37},
+            "page_classification": {"all": {"numerator": 412, "denominator": 412}},
+        },
         "comparisons": {"rules_vs_hybrid": "not measured (SYNTHETIC: no provider run)"},
     }
 
@@ -359,8 +395,14 @@ def test_governance_sections_render_when_present() -> None:
     bank = render_bank_model_risk(full_sources())
     assert "`results/governance_metrics.json` has no section" not in bank
     # monitoring
-    assert "| `no_drift` | no | false alert rate | 0.0500 [0.0000, 0.1500] (1/20) | not applicable |" in bank
-    assert "| `claim_rate_up` | yes | detection rate | 0.9500 [0.8500, 1.0000] (19/20) | 1.32 [0.89, 1.74] |" in bank
+    assert (
+        "| `no_drift` | no | false alert rate | 0.0500 [0.0000, 0.1500] (1/20) | not applicable | not applicable |"
+        in bank
+    )
+    assert (
+        "| `claim_rate_up` | yes | detection rate | 0.9500 [0.8500, 1.0000] (19/20) | 1.32 [0.89, 1.74] (19 of 20 "
+        "streams detected) | 0: 9, 1: 4, 2: 3, 5: 3 |" in bank
+    )
     assert "7 alert records this run" in bank and "model status champion -> under_review" in bank
     assert "1.0322 [0.9811, 1.0842]" in bank
     assert "not measured (SYNTHETIC reason: no credit data in the render test)" in bank
@@ -401,6 +443,57 @@ def test_monitoring_block_edge_cases() -> None:
     assert "| unsupported_claims | agent | not measured | not measured |" in block
 
 
+def test_missing_indicator_keeps_the_status_and_note_the_monitor_recorded() -> None:
+    """P6-PACKS-2: an indicator the monitor could not read says why ('not available' and its note), instead of a
+    bare 'not measured' that hides that the feedback section was absent when the monitor ran."""
+    sources = full_sources()
+    monitoring = sources[GOVERNANCE]["monitoring"]["results"]
+    monitoring["indicators"]["values"] = [
+        {
+            "name": "override_rate",
+            "component": "review_feedback",
+            "status": "not available",
+            "value": None,
+            "interval": None,
+            "level": None,
+            "note": "results/governance_metrics.json has no 'feedback' section (the feedback track has not run)",
+        },
+        {
+            "name": "unsupported_claim_rate",
+            "component": "agent",
+            "status": "not measured",
+            "value": None,
+            "level": None,
+            "note": "not measured: no LLM provider was used",
+        },
+    ]
+    block = "\n".join(monitoring_block(sources))
+    assert (
+        "| override_rate | review_feedback | not available (results/governance_metrics.json has no 'feedback' "
+        "section (the feedback track has not run)) | not available |"
+    ) in block
+    assert "| unsupported_claim_rate | agent | not measured: no LLM provider was used | not measured |" in block
+    assert "| override_rate | review_feedback | not measured |" not in block
+    assert "Indicators the monitor read from the results files when it ran" in block
+
+
+def test_mean_delay_says_it_covers_detected_streams_only() -> None:
+    """P6-STAT-3 / P6-PACKS-11: the mean delay names its population and the window cap, a zero-width interval is not
+    printed as an interval, and a scenario where no stream was detected says not applicable, not not measured."""
+    block = "\n".join(monitoring_block(full_sources()))
+    assert "Mean delay among detected streams, windows [95% CI] (detected of all streams)" in block
+    assert "Detected streams by delay (windows: streams)" in block
+    assert "20 streams per scenario, 12 windows each, numbered from 0; drift, if any, from window 6" in block
+    assert "over the detected streams only" in block and "cannot exceed the number of drifted windows" in block
+    assert "| 0.00 (20 of 20 streams detected; zero-width bootstrap interval) | 0: 20 |" in block
+    assert "[0.00, 0.00]" not in block
+    assert (
+        "| `mild_shift` | yes | detection rate | 0.0000 (0/20; zero-width bootstrap interval, exact interval not "
+        "recorded) | not applicable (no stream was detected, so there is no delay to report) | not applicable |"
+    ) in block
+    assert "Mean delay, windows [95% CI]" not in block
+
+
 def test_absent_governance_sections_say_not_measured_yet_with_their_make_target() -> None:
     sources = {**full_sources(), GOVERNANCE: {}}
     bank = render_bank_model_risk(sources)
@@ -415,12 +508,28 @@ def test_map_rows_follow_the_sections() -> None:
     present = {row[0]: row[2] for row in sr_26_2_rows(full_sources())}
     monitoring = "V. Ongoing model monitoring"
     assert absent[monitoring].startswith("not measured yet (`make monitor`)")
-    assert present[monitoring].startswith("SIMULATED stream on freMTPL2")
+    assert present[monitoring].startswith("SIMULATED stream on a separate demonstration freMTPL2 GLM only")
     assert absent.keys() == present.keys()
     risk_row = [row for row in naic_rows({}) if row[0] == "Risk management and internal controls"][0]
-    assert "Monitoring on a SIMULATED stream: not measured yet (`make monitor`)" in risk_row[2]
+    assert "of the extraction and the agent: not measured yet (`make monitor`)" in risk_row[2]
     risk_row = [row for row in naic_rows(full_sources()) if row[0] == "Risk management and internal controls"][0]
     assert "measured (section 3)" in risk_row[2]
+
+
+def test_packs_say_no_inventory_model_is_monitored() -> None:
+    """P6-PACKS-1: the monitor watches its own demonstration GLM with no discrimination metric; the packs must not
+    read as if the inventory models (or the frequency and severity models in scope) were monitored."""
+    present = {row[0]: row[2] for row in sr_26_2_rows(full_sources())}
+    row = present["V. Ongoing model monitoring"]
+    assert "none of the inventory models (section 1) is monitored" in row and "no discrimination metric" in row
+    bank = render_bank_model_risk(full_sources())
+    assert "Phase 6 runs it" not in bank
+    assert "it is not run for any inventory model" in bank
+    assert "separate demonstration GLM trained by `scripts/monitor.py`, which is not an inventory model" in bank
+    program = render_insurance_ai_program(full_sources())
+    assert "not the frequency or severity model of section 1 (neither of those is monitored)" in program
+    risk_row = [row for row in naic_rows(full_sources()) if row[0] == "Risk management and internal controls"][0]
+    assert "the frequency and severity models are not monitored; no discrimination metric" in risk_row[2]
 
 
 # ---------------------------------------------------------------------------
@@ -440,6 +549,49 @@ def test_llm_dependent_measures_say_not_measured() -> None:
     assert "[1.0000, 1.0000]" not in bank
 
 
+def test_bank_pack_states_the_llm_use_recorded_not_that_no_llm_was_available() -> None:
+    """P6-PACKS-9: local Ollama runs exist in the repo, so 'No LLM was available' was wrong; the pack says which LLM
+    the results files record, and an absent extraction file is not read as 'no LLM'."""
+    bank = render_bank_model_risk(full_sources())
+    assert "No LLM was available" not in bank
+    assert (
+        "LLM use recorded for the results below: agent memo writer: fake:fake-llm (SYNTHETIC render test); "
+        "extraction LLM provider: none (extractors run: rules)."
+    ) in bank
+    assert "agent memo writer: not measured; extraction LLM provider: not measured" in render_bank_model_risk({})
+    sources = full_sources()
+    sources[DOCINTEL]["run"] = {"extractors": ["rules", "hybrid"], "provider": "ollama"}
+    assert "extraction LLM provider: ollama" in render_bank_model_risk(sources)
+
+
+def test_third_party_pretrained_models_are_listed_with_their_recorded_use() -> None:
+    """P6-PACKS-4: Tesseract (a pretrained LSTM) read the scanned pages behind the extraction metrics, and the agent's
+    retrieval runs pretrained fastembed models; both packs list them instead of saying no third-party AI was used."""
+    rows = {row[0]: row[2] for row in third_party_model_rows(full_sources())}
+    assert rows["Tesseract OCR (tesseract SYNTHETIC-version)"].startswith(
+        "37 of 412 pages read by OCR in the extraction evaluation"
+    )
+    assert rows["Dense text embedding model (fastembed; `rag/settings.py` DENSE_MODEL_ID)"] == (
+        "yes (the agent evaluation recorded retrieval mode `hybrid`)"
+    )
+    assert rows["Cross-encoder reranker (fastembed; `rag/settings.py` RERANK_MODEL_ID)"] == (
+        "no (the agent evaluation recorded retrieval mode `hybrid`)"
+    )
+    absent = [row[2] for row in third_party_model_rows({})]
+    assert absent[0].startswith("not measured (no OCR page count") and absent[1].startswith("not measured")
+    program = render_insurance_ai_program(full_sources())
+    assert "none produced any number" not in program
+    assert "| Tesseract OCR (tesseract SYNTHETIC-version) |" in program
+    third_party = [row for row in naic_rows(full_sources()) if row[0] == "Third-party AI systems"][0]
+    assert "No third-party AI system produced these results" not in third_party[2]
+    assert "pretrained OCR and retrieval models" in third_party[2]
+    bank = render_bank_model_risk(full_sources())
+    assert "### Third-party pretrained models (not in the inventory)" in bank
+    assert "| Tesseract OCR (tesseract SYNTHETIC-version) |" in bank
+    vendor = {row[0]: row[2] for row in sr_26_2_rows(full_sources())}["VII. Vendor and other third-party products"]
+    assert "No vendor model is used by the inventory models" in vendor and "not validated here" in vendor
+
+
 def test_measured_injection_layers_and_certificates_are_shown() -> None:
     sources = full_sources()
     sources[INJECTION] = {
@@ -454,9 +606,26 @@ def test_measured_injection_layers_and_certificates_are_shown() -> None:
     assert (
         layers == "L0: 0.3500 [0.2414, 0.4767] (21/60, Wilson 95%); L2: not measured (no scored answer for this layer)"
     )
-    assert rows["An LLM or prompt change needs a migration certificate signed by a model_validator"] == (
-        "`results/llm_migration_a_vs_b.json`"
+    certificate = (
+        "An LLM or prompt change is to be certified by a migration certificate signed by a model_validator "
+        "(a process step)"
     )
+    assert rows[certificate] == "`results/llm_migration_a_vs_b.json`"
+
+
+def test_migration_certificate_is_not_listed_as_an_enforced_control() -> None:
+    """P6-PACKS-5: nothing in CI or the release gate requires a certificate when the prompt or LLM changes, so the
+    'How it is enforced' cell says it is not enforced, and the bank text calls it a manual step."""
+    enforcement = {row[0]: row[1] for row in genai_control_rows(full_sources())}
+    cell = enforcement[
+        "An LLM or prompt change is to be certified by a migration certificate signed by a model_validator "
+        "(a process step)"
+    ]
+    assert cell.startswith("Not enforced: scripts/llm_migration_gate.py is run by hand")
+    assert "neither CI nor the release gate checks that a certificate exists" in cell
+    bank = render_bank_model_risk(full_sources())
+    assert "a manual step: neither CI nor the release gate checks for a certificate" in bank
+    assert "needs a migration certificate signed by a model_validator" not in bank
 
 
 # ---------------------------------------------------------------------------
@@ -472,6 +641,16 @@ def test_both_packs_state_applicability_demonstration_and_data() -> None:
         assert "SR 11-7-style" not in body, name
 
 
+def test_data_statement_does_not_deny_the_real_records_in_the_public_data() -> None:
+    """Lending Club, freMTPL2 and German Credit are de-identified records of real loans and policies, and the
+    sanctions lists name real persons: the statement says so instead of 'no real applicant is involved'."""
+    statement = packs.DATA_STATEMENT
+    assert "No real applicant" not in statement
+    assert "de-identified records of real loans, credit applicants and motor policies" in statement
+    assert "name real sanctioned persons and entities" in statement
+    assert "every decision here is SYNTHETIC or SIMULATED" in statement
+
+
 def test_bank_pack_cites_sr_26_2_and_governs_genai_separately() -> None:
     bank = render_bank_model_risk({})
     assert "SR 26-2 / OCC Bulletin 2026-13 / FDIC FIL-15-2026" in bank and "April 17, 2026" in bank
@@ -480,6 +659,21 @@ def test_bank_pack_cites_sr_26_2_and_governs_genai_separately() -> None:
     assert packs.SR_26_2_FOOTNOTE_3 in bank
     assert "## 7. The LLM extraction and the agent: governed outside SR 26-2" in bank
     assert "were not checked against it" in bank  # the OCC and FDIC identifiers
+
+
+def test_footnote_3_is_quoted_in_full_and_its_sentences_are_named_right() -> None:
+    """P6-PACKS-3: the quote keeps the footnote's fourth sentence (non-generative AI stays within the principles),
+    and the pack's own controls follow the third sentence, not 'the last sentence'."""
+    assert packs.SR_26_2_FOOTNOTE_3.endswith(
+        "However, the principles described in this guidance apply to traditional statistical and quantitative models "
+        "and non-generative, non-agentic AI models."
+    )
+    assert len(re.findall(r"\.(?: |$)", packs.SR_26_2_FOOTNOTE_3)) == 4
+    bank = render_bank_model_risk({})
+    assert "footnote 3 in full" in bank
+    assert "Following the footnote's third sentence" in bank
+    assert "footnote's last sentence" not in bank
+    assert "Still within its principles: traditional statistical and quantitative models and non-generative" in bank
 
 
 def test_insurance_pack_says_the_naic_text_was_not_checked() -> None:
@@ -502,9 +696,18 @@ def test_quoted_wording_matches_the_local_primary_sources() -> None:
         return re.sub(r"\s+", " ", re.sub(r"-[ \t]*\n\s*", "-", straight))
 
     pdf = flat(" ".join(page.extract_text() or "" for page in PdfReader(REGULATORY_DIR / "frb_sr_26_2.pdf").pages))
+    # Footnote 3 is quoted whole: its marker comes right before the quote, and the page number (the end of its page)
+    # right after it, so no sentence of the footnote is left out at either end.
+    footnote = flat(packs.SR_26_2_FOOTNOTE_3)
+    assert footnote in pdf
+    start = pdf.index(footnote)
+    assert pdf[:start].endswith(" 3 "), pdf[start - 80 : start]
+    after = pdf[start + len(footnote) :]
+    assert re.match(r" \d+ ", after), after[:80]
     for quoted in (
         packs.SR_26_2_FOOTNOTE_3,
         packs.SR_26_2_NOT_A_MODEL,
+        packs.SR_26_2_IMMATERIAL,
         "does not set forth enforceable standards or prescriptive requirements",
         "most relevant to banking organizations with over $30 billion in total assets",
         "Model purpose, together with model exposure, determines model materiality",
@@ -597,6 +800,23 @@ def test_materiality_tier_rule(purpose: str, exposure: bool, designed: int, now:
     tier = materiality_tier(purpose, exposure)
     assert (tier.tier_as_designed, tier.tier_now) == (designed, now)
     assert purpose in tier.reason
+
+
+def test_tier_3_rule_does_not_claim_monitoring_that_no_code_does() -> None:
+    """P6-PACKS-6: has_exposure is a declared field and no inventory model's performance is monitored, so the rule
+    quotes what SR 26-2 lists for immaterial models (performance and conditions) and says only the listing is done."""
+    rule = " ".join(TIERING_RULE)
+    assert "monitored for the conditions under which it would become material" not in rule
+    assert f'"{packs.SR_26_2_IMMATERIAL}"' in rule
+    assert "monitoring model performance" in packs.SR_26_2_IMMATERIAL
+    assert "exposure is declared in `packs_inventory.py`, not monitored" in rule
+    assert "no inventory model's performance is monitored" in rule
+    for body in render_both({}).values():
+        assert "Only the first part is done here" in body
+    exposure_row = {row[0]: row[2] for row in sr_26_2_rows({})}[
+        "III. Inherent risk, exposure and purpose; materiality = purpose + exposure"
+    ]
+    assert "declared, not monitored" in exposure_row
 
 
 def test_unknown_purpose_is_refused() -> None:

@@ -75,14 +75,21 @@ SR_26_2_LINKS = (
     "agencies-revise-interagency-model-risk-management-guidance)"
 )
 SR_26_2_LOCAL_COPY = "data/raw/regulatory/frb_sr_26_2.pdf"
-# Quoted from the local copy of the attachment, section II (Purpose and Scope), footnote 3.
+# Quoted from the local copy of the attachment, section II (Purpose and Scope): footnote 3 in full (four sentences;
+# the integration test in tests/governance/test_packs.py checks that no sentence of the footnote is left out).
 SR_26_2_FOOTNOTE_3 = (
     "Generative AI and agentic AI models are novel and rapidly evolving. As such, they are not within the scope of "
     "this guidance. Nonetheless, a banking organization's risk management and governance practices should guide the "
     "determination of appropriate governance and controls for any tools, processes, or systems not covered in this "
-    "document."
+    "document. However, the principles described in this guidance apply to traditional statistical and quantitative "
+    "models and non-generative, non-agentic AI models."
 )
-# Quoted from the same section: what the guidance does not count as a model.
+# Quoted from section III: what model risk management may consist of for a model deemed immaterial.
+SR_26_2_IMMATERIAL = (
+    "identifying those models and monitoring model performance and conditions under which the use of those models "
+    "may become material"
+)
+# Quoted from section II: what the guidance does not count as a model.
 SR_26_2_NOT_A_MODEL = (
     "simple arithmetic calculations, such as those found within spreadsheets, as well as deterministic rule-based "
     "processes and software where there are no statistical, economic, or financial theories underpinning their "
@@ -110,8 +117,10 @@ APPLICABILITY = (
 DATA_STATEMENT = (
     "All data are public (Lending Club, freMTPL2 from OpenML 41214/41215, UCI Statlog German Credit, the OFAC SDN list "
     "and OpenSanctions) or SYNTHETIC / SIMULATED (the document packets, the agent applications, the reviewer "
-    "decisions, the monitoring stream's drift, the champion/challenger loans and their outcomes). No real applicant, "
-    "policyholder, reviewer or decision is involved."
+    "decisions, the monitoring stream's drift, the champion/challenger loans and their outcomes). The public loan and "
+    "policy datasets are de-identified records of real loans, credit applicants and motor policies; the OFAC SDN list "
+    "and OpenSanctions name real sanctioned persons and entities and are used only as screening references. Every "
+    "application the agent screens, every reviewer and every decision here is SYNTHETIC or SIMULATED."
 )
 
 # ---------------------------------------------------------------------------

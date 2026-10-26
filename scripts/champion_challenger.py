@@ -73,9 +73,9 @@ OUTCOMES_INTERPRETATION = (
     "default rates and calibration are reported. Real outcome analysis needs the Lending Club data and real decisions."
 )
 SELECTIVE_LABELS = (
-    "Every decision has outcomes here only because the SYNTHETIC rows are all issued loans. In a real portfolio a "
-    "declined application produces no outcome, so default rates for non-approved decisions exist only for files that "
-    "were later booked (selective labels)."
+    "Every decision type, including declines, can have an outcome here only because the SYNTHETIC rows are all issued "
+    "loans; loans not yet finished stay pending. In a real portfolio a declined application produces no outcome, so "
+    "default rates for non-approved decisions exist only for files that were later booked (selective labels)."
 )
 
 

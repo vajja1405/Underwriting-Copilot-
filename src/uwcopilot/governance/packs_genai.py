@@ -1,10 +1,12 @@
 """Controls on the LLM extraction and the agent, with their measured values, for the governance packs (Phase 6 E).
 
 SR 26-2 footnote 3 places generative and agentic AI outside that guidance, so the packs list these controls on their
-own. Values are read from results/agent_metrics.json (scripts/eval_agent.py), results/docintel_metrics.json
-(scripts/eval_docintel.py), results/injection_metrics.json and results/injection/injection_metrics_detector_only.json
-(scripts/eval_injection.py), and the names of any results/llm_migration_*.json certificates
-(scripts/llm_migration_gate.py). Every LLM-dependent value that was not measured says so.
+own. They also list the third-party pretrained, non-generative models (Tesseract OCR, the fastembed retrieval models)
+with their recorded use. Values are read from results/agent_metrics.json (scripts/eval_agent.py),
+results/docintel_metrics.json (scripts/eval_docintel.py), results/injection_metrics.json and
+results/injection/injection_metrics_detector_only.json (scripts/eval_injection.py), and the names of any
+results/llm_migration_*.json certificates (scripts/llm_migration_gate.py). Every LLM-dependent value that was not
+measured says so.
 """
 
 from collections.abc import Mapping
@@ -18,6 +20,7 @@ from uwcopilot.governance.packs import (
     MIGRATION_CERTIFICATES,
     NOT_MEASURED,
     integer,
+    is_number,
     lookup,
     share,
     text,
@@ -69,6 +72,80 @@ def _migration_certificates(sources: Mapping[str, Any]) -> str:
     if not names:
         return f"{NOT_MEASURED} (no `results/llm_migration_*.json` certificate exists: no LLM migration was evaluated)"
     return ", ".join(f"`results/{name}`" for name in names)
+
+
+# Guideline retrieval modes (rag/retriever.py) that run each pretrained retrieval model (ids in rag/settings.py).
+DENSE_MODES: tuple[str, ...] = ("dense", "hybrid", "hybrid_rerank")
+RERANK_MODES: tuple[str, ...] = ("hybrid_rerank",)
+THIRD_PARTY_MODEL_HEADER = [
+    "Third-party pretrained model (non-generative)",
+    "What it does here",
+    "Ran in the evaluations behind these results",
+    "Results file",
+]
+
+
+def _retrieval_use(mode: Any, modes: tuple[str, ...]) -> str:
+    """'yes' or 'no' with the retrieval mode the agent evaluation recorded, or 'not measured' without one."""
+    if not isinstance(mode, str) or not mode:
+        return f"{NOT_MEASURED} (no retrieval mode recorded)"
+    used = "yes" if mode in modes else "no"
+    return f"{used} (the agent evaluation recorded retrieval mode `{mode}`)"
+
+
+def third_party_model_rows(sources: Mapping[str, Any]) -> list[list[str]]:
+    """The third-party pretrained, non-generative models behind numbers in the packs, with their recorded use.
+
+    Tesseract OCR: its version and the pages it read, from results/docintel_metrics.json. The fastembed retrieval
+    models: used or not according to the retrieval mode results/agent_metrics.json records. This project uses all
+    of them as published and validates none of them.
+    """
+    ocr_pages = value_in(sources, DOCINTEL, "rules.latency.ocr_pages_total")
+    pages = value_in(sources, DOCINTEL, "rules.page_classification.all.denominator")
+    if is_number(ocr_pages) and is_number(pages):
+        ocr_use = (
+            f"{integer(ocr_pages)} of {integer(pages)} pages read by OCR in the extraction evaluation; the rules "
+            "extractor's F1 and citation support include those pages"
+        )
+    else:
+        ocr_use = f"{NOT_MEASURED} (no OCR page count in `results/{DOCINTEL}`)"
+    version = value_in(sources, DOCINTEL, "provenance.data_snapshots.tesseract_version")
+    mode = value_in(sources, AGENT, "configuration.retrieval_mode")
+    return [
+        [
+            f"Tesseract OCR ({text(version)})",
+            "Reads pages without a text layer for the rules extractor (`docintel/ocr.py`); its default engine, used "
+            "here, is a pretrained LSTM neural network",
+            ocr_use,
+            f"`results/{DOCINTEL}`",
+        ],
+        [
+            "Dense text embedding model (fastembed; `rag/settings.py` DENSE_MODEL_ID)",
+            "Embeds guideline chunks and queries for the agent's guideline search (modes dense, hybrid, hybrid_rerank)",
+            _retrieval_use(mode, DENSE_MODES),
+            f"`results/{AGENT}`",
+        ],
+        [
+            "Cross-encoder reranker (fastembed; `rag/settings.py` RERANK_MODEL_ID)",
+            "Reorders the retrieved guideline chunks (mode hybrid_rerank only)",
+            _retrieval_use(mode, RERANK_MODES),
+            f"`results/{AGENT}`",
+        ],
+    ]
+
+
+def llm_use(sources: Mapping[str, Any]) -> str:
+    """Which LLM the results shown used, as the results files record it: the agent's memo writer and the extraction
+    provider. 'not measured' when a file is absent, so an absent extraction run never reads as 'no LLM'."""
+    memo_writer = text(value_in(sources, AGENT, "configuration.llm"))
+    run = value_in(sources, DOCINTEL, "run")
+    if not isinstance(run, Mapping):
+        provider = NOT_MEASURED
+    elif run.get("provider"):
+        provider = text(run.get("provider"))
+    else:
+        provider = f"none (extractors run: {text(_joined(run.get('extractors')))})"
+    return f"agent memo writer: {memo_writer}; extraction LLM provider: {provider}"
 
 
 def agent_control_rows(sources: Mapping[str, Any]) -> list[list[str]]:
@@ -143,9 +220,12 @@ def genai_control_rows(sources: Mapping[str, Any]) -> list[list[str]]:
             agent,
         ],
         [
-            "An LLM or prompt change needs a migration certificate signed by a model_validator",
-            "scripts/llm_migration_gate.py (non-inferiority margins in config/release_gate.yaml); security/rbac.py "
-            "sign_migration_certificate",
+            "An LLM or prompt change is to be certified by a migration certificate signed by a model_validator "
+            "(a process step)",
+            "Not enforced: scripts/llm_migration_gate.py is run by hand (non-inferiority margins in "
+            "config/release_gate.yaml), and neither CI nor the release gate checks that a certificate exists when "
+            "the prompt or the LLM changes; security/rbac.py sign_migration_certificate only restricts who may sign "
+            "(model_validator)",
             _migration_certificates(sources),
             "`results/llm_migration_*.json`",
         ],
@@ -158,7 +238,8 @@ def llm_quality_rows(sources: Mapping[str, Any]) -> list[list[str]]:
     agent = f"`results/{AGENT}`"
     return [
         [
-            "Field extraction F1, rules extractor (deterministic; not an LLM)",
+            "Field extraction F1, rules extractor (deterministic rules, not an LLM; scanned pages read by "
+            "Tesseract OCR)",
             share(value_in(sources, DOCINTEL, "rules.fields.overall.f1")),
             docintel,
         ],

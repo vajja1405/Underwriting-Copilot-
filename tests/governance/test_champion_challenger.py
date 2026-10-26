@@ -284,6 +284,20 @@ def test_outcomes_join_the_window_and_agree_with_the_champion(
     assert recorded_ece["ci_low"] == pytest.approx(champion_ece["ci_low"])
 
 
+def test_selective_labels_caveat_does_not_contradict_the_pending_decisions(
+    script_run: tuple[dict[str, Any], dict[str, Any], script.RunPaths],
+) -> None:
+    """P6-PACKS-8: decisions on unfinished loans stay pending, so the caveat says every decision TYPE can have an
+    outcome, not that every decision has one."""
+    first, _, _ = script_run
+    outcomes = first["outcomes"]
+    assert outcomes["summary"]["join"]["n_decisions_pending"] > 0
+    caveat = outcomes["caveats"][0]
+    assert "Every decision has outcomes" not in caveat
+    assert caveat.startswith("Every decision type, including declines, can have an outcome here")
+    assert "loans not yet finished stay pending" in caveat
+
+
 def test_main_runs_from_the_command_line_and_prints_the_summary(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

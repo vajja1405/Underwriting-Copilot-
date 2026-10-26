@@ -21,15 +21,20 @@ therefore has two inputs per model:
   tier as designed:  Tier 1 (high) for consumer_decision, Tier 2 (medium) for financial_risk, Tier 3 (low) for
                      method_demonstration.
   tier now:          the tier as designed when the model has exposure; Tier 3 when it has none. SR 26-2 allows a
-                     model to be deemed immaterial on exposure and purpose, with risk management that identifies it
-                     and monitors the conditions under which it may become material. That is the status of every
-                     model in this repository; the tier as designed says what a real deployment would need first.
+                     model to be deemed immaterial on exposure and purpose, with risk management that may consist of
+                     identifying it and monitoring its performance and the conditions under which it may become
+                     material. Every model in this repository is Tier 3 now, but only the first part is done: each
+                     is listed in the inventory, while exposure is a declared field (has_exposure), not monitored,
+                     and no inventory model's performance is monitored. The tier as designed says what a real
+                     deployment would need first.
 
 TIER_EXPECTATIONS lists what each tier would require (also design choices).
 """
 
 from dataclasses import dataclass
 from typing import Literal
+
+from uwcopilot.governance.packs import SR_26_2_IMMATERIAL
 
 Purpose = Literal["consumer_decision", "financial_risk", "method_demonstration"]
 
@@ -51,8 +56,8 @@ TIER_EXPECTATIONS: dict[int, str] = {
         "review at least every two years"
     ),
     3: (
-        "listed in the inventory; the conditions under which its use would become material are monitored; "
-        "never used for a decision"
+        "listed in the inventory; its performance and the conditions under which its use would become material are "
+        "monitored; never used for a decision"
     ),
 }
 TIERING_RULE: tuple[str, ...] = (
@@ -62,8 +67,11 @@ TIERING_RULE: tuple[str, ...] = (
     f"Purpose financial_risk ({PURPOSE_TEXT['financial_risk']}): {TIER_LABELS[2]} as designed.",
     f"Purpose method_demonstration ({PURPOSE_TEXT['method_demonstration']}): {TIER_LABELS[3]}.",
     "Tier now: the tier as designed if the model has exposure, otherwise Tier 3. No model in this repository has "
-    "exposure (no portfolio, no production use), so every model is Tier 3 now and is handled as an immaterial model: "
-    "identified in the inventory and monitored for the conditions under which it would become material.",
+    "exposure (no portfolio, no production use), so every model is Tier 3 now.",
+    "For a model deemed immaterial, SR 26-2 (section III) says model risk management may consist of "
+    f'"{SR_26_2_IMMATERIAL}". Only the first part is done here: every model is listed in the inventory, but its '
+    "exposure is declared in `packs_inventory.py`, not monitored, and no inventory model's performance is monitored "
+    "(the Phase 6 monitor watches a separate demonstration GLM).",
     "This rule is a design choice of the project, not a rule from SR 26-2 or any other guidance.",
 )
 

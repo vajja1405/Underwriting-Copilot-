@@ -37,7 +37,13 @@ from uwcopilot.governance.packs import (
     table,
     text,
 )
-from uwcopilot.governance.packs_genai import agent_control_rows, llm_quality_rows
+from uwcopilot.governance.packs_genai import (
+    THIRD_PARTY_MODEL_HEADER,
+    agent_control_rows,
+    llm_quality_rows,
+    llm_use,
+    third_party_model_rows,
+)
 from uwcopilot.governance.packs_governance import (
     champion_challenger_block,
     feedback_block,
@@ -64,8 +70,8 @@ SOURCES_USED: tuple[tuple[str, str | None, str], ...] = (
     (GOVERNANCE, "release_gate", "6"),
     (GOVERNANCE, "lineage", "7"),
     (GOVERNANCE, "feedback", "7"),
-    (AGENT, None, "7"),
-    (DOCINTEL, None, "7"),
+    (AGENT, None, "1, 7"),
+    (DOCINTEL, None, "1, 7"),
     (INJECTION, None, "7"),
     (INJECTION_DETECTOR, None, "7"),
 )
@@ -76,7 +82,10 @@ def sr_26_2_rows(sources: Mapping[str, Any]) -> list[tuple[str, str, str]]:
     them. The monitoring, outcomes and change-management rows say "not measured yet" until their sections exist."""
     outcomes = run_status(sources, "outcomes", "SYNTHETIC outcomes joined to SIMULATED decisions (section 5)")
     monitoring = run_status(
-        sources, "monitoring", "SIMULATED stream on freMTPL2; the credit model is not monitored (data absent)"
+        sources,
+        "monitoring",
+        "SIMULATED stream on a separate demonstration freMTPL2 GLM only (input, score and calibration drift; no "
+        "discrimination metric); none of the inventory models (section 1) is monitored",
     )
     challenger = run_status(sources, "champion_challenger", "SYNTHETIC champion/challenger compared (section 6)")
     gate = run_status(sources, "release_gate", "release gate run against the reviewed baseline (section 6)")
@@ -89,7 +98,7 @@ def sr_26_2_rows(sources: Mapping[str, Any]) -> list[tuple[str, str, str]]:
         (
             "III. Inherent risk, exposure and purpose; materiality = purpose + exposure",
             "2. Materiality tiering",
-            "Rule stated (a design choice). Exposure: none (no portfolio).",
+            "Rule stated (a design choice). Exposure: none (no portfolio); declared, not monitored.",
         ),
         ("III. Aggregate model risk (common data, assumptions, methods)", "-", "Not assessed."),
         (
@@ -132,8 +141,11 @@ def sr_26_2_rows(sources: Mapping[str, Any]) -> list[tuple[str, str, str]]:
         ),
         (
             "VII. Vendor and other third-party products",
-            "Open-source libraries (LightGBM, scikit-learn, statsmodels) and public data",
-            "No vendor model is used. Library versions are recorded in each results section's metadata.",
+            "Open-source libraries (LightGBM, scikit-learn, statsmodels) and public data; third-party pretrained OCR "
+            "and retrieval models (section 1)",
+            "No vendor model is used by the inventory models. The pretrained OCR and retrieval models are listed with "
+            "their recorded use in these results and are not validated here. Library versions are recorded in each "
+            "results section's metadata.",
         ),
         (
             "Footnote 3: generative and agentic AI are not within the scope",
@@ -165,16 +177,22 @@ def regulatory_basis() -> list[str]:
                 f'Not models under its definition, which excludes "{SR_26_2_NOT_A_MODEL}" (section II): the Phase 4 '
                 "financial calculations and reconciliation rules, the agent's rule-based reference policy, the rules "
                 "document extractor and the release gate. They are deterministic and are tested, not validated as "
-                "models.",
+                "models. The rules extractor reads scanned pages through Tesseract OCR, a third-party pretrained model "
+                "listed in section 1.",
                 "Outside its scope: generative and agentic AI (footnote 3). The LLM extraction and the agent are "
                 "governed in section 7, not by stretching SR 26-2 to cover them.",
+                "Still within its principles: traditional statistical and quantitative models and non-generative, "
+                "non-agentic AI models (footnote 3, last sentence). The third-party pretrained OCR and retrieval "
+                "models of section 1 are non-generative; whether an institution treats such components as models "
+                "depends on the institution. They are listed, not validated, here.",
             ]
         ),
     ]
 
 
 def inventory_section(sources: Mapping[str, Any]) -> list[str]:
-    """One table per model: purpose, use, data, version, tier, ownership; then the Phase 6 registry entries."""
+    """One table per model: purpose, use, data, version, tier, ownership; then the Phase 6 registry entries and the
+    third-party pretrained models the extraction and the agent run."""
     lines = ["## 1. Model inventory", ""]
     for entry in INVENTORY:
         tier = entry.tier()
@@ -211,6 +229,18 @@ def inventory_section(sources: Mapping[str, Any]) -> list[str]:
         source_note(sources, GOVERNANCE, "monitoring"),
         "",
         source_note(sources, GOVERNANCE, "champion_challenger"),
+        "",
+        "### Third-party pretrained models (not in the inventory)",
+        "",
+        "The document extraction and the agent's guideline search run these pretrained, non-generative models as "
+        "published. They return text or a ranking of retrieved text rather than the quantitative estimates of the "
+        "models above, so they are not listed as inventory models; they were not validated by this project.",
+        "",
+        *table(THIRD_PARTY_MODEL_HEADER, third_party_model_rows(sources)),
+        "",
+        source_note(sources, DOCINTEL),
+        "",
+        source_note(sources, AGENT),
         "",
     ]
     return lines
@@ -317,9 +347,13 @@ def monitoring_section(sources: Mapping[str, Any]) -> list[str]:
     return [
         "## 4. Ongoing monitoring",
         "",
-        "The plan per model (population stability, calibration, discrimination, overrides) is in each model card. "
-        "Phase 6 runs it on a SIMULATED stream: every threshold is in `config/monitoring.yaml`; a breach writes an "
-        "alert record and marks the monitored model `under_review` in the model status registry.",
+        "The plan per model (population stability, calibration, discrimination, overrides) is in each model card; it "
+        "is not run for any inventory model. Phase 6 demonstrates input drift, score drift and calibration checks "
+        "(no discrimination metric) on a SIMULATED stream for a separate demonstration GLM trained by "
+        "`scripts/monitor.py`, which is not an inventory model (section 1 lists it with the Phase 6 demonstrations). "
+        "Every threshold is in "
+        "`config/monitoring.yaml`; a breach writes an alert record and marks the monitored model `under_review` in "
+        "the model status registry.",
         "",
         *monitoring_block(sources),
     ]
@@ -371,15 +405,16 @@ def genai_section(sources: Mapping[str, Any]) -> list[str]:
     return [
         "## 7. The LLM extraction and the agent: governed outside SR 26-2",
         "",
-        f'SR 26-2, footnote 3 (local copy, section II): "{SR_26_2_FOOTNOTE_3}"',
+        f'SR 26-2, footnote 3 in full (local copy, section II): "{SR_26_2_FOOTNOTE_3}"',
         "",
         "The LLM field extraction (`docintel/extract_llm*.py`) and the underwriting agent (`agent/graph.py`: tool "
         "calls and the memo) are generative and agentic AI, so SR 26-2 does not cover them. Following the footnote's "
-        "last sentence, the project governs them with its own controls: a human decides every file, the agent may "
+        "third sentence, the project governs them with its own controls: a human decides every file, the agent may "
         "only call allow-listed tools, document text is data and never instructions, and a change of LLM or prompt "
-        "is to be certified by `scripts/llm_migration_gate.py` and signed by a model_validator before release (no "
-        "such change has been evaluated here). No LLM was available for the "
-        "results below: every LLM-dependent measure says not measured.",
+        "is to be certified by `scripts/llm_migration_gate.py` and signed by a model_validator before release (a "
+        "manual step: neither CI nor the release gate checks for a certificate; no such change has been evaluated "
+        "here). LLM use recorded for the results below: "
+        f"{llm_use(sources)}. Every LLM-dependent measure that was not run says not measured.",
         "",
         "### Controls on the agent",
         "",
